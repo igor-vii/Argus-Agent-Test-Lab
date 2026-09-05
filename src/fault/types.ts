@@ -41,3 +41,13 @@ export interface FaultInjectionResult {
   timestamp: number;
   effect: Record<string, unknown>;
 }
+
+/**
+ * Fault Event - represents an event that may trigger fault injection
+ */
+export interface FaultEvent {
+  type: string;
+  data: Record<string, unknown>;
+  faultId?: string;
+  timestamp?: number;
+}

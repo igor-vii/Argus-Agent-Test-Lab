@@ -32,3 +32,14 @@ export interface AgentConfig {
   config: Record<string, unknown>;
   faults: FaultConfig[];
 }
+
+/**
+ * Event emitted by the agent during execution
+ */
+export interface AgentEvent {
+  timestamp: number;
+  runId: string;
+  agentId: string;
+  eventType: string;
+  data: Record<string, unknown>;
+}

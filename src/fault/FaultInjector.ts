@@ -1,4 +1,4 @@
-import { FaultDefinition, FaultInjectionResult, FaultTrigger } from './types';
+import { FaultDefinition, FaultInjectionResult, FaultTrigger, FaultEvent } from './types';
 
 /**
  * Event-based Fault Injection Engine
@@ -111,14 +111,4 @@ export class FaultInjector {
     event.faultId = fault.id;
     event.data = { ...event.data, ...fault.params };
   }
-}
-
-/**
- * Fault Event - represents an event that may trigger fault injection
- */
-export interface FaultEvent {
-  type: string;
-  data: Record<string, unknown>;
-  faultId?: string;
-  timestamp?: number;
 }

@@ -14,6 +14,9 @@ export interface EvidenceEvent {
   /** Actor that caused this event (agent id, system, etc.) */
   actor: string;
   
+  /** Agent ID reference if applicable */
+  agentId?: string;
+  
   /** Type of event */
   eventType: string;
   
@@ -28,6 +31,9 @@ export interface EvidenceEvent {
   
   /** Actual context/result */
   actual?: Record<string, unknown>;
+  
+  /** Structured data/metadata */
+  data?: Record<string, unknown>;
   
   /** Additional metadata */
   metadata?: Record<string, unknown>;

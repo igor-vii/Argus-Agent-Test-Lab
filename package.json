@@ -13,14 +13,19 @@
     "lab": "ts-node src/cli/lab.ts",
     "lab:run": "ts-node src/cli/lab.ts run"
   },
-  "keywords": ["ai", "agent", "testing", "adversarial"],
+  "keywords": [
+    "ai",
+    "agent",
+    "testing",
+    "adversarial"
+  ],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "commander": "^14.0.3"
   },
   "devDependencies": {
-    "@types/jest": "^29.5.12",
+    "@types/jest": "^29.5.14",
     "@types/node": "^20.12.12",
     "jest": "^29.7.0",
     "ts-jest": "^29.1.4",
