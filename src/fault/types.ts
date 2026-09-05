@@ -1,0 +1,43 @@
+/**
+ * Fault Type definitions for MVP
+ * 
+ * These are the primitive fault types that can be injected
+ */
+export type FaultType =
+  | 'duplicate_request'
+  | 'delayed_payment'
+  | 'unpaid_request'
+  | 'crash_after_payment'
+  | 'seller_timeout'
+  | 'concurrent_request'
+  | 'payment_retry'
+  | 'lost_delivery';
+
+/**
+ * Event trigger for fault injection
+ */
+export interface FaultTrigger {
+  event: string; // e.g., 'request.created', 'payment.submitted', etc.
+}
+
+/**
+ * Fault Configuration
+ */
+export interface FaultDefinition {
+  id: string;
+  type: FaultType;
+  description?: string;
+  trigger?: FaultTrigger;
+  params: Record<string, unknown>;
+  targetAgentId?: string; // Optional: which agent this fault affects
+}
+
+/**
+ * Fault Injection Result
+ */
+export interface FaultInjectionResult {
+  faultId: string;
+  applied: boolean;
+  timestamp: number;
+  effect: Record<string, unknown>;
+}

@@ -1,0 +1,30 @@
+{
+  "name": "zeus-agent-test-lab",
+  "version": "0.1.0",
+  "description": "Zeus Agent Test Lab - Adversarial Testing for AI Agent Protocols",
+  "main": "dist/index.js",
+  "bin": {
+    "lab": "./dist/cli/lab.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "jest",
+    "typecheck": "tsc --noEmit",
+    "lab": "ts-node src/cli/lab.ts",
+    "lab:run": "ts-node src/cli/lab.ts run"
+  },
+  "keywords": ["ai", "agent", "testing", "adversarial"],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "commander": "^14.0.3"
+  },
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/node": "^26.4.1",
+    "jest": "^30.5.1",
+    "ts-jest": "^29.4.12",
+    "ts-node": "^10.9.2",
+    "typescript": "^7.0.2"
+  }
+}
