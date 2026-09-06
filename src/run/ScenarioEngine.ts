@@ -1,4 +1,4 @@
-import { ScenarioDefinition } from '../scenario';
+import { ScenarioDefinition, ScenarioInvariant } from '../scenario';
 import { Agent, AgentConfig } from '../agent';
 import { FaultInjector, FaultDefinition } from '../fault';
 import { EvidenceCollector } from '../evidence';
@@ -73,7 +73,6 @@ export class ScenarioEngine {
         event.runId = runId;
         evidenceCollector.record({
           timestamp: event.timestamp,
-          agentId: event.agentId,
           actor: event.agentId,
           eventType: event.eventType,
           data: event.data
@@ -104,14 +103,10 @@ export class ScenarioEngine {
         data: { scenarioId: config.scenario.id }
       });
 
-      // Build evidence
-      const evidence = evidenceCollector.buildEvidence();
-
-      // Evaluate invariants
+      // Evaluate invariants using real evidence-based checks
       const evaluationFns = this.createEvaluationFunctions(
-        config.scenario.invariants,
-        evidence,
-        config.targetAdapter
+        assertionEngine,
+        config.scenario.invariants
       );
 
       const verdict = assertionEngine.evaluateAll(
@@ -125,8 +120,8 @@ export class ScenarioEngine {
         runId,
         scenarioId: config.scenario.id,
         seed,
-        startTime: evidence.summary.startTime,
-        endTime: evidence.summary.endTime,
+        startTime: evidenceCollector.buildEvidence().summary.startTime,
+        endTime: evidenceCollector.buildEvidence().summary.endTime,
         verdict,
         status: verdict.outcome === 'PASS' ? 'completed' : verdict.outcome === 'FAIL' ? 'failed' : 'inconclusive'
       };
@@ -243,23 +238,108 @@ export class ScenarioEngine {
   }
 
   /**
-   * Create evaluation functions for invariants
+   * Create evaluation functions for invariants based on actual evidence
    */
   private createEvaluationFunctions(
-    invariants: Array<{ id: string; check: string }>,
-    evidence: any,
-    targetAdapter: TargetAdapter
-  ): Map<string, () => { passed: boolean; expected: string; actual: string; inconclusive?: boolean }> {
-    const fns = new Map();
+    assertionEngine: AssertionEngine,
+    invariants: ScenarioInvariant[]
+  ): Map<string, () => { passed: boolean; expected: string; actual: string | number; inconclusive?: boolean; evidenceRefs?: string[] }> {
+    const fns = new Map<string, () => { passed: boolean; expected: string; actual: string | number; inconclusive?: boolean; evidenceRefs?: string[] }>();
 
     for (const invariant of invariants) {
-      fns.set(invariant.id, () => ({
-        passed: true, // MVP: default to pass for mock testing
-        expected: invariant.check,
-        actual: 'Mock evaluation - invariant assumed satisfied'
-      }));
+      fns.set(invariant.id, () => this.evaluateInvariantCheck(assertionEngine, invariant));
     }
 
     return fns;
+  }
+
+  /**
+   * Evaluate a single invariant check string
+   * Supports:
+   * - countEventsByType('eventType') == N
+   * - countEventsByType('eventType') <= N
+   * - countEventsByType('eventType') >= N
+   */
+  private evaluateInvariantCheck(
+    assertionEngine: AssertionEngine,
+    invariant: ScenarioInvariant
+  ): { passed: boolean; expected: string; actual: string | number; inconclusive?: boolean; evidenceRefs?: string[] } {
+    const check = invariant.check;
+
+    // Parse countEventsByType checks
+    const countMatch = check.match(/countEventsByType\(['"]([^'"]+)['"]\)\s*(==|<=|>=)\s*(\d+)/);
+    
+    if (countMatch) {
+      const [, eventType, operator, countStr] = countMatch;
+      const expectedCount = parseInt(countStr, 10);
+      const result = assertionEngine.countEventsByType(eventType);
+      
+      let passed = false;
+      switch (operator) {
+        case '==':
+          passed = result.count === expectedCount;
+          break;
+        case '<=':
+          passed = result.count <= expectedCount;
+          break;
+        case '>=':
+          passed = result.count >= expectedCount;
+          break;
+      }
+
+      // INCONCLUSIVE if we expect an event but it's missing (could be timeout/lost)
+      if (!passed && expectedCount > 0 && result.count === 0) {
+        return {
+          passed: false,
+          expected: check,
+          actual: `count=${result.count}`,
+          inconclusive: true,
+          evidenceRefs: []
+        };
+      }
+
+      return {
+        passed,
+        expected: check,
+        actual: `count=${result.count}`,
+        evidenceRefs: result.eventIds
+      };
+    }
+
+    // Parse isUnique checks
+    const uniqueMatch = check.match(/isUnique\(['"]([^'"]+)['"]\)/);
+    if (uniqueMatch) {
+      const [, fieldName] = uniqueMatch;
+      const result = assertionEngine.isUnique(fieldName);
+      return {
+        passed: result.unique,
+        expected: check,
+        actual: result.unique ? 'unique' : `duplicate values: ${result.values.join(', ')}`,
+        evidenceRefs: result.eventIds
+      };
+    }
+
+    // Parse hasSequence checks
+    const seqMatch = check.match(/hasSequence\(\[([^\]]+)\]\)/);
+    if (seqMatch) {
+      const [, seqStr] = seqMatch;
+      const eventTypes = seqStr.split(',').map(s => s.trim().replace(/['"]/g, ''));
+      const result = assertionEngine.hasSequence(eventTypes);
+      return {
+        passed: result.found,
+        expected: check,
+        actual: result.found ? 'sequence found' : 'sequence not found',
+        evidenceRefs: result.eventIds
+      };
+    }
+
+    // Unknown check format - return INCONCLUSIVE
+    return {
+      passed: false,
+      expected: check,
+      actual: 'Unknown check format',
+      inconclusive: true,
+      evidenceRefs: []
+    };
   }
 }

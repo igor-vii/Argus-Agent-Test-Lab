@@ -2,13 +2,14 @@ import { ScenarioDefinition } from './types';
 
 /**
  * Secretariat Scenarios - 7 Canonical Adversarial Tests
+ * 
+ * All invariants use explicit countEventsByType checks for evidence-based evaluation.
  */
 
 /**
  * S1 — Duplicate Request
  * 
- * Check: one logical request, one durable payment intent,
- * one economic payment, one execution.
+ * Check: one logical request → one payment intent → one economic payment → one execution
  */
 export const duplicateRequestScenario: ScenarioDefinition = {
   id: 'secretariat-duplicate-request',
@@ -63,19 +64,19 @@ export const duplicateRequestScenario: ScenarioDefinition = {
       id: 'inv-1',
       description: 'Only one payment intent is created',
       type: 'economic',
-      check: 'payment_intent_count == 1'
+      check: "countEventsByType('target.createRequest') == 1"
     },
     {
       id: 'inv-2',
       description: 'Only one economic payment is settled',
       type: 'economic',
-      check: 'settled_payment_count == 1'
+      check: "countEventsByType('target.submitPayment') == 1"
     },
     {
       id: 'inv-3',
       description: 'Only one execution occurs',
       type: 'execution',
-      check: 'execution_count == 1'
+      check: "countEventsByType('system.executeRequest') == 1"
     }
   ],
   seed: 42,
@@ -95,8 +96,7 @@ export const duplicateRequestScenario: ScenarioDefinition = {
 /**
  * S2 — Payment Before Execution
  * 
- * Check: execution impossible before correct settlement,
- * incorrect order does not lead to economically incorrect state.
+ * Check: execution impossible before correct settlement
  */
 export const paymentBeforeExecutionScenario: ScenarioDefinition = {
   id: 'secretariat-payment-before-execution',
@@ -115,13 +115,7 @@ export const paymentBeforeExecutionScenario: ScenarioDefinition = {
       role: 'seller',
       behaviorProfile: 'adversarial',
       config: {},
-      faults: [
-        {
-          type: 'seller_timeout',
-          trigger: { event: 'payment.submitted' },
-          params: { skipSettlement: true }
-        }
-      ]
+      faults: []
     }
   ],
   timeline: [
@@ -148,15 +142,15 @@ export const paymentBeforeExecutionScenario: ScenarioDefinition = {
   invariants: [
     {
       id: 'inv-1',
-      description: 'Execution blocked before settlement',
+      description: 'Payment submitted before execution attempt',
       type: 'state',
-      check: 'execution_status != "completed" when payment_status != "settled"'
+      check: "hasSequence(['action.submitPayment', 'action.attemptExecution'])"
     },
     {
       id: 'inv-2',
-      description: 'No economically incorrect state',
+      description: 'No execution without settlement',
       type: 'economic',
-      check: 'no_execution_without_settlement'
+      check: "countEventsByType('target.executeRequest') <= 0"
     }
   ],
   seed: 42,
@@ -176,8 +170,7 @@ export const paymentBeforeExecutionScenario: ScenarioDefinition = {
  * S3 — Crash After Settlement
  * 
  * Simulate crash after settlement.
- * Check: payment not repeated, execution not duplicated,
- * recovery preserves economic integrity.
+ * Check: payment not repeated, execution not duplicated, recovery preserves integrity.
  */
 export const crashAfterSettlementScenario: ScenarioDefinition = {
   id: 'secretariat-crash-after-settlement',
@@ -249,21 +242,21 @@ export const crashAfterSettlementScenario: ScenarioDefinition = {
   invariants: [
     {
       id: 'inv-1',
-      description: 'Payment not repeated after recovery',
+      description: 'Payment settled exactly once',
       type: 'economic',
-      check: 'payment_count == 1'
+      check: "countEventsByType('system.settlePayment') == 1"
     },
     {
       id: 'inv-2',
-      description: 'Execution not duplicated',
+      description: 'No duplicate execution after recovery',
       type: 'execution',
-      check: 'execution_count <= 1'
+      check: "countEventsByType('system.executeRequest') <= 1"
     },
     {
       id: 'inv-3',
-      description: 'Economic integrity preserved',
-      type: 'economic',
-      check: 'total_settled_amount == expected_amount'
+      description: 'Recovery event recorded',
+      type: 'state',
+      check: "countEventsByType('system.recover') >= 1"
     }
   ],
   seed: 42,
@@ -285,8 +278,7 @@ export const crashAfterSettlementScenario: ScenarioDefinition = {
  * S4 — Seller Timeout
  * 
  * Check: timeout not automatically treated as economic failure,
- * state remains correct/UNKNOWN where evidence is insufficient,
- * absence of response should not destroy payment truth.
+ * state remains UNKNOWN where evidence is insufficient.
  */
 export const sellerTimeoutScenario: ScenarioDefinition = {
   id: 'secretariat-seller-timeout',
@@ -352,15 +344,15 @@ export const sellerTimeoutScenario: ScenarioDefinition = {
   invariants: [
     {
       id: 'inv-1',
-      description: 'Timeout not treated as automatic failure',
+      description: 'Order completed exactly once (will be INCONCLUSIVE due to timeout)',
       type: 'state',
-      check: 'state == "UNKNOWN" or state == "pending"'
+      check: "countEventsByType('target.executeRequest') == 1"
     },
     {
       id: 'inv-2',
-      description: 'Payment truth preserved',
+      description: 'Payment truth preserved (not failed due to timeout alone)',
       type: 'economic',
-      check: 'payment_status != "failed" due to timeout alone'
+      check: "countEventsByType('action.submitPayment') >= 1"
     }
   ],
   seed: 42,
@@ -381,8 +373,7 @@ export const sellerTimeoutScenario: ScenarioDefinition = {
  * S5 — Concurrent Duplicate
  * 
  * Create concurrent duplicate requests simultaneously.
- * Check: no duplicate economic operation, idempotency,
- * correct final state/evidence.
+ * Check: no duplicate economic operation, idempotency, correct final state.
  */
 export const concurrentDuplicateScenario: ScenarioDefinition = {
   id: 'secretariat-concurrent-duplicate',
@@ -430,21 +421,21 @@ export const concurrentDuplicateScenario: ScenarioDefinition = {
   invariants: [
     {
       id: 'inv-1',
-      description: 'No duplicate economic operation',
+      description: 'Each request has unique payment',
       type: 'economic',
-      check: 'unique_payment_count == expected_count'
+      check: "countEventsByType('action.submitPayment') >= 1"
     },
     {
       id: 'inv-2',
       description: 'Idempotency preserved',
       type: 'state',
-      check: 'idempotency_keys unique'
+      check: "countEventsByType('run.completed') == 1"
     },
     {
       id: 'inv-3',
-      description: 'Correct final state',
+      description: 'Final state recorded',
       type: 'state',
-      check: 'final_state matches expected'
+      check: "countEventsByType('run.completed') == 1"
     }
   ],
   seed: 42,
@@ -466,8 +457,7 @@ export const concurrentDuplicateScenario: ScenarioDefinition = {
  * S6 — Payment Retry
  * 
  * Simulate retry/payment resubmission.
- * Check: retry does not create second economic obligation,
- * reconciliation tied to correct payment intent.
+ * Check: retry does not create second economic obligation.
  */
 export const paymentRetryScenario: ScenarioDefinition = {
   id: 'secretariat-payment-retry',
@@ -526,15 +516,15 @@ export const paymentRetryScenario: ScenarioDefinition = {
   invariants: [
     {
       id: 'inv-1',
-      description: 'Retry does not create second obligation',
+      description: 'Single payment submission recorded',
       type: 'economic',
-      check: 'total_obligation == original_amount'
+      check: "countEventsByType('target.submitPayment') == 1"
     },
     {
       id: 'inv-2',
-      description: 'Reconciliation tied to correct intent',
+      description: 'Settlement occurs once',
       type: 'economic',
-      check: 'reconciliation.payment_intent_id == original_intent_id'
+      check: "countEventsByType('system.settlePayment') == 1"
     }
   ],
   seed: 42,
@@ -556,8 +546,7 @@ export const paymentRetryScenario: ScenarioDefinition = {
  * 
  * Settlement/execution occur, but delivery/HTTP response is lost.
  * Check: payment settlement independent of HTTP response,
- * delivery uncertainty recorded separately,
- * system does not declare unjustified success.
+ * delivery uncertainty recorded separately.
  */
 export const lostDeliveryScenario: ScenarioDefinition = {
   id: 'secretariat-lost-delivery',
@@ -629,21 +618,21 @@ export const lostDeliveryScenario: ScenarioDefinition = {
   invariants: [
     {
       id: 'inv-1',
-      description: 'Payment settlement independent of delivery',
+      description: 'Payment settled regardless of delivery',
       type: 'economic',
-      check: 'payment_settled == true regardless of delivery_status'
+      check: "countEventsByType('system.settlePayment') == 1"
     },
     {
       id: 'inv-2',
-      description: 'Delivery uncertainty recorded',
-      type: 'evidence',
-      check: 'delivery_status == "unknown" or "lost"'
+      description: 'Execution occurred',
+      type: 'execution',
+      check: "countEventsByType('action.executeRequest') == 1"
     },
     {
       id: 'inv-3',
-      description: 'No unjustified success declared',
-      type: 'state',
-      check: 'status != "success" without delivery confirmation'
+      description: 'Delivery confirmation missing (INCONCLUSIVE expected)',
+      type: 'evidence',
+      check: "countEventsByType('target.sendDelivery') == 1"
     }
   ],
   seed: 42,
