@@ -1,0 +1,6 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.SecretariatTargetAdapter = void 0;
+var SecretariatTargetAdapter_1 = require("./SecretariatTargetAdapter");
+Object.defineProperty(exports, "SecretariatTargetAdapter", { enumerable: true, get: function () { return SecretariatTargetAdapter_1.SecretariatTargetAdapter; } });
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiaW5kZXguanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi8uLi9zcmMvdGFyZ2V0L2luZGV4LnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7OztBQUFBLHVFQUFzRTtBQUE3RCxvSUFBQSx3QkFBd0IsT0FBQSIsInNvdXJjZXNDb250ZW50IjpbImV4cG9ydCB7IFNlY3JldGFyaWF0VGFyZ2V0QWRhcHRlciB9IGZyb20gJy4vU2VjcmV0YXJpYXRUYXJnZXRBZGFwdGVyJztcbmV4cG9ydCB0eXBlIHsgXG4gIFRhcmdldEFkYXB0ZXIsIFxuICBTZWNyZXRhcmlhdEV4ZWN1dGVQYXJhbXMsIFxuICBTZWNyZXRhcmlhdEV4ZWN1dGVSZXN1bHQsIFxuICBTZWNyZXRhcmlhdE9ic2VydmVSZXN1bHQgXG59IGZyb20gJy4vdHlwZXMnO1xuIl19
