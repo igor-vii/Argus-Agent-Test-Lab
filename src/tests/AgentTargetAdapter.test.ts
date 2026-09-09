@@ -1,12 +1,12 @@
 /**
- * Unit tests for AgentTargetAdapter contract and MockTargetAdapter implementation
+ * Unit tests for AgentTargetPort contract and MockTargetAdapter implementation
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
 import {
   MessageDirection,
   ExchangeStatus,
-} from '../core/AgentTargetAdapter';
+} from '../core/AgentTargetPort';
 import { MockTargetAdapter } from '../adapters/MockTargetAdapter';
 
 describe('AgentTargetAdapter Contract', () => {

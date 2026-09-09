@@ -1,5 +1,5 @@
 /**
- * AgentTargetAdapter - Universal Port for Connecting Argus to Any AI-Agent
+ * AgentTargetPort - Universal Port for Connecting Argus to Any AI-Agent
  * 
  * This is a target-agnostic, transport-agnostic contract that allows Argus
  * to connect to any target agent and exchange observable data.
@@ -149,7 +149,7 @@ export interface ConnectionResult {
 }
 
 /**
- * The universal AgentTargetAdapter contract
+ * The universal AgentTargetPort contract
  * 
  * This interface defines the minimal set of operations needed to:
  * 1. Connect to a target agent
@@ -158,7 +158,7 @@ export interface ConnectionResult {
  * 4. Capture evidence
  * 5. Disconnect
  */
-export interface AgentTargetAdapter {
+export interface AgentTargetPort {
   /**
    * Get the adapter's identifier
    */
@@ -208,4 +208,4 @@ export interface AgentTargetAdapter {
  * Factory function type for creating adapters
  * Allows dependency injection and testing
  */
-export type AdapterFactory = (targetType: string) => AgentTargetAdapter;
+export type AdapterFactory = (targetType: string) => AgentTargetPort;

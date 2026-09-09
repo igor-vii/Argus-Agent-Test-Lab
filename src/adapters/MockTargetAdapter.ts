@@ -11,7 +11,7 @@
  */
 
 import {
-  AgentTargetAdapter,
+  AgentTargetPort,
   TargetConnectionConfig,
   ConnectionResult,
   Exchange,
@@ -19,7 +19,7 @@ import {
   MessageDirection,
   ExchangeStatus,
   RunId,
-} from '../core/AgentTargetAdapter';
+} from '../core/AgentTargetPort';
 
 /**
  * Generate a unique ID (simplified for mock purposes)
@@ -43,9 +43,9 @@ export interface MockTargetConfig extends TargetConnectionConfig {
 }
 
 /**
- * Mock implementation of AgentTargetAdapter
+ * Mock implementation of AgentTargetPort
  */
-export class MockTargetAdapter implements AgentTargetAdapter {
+export class MockTargetAdapter implements AgentTargetPort {
   private id: string;
   private targetType: string;
   private connected: boolean = false;

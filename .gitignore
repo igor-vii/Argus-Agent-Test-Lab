@@ -1,25 +1,44 @@
+```
 # Dependencies
 node_modules/
 
-# Build output
+# Build artifacts
 dist/
+build/
+target/
 
-# Package lock (using npm as canonical package manager)
-package-lock.json
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
 
-# IDE / Editor
-.idea/
+# Virtual environments
+venv/
+.venv/
+.env
+.env.local
+*.env.*
+
+# Logs
+*.log
+
+# Coverage reports
+coverage/
+htmlcov/
+.coverage
+
+# IDE files
 .vscode/
+.idea/
 *.swp
 *.swo
+*.tmp
 
 # OS files
 .DS_Store
 Thumbs.db
 
-# Test coverage
-coverage/
-
-# Logs
-*.log
-npm-debug.log*
+# Package lock files (preserved from current)
+package-lock.json
+```
