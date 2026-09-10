@@ -10,7 +10,7 @@ describe('ScenarioEngine', () => {
     let faultInjector;
     beforeEach(() => {
         mockTarget = new MockTargetAdapter({ transportType: 'mock' });
-        mockController = new AgentController(mockTarget, { timeoutMs: 30000, runId: 'test-run-id' });
+        mockController = new AgentController(mockTarget, { connectionConfig: { transportType: 'mock' }, timeoutMs: 30000, runId: 'test-run-id' });
         faultInjector = new FaultInjector();
     });
     it('should execute scenario timeline sequentially', async () => {

@@ -278,17 +278,20 @@ export class AgentController {
       throw new Error('RunId not set. Call setRunId() before executing interaction.');
     }
 
-    // Connect
-    const connectResult = await this.connect();
-    if (!connectResult.success) {
-      return {
-        runId: this.currentRunId,
-        status: ExchangeStatus.FAILURE,
-        error: `Connection failed: ${connectResult.error}`,
-      };
-    }
+    let connected = false;
 
     try {
+      // Connect
+      const connectResult = await this.connect();
+      if (!connectResult.success) {
+        return {
+          runId: this.currentRunId,
+          status: ExchangeStatus.FAILURE,
+          error: `Connection failed: ${connectResult.error}`,
+        };
+      }
+      connected = true;
+
       // Act
       const actOutcome = await this.act(actionType, actionPayload);
       if (actOutcome.status !== ExchangeStatus.SUCCESS) {
@@ -330,8 +333,10 @@ export class AgentController {
 
       return actOutcome;
     } finally {
-      // Always disconnect
-      await this.disconnect();
+      // Always disconnect if we successfully connected
+      if (connected) {
+        await this.disconnect();
+      }
     }
   }
 
