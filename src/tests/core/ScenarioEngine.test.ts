@@ -3,7 +3,7 @@ import { ScenarioEngine } from '../../core/ScenarioEngine';
 import { ScenarioDefinition } from '../../core/ScenarioDefinition';
 import { AgentController } from '../../core/AgentController';
 import { MockTargetAdapter } from '../../adapters/MockTargetAdapter';
-import { RunContext } from '../../core/RunLifecycle';
+import { RunContext, RunStatus } from '../../core/RunLifecycle';
 import { FaultInjector } from '../../core/FaultInjector';
 
 describe('ScenarioEngine', () => {
@@ -13,7 +13,7 @@ describe('ScenarioEngine', () => {
   let faultInjector: FaultInjector;
 
   beforeEach(() => {
-    mockTarget = new MockTargetAdapter({ transportType: 'mock' });
+    mockTarget = new MockTargetAdapter('mock');
     mockController = new AgentController(mockTarget, { connectionConfig: { transportType: 'mock' }, timeoutMs: 30000, runId: 'test-run-id' });
     faultInjector = new FaultInjector();
   });
@@ -22,11 +22,12 @@ describe('ScenarioEngine', () => {
     const scenario: ScenarioDefinition = {
       id: 'test-scenario',
       name: 'Test Timeline',
+      target: 'mock-target',
       agents: [],
       actions: [
-        { type: 'act', payload: { type: 'ACTION_1' } },
-        { type: 'act', payload: { type: 'ACTION_2' } },
-        { type: 'act', payload: { type: 'ACTION_3' } },
+        { type: 'act', agentId: 'agent-1', payload: { type: 'ACTION_1' } },
+        { type: 'act', agentId: 'agent-1', payload: { type: 'ACTION_2' } },
+        { type: 'act', agentId: 'agent-1', payload: { type: 'ACTION_3' } },
       ],
       faults: [],
       seed: 42,
@@ -37,24 +38,25 @@ describe('ScenarioEngine', () => {
       scenarioId: 'test-scenario',
       seed: 42,
       startedAt: new Date(),
-      status: 'CREATED',
+      status: RunStatus.CREATED,
     };
 
     engine = new ScenarioEngine(scenario, context, mockController, faultInjector);
-    
+
     // Execute and verify no errors thrown
     await expect(engine.execute()).resolves.not.toThrow();
-    
+
     // Verify run status updated
-    expect(context.status).toBe('COMPLETED');
+    expect(context.status).toBe(RunStatus.COMPLETED);
   });
 
   it('should pass runId and seed to execution context', async () => {
     const scenario: ScenarioDefinition = {
       id: 'seed-test',
       name: 'Seed Test',
+      target: 'mock-target',
       agents: [],
-      actions: [{ type: 'act', payload: { type: 'CHECK_SEED' } }],
+      actions: [{ type: 'act', agentId: 'agent-1', payload: { type: 'CHECK_SEED' } }],
       faults: [],
       seed: 999,
     };
@@ -64,7 +66,7 @@ describe('ScenarioEngine', () => {
       scenarioId: 'seed-test',
       seed: 999,
       startedAt: new Date(),
-      status: 'CREATED',
+      status: RunStatus.CREATED,
     };
 
     engine = new ScenarioEngine(scenario, context, mockController, faultInjector);
@@ -76,13 +78,15 @@ describe('ScenarioEngine', () => {
 
   it('should handle runtime failure gracefully', async () => {
     // Setup target to fail on send
-    mockTarget.send = vi.fn().mockRejectedValue(new Error('Simulated Failure'));
+    const originalSend = mockTarget.send;
+    mockTarget.send = async () => { throw new Error('Simulated Failure'); };
 
     const scenario: ScenarioDefinition = {
       id: 'fail-test',
       name: 'Failure Test',
+      target: 'mock-target',
       agents: [],
-      actions: [{ type: 'act', payload: { type: 'FAIL_ACTION' } }],
+      actions: [{ type: 'act', agentId: 'agent-1', payload: { type: 'FAIL_ACTION' } }],
       faults: [],
       seed: 1,
     };
@@ -92,13 +96,16 @@ describe('ScenarioEngine', () => {
       scenarioId: 'fail-test',
       seed: 1,
       startedAt: new Date(),
-      status: 'CREATED',
+      status: RunStatus.CREATED,
     };
 
     engine = new ScenarioEngine(scenario, context, mockController, faultInjector);
-    
+
     // Should not throw unhandled error, but status should reflect failure or completion with errors
-    await expect(engine.execute()).resolves.not.toThrow(); 
+    await expect(engine.execute()).resolves.not.toThrow();
     // Depending on implementation, status might be FAILED or COMPLETED with error evidence
+    
+    // Restore original send
+    mockTarget.send = originalSend;
   });
 });

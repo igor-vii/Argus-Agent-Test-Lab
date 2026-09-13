@@ -33,10 +33,6 @@ export class ScenarioEngine {
     try {
       // Последовательное выполнение действий timeline
       for (const action of this.scenario.actions) {
-        if (this.context.status === RunStatus.FAILED) {
-          break;
-        }
-
         await this.executeAction(action);
       }
 
