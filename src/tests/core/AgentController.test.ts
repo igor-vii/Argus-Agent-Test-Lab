@@ -8,7 +8,7 @@
  * - C4: No automatic retry
  * - C5: Proper disconnect on failure
  * - C6: Works through AgentTargetPort abstraction
- * - C7: Target-agnostic (no Secretariat-specific logic)
+ * - C7: Target-agnostic (no scenario-specific participantIds)
  */
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
@@ -373,9 +373,9 @@ describe('AgentController', () => {
 
   // C7 — target agnostic
   describe('C7: Target-agnostic behavior', () => {
-    it('should not contain Secretariat-specific logic', () => {
-      // Controller code should not reference Secretariat
-      // This is verified by inspection - no "secretariat" strings in Controller
+    it('should not contain scenario-specific participantIds', () => {
+      // Controller code should not reference any participantId from scenarios (e.g., 'sut-1', 'buyer-1', 'seller-1')
+      // This is verified by inspection - no hardcoded participant strings in Controller
       expect(controller.getRunId()).toBe('test-run-123');
       // Controller treats all targets uniformly
     });

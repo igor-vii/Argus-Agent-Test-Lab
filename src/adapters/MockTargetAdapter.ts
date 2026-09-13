@@ -64,7 +64,7 @@ export class MockTargetAdapter implements AgentTargetPort {
   // await between has() and set(), there is no race window inside a
   // single event loop. This invariant must hold if this adapter is ever
   // wrapped in real async I/O (e.g., HTTP). For S5 concurrency, the
-  // target of the test is Secretariat, not this mock.
+  // target of the test is the SUT, not this mock.
   private paymentIntents: Map<string, PaymentIntent> = new Map();
 
   constructor(targetType: string = 'mock-target') {

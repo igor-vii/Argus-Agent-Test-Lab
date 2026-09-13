@@ -9,7 +9,7 @@
  * Argus and a target agent through the universal AgentTargetPort.
  *
  * ARCHITECTURAL PRINCIPLES:
- * - Controller is target-agnostic (doesn't know Secretariat, HTTP, MCP, etc.)
+ * - Controller is target-agnostic (doesn't know any specific target like HTTP, MCP, etc.)
  * - Controller does NOT implement automatic retry
  * - Controller does NOT determine PASS/FAIL/INCONCLUSIVE verdicts
  * - Controller treats timeout as an observed outcome, not a semantic verdict

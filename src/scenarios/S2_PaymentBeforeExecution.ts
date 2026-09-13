@@ -13,17 +13,17 @@ export const S2_PaymentBeforeExecution: ScenarioDefinition = {
       // см. rationale в S1
       ownership: 'ARGUS',
     },
-    { participantId: 'secretariat', protocolRole: 'INTERMEDIARY', ownership: 'EXTERNAL' },
+    { participantId: 'sut-1', protocolRole: 'INTERMEDIARY', ownership: 'EXTERNAL' },
   ],
 
   topology: {
     edges: [
-      { from: 'buyer-1', to: 'secretariat', kind: 'request' },
-      { from: 'secretariat', to: 'seller-1', kind: 'forward' },
+      { from: 'buyer-1', to: 'sut-1', kind: 'request' },
+      { from: 'sut-1', to: 'seller-1', kind: 'forward' },
     ],
   },
 
-  testSubject: 'secretariat',
+  testSubject: 'sut-1',
 
   actions: [
     {
@@ -56,10 +56,10 @@ export const S2_PaymentBeforeExecution: ScenarioDefinition = {
       kind: 'behavioral',
       evaluate: (evidence) => {
         const settled = evidence.find(
-          (e) => e.source === 'secretariat' && e.type === 'payment_settled'
+          (e) => e.source === 'sut-1' && e.type === 'payment_settled'
         );
         const success = evidence.find(
-          (e) => e.source === 'secretariat' && e.type === 'success'
+          (e) => e.source === 'sut-1' && e.type === 'success'
         );
         if (!settled) return { status: 'INCONCLUSIVE', reason: 'payment_settled not observed yet' };
         if (!success) return { status: 'INCONCLUSIVE', reason: 'success not observed yet — still pending, expected' };

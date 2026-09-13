@@ -3,7 +3,7 @@ import { ScenarioDefinition } from '../core/ScenarioDefinition';
 export const S3_CrashAfterSettlement: ScenarioDefinition = {
   id: 'S3',
   name: 'Crash After Settlement',
-  description: 'Secretariat падает и перезапускается сразу после payment_settled',
+  description: 'Test subject падает и перезапускается сразу после payment_settled',
 
   participants: [
     { participantId: 'buyer-1', protocolRole: 'BUYER', ownership: 'ARGUS' },
@@ -12,17 +12,17 @@ export const S3_CrashAfterSettlement: ScenarioDefinition = {
       protocolRole: 'SELLER',
       ownership: 'ARGUS', // см. rationale в S1
     },
-    { participantId: 'secretariat', protocolRole: 'INTERMEDIARY', ownership: 'EXTERNAL' },
+    { participantId: 'sut-1', protocolRole: 'INTERMEDIARY', ownership: 'EXTERNAL' },
   ],
 
   topology: {
     edges: [
-      { from: 'buyer-1', to: 'secretariat', kind: 'request' },
-      { from: 'secretariat', to: 'seller-1', kind: 'forward' },
+      { from: 'buyer-1', to: 'sut-1', kind: 'request' },
+      { from: 'sut-1', to: 'seller-1', kind: 'forward' },
     ],
   },
 
-  testSubject: 'secretariat',
+  testSubject: 'sut-1',
 
   actions: [
     {
@@ -51,14 +51,14 @@ export const S3_CrashAfterSettlement: ScenarioDefinition = {
   assertions: [
     {
       // Reference: S3 assertion — пример корректного применения kind: 'mixed'.
-      // Evidence используется и от secretariat (payment_settled) — behavioral часть,
+      // Evidence используется и от sut-1 (payment_settled) — behavioral часть,
       // и от engine (recovery_completed, forward_request) — engine-behavior часть.
       id: 'assert_single_settlement_survives_crash',
       invariantId: 'no_double_settlement_after_crash',
       kind: 'mixed',
       evaluate: (evidence) => {
         const settlements = evidence.filter(
-          (e) => e.source === 'secretariat' && e.type === 'payment_settled'
+          (e) => e.source === 'sut-1' && e.type === 'payment_settled'
         );
         if (settlements.length === 0) {
           return { status: 'INCONCLUSIVE', reason: 'no settlement observed yet' };
@@ -67,7 +67,7 @@ export const S3_CrashAfterSettlement: ScenarioDefinition = {
           return { status: 'FAIL', reason: `duplicate settlement after crash: ${settlements.length}` };
         }
         const restarted = evidence.some(
-          (e) => e.source === 'secretariat' && e.type === 'recovery_completed'
+          (e) => e.source === 'sut-1' && e.type === 'recovery_completed'
         );
         if (!restarted) {
           return { status: 'INCONCLUSIVE', reason: 'restart/recovery not observed yet' };

@@ -16,17 +16,17 @@ export const S1_DuplicateRequest: ScenarioDefinition = {
       // "not respond" in S4 or to "lose delivery" in S7.
       ownership: 'ARGUS',
     },
-    { participantId: 'secretariat', protocolRole: 'INTERMEDIARY', ownership: 'EXTERNAL' },
+    { participantId: 'sut-1', protocolRole: 'INTERMEDIARY', ownership: 'EXTERNAL' },
   ],
 
   topology: {
     edges: [
-      { from: 'buyer-1', to: 'secretariat', kind: 'request' },
-      { from: 'secretariat', to: 'seller-1', kind: 'forward' },
+      { from: 'buyer-1', to: 'sut-1', kind: 'request' },
+      { from: 'sut-1', to: 'seller-1', kind: 'forward' },
     ],
   },
 
-  testSubject: 'secretariat',
+  testSubject: 'sut-1',
 
   actions: [
     {
@@ -48,7 +48,7 @@ export const S1_DuplicateRequest: ScenarioDefinition = {
   invariants: [
     {
       id: 'no_duplicate_payment_intent',
-      description: 'При дублировании запроса с одинаковым idempotencyKey, Secretariat должен создать ровно один payment_intent.',
+      description: 'При дублировании запроса с одинаковым idempotencyKey, test subject должен создать ровно один payment_intent.',
     },
   ],
 
