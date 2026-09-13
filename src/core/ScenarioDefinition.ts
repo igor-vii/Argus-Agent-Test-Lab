@@ -1,22 +1,23 @@
-import { AgentConfig } from './AgentRuntime';
+import { Participant } from './Participant';
+import { Topology } from './Topology';
+import { Fault } from './Fault';
+import { Assertion } from './Assertions';
 
 /**
  * Определение действия в сценарии
  */
-export interface ScenarioAction {
+export interface Action {
+  actor: string;                  // participantId
   type: string;
-  agentId: string;
-  payload?: Record<string, unknown>;
-  timeout?: number;
+  payload: Record<string, unknown>;
 }
 
 /**
- * Определение фолта (сбоя) в сценарии
+ * Инвариант сценария
  */
-export interface ScenarioFault {
-  type: 'duplicate_request' | 'delayed_payment' | 'crash_after_payment' | 'seller_timeout' | 'concurrent_request' | 'payment_retry' | 'lost_delivery';
-  trigger?: string; // событие-триггер
-  config?: Record<string, unknown>;
+export interface Invariant {
+  id: string;
+  description: string;
 }
 
 /**
@@ -26,11 +27,12 @@ export interface ScenarioDefinition {
   id: string;
   name: string;
   description?: string;
-  target: string;
-  agents: AgentConfig[];
-  actions: ScenarioAction[];
-  faults: ScenarioFault[];
+  participants: Participant[];
+  topology: Topology;
+  testSubject: string;
+  actions: Action[];
+  faults: Fault[];
+  invariants: Invariant[];
+  assertions: Assertion[];
   seed: number;
-  expectedInvariants?: string[];
-  metadata?: Record<string, unknown>;
 }
