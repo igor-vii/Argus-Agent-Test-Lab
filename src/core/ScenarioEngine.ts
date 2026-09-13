@@ -72,9 +72,6 @@ export class ScenarioEngine {
     const payload = action.payload || {};
     
     // Используем контроллер для взаимодействия
-    await this.controller.act(this.context.runId, {
-      type: action.type,
-      payload
-    });
+    await this.controller.act(action.type, payload);
   }
 }
