@@ -1,24 +1,41 @@
 import { describe, it, expect } from 'vitest';
 import { AssertionEngine } from '../../core/AssertionEngine';
 import { EventExistsAssertion, EventCountAssertion, AssertionGroup } from '../../core/Assertions';
+import { EvidenceRecord, EvidenceSource } from '../../core/EvidenceCollector';
 
 describe('AssertionEngine', () => {
   const engine = new AssertionEngine();
-  
+
   it('should return INCONCLUSIVE when evidence is missing', () => {
-    const emptyEvidence: any[] = [];
+    const emptyEvidence: EvidenceRecord[] = [];
     const assertion = new EventExistsAssertion('non_existent_event');
 
     // Interface: evaluate(evidence, assertions)
     const result = engine.evaluate(emptyEvidence, [assertion]);
-    
+
     expect(result.status).toBe('INCONCLUSIVE');
   });
 
   it('ALL operator: FAIL overrides PASS', () => {
-    const evidence = [
-      { type: 'event_a', source: 'SYSTEM', data: {}, sequence: 1 },
-      { type: 'event_b', source: 'SYSTEM', data: {}, sequence: 2 }
+    const evidence: EvidenceRecord[] = [
+      {
+        evidenceId: 'ev-1',
+        runId: 'test-run',
+        timestamp: Date.now(),
+        sequence: 1,
+        type: 'event_a',
+        source: EvidenceSource.SYSTEM,
+        data: {}
+      },
+      {
+        evidenceId: 'ev-2',
+        runId: 'test-run',
+        timestamp: Date.now(),
+        sequence: 2,
+        type: 'event_b',
+        source: EvidenceSource.SYSTEM,
+        data: {}
+      }
     ];
 
     const passAssert = {
@@ -26,7 +43,7 @@ describe('AssertionEngine', () => {
       evaluate: () => 'PASS' as const,
       getReason: () => undefined
     };
-    
+
     const failAssert = {
       name: 'fail-assert',
       evaluate: () => 'FAIL' as const,
@@ -43,14 +60,14 @@ describe('AssertionEngine', () => {
   });
 
   it('ANY operator: PASS overrides FAIL', () => {
-    const evidence: any[] = [];
-    
+    const evidence: EvidenceRecord[] = [];
+
     const failAssert = {
       name: 'fail-assert',
       evaluate: () => 'FAIL' as const,
       getReason: () => undefined
     };
-    
+
     const passAssert = {
       name: 'pass-assert',
       evaluate: () => 'PASS' as const,
@@ -67,7 +84,15 @@ describe('AssertionEngine', () => {
   });
 
   it('should be independent of scenarioId', () => {
-    const evidence = [{ type: 'test_event', source: 'SYSTEM', data: {}, sequence: 1 }];
+    const evidence: EvidenceRecord[] = [{
+      evidenceId: 'ev-1',
+      runId: 'test-run',
+      timestamp: Date.now(),
+      sequence: 1,
+      type: 'test_event',
+      source: EvidenceSource.SYSTEM,
+      data: {}
+    }];
     const assertion = new EventCountAssertion('test_event', 1);
 
     const result1 = engine.evaluate(evidence, [assertion]);
