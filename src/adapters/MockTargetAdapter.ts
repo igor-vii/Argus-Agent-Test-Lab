@@ -150,7 +150,7 @@ export class MockTargetAdapter implements AgentTargetPort {
       }
 
       default:
-        responsePayload = { acknowledged: true };
+        responsePayload = payload ?? {};
         observations = [];
     }
 
