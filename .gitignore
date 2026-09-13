@@ -1,12 +1,1 @@
-```
-# Dependencies
-node_modules/
-
-# Build artifacts
-dist/
-build/
-target/
-
-# Cache directories
-.vite/
-```
+(src/core/RunOrchestrator.ts)

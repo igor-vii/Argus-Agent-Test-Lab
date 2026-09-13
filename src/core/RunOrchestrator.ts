@@ -1,15 +1,22 @@
+// ============================================================
+// src/core/RunOrchestrator.ts
+// ============================================================
+
 import { ScenarioEngine } from './ScenarioEngine';
 import { ScenarioDefinition } from './ScenarioDefinition';
 import { AgentController } from './AgentController';
 import { FaultInjector } from './FaultInjector';
-import { EvidenceCollector, EvidenceSource } from './EvidenceCollector';
+import { EvidenceCollector } from './EvidenceCollector';
 import { AssertionEngine } from './AssertionEngine';
-import { Assertion, AssertionGroup } from './Assertions';
+import { Assertion } from './Assertions';
 import { RunContext, RunStatus, RunResult, generateRunId } from './RunLifecycle';
 import { AgentTargetPort } from './AgentTargetPort';
 
 /**
- * Оркестратор запуска тестового прогона
+ * Оркестратор запуска тестового прогона.
+ *
+ * Создаёт EvidenceCollector и передаёт его в ScenarioEngine.
+ * AgentController — транспорт, не знает про evidence.
  */
 export class RunOrchestrator {
   private scenario: ScenarioDefinition;
@@ -17,13 +24,13 @@ export class RunOrchestrator {
   private targetPort: AgentTargetPort;
   private evidenceCollector: EvidenceCollector;
   private assertionEngine: AssertionEngine;
-  private assertions: Assertion[] | AssertionGroup;
+  private assertions: Assertion[];
 
   constructor(
     scenario: ScenarioDefinition,
     controller: AgentController,
     targetPort: AgentTargetPort,
-    assertions: Assertion[] | AssertionGroup
+    assertions: Assertion[]
   ) {
     this.scenario = scenario;
     this.controller = controller;
@@ -31,13 +38,10 @@ export class RunOrchestrator {
     this.evidenceCollector = new EvidenceCollector();
     this.assertionEngine = new AssertionEngine();
     this.assertions = assertions;
-    
-    // Inject evidence collector into controller for automatic evidence collection
-    (this.controller as any).evidenceCollector = this.evidenceCollector;
   }
 
   /**
-   * Запуск полного прогона сценария
+   * Запуск полного прогона сценария.
    */
   public async run(): Promise<RunResult> {
     const runId = generateRunId();
@@ -52,31 +56,23 @@ export class RunOrchestrator {
     };
 
     try {
-      // Подключение к таргету
       await this.controller.connect();
-      
-      // Создание инжектора фолтов
+
       const faultInjector = new FaultInjector(this.scenario.faults);
 
-      // Создание движка сценариев
       const engine = new ScenarioEngine(
         this.scenario,
         context,
         this.controller,
-        faultInjector
+        faultInjector,
+        this.evidenceCollector
       );
 
-      // Перехват событий для сбора доказательств
-      this.setupEvidenceCollection(runId);
-
-      // Выполнение сценария
       await engine.execute();
 
-      // Отключение
       await this.controller.disconnect();
 
-      // Сбор доказательств и оценка
-      const evidence = this.evidenceCollector.getEvidenceSet();
+      const evidence = this.evidenceCollector.getEvidenceSet(runId);
       const assertionResult = this.assertionEngine.evaluate(evidence, this.assertions);
 
       return {
@@ -92,16 +88,15 @@ export class RunOrchestrator {
         }
       };
     } catch (error) {
-      // Техническая ошибка выполнения
       context.status = RunStatus.FAILED;
-      
+
       return {
         runId,
         scenarioId: this.scenario.id,
         status: RunStatus.FAILED,
         startedAt,
         finishedAt: new Date(),
-        evidenceCount: this.evidenceCollector.count(),
+        evidenceCount: this.evidenceCollector.count(runId),
         verdict: {
           status: 'INCONCLUSIVE',
           reason: `Runtime error: ${error instanceof Error ? error.message : 'Unknown error'}`
@@ -109,15 +104,8 @@ export class RunOrchestrator {
       };
     }
   }
-
-  /**
-   * Настройка сбора доказательств из runtime
-   */
-  private setupEvidenceCollection(runId: string): void {
-    // Здесь можно добавить хуки в контроллер или адаптер для автоматического сбора
-    // Для простоты собираем доказательства постфактум через обмен данными контроллера
-    
-    // В реальной реализации это должно быть интегрировано в AgentController
-    // чтобы каждое взаимодействие автоматически записывалось в коллектор
-  }
 }
+
+// ============================================================
+// КОНЕЦ ФАЙЛА
+// ============================================================
