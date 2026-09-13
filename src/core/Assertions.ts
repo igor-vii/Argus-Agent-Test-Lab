@@ -27,5 +27,12 @@ export interface Assertion {
   id: string;
   invariantId: string;
   kind?: AssertionKind;  // по умолчанию 'behavioral'
+  /**
+   * Декларативный список source'ов, на которые ссылается assertion
+   * в evaluate(). Фактические participantId + 'engine'.
+   * Опционально в переходный период (8a); станет обязательным
+   * после фазы 8b, когда S1–S7 будут заполнены.
+   */
+  referencedSources?: string[];
   evaluate: (evidence: Evidence[]) => Verdict;
 }

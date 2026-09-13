@@ -1,1 +1,1 @@
-Nothing should be ignored since the changes only include source code files (.ts files) and no build artifacts, dependencies, or temporary files.
+Nothing to output - the file changes contain only TypeScript source files (.ts) which are not build artifacts, dependencies, or temporary files.

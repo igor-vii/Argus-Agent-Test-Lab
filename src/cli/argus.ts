@@ -5,6 +5,7 @@ import { AgentController } from '../core/AgentController';
 import { MockTargetAdapter } from '../adapters/MockTargetAdapter';
 import { ScenarioRegistry, getScenarioIds } from './ScenarioRegistry';
 import { Assertion } from '../core/Assertions';
+import { validateScenario } from '../core/validateScenario';
 
 /**
  * Минимальный CLI для Argus Test Lab
@@ -25,7 +26,16 @@ async function main(): Promise<void> {
     console.log('Available Scenarios:');
     for (const id of getScenarioIds()) {
       const scenario = ScenarioRegistry.get(id);
-      console.log(`  ${id} - ${scenario?.name || 'Unknown'}`);
+      if (!scenario) continue;
+      const result = validateScenario(scenario);
+      if (result.valid) {
+        console.log(`  ${id} - ${scenario.name}`);
+      } else {
+        const reasons = result.errors
+          .map((e) => `${e.assertionId} ${e.rule} — ${e.message}`)
+          .join('; ');
+        console.log(`  ${id} - ${scenario.name} [INVALID: ${reasons}]`);
+      }
     }
     process.exit(0);
   }
@@ -44,6 +54,16 @@ async function main(): Promise<void> {
     if (!scenarioDef) {
       console.error(`Error: Unknown scenario '${scenarioId}'`);
       console.error(`Available scenarios: ${getScenarioIds().join(', ')}`);
+      process.exit(1);
+    }
+
+    // Валидация Rule 1 (до любого запуска)
+    const validation = validateScenario(scenarioDef);
+    if (!validation.valid) {
+      console.error(`Error: scenario '${scenarioId}' failed validation:`);
+      for (const e of validation.errors) {
+        console.error(`  - [${e.rule}] ${e.assertionId}: ${e.message}`);
+      }
       process.exit(1);
     }
 
