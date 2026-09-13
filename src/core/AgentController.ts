@@ -167,12 +167,25 @@ export class AgentController {
 
       // Collect evidence if collector is available
       if (this.evidenceCollector) {
-        this.evidenceCollector.collect(
-          type,
-          EvidenceSource.TARGET,
-          (exchange.payload || {}) as Record<string, unknown>,
-          this.currentRunId
-        );
+        const observations = (exchange.metadata?.observations as string[]) || [];
+        if (observations.length > 0) {
+          for (const observationType of observations) {
+            this.evidenceCollector.collect(
+              observationType,
+              EvidenceSource.TARGET,
+              (exchange.payload || {}) as Record<string, unknown>,
+              this.currentRunId
+            );
+          }
+        } else {
+          // Fallback to action type if no observations
+          this.evidenceCollector.collect(
+            type,
+            EvidenceSource.TARGET,
+            (exchange.payload || {}) as Record<string, unknown>,
+            this.currentRunId
+          );
+        }
       }
 
       return {

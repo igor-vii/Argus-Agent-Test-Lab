@@ -43,6 +43,14 @@ export interface MockTargetConfig extends TargetConnectionConfig {
 }
 
 /**
+ * Internal state for tracking payment intents by idempotency key
+ */
+interface PaymentIntent {
+  id: string;
+  amount: number;
+}
+
+/**
  * Mock implementation of AgentTargetPort
  */
 export class MockTargetAdapter implements AgentTargetPort {
@@ -52,6 +60,7 @@ export class MockTargetAdapter implements AgentTargetPort {
   private config?: MockTargetConfig;
   private exchanges: Exchange[] = [];
   private evidences: Evidence[] = [];
+  private paymentIntents: Map<string, PaymentIntent> = new Map();
 
   constructor(targetType: string = 'mock-target') {
     this.id = generateId('adapter');
@@ -101,17 +110,54 @@ export class MockTargetAdapter implements AgentTargetPort {
     if (!this.connected) {
       throw new Error('Not connected. Call connect() first.');
     }
-    
+
+    let responsePayload: unknown = {};
+    let observations: string[] = [];
+
+    switch (type) {
+      case 'duplicate_request': {
+        const idempotencyKey = (payload as any)?.idempotencyKey;
+        const amount = (payload as any)?.amount || 100;
+
+        if (idempotencyKey && this.paymentIntents.has(idempotencyKey)) {
+          // Target already has a payment_intent for this key - idempotency works
+          const existing = this.paymentIntents.get(idempotencyKey)!;
+          responsePayload = {
+            payment_intent: existing,
+            reused: true,
+          };
+          observations = ['payment_intent', 'response_received'];
+        } else {
+          // Target creates a new payment_intent
+          const newIntent: PaymentIntent = { id: generateId('pi'), amount };
+          if (idempotencyKey) {
+            this.paymentIntents.set(idempotencyKey, newIntent);
+          }
+          responsePayload = {
+            payment_intent: newIntent,
+            reused: false,
+          };
+          observations = ['payment_intent'];
+        }
+        break;
+      }
+
+      default:
+        responsePayload = { acknowledged: true };
+        observations = [];
+    }
+
     const exchange: Exchange = {
       id: generateId('exch'),
       runId,
       direction: MessageDirection.OUTBOUND,
       type,
       timestamp: Date.now(),
-      payload,
+      payload: responsePayload,
       status: ExchangeStatus.SUCCESS,
+      metadata: { observations },
     };
-    
+
     this.exchanges.push(exchange);
     return exchange;
   }

@@ -3,10 +3,29 @@
 node_modules/
 
 # Vite/Vitest cache
-node_modules/.vite/
+.node_modules/.vite/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
 
 # Environment
 .env
 .env.local
-.env.*
+*.env.*
+
+# Coverage
+coverage/
+htmlcov/
+.coverage
+
+# Build outputs
+dist/
+build/
+target/
 ```
