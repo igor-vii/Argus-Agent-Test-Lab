@@ -53,6 +53,7 @@ export const S5_ConcurrentDuplicate: ScenarioDefinition = {
       id: 'assert_concurrent_single_intent',
       invariantId: 'concurrent_requests_single_intent',
       kind: 'behavioral',
+      referencedSources: ['sut-1'],
       evaluate: (evidence) => {
         const intents = evidence.filter(
           (e) =>
@@ -69,6 +70,7 @@ export const S5_ConcurrentDuplicate: ScenarioDefinition = {
       id: 'assert_no_unhandled_errors',
       invariantId: 'concurrent_requests_single_intent',
       kind: 'behavioral',
+      referencedSources: ['sut-1'],
       evaluate: (evidence) => {
         const unhandled = evidence.filter(
           (e) => e.source === 'sut-1' && e.type === 'unhandled_exception'

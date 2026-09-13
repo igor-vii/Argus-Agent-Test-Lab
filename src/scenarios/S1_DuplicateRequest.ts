@@ -57,6 +57,7 @@ export const S1_DuplicateRequest: ScenarioDefinition = {
       id: 'assert_no_duplicate',
       invariantId: 'no_duplicate_payment_intent',
       kind: 'behavioral',
+      referencedSources: ['sut-1'],
       evaluate: (evidence) => {
         // S1: buyer-1 sends request_payment twice (duplicate_request fault).
         // MockTargetAdapter emits:

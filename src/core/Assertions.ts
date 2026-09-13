@@ -30,9 +30,7 @@ export interface Assertion {
   /**
    * Декларативный список source'ов, на которые ссылается assertion
    * в evaluate(). Фактические participantId + 'engine'.
-   * Опционально в переходный период (8a); станет обязательным
-   * после фазы 8b, когда S1–S7 будут заполнены.
    */
-  referencedSources?: string[];
+  referencedSources: string[];
   evaluate: (evidence: Evidence[]) => Verdict;
 }

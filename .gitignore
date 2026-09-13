@@ -1,1 +1,45 @@
-Nothing to output - the file changes contain only TypeScript source files (.ts) which are not build artifacts, dependencies, or temporary files.
+```
+# Dependencies
+node_modules/
+
+# Build artifacts
+dist/
+build/
+target/
+
+# TypeScript/JavaScript specific
+*.tsbuildinfo
+*.js.map
+*.ts.map
+
+# Environment files
+.env
+.env.local
+.env.*
+
+# Logs
+*.log
+
+# Coverage reports
+coverage/
+.nyc_output/
+.jest_coverage/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*.tmp
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Python artifacts (if any Python in project)
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+```

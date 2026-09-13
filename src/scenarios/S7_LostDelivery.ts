@@ -54,6 +54,7 @@ export const S7_LostDelivery: ScenarioDefinition = {
       id: 'assert_seller_sent_but_sut_never_received',
       invariantId: 'lost_response_yields_unknown_not_duplicate',
       kind: 'behavioral',
+      referencedSources: ['seller-1', 'sut-1'],
       evaluate: (evidence) => {
         const sellerSent = evidence.find((e) => e.source === 'seller-1' && e.type === 'delivery_sent');
         if (!sellerSent) return { status: 'INCONCLUSIVE', reason: 'seller has not sent response yet' };

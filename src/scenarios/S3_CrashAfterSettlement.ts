@@ -56,6 +56,7 @@ export const S3_CrashAfterSettlement: ScenarioDefinition = {
       id: 'assert_single_settlement_survives_crash',
       invariantId: 'no_double_settlement_after_crash',
       kind: 'mixed',
+      referencedSources: ['sut-1', 'engine'],
       evaluate: (evidence) => {
         const settlements = evidence.filter(
           (e) => e.source === 'sut-1' && e.type === 'payment_settled'
