@@ -58,10 +58,14 @@ export const S1_DuplicateRequest: ScenarioDefinition = {
       invariantId: 'no_duplicate_payment_intent',
       kind: 'behavioral',
       evaluate: (evidence) => {
+        // S1: buyer-1 sends request_payment twice (duplicate_request fault).
+        // MockTargetAdapter emits:
+        //   - 1st call: payment_intent_created
+        //   - 2nd call: payment_intent_reused
+        // Assertion: exactly ONE payment_intent_created from buyer-1.
         const count = evidence.filter(
-          (e) => e.source === 'secretariat' &&
-                 e.type === 'payment_intent_created' &&
-                 (e.data as any)?.idempotencyKey === 'key-1'
+          (e) => e.source === 'buyer-1' &&
+                 e.type === 'payment_intent_created'
         ).length;
         if (count === 1) return { status: 'PASS' };
         if (count > 1) return { status: 'FAIL', reason: `Expected 1, got ${count}` };

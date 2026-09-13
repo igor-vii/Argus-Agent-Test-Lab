@@ -16,15 +16,15 @@ export class FaultInjector {
    * Регистрация фолта
    */
   public registerFault(fault: Fault): void {
-    const key = fault.trigger || fault.type;
+    const key = fault.trigger;
     this.faults.set(key, fault);
   }
 
   /**
-   * Получение фолта для действия
+   * Получение фолта для события (engine event)
    */
-  public getFaultForAction(actionType: string): Fault | undefined {
-    return this.faults.get(actionType);
+  public getFaultForEvent(eventType: string): Fault | undefined {
+    return this.faults.get(eventType);
   }
 
   /**
