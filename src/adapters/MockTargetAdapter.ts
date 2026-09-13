@@ -130,6 +130,7 @@ export class MockTargetAdapter implements AgentTargetPort {
           responsePayload = {
             payment_intent: existing,
             reused: true,
+            idempotencyKey,
           };
           observations = ['payment_intent_reused', 'response_received'];
         } else {
@@ -141,6 +142,7 @@ export class MockTargetAdapter implements AgentTargetPort {
           responsePayload = {
             payment_intent: newIntent,
             reused: false,
+            idempotencyKey,
           };
           observations = ['payment_intent_created'];
         }

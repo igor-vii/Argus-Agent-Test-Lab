@@ -99,7 +99,7 @@ export class ScenarioEngine {
     for (const observationType of observations) {
       this.evidenceCollector.collect(
         {
-          source: action.actor,
+          source: this.scenario.testSubject,
           type: observationType,
           data: (outcome.exchange?.payload || {}) as Record<string, unknown>,
           timestamp: now,

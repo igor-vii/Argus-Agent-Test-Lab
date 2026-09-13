@@ -62,10 +62,12 @@ export const S1_DuplicateRequest: ScenarioDefinition = {
         // MockTargetAdapter emits:
         //   - 1st call: payment_intent_created
         //   - 2nd call: payment_intent_reused
-        // Assertion: exactly ONE payment_intent_created from buyer-1.
+        // Observation source = testSubject (sut-1), not actor (buyer-1).
+        // Assertion: exactly ONE payment_intent_created from sut-1 with idempotencyKey === 'key-1'.
         const count = evidence.filter(
-          (e) => e.source === 'buyer-1' &&
-                 e.type === 'payment_intent_created'
+          (e) => e.source === 'sut-1' &&
+                 e.type === 'payment_intent_created' &&
+                 (e.data as any)?.idempotencyKey === 'key-1'
         ).length;
         if (count === 1) return { status: 'PASS' };
         if (count > 1) return { status: 'FAIL', reason: `Expected 1, got ${count}` };

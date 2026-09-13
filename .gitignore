@@ -1,3 +1,1 @@
-```ts
-
-```
+Nothing to output - the file changes contain only TypeScript source files (.ts) which are not build artifacts, dependencies, or temporary files.
