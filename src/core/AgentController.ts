@@ -21,6 +21,7 @@ import {
   RunId,
   ExchangeStatus,
 } from '../core/AgentTargetPort';
+import { EvidenceCollector, EvidenceSource } from '../core/EvidenceCollector';
 
 /**
  * Outcome of a controller-managed interaction
@@ -83,19 +84,22 @@ export class AgentController {
   private readonly config: ControllerConfig;
   private isConnectedFlag: boolean = false;
   private currentRunId?: RunId;
+  private evidenceCollector?: EvidenceCollector;
 
   /**
    * Create a new AgentController
    * @param port - The AgentTargetPort implementation to use
    * @param config - Controller configuration
+   * @param evidenceCollector - Optional evidence collector for recording interactions
    */
-  constructor(port: AgentTargetPort, config: ControllerConfig) {
+  constructor(port: AgentTargetPort, config: ControllerConfig, evidenceCollector?: EvidenceCollector) {
     this.port = port;
     this.config = {
       ...config,
       timeoutMs: config.timeoutMs ?? 30000, // Default 30s timeout
     };
     this.currentRunId = config.runId;
+    this.evidenceCollector = evidenceCollector;
   }
 
   /**
@@ -161,6 +165,16 @@ export class AgentController {
       const exchange = await Promise.race([actionPromise, timeoutPromise]);
       const durationMs = Date.now() - startTime;
 
+      // Collect evidence if collector is available
+      if (this.evidenceCollector) {
+        this.evidenceCollector.collect(
+          type,
+          EvidenceSource.TARGET,
+          (exchange.payload || {}) as Record<string, unknown>,
+          this.currentRunId
+        );
+      }
+
       return {
         runId: this.currentRunId,
         status: exchange.status,
@@ -208,6 +222,16 @@ export class AgentController {
     try {
       const exchange = await this.port.receive(this.currentRunId, type, payload);
       const durationMs = Date.now() - startTime;
+
+      // Collect evidence if collector is available
+      if (this.evidenceCollector) {
+        this.evidenceCollector.collect(
+          type,
+          EvidenceSource.TARGET,
+          (exchange.payload || {}) as Record<string, unknown>,
+          this.currentRunId
+        );
+      }
 
       return {
         runId: this.currentRunId,

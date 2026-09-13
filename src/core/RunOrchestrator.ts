@@ -31,6 +31,9 @@ export class RunOrchestrator {
     this.evidenceCollector = new EvidenceCollector();
     this.assertionEngine = new AssertionEngine();
     this.assertions = assertions;
+    
+    // Inject evidence collector into controller for automatic evidence collection
+    (this.controller as any).evidenceCollector = this.evidenceCollector;
   }
 
   /**
