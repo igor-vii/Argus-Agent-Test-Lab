@@ -1,3 +1,12 @@
-```ts
+```
+# Dependencies
+node_modules/
 
+# Vite/Vitest cache
+node_modules/.vite/
+
+# Environment
+.env
+.env.local
+.env.*
 ```
