@@ -1,47 +1,85 @@
 import { ScenarioDefinition } from '../core/ScenarioDefinition';
-import { AgentRole } from '../core/AgentRuntime';
-import { EventCountAssertion, AssertionGroup } from '../core/Assertions';
 
-/**
- * S5 — Concurrent Duplicate
- * 
- * Цель: Проверить идемпотентность при конкурентных запросах.
- * Invariant: 5 concurrent requests → максимум 1 payment operation.
- */
 export const S5_ConcurrentDuplicate: ScenarioDefinition = {
   id: 'S5',
   name: 'Concurrent Duplicate',
-  description: 'Проверка идемпотентности при конкурентных запросах',
-  target: 'mock-target',
-  agents: [
+  description: '5 параллельных запросов с одинаковым idempotencyKey',
+
+  participants: [
+    { participantId: 'buyer-1', protocolRole: 'BUYER', ownership: 'ARGUS' },
     {
-      id: 'buyer-1',
-      role: AgentRole.BUYER,
-      capabilities: { canRequest: true, canPay: true }
-    }
+      participantId: 'seller-1',
+      protocolRole: 'SELLER',
+      ownership: 'ARGUS', // см. rationale в S1
+    },
+    { participantId: 'secretariat', protocolRole: 'INTERMEDIARY', ownership: 'EXTERNAL' },
   ],
+
+  topology: {
+    edges: [
+      { from: 'buyer-1', to: 'secretariat', kind: 'request' },
+      { from: 'secretariat', to: 'seller-1', kind: 'forward' },
+    ],
+  },
+
+  testSubject: 'secretariat',
+
   actions: [
     {
-      type: 'concurrent_request',
-      agentId: 'buyer-1',
-      payload: { requestId: 'req-concurrent', idempotencyKey: 'key-concurrent' }
-    }
+      actor: 'buyer-1',
+      type: 'request_payment',
+      payload: { requestId: 'req-5', idempotencyKey: 'key-5', amount: 100 },
+    },
   ],
+
   faults: [
     {
+      target: { kind: 'participant', participantId: 'buyer-1' },
       type: 'concurrent_request',
-      trigger: 'concurrent_request',
-      config: { parallel_count: 5 }
-    }
+      trigger: 'action_request_payment',
+      config: { parallel_count: 5, same_idempotency_key: true },
+    },
   ],
-  seed: 42,
-  expectedInvariants: ['Одна операция на все конкурентные запросы'],
-  metadata: {
-    assertions: new AssertionGroup({
-      operator: 'ALL',
-      assertions: [
-        new EventCountAssertion('payment_operation', 1)
-      ]
-    })
-  }
+
+  invariants: [
+    {
+      id: 'concurrent_requests_single_intent',
+      description: '5 параллельных запросов с одним idempotencyKey создают ровно один payment_intent.',
+    },
+  ],
+
+  assertions: [
+    {
+      id: 'assert_concurrent_single_intent',
+      invariantId: 'concurrent_requests_single_intent',
+      kind: 'behavioral',
+      evaluate: (evidence) => {
+        const intents = evidence.filter(
+          (e) =>
+            e.source === 'secretariat' &&
+            e.type === 'payment_intent_created' &&
+            (e.data as any)?.idempotencyKey === 'key-5'
+        );
+        if (intents.length === 0) return { status: 'INCONCLUSIVE', reason: 'no payment_intent observed yet' };
+        if (intents.length === 1) return { status: 'PASS' };
+        return { status: 'FAIL', reason: `expected 1, got ${intents.length}` };
+      },
+    },
+    {
+      id: 'assert_no_unhandled_errors',
+      invariantId: 'concurrent_requests_single_intent',
+      kind: 'behavioral',
+      evaluate: (evidence) => {
+        const unhandled = evidence.filter(
+          (e) => e.source === 'secretariat' && e.type === 'unhandled_exception'
+        );
+        if (unhandled.length > 0) {
+          return { status: 'FAIL', reason: `${unhandled.length} unhandled exceptions on concurrent retry` };
+        }
+        return { status: 'PASS' };
+      },
+    },
+  ],
+
+  seed: 45,
 };
