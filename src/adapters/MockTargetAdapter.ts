@@ -60,6 +60,11 @@ export class MockTargetAdapter implements AgentTargetPort {
   private config?: MockTargetConfig;
   private exchanges: Exchange[] = [];
   private evidences: Evidence[] = [];
+  // NOTE: Map operations below are synchronous. Because send() has no
+  // await between has() and set(), there is no race window inside a
+  // single event loop. This invariant must hold if this adapter is ever
+  // wrapped in real async I/O (e.g., HTTP). For S5 concurrency, the
+  // target of the test is the SUT, not this mock.
   private paymentIntents: Map<string, PaymentIntent> = new Map();
 
   constructor(targetType: string = 'mock-target') {
@@ -115,9 +120,9 @@ export class MockTargetAdapter implements AgentTargetPort {
     let observations: string[] = [];
 
     switch (type) {
-      case 'duplicate_request': {
+      case 'request_payment': {
         const idempotencyKey = (payload as any)?.idempotencyKey;
-        const amount = (payload as any)?.amount || 100;
+        const amount = (payload as any)?.amount ?? 100;
 
         if (idempotencyKey && this.paymentIntents.has(idempotencyKey)) {
           // Target already has a payment_intent for this key - idempotency works
@@ -126,7 +131,7 @@ export class MockTargetAdapter implements AgentTargetPort {
             payment_intent: existing,
             reused: true,
           };
-          observations = ['payment_intent', 'response_received'];
+          observations = ['payment_intent_reused', 'response_received'];
         } else {
           // Target creates a new payment_intent
           const newIntent: PaymentIntent = { id: generateId('pi'), amount };
@@ -137,7 +142,7 @@ export class MockTargetAdapter implements AgentTargetPort {
             payment_intent: newIntent,
             reused: false,
           };
-          observations = ['payment_intent'];
+          observations = ['payment_intent_created'];
         }
         break;
       }

@@ -6,7 +6,7 @@
  * any MCP-based target agent through configuration.
  * 
  * PRINCIPLES:
- * - Does NOT know about Secretariat, payment, or business semantics
+ * - Does NOT know about any specific target, payment, or business semantics
  * - Only handles MCP transport concerns (sessions, tools, resources)
  * - Returns raw response data; interpretation happens in Argus Core
  * 

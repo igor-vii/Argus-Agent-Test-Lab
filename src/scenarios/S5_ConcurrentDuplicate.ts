@@ -12,17 +12,17 @@ export const S5_ConcurrentDuplicate: ScenarioDefinition = {
       protocolRole: 'SELLER',
       ownership: 'ARGUS', // см. rationale в S1
     },
-    { participantId: 'secretariat', protocolRole: 'INTERMEDIARY', ownership: 'EXTERNAL' },
+    { participantId: 'sut-1', protocolRole: 'INTERMEDIARY', ownership: 'EXTERNAL' },
   ],
 
   topology: {
     edges: [
-      { from: 'buyer-1', to: 'secretariat', kind: 'request' },
-      { from: 'secretariat', to: 'seller-1', kind: 'forward' },
+      { from: 'buyer-1', to: 'sut-1', kind: 'request' },
+      { from: 'sut-1', to: 'seller-1', kind: 'forward' },
     ],
   },
 
-  testSubject: 'secretariat',
+  testSubject: 'sut-1',
 
   actions: [
     {
@@ -56,7 +56,7 @@ export const S5_ConcurrentDuplicate: ScenarioDefinition = {
       evaluate: (evidence) => {
         const intents = evidence.filter(
           (e) =>
-            e.source === 'secretariat' &&
+            e.source === 'sut-1' &&
             e.type === 'payment_intent_created' &&
             (e.data as any)?.idempotencyKey === 'key-5'
         );
@@ -71,7 +71,7 @@ export const S5_ConcurrentDuplicate: ScenarioDefinition = {
       kind: 'behavioral',
       evaluate: (evidence) => {
         const unhandled = evidence.filter(
-          (e) => e.source === 'secretariat' && e.type === 'unhandled_exception'
+          (e) => e.source === 'sut-1' && e.type === 'unhandled_exception'
         );
         if (unhandled.length > 0) {
           return { status: 'FAIL', reason: `${unhandled.length} unhandled exceptions on concurrent retry` };

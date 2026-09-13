@@ -16,17 +16,17 @@ export const S1_DuplicateRequest: ScenarioDefinition = {
       // "not respond" in S4 or to "lose delivery" in S7.
       ownership: 'ARGUS',
     },
-    { participantId: 'secretariat', protocolRole: 'INTERMEDIARY', ownership: 'EXTERNAL' },
+    { participantId: 'sut-1', protocolRole: 'INTERMEDIARY', ownership: 'EXTERNAL' },
   ],
 
   topology: {
     edges: [
-      { from: 'buyer-1', to: 'secretariat', kind: 'request' },
-      { from: 'secretariat', to: 'seller-1', kind: 'forward' },
+      { from: 'buyer-1', to: 'sut-1', kind: 'request' },
+      { from: 'sut-1', to: 'seller-1', kind: 'forward' },
     ],
   },
 
-  testSubject: 'secretariat',
+  testSubject: 'sut-1',
 
   actions: [
     {
@@ -48,7 +48,7 @@ export const S1_DuplicateRequest: ScenarioDefinition = {
   invariants: [
     {
       id: 'no_duplicate_payment_intent',
-      description: 'При дублировании запроса с одинаковым idempotencyKey, Secretariat должен создать ровно один payment_intent.',
+      description: 'При дублировании запроса с одинаковым idempotencyKey, test subject должен создать ровно один payment_intent.',
     },
   ],
 
@@ -58,10 +58,14 @@ export const S1_DuplicateRequest: ScenarioDefinition = {
       invariantId: 'no_duplicate_payment_intent',
       kind: 'behavioral',
       evaluate: (evidence) => {
+        // S1: buyer-1 sends request_payment twice (duplicate_request fault).
+        // MockTargetAdapter emits:
+        //   - 1st call: payment_intent_created
+        //   - 2nd call: payment_intent_reused
+        // Assertion: exactly ONE payment_intent_created from buyer-1.
         const count = evidence.filter(
-          (e) => e.source === 'secretariat' &&
-                 e.type === 'payment_intent_created' &&
-                 (e.data as any)?.idempotencyKey === 'key-1'
+          (e) => e.source === 'buyer-1' &&
+                 e.type === 'payment_intent_created'
         ).length;
         if (count === 1) return { status: 'PASS' };
         if (count > 1) return { status: 'FAIL', reason: `Expected 1, got ${count}` };

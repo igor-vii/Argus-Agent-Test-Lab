@@ -12,17 +12,17 @@ export const S4_SellerTimeout: ScenarioDefinition = {
       protocolRole: 'SELLER',
       ownership: 'ARGUS', // см. rationale в S1
     },
-    { participantId: 'secretariat', protocolRole: 'INTERMEDIARY', ownership: 'EXTERNAL' },
+    { participantId: 'sut-1', protocolRole: 'INTERMEDIARY', ownership: 'EXTERNAL' },
   ],
 
   topology: {
     edges: [
-      { from: 'buyer-1', to: 'secretariat', kind: 'request' },
-      { from: 'secretariat', to: 'seller-1', kind: 'forward' },
+      { from: 'buyer-1', to: 'sut-1', kind: 'request' },
+      { from: 'sut-1', to: 'seller-1', kind: 'forward' },
     ],
   },
 
-  testSubject: 'secretariat',
+  testSubject: 'sut-1',
 
   actions: [
     {
@@ -55,19 +55,19 @@ export const S4_SellerTimeout: ScenarioDefinition = {
       kind: 'behavioral',
       evaluate: (evidence) => {
         const settled = evidence.find(
-          (e) => e.source === 'secretariat' && e.type === 'payment_settled'
+          (e) => e.source === 'sut-1' && e.type === 'payment_settled'
         );
         if (!settled) return { status: 'INCONCLUSIVE', reason: 'payment_settled not observed yet' };
 
-        const failed = evidence.find((e) => e.source === 'secretariat' && e.type === 'failed');
-        const success = evidence.find((e) => e.source === 'secretariat' && e.type === 'success');
-        const unknown = evidence.find((e) => e.source === 'secretariat' && e.type === 'delivery_unknown');
+        const failed = evidence.find((e) => e.source === 'sut-1' && e.type === 'failed');
+        const success = evidence.find((e) => e.source === 'sut-1' && e.type === 'success');
+        const unknown = evidence.find((e) => e.source === 'sut-1' && e.type === 'delivery_unknown');
 
         if (failed) return { status: 'FAIL', reason: 'marked FAILED without seller ever responding' };
         if (success) return { status: 'FAIL', reason: 'marked SUCCESS without seller ever responding' };
 
         const settlementCount = evidence.filter(
-          (e) => e.source === 'secretariat' && e.type === 'payment_settled'
+          (e) => e.source === 'sut-1' && e.type === 'payment_settled'
         ).length;
         if (settlementCount > 1) {
           return { status: 'FAIL', reason: `duplicate settlement attempted: ${settlementCount}` };

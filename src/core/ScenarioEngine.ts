@@ -60,7 +60,8 @@ export class ScenarioEngine {
    * Выполнение одного действия.
    */
   private async executeAction(action: Action): Promise<void> {
-    const fault = this.faultInjector.getFaultForAction(action.type);
+    const eventType = `action_${action.type}`;
+    const fault = this.faultInjector.getFaultForEvent(eventType);
 
     if (fault) {
       await this.faultInjector.apply(fault, async () => {
@@ -77,6 +78,9 @@ export class ScenarioEngine {
    * После выполнения — собирает evidence:
    * 1. Observations из exchange.metadata.observations
    * 2. Engine event: action_<type>
+   *
+   * NOTE: Если outcome.exchange отсутствует (например, action завершился
+   * TIMEOUT), никакого fallback на action.type как observation не происходит.
    */
   private async performAction(action: Action): Promise<void> {
     const payload = action.payload || {};
