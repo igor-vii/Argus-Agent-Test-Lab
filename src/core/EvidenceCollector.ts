@@ -1,108 +1,106 @@
-/**
- * Источники доказательств (наблюдений)
- */
-export enum EvidenceSource {
-  ENGINE = 'ENGINE',
-  AGENT = 'AGENT',
-  ADAPTER = 'ADAPTER',
-  TARGET = 'TARGET',
-  CHAIN = 'CHAIN',
-  SYSTEM = 'SYSTEM'
-}
+// ============================================================
+// src/core/EvidenceCollector.ts
+// ============================================================
+
+import { Evidence } from './Evidence';
 
 /**
- * Запись доказательства (наблюдения)
+ * Внутренняя запись evidence.
+ * В Model V0 Evidence = Observation | EngineEvent.
+ * Коллектор хранит их как есть, без интерпретации.
  */
 export interface EvidenceRecord {
-  evidenceId: string;
-  runId: string;
-  timestamp: number;
-  sequence: number;
+  /** Уникальный идентификатор записи */
+  id: string;
+  /** Source: participantId или 'engine' */
+  source: string;
+  /** Type: semantic event type */
   type: string;
-  source: EvidenceSource;
+  /** Data: observation data */
   data: Record<string, unknown>;
-  description?: string;
-  metadata?: Record<string, unknown>; // Для concurrency/causality резерваций
+  /** Timestamp в миллисекундах */
+  timestamp: number;
+  /** Run ID */
+  runId: string;
 }
 
 /**
- * Коллектор доказательств
+ * EvidenceCollector — сбор evidence во время test run.
+ *
+ * Принципы:
+ * - Сохраняет ВСЕ observations (не фильтрует, не делает hierarchy).
+ * - Не интерпретирует — что получил, то и записал.
+ * - Assertions сами решают, какие observations им нужны.
  */
 export class EvidenceCollector {
-  private evidence: EvidenceRecord[] = [];
-  private sequenceCounter: number = 0;
+  private records: EvidenceRecord[] = [];
+  private idCounter = 0;
 
   /**
-   * Добавление наблюдения
-   * ВАЖНО: Сохраняет ВСЕ наблюдения, даже конфликтующие.
-   * Не выбирает "истину", не удаляет дубликаты от разных источников.
+   * Собрать evidence.
+   * Принимает Evidence (Observation | EngineEvent) + runId.
    */
-  public collect(
-    type: string,
-    source: EvidenceSource,
-    data: Record<string, unknown>,
-    runId: string,
-    description?: string,
-    metadata?: Record<string, unknown>
-  ): EvidenceRecord {
+  collect(evidence: Evidence, runId: string): EvidenceRecord {
     const record: EvidenceRecord = {
-      evidenceId: this.generateEvidenceId(),
+      id: `ev_${this.idCounter++}`,
+      source: evidence.source,
+      type: evidence.type,
+      data: evidence.data,
+      timestamp: evidence.timestamp,
       runId,
-      timestamp: Date.now(),
-      sequence: ++this.sequenceCounter, // Порядок поступления, НЕ causal order
-      type,
-      source,
-      data,
-      description,
-      metadata
     };
-
-    // Просто добавляем, без дедупликации или разрешения конфликтов
-    this.evidence.push(record);
-    
+    this.records.push(record);
     return record;
   }
 
   /**
-   * Получение всего набора доказательств
+   * Получить все evidence для run.
    */
-  public getEvidenceSet(): EvidenceRecord[] {
-    return [...this.evidence];
+  getEvidenceSet(runId: string): EvidenceRecord[] {
+    return this.records.filter((r) => r.runId === runId);
   }
 
   /**
-   * Получение доказательств по типу
+   * Получить все evidence (для отладки).
    */
-  public getByType(type: string): EvidenceRecord[] {
-    return this.evidence.filter(e => e.type === type);
+  getAllRecords(): EvidenceRecord[] {
+    return [...this.records];
   }
 
   /**
-   * Получение доказательств по источнику
+   * Получить evidence по типу для run.
    */
-  public getBySource(source: EvidenceSource): EvidenceRecord[] {
-    return this.evidence.filter(e => e.source === source);
+  getByType(runId: string, type: string): EvidenceRecord[] {
+    return this.records.filter(
+      (r) => r.runId === runId && r.type === type
+    );
   }
 
   /**
-   * Очистка коллектора
+   * Получить evidence по source для run.
    */
-  public clear(): void {
-    this.evidence = [];
-    this.sequenceCounter = 0;
+  getBySource(runId: string, source: string): EvidenceRecord[] {
+    return this.records.filter(
+      (r) => r.runId === runId && r.source === source
+    );
   }
 
   /**
-   * Количество собранных доказательств
+   * Количество evidence для run.
    */
-  public count(): number {
-    return this.evidence.length;
+  count(runId: string): number {
+    return this.records.filter((r) => r.runId === runId).length;
   }
 
   /**
-   * Генерация уникального ID доказательства
+   * Очистить коллектор.
    */
-  private generateEvidenceId(): string {
-    return `ev_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  clear(): void {
+    this.records = [];
+    this.idCounter = 0;
   }
 }
+
+// ============================================================
+// КОНЕЦ ФАЙЛА
+// ============================================================
