@@ -4,7 +4,7 @@ import { RunOrchestrator } from '../core/RunOrchestrator';
 import { AgentController } from '../core/AgentController';
 import { MockTargetAdapter } from '../adapters/MockTargetAdapter';
 import { ScenarioRegistry, getScenarioIds } from './ScenarioRegistry';
-import { Assertion, AssertionGroup } from '../core/Assertions';
+import { Assertion } from '../core/Assertions';
 
 /**
  * Минимальный CLI для Argus Test Lab
@@ -56,17 +56,8 @@ async function main(): Promise<void> {
         runId: `run_${Date.now()}`
       });
 
-      // Получение ассертов из метаданных сценария
-      const assertionsRaw = scenarioDef.metadata?.assertions;
-      let assertions: Assertion[] | AssertionGroup;
-      
-      if (assertionsRaw instanceof AssertionGroup) {
-        assertions = assertionsRaw;
-      } else if (Array.isArray(assertionsRaw)) {
-        assertions = assertionsRaw as Assertion[];
-      } else {
-        assertions = [];
-      }
+      // Assertions из сценария (Model V0: scenarioDef.assertions)
+      const assertions: Assertion[] = scenarioDef.assertions || [];
 
       // Запуск оркестратора
       const orchestrator = new RunOrchestrator(
