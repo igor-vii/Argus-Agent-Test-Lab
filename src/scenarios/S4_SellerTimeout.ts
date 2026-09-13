@@ -53,6 +53,7 @@ export const S4_SellerTimeout: ScenarioDefinition = {
       id: 'assert_timeout_state',
       invariantId: 'timeout_yields_unknown_not_failed',
       kind: 'behavioral',
+      referencedSources: ['sut-1'],
       evaluate: (evidence) => {
         const settled = evidence.find(
           (e) => e.source === 'sut-1' && e.type === 'payment_settled'

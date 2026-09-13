@@ -54,6 +54,7 @@ export const S2_PaymentBeforeExecution: ScenarioDefinition = {
       id: 'assert_no_premature_success',
       invariantId: 'no_premature_success',
       kind: 'behavioral',
+      referencedSources: ['sut-1', 'seller-1'],
       evaluate: (evidence) => {
         const settled = evidence.find(
           (e) => e.source === 'sut-1' && e.type === 'payment_settled'

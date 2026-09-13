@@ -56,6 +56,7 @@ export const S3_CrashAfterSettlement: ScenarioDefinition = {
       id: 'assert_single_settlement_survives_crash',
       invariantId: 'no_double_settlement_after_crash',
       kind: 'mixed',
+      referencedSources: ['sut-1', 'engine'],
       evaluate: (evidence) => {
         const settlements = evidence.filter(
           (e) => e.source === 'sut-1' && e.type === 'payment_settled'
@@ -66,13 +67,13 @@ export const S3_CrashAfterSettlement: ScenarioDefinition = {
         if (settlements.length > 1) {
           return { status: 'FAIL', reason: `duplicate settlement after crash: ${settlements.length}` };
         }
-        const restarted = evidence.some(
+        const recovery = evidence.find(
           (e) => e.source === 'sut-1' && e.type === 'recovery_completed'
         );
-        if (!restarted) {
+        if (!recovery) {
           return { status: 'INCONCLUSIVE', reason: 'restart/recovery not observed yet' };
         }
-        const recoveryTs = evidence.find((r) => r.type === 'recovery_completed')?.timestamp ?? 0;
+        const recoveryTs = recovery.timestamp;
         const resumedForward = evidence.some(
           (e) => e.source === 'engine' &&
                  e.type === 'forward_request' &&

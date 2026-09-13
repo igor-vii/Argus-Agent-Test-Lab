@@ -53,6 +53,7 @@ export const S6_PaymentRetry: ScenarioDefinition = {
       id: 'assert_no_duplicate_settlement',
       invariantId: 'no_duplicate_payment_on_unknown',
       kind: 'behavioral',
+      referencedSources: ['sut-1'],
       evaluate: (evidence) => {
         const settlements = evidence.filter(
           (e) => e.source === 'sut-1' && e.type === 'payment_settled'
