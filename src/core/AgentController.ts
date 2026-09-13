@@ -204,6 +204,61 @@ export class AgentController {
     }
   }
 
+  /**
+   * Execute a complete interaction lifecycle:
+   * connect → act → observe → disconnect
+   *
+   * Returns raw outcome without evidence collection.
+   */
+  async executeInteraction(
+    actionType: string,
+    actionPayload?: unknown,
+    observeType?: string
+  ): Promise<InteractionOutcome> {
+    if (!this.currentRunId) {
+      throw new Error('RunId not set. Call setRunId() before executing interaction.');
+    }
+
+    let connected = false;
+
+    try {
+      const connectResult = await this.connect();
+      if (!connectResult.success) {
+        return {
+          runId: this.currentRunId,
+          status: ExchangeStatus.FAILURE,
+          error: `Connection failed: ${connectResult.error}`,
+        };
+      }
+      connected = true;
+
+      const actOutcome = await this.act(actionType, actionPayload);
+      if (actOutcome.status !== ExchangeStatus.SUCCESS) {
+        return actOutcome;
+      }
+
+      if (observeType) {
+        const observeOutcome = await this.observe(observeType);
+        if (observeOutcome.status !== ExchangeStatus.SUCCESS) {
+          return observeOutcome;
+        }
+
+        return {
+          runId: this.currentRunId,
+          status: ExchangeStatus.SUCCESS,
+          exchange: observeOutcome.exchange,
+          durationMs: (actOutcome.durationMs ?? 0) + (observeOutcome.durationMs ?? 0),
+        };
+      }
+
+      return actOutcome;
+    } finally {
+      if (connected) {
+        await this.disconnect();
+      }
+    }
+  }
+
   setRunId(runId: RunId): void {
     this.currentRunId = runId;
   }
