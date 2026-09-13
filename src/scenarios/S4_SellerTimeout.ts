@@ -1,52 +1,83 @@
 import { ScenarioDefinition } from '../core/ScenarioDefinition';
-import { AgentRole } from '../core/AgentRuntime';
-import { EvidencePresentAssertion, AssertionGroup } from '../core/Assertions';
 
-/**
- * S4 — Seller Timeout
- * 
- * Цель: Проверить, что таймаут не означает автоматически FAILED.
- * Expected state: DELIVERY_UNKNOWN.
- */
 export const S4_SellerTimeout: ScenarioDefinition = {
   id: 'S4',
   name: 'Seller Timeout',
-  description: 'Проверка обработки таймаута продавца',
-  target: 'mock-target',
-  agents: [
+  description: 'Seller никогда не отвечает — проверяем DELIVERY_UNKNOWN, не FAILED/SUCCESS',
+
+  participants: [
+    { participantId: 'buyer-1', protocolRole: 'BUYER', ownership: 'ARGUS' },
     {
-      id: 'buyer-1',
-      role: AgentRole.BUYER,
-      capabilities: { canRequest: true, canPay: true, canObserve: true }
+      participantId: 'seller-1',
+      protocolRole: 'SELLER',
+      ownership: 'ARGUS', // см. rationale в S1
     },
-    {
-      id: 'seller-1',
-      role: AgentRole.SELLER,
-      capabilities: { canExecute: true }
-    }
+    { participantId: 'secretariat', protocolRole: 'INTERMEDIARY', ownership: 'EXTERNAL' },
   ],
+
+  topology: {
+    edges: [
+      { from: 'buyer-1', to: 'secretariat', kind: 'request' },
+      { from: 'secretariat', to: 'seller-1', kind: 'forward' },
+    ],
+  },
+
+  testSubject: 'secretariat',
+
   actions: [
-    { type: 'payment_settled', agentId: 'buyer-1' },
-    { type: 'await_delivery', agentId: 'buyer-1' }
+    {
+      actor: 'buyer-1',
+      type: 'request_payment',
+      payload: { requestId: 'req-4', idempotencyKey: 'key-4', amount: 100 },
+    },
   ],
+
   faults: [
     {
-      type: 'seller_timeout',
-      trigger: 'await_delivery',
-      config: { timeout_ms: 30000 }
-    }
+      target: { kind: 'participant', participantId: 'seller-1' },
+      type: 'hang',
+      trigger: 'delivery_started',
+      config: { duration_ms: -1 },
+    },
   ],
-  seed: 42,
-  expectedInvariants: ['DELIVERY_UNKNOWN при отсутствии ответа'],
-  metadata: {
-    assertions: new AssertionGroup({
-      operator: 'ALL',
-      assertions: [
-        new EvidencePresentAssertion(
-          'DeliveryUnknownState',
-          (e) => e.type === 'delivery_status' && e.data?.status === 'UNKNOWN'
-        )
-      ]
-    })
-  }
+
+  invariants: [
+    {
+      id: 'timeout_yields_unknown_not_failed',
+      description: 'Settled + seller не отвечает → DELIVERY_UNKNOWN, не FAILED, не SUCCESS, без повторной оплаты.',
+    },
+  ],
+
+  assertions: [
+    {
+      id: 'assert_timeout_state',
+      invariantId: 'timeout_yields_unknown_not_failed',
+      kind: 'behavioral',
+      evaluate: (evidence) => {
+        const settled = evidence.find(
+          (e) => e.source === 'secretariat' && e.type === 'payment_settled'
+        );
+        if (!settled) return { status: 'INCONCLUSIVE', reason: 'payment_settled not observed yet' };
+
+        const failed = evidence.find((e) => e.source === 'secretariat' && e.type === 'failed');
+        const success = evidence.find((e) => e.source === 'secretariat' && e.type === 'success');
+        const unknown = evidence.find((e) => e.source === 'secretariat' && e.type === 'delivery_unknown');
+
+        if (failed) return { status: 'FAIL', reason: 'marked FAILED without seller ever responding' };
+        if (success) return { status: 'FAIL', reason: 'marked SUCCESS without seller ever responding' };
+
+        const settlementCount = evidence.filter(
+          (e) => e.source === 'secretariat' && e.type === 'payment_settled'
+        ).length;
+        if (settlementCount > 1) {
+          return { status: 'FAIL', reason: `duplicate settlement attempted: ${settlementCount}` };
+        }
+
+        if (unknown) return { status: 'PASS' };
+        return { status: 'INCONCLUSIVE', reason: 'no terminal state observed yet' };
+      },
+    },
+  ],
+
+  seed: 44,
 };

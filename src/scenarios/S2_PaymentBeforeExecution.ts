@@ -1,49 +1,81 @@
 import { ScenarioDefinition } from '../core/ScenarioDefinition';
-import { AgentRole } from '../core/AgentRuntime';
-import { EventOrderingAssertion, AssertionGroup } from '../core/Assertions';
 
-/**
- * S2 — Payment Before Execution
- * 
- * Цель: Проверить порядок PAYMENT → EXECUTION.
- * Invariant: payment_settled должен наблюдаться до execution_started.
- */
 export const S2_PaymentBeforeExecution: ScenarioDefinition = {
   id: 'S2',
   name: 'Payment Before Execution',
-  description: 'Проверка порядка оплаты и исполнения',
-  target: 'mock-target',
-  agents: [
+  description: 'Платёж settled раньше, чем seller успевает ответить',
+
+  participants: [
+    { participantId: 'buyer-1', protocolRole: 'BUYER', ownership: 'ARGUS' },
     {
-      id: 'buyer-1',
-      role: AgentRole.BUYER,
-      capabilities: { canRequest: true, canPay: true }
+      participantId: 'seller-1',
+      protocolRole: 'SELLER',
+      // см. rationale в S1
+      ownership: 'ARGUS',
     },
-    {
-      id: 'seller-1',
-      role: AgentRole.SELLER,
-      capabilities: { canExecute: true, canObserve: true }
-    }
+    { participantId: 'secretariat', protocolRole: 'INTERMEDIARY', ownership: 'EXTERNAL' },
   ],
+
+  topology: {
+    edges: [
+      { from: 'buyer-1', to: 'secretariat', kind: 'request' },
+      { from: 'secretariat', to: 'seller-1', kind: 'forward' },
+    ],
+  },
+
+  testSubject: 'secretariat',
+
   actions: [
-    { type: 'payment_initiated', agentId: 'buyer-1' },
-    { type: 'delivery_started', agentId: 'seller-1' }
+    {
+      actor: 'buyer-1',
+      type: 'request_payment',
+      payload: { requestId: 'req-2', idempotencyKey: 'key-2', amount: 100 },
+    },
   ],
+
   faults: [
     {
-      type: 'delayed_payment',
+      target: { kind: 'participant', participantId: 'seller-1' },
+      type: 'delayed_response',
       trigger: 'delivery_started',
-      config: { delay_ms: 5000 }
-    }
+      config: { delay_ms: 5000 },
+    },
   ],
-  seed: 42,
-  expectedInvariants: ['Оплата предшествует исполнению'],
-  metadata: {
-    assertions: new AssertionGroup({
-      operator: 'ALL',
-      assertions: [
-        new EventOrderingAssertion('payment_settled', 'execution_started')
-      ]
-    })
-  }
+
+  invariants: [
+    {
+      id: 'no_premature_success',
+      description: 'SUCCESS не должен фиксироваться раньше, чем seller фактически ответил.',
+    },
+  ],
+
+  assertions: [
+    {
+      id: 'assert_no_premature_success',
+      invariantId: 'no_premature_success',
+      kind: 'behavioral',
+      evaluate: (evidence) => {
+        const settled = evidence.find(
+          (e) => e.source === 'secretariat' && e.type === 'payment_settled'
+        );
+        const success = evidence.find(
+          (e) => e.source === 'secretariat' && e.type === 'success'
+        );
+        if (!settled) return { status: 'INCONCLUSIVE', reason: 'payment_settled not observed yet' };
+        if (!success) return { status: 'INCONCLUSIVE', reason: 'success not observed yet — still pending, expected' };
+        if (success.timestamp < settled.timestamp) {
+          return { status: 'FAIL', reason: 'success recorded before payment_settled' };
+        }
+        const sellerReallyResponded = evidence.some(
+          (e) => e.source === 'seller-1' && e.type === 'delivery_completed'
+        );
+        if (success && !sellerReallyResponded) {
+          return { status: 'FAIL', reason: 'success recorded without seller actually responding' };
+        }
+        return { status: 'PASS' };
+      },
+    },
+  ],
+
+  seed: 43,
 };

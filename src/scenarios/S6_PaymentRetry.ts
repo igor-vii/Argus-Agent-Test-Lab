@@ -1,44 +1,70 @@
 import { ScenarioDefinition } from '../core/ScenarioDefinition';
-import { AgentRole } from '../core/AgentRuntime';
-import { EventCountAssertion, AssertionGroup } from '../core/Assertions';
 
-/**
- * S6 — Payment Retry
- * 
- * Цель: Проверить, что blind retry не создает дублирующую оплату.
- * Invariant: Повторные попытки только при доказанном NOT_SETTLED.
- */
 export const S6_PaymentRetry: ScenarioDefinition = {
   id: 'S6',
   name: 'Payment Retry',
-  description: 'Проверка корректности повторных попыток оплаты',
-  target: 'mock-target',
-  agents: [
+  description: 'Adversarial buyer пытается создать новую authorization на UNKNOWN settlement',
+
+  participants: [
+    { participantId: 'buyer-1', protocolRole: 'BUYER', ownership: 'ARGUS' },
     {
-      id: 'buyer-1',
-      role: AgentRole.BUYER,
-      capabilities: { canRequest: true, canPay: true, canRetry: true }
-    }
+      participantId: 'seller-1',
+      protocolRole: 'SELLER',
+      ownership: 'ARGUS', // см. rationale в S1
+    },
+    { participantId: 'secretariat', protocolRole: 'INTERMEDIARY', ownership: 'EXTERNAL' },
   ],
+
+  topology: {
+    edges: [
+      { from: 'buyer-1', to: 'secretariat', kind: 'request' },
+      { from: 'secretariat', to: 'seller-1', kind: 'forward' },
+    ],
+  },
+
+  testSubject: 'secretariat',
+
   actions: [
-    { type: 'payment_attempt', agentId: 'buyer-1' },
-    { type: 'settlement_check', agentId: 'buyer-1' }
+    {
+      actor: 'buyer-1',
+      type: 'request_payment',
+      payload: { requestId: 'req-6', idempotencyKey: 'key-6', amount: 100 },
+    },
   ],
+
   faults: [
     {
-      type: 'payment_retry',
-      trigger: 'payment_attempt',
-      config: { retry_count: 3 }
-    }
+      target: { kind: 'participant', participantId: 'buyer-1' },
+      type: 'retry',
+      trigger: 'settlement_unknown',
+      config: { retry_count: 3, new_authorization_each_time: true },
+    },
   ],
-  seed: 42,
-  expectedInvariants: ['Максимум одна экономически валидная оплата'],
-  metadata: {
-    assertions: new AssertionGroup({
-      operator: 'ALL',
-      assertions: [
-        new EventCountAssertion('economic_settlement', 1)
-      ]
-    })
-  }
+
+  invariants: [
+    {
+      id: 'no_duplicate_payment_on_unknown',
+      description: 'Пока reconciliation не подтвердил NOT_SETTLED, новая authorization для той же логической операции отклоняется.',
+    },
+  ],
+
+  assertions: [
+    {
+      id: 'assert_no_duplicate_settlement',
+      invariantId: 'no_duplicate_payment_on_unknown',
+      kind: 'behavioral',
+      evaluate: (evidence) => {
+        const settlements = evidence.filter(
+          (e) => e.source === 'secretariat' && e.type === 'payment_settled'
+        );
+        if (settlements.length > 1) {
+          return { status: 'FAIL', reason: `${settlements.length} settled payments without confirmed NOT_SETTLED` };
+        }
+        if (settlements.length === 1) return { status: 'PASS' };
+        return { status: 'INCONCLUSIVE', reason: 'no settlement observed yet' };
+      },
+    },
+  ],
+
+  seed: 46,
 };
