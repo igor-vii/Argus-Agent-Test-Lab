@@ -1,5 +1,5 @@
 import { AgentController } from './AgentController';
-import { ScenarioDefinition, ScenarioAction } from './ScenarioDefinition';
+import { ScenarioDefinition, Action } from './ScenarioDefinition';
 import { RunContext, RunStatus } from './RunLifecycle';
 import { FaultInjector } from './FaultInjector';
 
@@ -48,10 +48,10 @@ export class ScenarioEngine {
   /**
    * Выполнение одного действия
    */
-  private async executeAction(action: ScenarioAction): Promise<void> {
+  private async executeAction(action: Action): Promise<void> {
     // Применение фолтов если есть
     const fault = this.faultInjector.getFaultForAction(action.type);
-    
+
     if (fault) {
       await this.faultInjector.apply(fault, async () => {
         await this.performAction(action);
@@ -64,9 +64,9 @@ export class ScenarioEngine {
   /**
    * Непосредственное выполнение действия через контроллер
    */
-  private async performAction(action: ScenarioAction): Promise<void> {
+  private async performAction(action: Action): Promise<void> {
     const payload = action.payload || {};
-    
+
     // Используем контроллер для взаимодействия
     await this.controller.act(action.type, payload);
   }

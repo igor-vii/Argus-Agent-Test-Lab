@@ -1,12 +1,12 @@
-import { ScenarioFault } from './ScenarioDefinition';
+import { Fault } from './Fault';
 
 /**
  * Инжектор фолтов (сбоев) для тестирования
  */
 export class FaultInjector {
-  private faults: Map<string, ScenarioFault> = new Map();
+  private faults: Map<string, Fault> = new Map();
 
-  constructor(faults: ScenarioFault[] = []) {
+  constructor(faults: Fault[] = []) {
     for (const fault of faults) {
       this.registerFault(fault);
     }
@@ -15,7 +15,7 @@ export class FaultInjector {
   /**
    * Регистрация фолта
    */
-  public registerFault(fault: ScenarioFault): void {
+  public registerFault(fault: Fault): void {
     const key = fault.trigger || fault.type;
     this.faults.set(key, fault);
   }
@@ -23,36 +23,36 @@ export class FaultInjector {
   /**
    * Получение фолта для действия
    */
-  public getFaultForAction(actionType: string): ScenarioFault | undefined {
+  public getFaultForAction(actionType: string): Fault | undefined {
     return this.faults.get(actionType);
   }
 
   /**
    * Применение фолта к операции
    */
-  public async apply<T>(fault: ScenarioFault, operation: () => Promise<T>): Promise<T> {
+  public async apply<T>(fault: Fault, operation: () => Promise<T>): Promise<T> {
     switch (fault.type) {
       case 'duplicate_request':
         return this.handleDuplicateRequest(operation, fault.config);
-      
-      case 'delayed_payment':
-        return this.handleDelayedPayment(operation, fault.config);
-      
-      case 'crash_after_payment':
-        return this.handleCrashAfterPayment(operation, fault.config);
-      
-      case 'seller_timeout':
-        return this.handleSellerTimeout(operation, fault.config);
-      
+
+      case 'delayed_response':
+        return this.handleDelayedResponse(operation, fault.config);
+
+      case 'crash':
+        return this.handleCrash(operation, fault.config);
+
+      case 'hang':
+        return this.handleHang(operation, fault.config);
+
       case 'concurrent_request':
         return this.handleConcurrentRequest(operation, fault.config);
-      
-      case 'payment_retry':
-        return this.handlePaymentRetry(operation, fault.config);
-      
+
+      case 'retry':
+        return this.handleRetry(operation, fault.config);
+
       case 'lost_delivery':
         return this.handleLostDelivery(operation, fault.config);
-      
+
       default:
         return operation();
     }
@@ -63,7 +63,7 @@ export class FaultInjector {
    */
   private async handleDuplicateRequest<T>(operation: () => Promise<T>, config?: Record<string, unknown>): Promise<T> {
     const repeatCount = (config?.['repeat_count'] as number) || 2;
-    
+
     let result: T | undefined;
     for (let i = 0; i < repeatCount; i++) {
       result = await operation();
@@ -74,7 +74,7 @@ export class FaultInjector {
   /**
    * Задержка выполнения
    */
-  private async handleDelayedPayment<T>(operation: () => Promise<T>, config?: Record<string, unknown>): Promise<T> {
+  private async handleDelayedResponse<T>(operation: () => Promise<T>, config?: Record<string, unknown>): Promise<T> {
     const delayMs = (config?.['delay_ms'] as number) || 5000;
     await this.sleep(delayMs);
     return operation();
@@ -83,25 +83,29 @@ export class FaultInjector {
   /**
    * Краш после выполнения
    */
-  private async handleCrashAfterPayment<T>(operation: () => Promise<T>, config?: Record<string, unknown>): Promise<T> {
+  private async handleCrash<T>(operation: () => Promise<T>, config?: Record<string, unknown>): Promise<T> {
     const result = await operation();
-    
+
     // Симуляция краша
-    throw new Error('Simulated crash after payment');
+    throw new Error('Simulated crash');
   }
 
   /**
-   * Таймаут продавца
+   * Таймаут (зависание)
    */
-  private async handleSellerTimeout<T>(operation: () => Promise<T>, config?: Record<string, unknown>): Promise<T> {
-    const timeoutMs = (config?.['timeout_ms'] as number) || 30000;
-    
-    // Создаем промис, который никогда не разрешится (или разрешится после таймаута)
+  private async handleHang<T>(operation: () => Promise<T>, config?: Record<string, unknown>): Promise<T> {
+    const durationMs = (config?.['duration_ms'] as number) || -1;
+
+    if (durationMs < 0) {
+      // Никогда не разрешается
+      return new Promise<T>(() => { /* intentionally never resolves */ });
+    }
+
     return new Promise<T>((resolve, reject) => {
       const timer = setTimeout(() => {
-        reject(new Error('Seller timeout'));
-      }, timeoutMs);
-      
+        reject(new Error('Hang timeout'));
+      }, durationMs);
+
       operation()
         .then(result => {
           clearTimeout(timer);
@@ -116,20 +120,20 @@ export class FaultInjector {
    */
   private async handleConcurrentRequest<T>(operation: () => Promise<T>, config?: Record<string, unknown>): Promise<T> {
     const parallelCount = (config?.['parallel_count'] as number) || 5;
-    
+
     const promises = Array.from({ length: parallelCount }, () => operation());
     const results = await Promise.all(promises);
-    
+
     return results[0]; // Возвращаем первый результат как основной
   }
 
   /**
    * Повтор попытки при ошибке
    */
-  private async handlePaymentRetry<T>(operation: () => Promise<T>, config?: Record<string, unknown>): Promise<T> {
+  private async handleRetry<T>(operation: () => Promise<T>, config?: Record<string, unknown>): Promise<T> {
     const retryCount = (config?.['retry_count'] as number) || 3;
     let lastError: Error | undefined;
-    
+
     for (let i = 0; i < retryCount; i++) {
       try {
         return await operation();
@@ -138,7 +142,7 @@ export class FaultInjector {
         // Продолжаем попытки
       }
     }
-    
+
     throw lastError || new Error('All retries failed');
   }
 
@@ -147,14 +151,14 @@ export class FaultInjector {
    */
   private async handleLostDelivery<T>(operation: () => Promise<T>, config?: Record<string, unknown>): Promise<T> {
     const dropProbability = (config?.['drop_probability'] as number) || 1.0;
-    
+
     const result = await operation();
-    
+
     // Симулируем потерю ответа
     if (Math.random() < dropProbability) {
       throw new Error('Delivery lost in transit');
     }
-    
+
     return result;
   }
 
