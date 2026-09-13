@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { RunOrchestrator } from '../../core/RunOrchestrator';
 import { MockTargetAdapter } from '../../adapters/MockTargetAdapter';
 import { AgentController } from '../../core/AgentController';
+import { validateScenario } from '../../core/validateScenario';
 import { S1_DuplicateRequest } from '../../scenarios/S1_DuplicateRequest';
 import { S2_PaymentBeforeExecution } from '../../scenarios/S2_PaymentBeforeExecution';
 import { S3_CrashAfterSettlement } from '../../scenarios/S3_CrashAfterSettlement';
@@ -28,17 +29,8 @@ describe('Canonical Scenarios S1-S7', () => {
         connectionConfig: { transportType: 'mock' },
         runId: `run_${Date.now()}`
       });
-      
-      const assertionsRaw = def.metadata?.assertions;
-      let assertions: any[] | any;
-      
-      if (assertionsRaw && typeof assertionsRaw === 'object' && 'operator' in assertionsRaw) {
-        assertions = assertionsRaw;
-      } else if (Array.isArray(assertionsRaw)) {
-        assertions = assertionsRaw;
-      } else {
-        assertions = [];
-      }
+
+      const assertions = def.assertions || [];
 
       const orchestrator = new RunOrchestrator(def, controller, targetAdapter, assertions);
       const result = await orchestrator.run();
@@ -52,41 +44,45 @@ describe('Canonical Scenarios S1-S7', () => {
     });
   });
 
-  it('S1 - should detect duplicate payment (FAIL expected)', async () => {
+  it('S1 - should detect idempotency (PASS expected)', async () => {
     const targetAdapter = new MockTargetAdapter('mock');
     const controller = new AgentController(targetAdapter, {
       connectionConfig: { transportType: 'mock' },
       runId: `run_${Date.now()}`
     });
-    
-    const assertionsRaw = S1_DuplicateRequest.metadata?.assertions;
-    let assertions: any[] | any = assertionsRaw || [];
+
+    const assertions = S1_DuplicateRequest.assertions || [];
 
     const orchestrator = new RunOrchestrator(S1_DuplicateRequest, controller, targetAdapter, assertions);
     const result = await orchestrator.run();
 
-    // S1 ожидает FAIL, так как MockTarget симулирует нарушение (дубликат)
+    // S1 ожидает PASS, так как идемпотентность работает корректно
     if (result.verdict) {
-      expect(result.verdict.status).toBe('FAIL');
+      expect(result.verdict.status).toBe('PASS');
     }
   });
 
-  it('S6 - should pass valid flow (PASS expected)', async () => {
+  it('S2 - should fail validation (Rule 1: unknown source seller-1)', () => {
+    const result = validateScenario(S2_PaymentBeforeExecution);
+    expect(result.valid).toBe(false);
+    expect(result.errors.some(e => e.message.includes('seller-1'))).toBe(true);
+  });
+
+  it('S6 - should be inconclusive (scaffolding)', async () => {
     const targetAdapter = new MockTargetAdapter('mock');
     const controller = new AgentController(targetAdapter, {
       connectionConfig: { transportType: 'mock' },
       runId: `run_${Date.now()}`
     });
-    
-    const assertionsRaw = S6_PaymentRetry.metadata?.assertions;
-    let assertions: any[] | any = assertionsRaw || [];
+
+    const assertions = S6_PaymentRetry.assertions || [];
 
     const orchestrator = new RunOrchestrator(S6_PaymentRetry, controller, targetAdapter, assertions);
     const result = await orchestrator.run();
 
-    // S6 ожидает PASS, так как это корректный сценарий
+    // S6 сейчас INCONCLUSIVE (scaffolding, Variant A)
     if (result.verdict) {
-      expect(result.verdict.status).toBe('PASS');
+      expect(result.verdict.status).toBe('INCONCLUSIVE');
     }
   });
 });

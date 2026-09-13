@@ -7,39 +7,35 @@ dist/
 build/
 target/
 
-# TypeScript/JavaScript specific
-*.tsbuildinfo
-*.js.map
-*.ts.map
+# Cache directories
+.cache/
+.vite/
 
-# Environment files
-.env
-.env.local
-.env.*
-
-# Logs
+# Logs and temp files
 *.log
-
-# Coverage reports
-coverage/
-.nyc_output/
-.jest_coverage/
-
-# IDE files
-.vscode/
-.idea/
-*.swp
-*.swo
 *.tmp
 
-# OS files
-.DS_Store
-Thumbs.db
+# Environment
+.env
+.env.local
+*.env.*
 
-# Python artifacts (if any Python in project)
+# Editors
+.vscode/
+.idea/
+
+# Python
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
-.Python
+
+# Coverage
+coverage/
+htmlcov/
+.coverage
+
+# OS
+.DS_Store
+Thumbs.db
 ```
