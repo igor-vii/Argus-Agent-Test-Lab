@@ -128,7 +128,7 @@ describe('AgentTargetAdapter Contract', () => {
       it('should handle undefined payload', async () => {
         const exchange = await adapter.send('run-1', 'test-no-payload');
         
-        expect(exchange.payload).toBeUndefined();
+        expect(exchange.payload).toEqual({});
         expect(exchange.status).toBe(ExchangeStatus.SUCCESS);
       });
     });

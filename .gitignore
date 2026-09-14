@@ -30,12 +30,18 @@ __pycache__/
 *.pyo
 *.pyd
 
-# Coverage
+# Compiled
+*.o
+*.obj
+*.so
+*.a
+*.dll
+*.exe
+*.out
+
+# Testing
 coverage/
 htmlcov/
 .coverage
-
-# OS
-.DS_Store
-Thumbs.db
+.nyc_output/
 ```

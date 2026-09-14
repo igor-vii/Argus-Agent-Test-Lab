@@ -22,14 +22,19 @@ describe('ScenarioEngine', () => {
     const scenario: ScenarioDefinition = {
       id: 'test-scenario',
       name: 'Test Timeline',
-      target: 'mock-target',
-      agents: [],
+      participants: [
+        { participantId: 'sut-1', protocolRole: 'seller', ownership: 'EXTERNAL' }
+      ],
+      topology: { edges: [] },
+      testSubject: 'sut-1',
       actions: [
-        { type: 'act', agentId: 'agent-1', payload: { type: 'ACTION_1' } },
-        { type: 'act', agentId: 'agent-1', payload: { type: 'ACTION_2' } },
-        { type: 'act', agentId: 'agent-1', payload: { type: 'ACTION_3' } },
+        { actor: 'sut-1', type: 'ACTION_1', payload: {} },
+        { actor: 'sut-1', type: 'ACTION_2', payload: {} },
+        { actor: 'sut-1', type: 'ACTION_3', payload: {} },
       ],
       faults: [],
+      invariants: [],
+      assertions: [],
       seed: 42,
     };
 
@@ -54,10 +59,15 @@ describe('ScenarioEngine', () => {
     const scenario: ScenarioDefinition = {
       id: 'seed-test',
       name: 'Seed Test',
-      target: 'mock-target',
-      agents: [],
-      actions: [{ type: 'act', agentId: 'agent-1', payload: { type: 'CHECK_SEED' } }],
+      participants: [
+        { participantId: 'sut-1', protocolRole: 'seller', ownership: 'EXTERNAL' }
+      ],
+      topology: { edges: [] },
+      testSubject: 'sut-1',
+      actions: [{ actor: 'sut-1', type: 'CHECK_SEED', payload: {} }],
       faults: [],
+      invariants: [],
+      assertions: [],
       seed: 999,
     };
 
@@ -84,10 +94,15 @@ describe('ScenarioEngine', () => {
     const scenario: ScenarioDefinition = {
       id: 'fail-test',
       name: 'Failure Test',
-      target: 'mock-target',
-      agents: [],
-      actions: [{ type: 'act', agentId: 'agent-1', payload: { type: 'FAIL_ACTION' } }],
+      participants: [
+        { participantId: 'sut-1', protocolRole: 'seller', ownership: 'EXTERNAL' }
+      ],
+      topology: { edges: [] },
+      testSubject: 'sut-1',
+      actions: [{ actor: 'sut-1', type: 'FAIL_ACTION', payload: {} }],
       faults: [],
+      invariants: [],
+      assertions: [],
       seed: 1,
     };
 
@@ -104,7 +119,7 @@ describe('ScenarioEngine', () => {
     // Should not throw unhandled error, but status should reflect failure or completion with errors
     await expect(engine.execute()).resolves.not.toThrow();
     // Depending on implementation, status might be FAILED or COMPLETED with error evidence
-    
+
     // Restore original send
     mockTarget.send = originalSend;
   });

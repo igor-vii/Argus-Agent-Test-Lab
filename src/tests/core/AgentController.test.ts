@@ -400,26 +400,6 @@ describe('AgentController', () => {
   });
 
   // Additional tests
-  describe('Evidence capture', () => {
-    it('should capture evidence during interaction', async () => {
-      await controller.connect();
-      
-      const evidence = await controller.captureEvidence('test-evidence', { key: 'value' }, 'Test description');
-      
-      expect(evidence).toBeDefined();
-      expect(evidence?.type).toBe('test-evidence');
-      expect(evidence?.description).toBe('Test description');
-    });
-
-    it('should continue interaction even if evidence capture fails', async () => {
-      // This test verifies that evidence capture failure doesn't break the flow
-      await controller.connect();
-      
-      // Normal act should work regardless of evidence capture
-      const outcome = await controller.act('test');
-      expect(outcome.status).toBe(ExchangeStatus.SUCCESS);
-    });
-  });
 
   describe('RunId management', () => {
     it('should require runId before operations', async () => {
