@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { EvidenceCollector, EvidenceSource } from '../../core/EvidenceCollector';
+import { EvidenceCollector } from '../../core/EvidenceCollector';
+import { Observation, EngineEvent } from '../../core/Evidence';
 
 describe('EvidenceCollector', () => {
   let collector: EvidenceCollector;
@@ -8,70 +9,125 @@ describe('EvidenceCollector', () => {
     collector = new EvidenceCollector();
   });
 
-  it('should preserve all evidence fields', () => {
-    const record = collector.collect(
-      'payment_sent',
-      EvidenceSource.AGENT,
-      { amount: 100 },
-      'run-123',
-      'Payment sent by agent'
-    );
+  it('should collect evidence with correct fields', () => {
+    const observation: Observation = {
+      source: 'sut-1',
+      type: 'payment_sent',
+      data: { amount: 100 },
+      timestamp: Date.now()
+    };
+
+    const record = collector.collect(observation, 'run-123');
 
     expect(record.runId).toBe('run-123');
+    expect(record.source).toBe('sut-1');
     expect(record.type).toBe('payment_sent');
-    expect(record.source).toBe(EvidenceSource.AGENT);
     expect(record.data).toEqual({ amount: 100 });
-    expect(record.sequence).toBe(1);
   });
 
-  it('should preserve conflicting sources', () => {
-    collector.collect('delivery_completed', EvidenceSource.AGENT, {}, 'run-123');
-    collector.collect('timeout', EvidenceSource.ADAPTER, {}, 'run-123');
-    collector.collect('response_sent', EvidenceSource.TARGET, {}, 'run-123');
+  it('should collect evidence from different sources', () => {
+    const obs1: Observation = {
+      source: 'sut-1',
+      type: 'delivery_completed',
+      data: {},
+      timestamp: Date.now()
+    };
+    const obs2: EngineEvent = {
+      source: 'engine',
+      type: 'timeout',
+      data: {},
+      timestamp: Date.now()
+    };
+    const obs3: Observation = {
+      source: 'buyer-1',
+      type: 'response_sent',
+      data: {},
+      timestamp: Date.now()
+    };
 
-    const evidence = collector.getEvidenceSet();
+    collector.collect(obs1, 'run-123');
+    collector.collect(obs2, 'run-123');
+    collector.collect(obs3, 'run-123');
+
+    const evidence = collector.getEvidenceSet('run-123');
     expect(evidence.length).toBe(3);
-    
-    // Ensure no deduplication happened
+
     const sources = evidence.map(e => e.source);
-    expect(sources).toContain(EvidenceSource.AGENT);
-    expect(sources).toContain(EvidenceSource.ADAPTER);
-    expect(sources).toContain(EvidenceSource.TARGET);
+    expect(sources).toContain('sut-1');
+    expect(sources).toContain('engine');
+    expect(sources).toContain('buyer-1');
   });
 
-  it('sequence should reflect observation order, not causality', () => {
-    collector.collect('A', EvidenceSource.SYSTEM, {}, 'run-123');
-    collector.collect('B', EvidenceSource.SYSTEM, {}, 'run-123');
-    collector.collect('C', EvidenceSource.SYSTEM, {}, 'run-123');
+  it('should filter by runId', () => {
+    const obs1: Observation = {
+      source: 'sut-1',
+      type: 'event_a',
+      data: {},
+      timestamp: Date.now()
+    };
+    const obs2: Observation = {
+      source: 'sut-1',
+      type: 'event_b',
+      data: {},
+      timestamp: Date.now()
+    };
 
-    const evidence = collector.getEvidenceSet();
-    expect(evidence[0].sequence).toBe(1);
-    expect(evidence[1].sequence).toBe(2);
-    expect(evidence[2].sequence).toBe(3);
-    
-    // Sequence is just order of collection, no causal claim made
+    collector.collect(obs1, 'run-1');
+    collector.collect(obs2, 'run-2');
+
+    const run1Evidence = collector.getEvidenceSet('run-1');
+    const run2Evidence = collector.getEvidenceSet('run-2');
+
+    expect(run1Evidence.length).toBe(1);
+    expect(run1Evidence[0].source).toBe('sut-1');
+    expect(run2Evidence.length).toBe(1);
+    expect(run2Evidence[0].source).toBe('sut-1');
   });
 
-  it('should allow metadata for concurrency reservation', () => {
-    collector.collect(
-      'parallel_event', 
-      EvidenceSource.ENGINE, 
-      {}, 
-      'run-123',
-      undefined,
-      { concurrentWith: ['event-b'] } 
-    );
+  it('should preserve observation order', () => {
+    const obs1: Observation = {
+      source: 'sut-1',
+      type: 'A',
+      data: {},
+      timestamp: Date.now()
+    };
+    const obs2: Observation = {
+      source: 'sut-1',
+      type: 'B',
+      data: {},
+      timestamp: Date.now()
+    };
+    const obs3: Observation = {
+      source: 'sut-1',
+      type: 'C',
+      data: {},
+      timestamp: Date.now()
+    };
 
-    const evidence = collector.getEvidenceSet();
-    expect(evidence[0].metadata).toBeDefined();
-    expect(evidence[0].metadata?.concurrentWith).toEqual(['event-b']);
+    collector.collect(obs1, 'run-123');
+    collector.collect(obs2, 'run-123');
+    collector.collect(obs3, 'run-123');
+
+    const evidence = collector.getEvidenceSet('run-123');
+    expect(evidence[0].type).toBe('A');
+    expect(evidence[1].type).toBe('B');
+    expect(evidence[2].type).toBe('C');
   });
 
   it('should NOT calculate verdict', () => {
-    // Collector only stores data
-    const result = collector.collect('test', EvidenceSource.SYSTEM, {}, 'run-123');
-    // Result is just the record, no PASS/FAIL logic inside collector
-    expect(result).toHaveProperty('evidenceId');
-    expect(result).not.toHaveProperty('verdict');
+    const obs: Observation = {
+      source: 'sut-1',
+      type: 'test',
+      data: {},
+      timestamp: Date.now()
+    };
+
+    const record = collector.collect(obs, 'run-123');
+
+    // Record is just EvidenceRecord, no verdict property
+    expect(record).toHaveProperty('id');
+    expect(record).toHaveProperty('source');
+    expect(record).toHaveProperty('type');
+    expect(record).not.toHaveProperty('verdict');
   });
 });
