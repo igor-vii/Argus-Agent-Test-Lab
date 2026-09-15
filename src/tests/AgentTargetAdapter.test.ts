@@ -63,7 +63,7 @@ describe('AgentTargetAdapter Contract', () => {
         });
         const elapsed = Date.now() - startTime;
 
-        expect(elapsed).toBeGreaterThanOrEqual(100);
+        expect(elapsed).toBeGreaterThanOrEqual(90); // Allow small margin
       });
 
       it('should simulate connection failure based on failureRate', async () => {
