@@ -17,8 +17,8 @@ describe('Argus CLI', () => {
   });
 
   it('should throw on unknown scenario', async () => {
-    const { getScenarioDefinition } = await import('../../cli/ScenarioRegistry');
+    const { getScenario } = await import('../../cli/ScenarioRegistry');
     
-    expect(() => getScenarioDefinition('UNKNOWN')).toThrow();
+    expect(getScenario('UNKNOWN')).toBeUndefined();
   });
 });

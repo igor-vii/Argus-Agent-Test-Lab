@@ -3,7 +3,7 @@ import { ScenarioEngine } from '../../core/ScenarioEngine';
 import { ScenarioDefinition } from '../../core/ScenarioDefinition';
 import { AgentController } from '../../core/AgentController';
 import { MockTargetAdapter } from '../../adapters/MockTargetAdapter';
-import { RunContext } from '../../core/RunLifecycle';
+import { RunContext, RunStatus } from '../../core/RunLifecycle';
 import { FaultInjector } from '../../core/FaultInjector';
 
 describe('ScenarioEngine', () => {
@@ -13,7 +13,7 @@ describe('ScenarioEngine', () => {
   let faultInjector: FaultInjector;
 
   beforeEach(() => {
-    mockTarget = new MockTargetAdapter({ transportType: 'mock' });
+    mockTarget = new MockTargetAdapter('mock');
     mockController = new AgentController(mockTarget, { connectionConfig: { transportType: 'mock' }, timeoutMs: 30000, runId: 'test-run-id' });
     faultInjector = new FaultInjector();
   });
@@ -22,13 +22,19 @@ describe('ScenarioEngine', () => {
     const scenario: ScenarioDefinition = {
       id: 'test-scenario',
       name: 'Test Timeline',
-      agents: [],
+      participants: [
+        { participantId: 'sut-1', protocolRole: 'seller', ownership: 'EXTERNAL' }
+      ],
+      topology: { edges: [] },
+      testSubject: 'sut-1',
       actions: [
-        { type: 'act', payload: { type: 'ACTION_1' } },
-        { type: 'act', payload: { type: 'ACTION_2' } },
-        { type: 'act', payload: { type: 'ACTION_3' } },
+        { actor: 'sut-1', type: 'ACTION_1', payload: {} },
+        { actor: 'sut-1', type: 'ACTION_2', payload: {} },
+        { actor: 'sut-1', type: 'ACTION_3', payload: {} },
       ],
       faults: [],
+      invariants: [],
+      assertions: [],
       seed: 42,
     };
 
@@ -37,25 +43,31 @@ describe('ScenarioEngine', () => {
       scenarioId: 'test-scenario',
       seed: 42,
       startedAt: new Date(),
-      status: 'CREATED',
+      status: RunStatus.CREATED,
     };
 
     engine = new ScenarioEngine(scenario, context, mockController, faultInjector);
-    
+
     // Execute and verify no errors thrown
     await expect(engine.execute()).resolves.not.toThrow();
-    
+
     // Verify run status updated
-    expect(context.status).toBe('COMPLETED');
+    expect(context.status).toBe(RunStatus.COMPLETED);
   });
 
   it('should pass runId and seed to execution context', async () => {
     const scenario: ScenarioDefinition = {
       id: 'seed-test',
       name: 'Seed Test',
-      agents: [],
-      actions: [{ type: 'act', payload: { type: 'CHECK_SEED' } }],
+      participants: [
+        { participantId: 'sut-1', protocolRole: 'seller', ownership: 'EXTERNAL' }
+      ],
+      topology: { edges: [] },
+      testSubject: 'sut-1',
+      actions: [{ actor: 'sut-1', type: 'CHECK_SEED', payload: {} }],
       faults: [],
+      invariants: [],
+      assertions: [],
       seed: 999,
     };
 
@@ -64,7 +76,7 @@ describe('ScenarioEngine', () => {
       scenarioId: 'seed-test',
       seed: 999,
       startedAt: new Date(),
-      status: 'CREATED',
+      status: RunStatus.CREATED,
     };
 
     engine = new ScenarioEngine(scenario, context, mockController, faultInjector);
@@ -76,14 +88,21 @@ describe('ScenarioEngine', () => {
 
   it('should handle runtime failure gracefully', async () => {
     // Setup target to fail on send
-    mockTarget.send = vi.fn().mockRejectedValue(new Error('Simulated Failure'));
+    const originalSend = mockTarget.send;
+    mockTarget.send = async () => { throw new Error('Simulated Failure'); };
 
     const scenario: ScenarioDefinition = {
       id: 'fail-test',
       name: 'Failure Test',
-      agents: [],
-      actions: [{ type: 'act', payload: { type: 'FAIL_ACTION' } }],
+      participants: [
+        { participantId: 'sut-1', protocolRole: 'seller', ownership: 'EXTERNAL' }
+      ],
+      topology: { edges: [] },
+      testSubject: 'sut-1',
+      actions: [{ actor: 'sut-1', type: 'FAIL_ACTION', payload: {} }],
       faults: [],
+      invariants: [],
+      assertions: [],
       seed: 1,
     };
 
@@ -92,13 +111,16 @@ describe('ScenarioEngine', () => {
       scenarioId: 'fail-test',
       seed: 1,
       startedAt: new Date(),
-      status: 'CREATED',
+      status: RunStatus.CREATED,
     };
 
     engine = new ScenarioEngine(scenario, context, mockController, faultInjector);
-    
+
     // Should not throw unhandled error, but status should reflect failure or completion with errors
-    await expect(engine.execute()).resolves.not.toThrow(); 
+    await expect(engine.execute()).resolves.not.toThrow();
     // Depending on implementation, status might be FAILED or COMPLETED with error evidence
+
+    // Restore original send
+    mockTarget.send = originalSend;
   });
 });

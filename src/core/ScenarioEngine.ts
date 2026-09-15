@@ -1,42 +1,49 @@
+// ============================================================
+// src/core/ScenarioEngine.ts
+// ============================================================
+
 import { AgentController } from './AgentController';
-import { ScenarioDefinition, ScenarioAction } from './ScenarioDefinition';
+import { ScenarioDefinition, Action } from './ScenarioDefinition';
 import { RunContext, RunStatus } from './RunLifecycle';
 import { FaultInjector } from './FaultInjector';
+import { EvidenceCollector } from './EvidenceCollector';
 
 /**
- * Движок исполнения сценариев
+ * Движок исполнения сценариев.
+ *
+ * Собирает evidence из результатов действий.
+ * Знает actor (participantId), потому что это — семантика сценария.
+ * AgentController — транспорт, не знает про actor.
  */
 export class ScenarioEngine {
   private scenario: ScenarioDefinition;
   private context: RunContext;
   private controller: AgentController;
   private faultInjector: FaultInjector;
+  private evidenceCollector?: EvidenceCollector;
 
   constructor(
     scenario: ScenarioDefinition,
     context: RunContext,
     controller: AgentController,
-    faultInjector: FaultInjector
+    faultInjector: FaultInjector,
+    evidenceCollector?: EvidenceCollector
   ) {
     this.scenario = scenario;
     this.context = context;
     this.controller = controller;
     this.faultInjector = faultInjector;
+    this.evidenceCollector = evidenceCollector;
   }
 
   /**
-   * Запуск исполнения сценария
+   * Запуск исполнения сценария.
    */
   public async execute(): Promise<void> {
     this.context.status = RunStatus.RUNNING;
 
     try {
-      // Последовательное выполнение действий timeline
       for (const action of this.scenario.actions) {
-        if (this.context.status === RunStatus.FAILED) {
-          break;
-        }
-
         await this.executeAction(action);
       }
 
@@ -50,12 +57,12 @@ export class ScenarioEngine {
   }
 
   /**
-   * Выполнение одного действия
+   * Выполнение одного действия.
    */
-  private async executeAction(action: ScenarioAction): Promise<void> {
-    // Применение фолтов если есть
-    const fault = this.faultInjector.getFaultForAction(action.type);
-    
+  private async executeAction(action: Action): Promise<void> {
+    const eventType = `action_${action.type}`;
+    const fault = this.faultInjector.getFaultForEvent(eventType);
+
     if (fault) {
       await this.faultInjector.apply(fault, async () => {
         await this.performAction(action);
@@ -66,15 +73,54 @@ export class ScenarioEngine {
   }
 
   /**
-   * Непосредственное выполнение действия через контроллер
+   * Непосредственное выполнение действия через контроллер.
+   *
+   * После выполнения — собирает evidence:
+   * 1. Observations из exchange.metadata.observations
+   * 2. Engine event: action_<type>
+   *
+   * NOTE: Если outcome.exchange отсутствует (например, action завершился
+   * TIMEOUT), никакого fallback на action.type как observation не происходит.
    */
-  private async performAction(action: ScenarioAction): Promise<void> {
+  private async performAction(action: Action): Promise<void> {
     const payload = action.payload || {};
-    
-    // Используем контроллер для взаимодействия
-    await this.controller.act(this.context.runId, {
-      type: action.type,
-      payload
-    });
+    const outcome = await this.controller.act(action.type, payload);
+
+    if (!this.evidenceCollector) {
+      return;
+    }
+
+    const now = Date.now();
+
+    // 1. Observations из metadata
+    const observations =
+      (outcome.exchange?.metadata?.observations as string[]) || [];
+
+    for (const observationType of observations) {
+      this.evidenceCollector.collect(
+        {
+          source: this.scenario.testSubject,
+          type: observationType,
+          data: (outcome.exchange?.payload || {}) as Record<string, unknown>,
+          timestamp: now,
+        },
+        this.context.runId
+      );
+    }
+
+    // 2. Engine event: action был выполнен
+    this.evidenceCollector.collect(
+      {
+        source: 'engine',
+        type: `action_${action.type}`,
+        data: payload as Record<string, unknown>,
+        timestamp: now,
+      },
+      this.context.runId
+    );
   }
 }
+
+// ============================================================
+// КОНЕЦ ФАЙЛА
+// ============================================================

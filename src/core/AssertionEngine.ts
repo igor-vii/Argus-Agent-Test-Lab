@@ -1,16 +1,15 @@
-import { EvidenceRecord } from './EvidenceCollector';
-import { Assertion, AssertionGroup, AssertionResult, AssertionOperator } from './Assertions';
+import { Evidence } from './Evidence';
+import { Assertion, Verdict } from './Assertions';
 
 /**
  * Результат работы движка ассертов
  */
 export interface AssertionEngineResult {
-  status: AssertionResult;
+  status: 'PASS' | 'FAIL' | 'INCONCLUSIVE';
   reasons: string[];
   details: Array<{
-    assertionName: string;
-    result: AssertionResult;
-    reason?: string;
+    assertionId: string;
+    verdict: Verdict;
   }>;
 }
 
@@ -22,89 +21,54 @@ export class AssertionEngine {
    * Оценка набора ассертов против доказательств
    */
   public evaluate(
-    evidence: EvidenceRecord[],
-    assertions: Assertion[] | AssertionGroup
+    evidence: Evidence[],
+    assertions: Assertion[]
   ): AssertionEngineResult {
-    const results: Array<{
-      assertionName: string;
-      result: AssertionResult;
-      reason?: string;
+    const details: Array<{
+      assertionId: string;
+      verdict: Verdict;
     }> = [];
 
-    let assertionList: Assertion[];
-    let operator: AssertionOperator = 'ALL';
-
-    if ('assertions' in assertions) {
-      // Это группа
-      assertionList = assertions.assertions;
-      operator = assertions.operator;
-    } else {
-      // Это плоский список
-      assertionList = assertions as Assertion[];
-    }
-
     // Оцениваем каждый ассерт
-    for (const assertion of assertionList) {
-      const result = assertion.evaluate(evidence);
-      results.push({
-        assertionName: assertion.name,
-        result,
-        reason: assertion.getReason?.()
+    for (const assertion of assertions) {
+      const verdict = assertion.evaluate(evidence);
+      details.push({
+        assertionId: assertion.id,
+        verdict
       });
     }
 
-    // Агрегируем результаты согласно оператору
-    const finalStatus = this.aggregateResults(results, operator);
-    const reasons = results
-      .filter(r => r.reason)
-      .map(r => r.reason!);
+    // Агрегируем результаты (по умолчанию ALL — все должны пройти)
+    const finalStatus = this.aggregateResults(details);
+    const reasons = details
+      .filter(d => d.verdict.reason)
+      .map(d => d.verdict.reason!);
 
     return {
       status: finalStatus,
       reasons,
-      details: results
+      details
     };
   }
 
   /**
-   * Агрегация результатов по оператору ALL или ANY
+   * Агрегация результатов: все должны быть PASS для общего PASS
    */
   private aggregateResults(
-    results: Array<{ result: AssertionResult }>,
-    operator: AssertionOperator
-  ): AssertionResult {
-    const hasFail = results.some(r => r.result === 'FAIL');
-    const hasPass = results.some(r => r.result === 'PASS');
-    const hasInconclusive = results.some(r => r.result === 'INCONCLUSIVE');
+    details: Array<{ verdict: Verdict }>
+  ): 'PASS' | 'FAIL' | 'INCONCLUSIVE' {
+    const hasFail = details.some(d => d.verdict.status === 'FAIL');
+    const hasPass = details.every(d => d.verdict.status === 'PASS');
+    const hasInconclusive = details.some(d => d.verdict.status === 'INCONCLUSIVE');
 
-    if (operator === 'ALL') {
-      // Все должны быть PASS для общего PASS
-      // Любой FAIL делает общий результат FAIL
-      // Иначе INCONCLUSIVE
-      
-      if (hasFail) {
-        return 'FAIL';
-      }
-      
-      if (hasInconclusive) {
-        return 'INCONCLUSIVE';
-      }
-      
-      return 'PASS';
-    } else {
-      // ANY: хотя бы один PASS дает общий PASS
-      // Все FAIL дают общий FAIL
-      // Иначе INCONCLUSIVE
-      
-      if (hasPass) {
-        return 'PASS';
-      }
-      
-      if (hasFail && !hasInconclusive) {
-        return 'FAIL';
-      }
-      
+    if (hasFail) {
+      return 'FAIL';
+    }
+    
+    if (hasInconclusive) {
       return 'INCONCLUSIVE';
     }
+    
+    return hasPass ? 'PASS' : 'INCONCLUSIVE';
   }
 }

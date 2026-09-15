@@ -5,7 +5,7 @@
  * to connect to any target agent and exchange observable data.
  * 
  * PRINCIPLES:
- * - ATA does NOT know about Secretariat, payment, settlement, escrow, etc.
+ * - ATA does NOT know about any specific target (payment processors, oracles, escrow services, etc.)
  * - ATA does NOT interpret economic semantics
  * - ATA is purely a connectivity/observation port
  * - Semantic interpretation happens above ATA in Argus Core
@@ -166,7 +166,7 @@ export interface AgentTargetPort {
   
   /**
    * Get the type of target this adapter connects to
-   * (e.g., 'secretariat', 'insurance', 'external-agent')
+   * (e.g., 'payment-processor', 'oracle', 'external-agent')
    * This is for identification/logging only - no semantic assumptions
    */
   getTargetType(): string;

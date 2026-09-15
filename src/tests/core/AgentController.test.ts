@@ -8,7 +8,7 @@
  * - C4: No automatic retry
  * - C5: Proper disconnect on failure
  * - C6: Works through AgentTargetPort abstraction
- * - C7: Target-agnostic (no Secretariat-specific logic)
+ * - C7: Target-agnostic (no scenario-specific participantIds)
  */
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
@@ -263,18 +263,23 @@ describe('AgentController', () => {
   // C4 — no automatic retry
   describe('C4: No automatic retry', () => {
     it('should NOT retry failed actions automatically', async () => {
-      mockPort.setShouldFail(true);
-      
+      // Сначала подключаемся успешно
       await controller.connect();
       
-      // Устанавливаем runId, так как это требуется для act()
+      // Устанавливаем runId
       controller.setRunId('test-run-c4');
+      
+      // Теперь устанавливаем ошибку только для send
+      mockPort.setShouldFail(true);
       
       const outcome = await controller.act('action');
       
       // Verify send was called only once (no retry)
       expect(mockPort.getCallCount('send')).toBe(1);
       expect(outcome.status).toBe(ExchangeStatus.FAILURE);
+      
+      // Сбрасываем флаг ошибки
+      mockPort.setShouldFail(false);
     });
 
     it('should NOT retry on timeout', async () => {
@@ -319,14 +324,18 @@ describe('AgentController', () => {
     it('should handle cleanup when act fails in executeInteraction', async () => {
       // Set up fresh mock that succeeds on connect but fails on send
       const freshMock = new MockTargetPort();
+      
+      // Override send to throw an error
+      const originalSend = freshMock.send.bind(freshMock);
+      freshMock.send = async (runId: string, type: string, payload?: unknown) => {
+        throw new Error('Simulated send failure');
+      };
+      
       const controller3 = new AgentController(freshMock, {
         connectionConfig: testConfig,
         timeoutMs: 1000,
         runId: 'test-run-999',
       });
-      
-      // Make it fail on send
-      freshMock.setShouldFail(true);
       
       const outcome = await controller3.executeInteraction('action');
       
@@ -364,9 +373,9 @@ describe('AgentController', () => {
 
   // C7 — target agnostic
   describe('C7: Target-agnostic behavior', () => {
-    it('should not contain Secretariat-specific logic', () => {
-      // Controller code should not reference Secretariat
-      // This is verified by inspection - no "secretariat" strings in Controller
+    it('should not contain scenario-specific participantIds', () => {
+      // Controller code should not reference any participantId from scenarios (e.g., 'sut-1', 'buyer-1', 'seller-1')
+      // This is verified by inspection - no hardcoded participant strings in Controller
       expect(controller.getRunId()).toBe('test-run-123');
       // Controller treats all targets uniformly
     });
@@ -391,26 +400,6 @@ describe('AgentController', () => {
   });
 
   // Additional tests
-  describe('Evidence capture', () => {
-    it('should capture evidence during interaction', async () => {
-      await controller.connect();
-      
-      const evidence = await controller.captureEvidence('test-evidence', { key: 'value' }, 'Test description');
-      
-      expect(evidence).toBeDefined();
-      expect(evidence?.type).toBe('test-evidence');
-      expect(evidence?.description).toBe('Test description');
-    });
-
-    it('should continue interaction even if evidence capture fails', async () => {
-      // This test verifies that evidence capture failure doesn't break the flow
-      await controller.connect();
-      
-      // Normal act should work regardless of evidence capture
-      const outcome = await controller.act('test');
-      expect(outcome.status).toBe(ExchangeStatus.SUCCESS);
-    });
-  });
 
   describe('RunId management', () => {
     it('should require runId before operations', async () => {

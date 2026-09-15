@@ -6,7 +6,7 @@
  * any HTTP-based target agent through configuration.
  * 
  * PRINCIPLES:
- * - Does NOT know about Secretariat, payment, or business semantics
+ * - Does NOT know about any specific target, payment, or business semantics
  * - Only handles HTTP transport concerns (URL, method, headers, status codes)
  * - Returns raw response data; interpretation happens in Argus Core
  */
