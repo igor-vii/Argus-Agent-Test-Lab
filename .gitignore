@@ -1,28 +1,38 @@
-```
 # Dependencies
 node_modules/
-
-# Environment
-.env
-.env.local
-.env.*
 
 # Build artifacts
 dist/
 build/
 target/
+*.tsbuildinfo
 
-# Logs
+# Cache
+.cache/
+.vite/
+
+# Logs and temp files
 *.log
-
-# Temporary files
 *.tmp
-*.swp
+*.temp
 
-# IDE
+# Environment
+.env
+.env.local
+*.env.*
+
+# Editors
 .vscode/
 .idea/
+*.swp
+*.swo
 
-# Package manager
-package-lock.json
-```
+# Test coverage
+coverage/
+htmlcov/
+.coverage
+
+# OS
+.DS_Store
+Thumbs.db
+!.env.example
