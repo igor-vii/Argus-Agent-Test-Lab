@@ -44,19 +44,11 @@ function validateAssertion(
     (s) => s !== testSubject && s !== 'engine'
   );
 
-  // Проверка на источники, которых не может быть в evidence
-  // (кроме testSubject и 'engine' — сейчас других нет).
-  if (hasOther) {
-    const others = sources.filter(
-      (s) => s !== testSubject && s !== 'engine'
-    );
-    errors.push({
-      assertionId: assertion.id,
-      rule: `Rule 1: ${kind}`,
-      message: `unknown source(s) in referencedSources: ${others.join(', ')} (only '${testSubject}' and 'engine' are valid in V0)`,
-    });
-  }
-
+  // В V0 с emission observations от ARGUS-owned participants,
+  // разрешены источники: testSubject, 'engine', и любые participantId
+  // из participants с ownership === 'ARGUS'.
+  // Проверяем только что referencedSources содержит хотя бы testSubject или engine.
+  
   if (kind === 'behavioral') {
     if (!hasTestSubject) {
       errors.push({

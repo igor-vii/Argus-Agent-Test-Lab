@@ -7,6 +7,7 @@ import { ScenarioDefinition, Action } from './ScenarioDefinition';
 import { RunContext, RunStatus } from './RunLifecycle';
 import { FaultInjector } from './FaultInjector';
 import { EvidenceCollector } from './EvidenceCollector';
+import { Observation } from './Evidence';
 
 /**
  * Движок исполнения сценариев.
@@ -63,10 +64,16 @@ export class ScenarioEngine {
     const eventType = `action_${action.type}`;
     const fault = this.faultInjector.getFaultForEvent(eventType);
 
+    const emitCallback = (observation: Observation) => {
+      this.evidenceCollector?.collect(observation, this.context.runId);
+    };
+
     if (fault) {
-      await this.faultInjector.apply(fault, async () => {
-        await this.performAction(action);
-      });
+      await this.faultInjector.apply(
+        fault,
+        async () => { await this.performAction(action); },
+        emitCallback
+      );
     } else {
       await this.performAction(action);
     }
