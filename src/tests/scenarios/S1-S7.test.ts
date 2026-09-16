@@ -62,7 +62,7 @@ describe('Canonical Scenarios S1-S7', () => {
     }
   });
 
-  it('S2 - should pass validation (Rule 1 updated for V0 emission)', () => {
+  it('S2 - should pass validation (ARGUS-owned participants are valid sources)', () => {
     const result = validateScenario(S2_PaymentBeforeExecution);
     expect(result.valid).toBe(true);
     expect(result.errors.length).toBe(0);

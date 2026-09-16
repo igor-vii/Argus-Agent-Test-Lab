@@ -47,6 +47,16 @@ export const S7_LostDelivery: ScenarioDefinition = {
       // "target ответил" — см. Temporal Trust Boundary addendum.
     },
     {
+      // sut-1 — testSubject (EXTERNAL), но его реакция на
+      // потерянный ответ (delivery_unknown) тоже approximated:
+      // Mock не даёт реального таймаута "ответ не пришёл".
+      target: { kind: 'participant', participantId: 'sut-1' },
+      type: 'respond',
+      trigger: 'action_request_payment',
+      config: { emit: 'delivery_unknown' },
+      approximated: true,
+    },
+    {
       // edge fault — реальный сбой: то, что respond честно
       // отправил, теряется на канале.
       target: { kind: 'edge', from: 'seller-1', to: 'sut-1' },

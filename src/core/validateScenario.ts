@@ -6,8 +6,8 @@ import { Assertion, AssertionKind } from './Assertions';
  */
 export interface ValidationError {
   assertionId: string;
-  rule: string;      // 'Rule 1: behavioral' | 'Rule 1: engine-behavior' | 'Rule 1: mixed'
-  message: string;   // человекочитаемое описание
+  rule: string;
+  message: string;
 }
 
 /**
@@ -21,12 +21,17 @@ export interface ValidationResult {
 /**
  * Проверка Rule 1 для одного assertion.
  *
+ * validSources — множество легальных source'ов для этого сценария:
+ * - testSubject (наблюдения target'а)
+ * - 'engine' (engine events)
+ * - participantId любого участника с ownership === 'ARGUS'
+ *   (эмиссия через respond-fault)
+ *
  * Возвращает массив ошибок (пустой, если assertion валиден).
- * Проверка запускается ТОЛЬКО если referencedSources присутствует
- * (переходный период 8a).
  */
 function validateAssertion(
   assertion: Assertion,
+  validSources: Set<string>,
   testSubject: string
 ): ValidationError[] {
   const errors: ValidationError[] = [];
@@ -40,15 +45,18 @@ function validateAssertion(
   const kind: AssertionKind = assertion.kind ?? 'behavioral';
   const hasTestSubject = sources.includes(testSubject);
   const hasEngine = sources.includes('engine');
-  const hasOther = sources.some(
-    (s) => s !== testSubject && s !== 'engine'
-  );
 
-  // В V0 с emission observations от ARGUS-owned participants,
-  // разрешены источники: testSubject, 'engine', и любые participantId
-  // из participants с ownership === 'ARGUS'.
-  // Проверяем только что referencedSources содержит хотя бы testSubject или engine.
-  
+  // Проверка на нелегальные источники.
+  const invalid = sources.filter((s) => !validSources.has(s));
+  if (invalid.length > 0) {
+    const validList = Array.from(validSources).join("', '");
+    errors.push({
+      assertionId: assertion.id,
+      rule: `Rule 1: ${kind}`,
+      message: `unknown source(s) in referencedSources: ${invalid.join(', ')} (valid sources for this scenario: '${validList}')`,
+    });
+  }
+
   if (kind === 'behavioral') {
     if (!hasTestSubject) {
       errors.push({
@@ -94,6 +102,11 @@ function validateAssertion(
 
 /**
  * Валидация сценария. Проверяет Rule 1 для всех assertions.
+ *
+ * Легальные source'ы:
+ * - testSubject
+ * - 'engine'
+ * - participantId любого участника с ownership === 'ARGUS'
  */
 export function validateScenario(
   scenario: ScenarioDefinition
@@ -101,8 +114,17 @@ export function validateScenario(
   const errors: ValidationError[] = [];
   const testSubject = scenario.testSubject;
 
+  const validSources = new Set<string>();
+  validSources.add(testSubject);
+  validSources.add('engine');
+  for (const participant of scenario.participants) {
+    if (participant.ownership === 'ARGUS') {
+      validSources.add(participant.participantId);
+    }
+  }
+
   for (const assertion of scenario.assertions) {
-    errors.push(...validateAssertion(assertion, testSubject));
+    errors.push(...validateAssertion(assertion, validSources, testSubject));
   }
 
   return {
