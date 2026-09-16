@@ -2,6 +2,27 @@
 # Dependencies
 node_modules/
 
+# Environment
+.env
+.env.local
+.env.*
+
 # Build artifacts
-node_modules/.vite/
+dist/
+build/
+target/
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.swp
+
+# IDE
+.vscode/
+.idea/
+
+# Package manager
+package-lock.json
 ```
