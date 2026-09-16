@@ -5,7 +5,7 @@ import { Observation } from './Evidence';
  * Инжектор фолтов (сбоев) для тестирования
  */
 export class FaultInjector {
-  private faults: Map<string, Fault> = new Map();
+  private faults: Map<string, Fault[]> = new Map();
 
   constructor(faults: Fault[] = []) {
     for (const fault of faults) {
@@ -18,14 +18,17 @@ export class FaultInjector {
    */
   public registerFault(fault: Fault): void {
     const key = fault.trigger;
-    this.faults.set(key, fault);
+    const existing = this.faults.get(key) ?? [];
+    existing.push(fault);
+    this.faults.set(key, existing);
   }
 
   /**
-   * Получение фолта для события (engine event)
+   * Получение всех fault'ов для события (engine event).
+   * Возвращает пустой массив, если ничего не зарегистрировано.
    */
-  public getFaultForEvent(eventType: string): Fault | undefined {
-    return this.faults.get(eventType);
+  public getFaultsForEvent(eventType: string): Fault[] {
+    return this.faults.get(eventType) ?? [];
   }
 
   /**
