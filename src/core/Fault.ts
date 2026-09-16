@@ -16,4 +16,11 @@ export interface Fault {
   type: string;                          // fault type
   trigger: string;                       // eventType, на который реагирует fault
   config: Record<string, unknown>;
+  /**
+   * true — trigger не отражает реальный момент события 1:1,
+   * approximation из-за ограничений Mock-режима.
+   * Не влияет на runtime — metadata для аудита
+   * (Temporal Trust Boundary).
+   */
+  approximated?: boolean;
 }

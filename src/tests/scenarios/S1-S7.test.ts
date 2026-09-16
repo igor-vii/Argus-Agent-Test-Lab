@@ -62,10 +62,10 @@ describe('Canonical Scenarios S1-S7', () => {
     }
   });
 
-  it('S2 - should fail validation (Rule 1: unknown source seller-1)', () => {
+  it('S2 - should pass validation (ARGUS-owned participants are valid sources)', () => {
     const result = validateScenario(S2_PaymentBeforeExecution);
-    expect(result.valid).toBe(false);
-    expect(result.errors.some(e => e.message.includes('seller-1'))).toBe(true);
+    expect(result.valid).toBe(true);
+    expect(result.errors.length).toBe(0);
   });
 
   it('S6 - should be inconclusive (scaffolding)', async () => {

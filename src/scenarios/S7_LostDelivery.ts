@@ -3,7 +3,7 @@ import { ScenarioDefinition } from '../core/ScenarioDefinition';
 export const S7_LostDelivery: ScenarioDefinition = {
   id: 'S7',
   name: 'Lost Delivery',
-  description: 'Seller фактически ответил, но ответ потерян на канале seller-1 → sut-1',
+  description: 'Seller фактически отвечает (respond), но ответ теряется на edge seller-1 → sut-1',
 
   participants: [
     { participantId: 'buyer-1', protocolRole: 'BUYER', ownership: 'ARGUS' },
@@ -35,6 +35,23 @@ export const S7_LostDelivery: ScenarioDefinition = {
 
   faults: [
     {
+      // respond — НЕ fault по смыслу (baseline-поведение participant'а),
+      // живёт здесь ради единообразия механизма emission
+      // (FaultInjector.apply + callback).
+      target: { kind: 'participant', participantId: 'seller-1' },
+      type: 'respond',
+      trigger: 'action_request_payment',
+      config: { emit: 'delivery_sent' },
+      approximated: true,
+      // Mock-режим не различает "переслано seller-1" от
+      // "target ответил" — см. Temporal Trust Boundary addendum.
+    },
+    {
+      // В Mock-режиме V0 этот fault семантически объявлен,
+      // но не имеет наблюдаемого эффекта: нет пути от
+      // emission seller-1 к reception sut-1, который можно
+      // дропнуть. Станет содержательным при HTTP-интеграции —
+      // см. ROADMAP backlog.
       target: { kind: 'edge', from: 'seller-1', to: 'sut-1' },
       type: 'lost_delivery',
       trigger: 'delivery_sent',
@@ -45,7 +62,7 @@ export const S7_LostDelivery: ScenarioDefinition = {
   invariants: [
     {
       id: 'lost_response_yields_unknown_not_duplicate',
-      description: 'Seller фактически отправил ответ (наблюдается со стороны seller-1), но test subject его не получил. Состояние — DELIVERY_UNKNOWN, платёж не дублируется, допустим повторный запрос к seller (не платёж).',
+      description: 'Seller фактически отправил ответ (respond), но secretariat его не получил (edge fault). Состояние — DELIVERY_UNKNOWN, платёж не дублируется, допустим повторный запрос к seller (не платёж).',
     },
   ],
 
@@ -62,7 +79,7 @@ export const S7_LostDelivery: ScenarioDefinition = {
         const sutReceived = evidence.find(
           (e) => e.source === 'sut-1' && e.type === 'delivery_received'
         );
-        if (sutReceived) return { status: 'FAIL', reason: 'fault did not actually drop the response — test setup invalid' };
+        if (sutReceived) return { status: 'FAIL', reason: 'edge fault did not actually drop the response — test setup invalid' };
 
         const duplicatePayment = evidence.filter(
           (e) => e.source === 'sut-1' && e.type === 'payment_settled'

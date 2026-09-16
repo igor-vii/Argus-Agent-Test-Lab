@@ -1,10 +1,11 @@
 import { Fault } from './Fault';
+import { Observation } from './Evidence';
 
 /**
  * Инжектор фолтов (сбоев) для тестирования
  */
 export class FaultInjector {
-  private faults: Map<string, Fault> = new Map();
+  private faults: Map<string, Fault[]> = new Map();
 
   constructor(faults: Fault[] = []) {
     for (const fault of faults) {
@@ -17,32 +18,43 @@ export class FaultInjector {
    */
   public registerFault(fault: Fault): void {
     const key = fault.trigger;
-    this.faults.set(key, fault);
+    const existing = this.faults.get(key) ?? [];
+    existing.push(fault);
+    this.faults.set(key, existing);
   }
 
   /**
-   * Получение фолта для события (engine event)
+   * Получение всех fault'ов для события (engine event).
+   * Возвращает пустой массив, если ничего не зарегистрировано.
    */
-  public getFaultForEvent(eventType: string): Fault | undefined {
-    return this.faults.get(eventType);
+  public getFaultsForEvent(eventType: string): Fault[] {
+    return this.faults.get(eventType) ?? [];
   }
 
   /**
    * Применение фолта к операции
    */
-  public async apply<T>(fault: Fault, operation: () => Promise<T>): Promise<T> {
+  public async apply<T>(
+    fault: Fault,
+    operation: () => Promise<T>,
+    emit?: (observation: Observation) => void
+  ): Promise<T> {
+    const source = fault.target.kind === 'participant'
+      ? fault.target.participantId
+      : null;
+
     switch (fault.type) {
       case 'duplicate_request':
         return this.handleDuplicateRequest(operation, fault.config);
 
       case 'delayed_response':
-        return this.handleDelayedResponse(operation, fault.config);
+        return this.handleDelayedResponse(operation, fault.config, source, emit);
 
       case 'crash':
         return this.handleCrash(operation, fault.config);
 
       case 'hang':
-        return this.handleHang(operation, fault.config);
+        return this.handleHang(operation, fault.config, source, emit);
 
       case 'concurrent_request':
         return this.handleConcurrentRequest(operation, fault.config);
@@ -52,6 +64,9 @@ export class FaultInjector {
 
       case 'lost_delivery':
         return this.handleLostDelivery(operation, fault.config);
+
+      case 'respond':
+        return this.handleRespond(operation, fault.config, source, emit);
 
       default:
         return operation();
@@ -74,9 +89,30 @@ export class FaultInjector {
   /**
    * Задержка выполнения
    */
-  private async handleDelayedResponse<T>(operation: () => Promise<T>, config?: Record<string, unknown>): Promise<T> {
+  private async handleDelayedResponse<T>(
+    operation: () => Promise<T>,
+    config?: Record<string, unknown>,
+    source?: string | null,
+    emit?: (observation: Observation) => void
+  ): Promise<T> {
     const delayMs = (config?.['delay_ms'] as number) || 5000;
+    if (emit && source) {
+      emit({
+        source,
+        type: 'delivery_started',
+        data: {},
+        timestamp: Date.now(),
+      });
+    }
     await this.sleep(delayMs);
+    if (emit && source) {
+      emit({
+        source,
+        type: 'delivery_completed',
+        data: {},
+        timestamp: Date.now(),
+      });
+    }
     return operation();
   }
 
@@ -93,19 +129,28 @@ export class FaultInjector {
   /**
    * Таймаут (зависание)
    */
-  private async handleHang<T>(operation: () => Promise<T>, config?: Record<string, unknown>): Promise<T> {
+  private async handleHang<T>(
+    operation: () => Promise<T>,
+    config?: Record<string, unknown>,
+    source?: string | null,
+    emit?: (observation: Observation) => void
+  ): Promise<T> {
     const durationMs = (config?.['duration_ms'] as number) || -1;
-
-    if (durationMs < 0) {
-      // Никогда не разрешается
-      return new Promise<T>(() => { /* intentionally never resolves */ });
+    if (emit && source) {
+      emit({
+        source,
+        type: 'delivery_started',
+        data: {},
+        timestamp: Date.now(),
+      });
     }
-
+    if (durationMs < 0) {
+      return new Promise<T>(() => {});
+    }
     return new Promise<T>((resolve, reject) => {
       const timer = setTimeout(() => {
         reject(new Error('Hang timeout'));
       }, durationMs);
-
       operation()
         .then(result => {
           clearTimeout(timer);
@@ -160,6 +205,31 @@ export class FaultInjector {
     }
 
     return result;
+  }
+
+  /**
+   * Respond — НЕ fault по смыслу (baseline-поведение participant'а),
+   * живёт здесь ради единообразия механизма emission
+   * (FaultInjector.apply + callback).
+   */
+  private async handleRespond<T>(
+    operation: () => Promise<T>,
+    config?: Record<string, unknown>,
+    source?: string | null,
+    emit?: (observation: Observation) => void
+  ): Promise<T> {
+    if (emit && source) {
+      const emitType = config?.['emit'] as string | undefined;
+      if (emitType) {
+        emit({
+          source,
+          type: emitType,
+          data: {},
+          timestamp: Date.now(),
+        });
+      }
+    }
+    return operation();
   }
 
   /**

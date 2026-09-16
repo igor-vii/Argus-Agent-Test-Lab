@@ -7,6 +7,7 @@ import { ScenarioDefinition, Action } from './ScenarioDefinition';
 import { RunContext, RunStatus } from './RunLifecycle';
 import { FaultInjector } from './FaultInjector';
 import { EvidenceCollector } from './EvidenceCollector';
+import { Observation } from './Evidence';
 
 /**
  * Движок исполнения сценариев.
@@ -61,15 +62,30 @@ export class ScenarioEngine {
    */
   private async executeAction(action: Action): Promise<void> {
     const eventType = `action_${action.type}`;
-    const fault = this.faultInjector.getFaultForEvent(eventType);
+    const faults = this.faultInjector.getFaultsForEvent(eventType);
 
-    if (fault) {
-      await this.faultInjector.apply(fault, async () => {
-        await this.performAction(action);
-      });
-    } else {
+    const emitCallback = (observation: Observation) => {
+      this.evidenceCollector?.collect(observation, this.context.runId);
+    };
+
+    const baseOperation = async () => {
       await this.performAction(action);
+    };
+
+    if (faults.length === 0) {
+      await baseOperation();
+      return;
     }
+
+    // Применяем fault'ы цепочкой: fault1(fault2(...faultN(operation))).
+    // reduceRight — правый свёртыватель: последний fault оборачивает
+    // operation первым, первый fault — последним (снаружи).
+    const chained = faults.reduceRight<() => Promise<void>>(
+      (op, fault) => () => this.faultInjector.apply(fault, op, emitCallback),
+      baseOperation
+    );
+
+    await chained();
   }
 
   /**
