@@ -1,5 +1,6 @@
 import { ScenarioDefinition } from './ScenarioDefinition';
 import { AgentController } from './AgentController';
+import { EvidenceRecord } from './EvidenceCollector';
 import { Assertion } from './Assertions';
 import { RunResult } from './RunLifecycle';
 import { AgentTargetPort } from './AgentTargetPort';
@@ -23,5 +24,10 @@ export declare class RunOrchestrator {
      * Запуск полного прогона сценария.
      */
     run(): Promise<RunResult>;
+    /**
+     * Get all evidence records collected during the run.
+     * Intended for tests and debugging.
+     */
+    getEvidence(): EvidenceRecord[];
 }
 //# sourceMappingURL=RunOrchestrator.d.ts.map

@@ -96,6 +96,13 @@ export class RunOrchestrator {
             };
         }
     }
+    /**
+     * Get all evidence records collected during the run.
+     * Intended for tests and debugging.
+     */
+    getEvidence() {
+        return this.evidenceCollector.getAllRecords();
+    }
 }
 // ============================================================
 // КОНЕЦ ФАЙЛА

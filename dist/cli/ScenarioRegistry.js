@@ -5,6 +5,7 @@ import { S4_SellerTimeout } from '../scenarios/S4_SellerTimeout';
 import { S5_ConcurrentDuplicate } from '../scenarios/S5_ConcurrentDuplicate';
 import { S6_PaymentRetry } from '../scenarios/S6_PaymentRetry';
 import { S7_LostDelivery } from '../scenarios/S7_LostDelivery';
+import { S8_X402Payment } from '../scenarios/S8_X402Payment';
 /**
  * Реестр сценариев
  */
@@ -15,7 +16,8 @@ export const ScenarioRegistry = new Map([
     ['S4', S4_SellerTimeout],
     ['S5', S5_ConcurrentDuplicate],
     ['S6', S6_PaymentRetry],
-    ['S7', S7_LostDelivery]
+    ['S7', S7_LostDelivery],
+    ['S8', S8_X402Payment]
 ]);
 /**
  * Получить все ID сценариев

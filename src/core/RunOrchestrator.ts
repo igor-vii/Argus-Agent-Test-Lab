@@ -6,7 +6,7 @@ import { ScenarioEngine } from './ScenarioEngine';
 import { ScenarioDefinition } from './ScenarioDefinition';
 import { AgentController } from './AgentController';
 import { FaultInjector } from './FaultInjector';
-import { EvidenceCollector } from './EvidenceCollector';
+import { EvidenceCollector, EvidenceRecord } from './EvidenceCollector';
 import { AssertionEngine } from './AssertionEngine';
 import { Assertion } from './Assertions';
 import { RunContext, RunStatus, RunResult, generateRunId } from './RunLifecycle';
@@ -128,6 +128,14 @@ export class RunOrchestrator {
         }
       };
     }
+  }
+
+  /**
+   * Get all evidence records collected during the run.
+   * Intended for tests and debugging.
+   */
+  getEvidence(): EvidenceRecord[] {
+    return this.evidenceCollector.getAllRecords();
   }
 }
 

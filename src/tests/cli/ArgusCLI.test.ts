@@ -13,7 +13,8 @@ describe('Argus CLI', () => {
     expect(ids).toContain('S5');
     expect(ids).toContain('S6');
     expect(ids).toContain('S7');
-    expect(ids.length).toBe(7);
+    expect(ids).toContain('S8');
+    expect(ids.length).toBe(8);
   });
 
   it('should throw on unknown scenario', async () => {
