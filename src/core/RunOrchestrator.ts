@@ -11,6 +11,8 @@ import { AssertionEngine } from './AssertionEngine';
 import { Assertion } from './Assertions';
 import { RunContext, RunStatus, RunResult, generateRunId } from './RunLifecycle';
 import { AgentTargetPort } from './AgentTargetPort';
+import { PaymentAdapter } from '../adapters/payment/PaymentAdapter';
+import { PaymentResolver } from './ScenarioEngine';
 
 /**
  * Оркестратор запуска тестового прогона.
@@ -25,12 +27,14 @@ export class RunOrchestrator {
   private evidenceCollector: EvidenceCollector;
   private assertionEngine: AssertionEngine;
   private assertions: Assertion[];
+  private paymentAdapter?: PaymentAdapter;
 
   constructor(
     scenario: ScenarioDefinition,
     controller: AgentController,
     targetPort: AgentTargetPort,
-    assertions: Assertion[]
+    assertions: Assertion[],
+    paymentAdapter?: PaymentAdapter
   ) {
     this.scenario = scenario;
     this.controller = controller;
@@ -38,6 +42,7 @@ export class RunOrchestrator {
     this.evidenceCollector = new EvidenceCollector();
     this.assertionEngine = new AssertionEngine();
     this.assertions = assertions;
+    this.paymentAdapter = paymentAdapter;
   }
 
   /**
@@ -60,12 +65,32 @@ export class RunOrchestrator {
 
       const faultInjector = new FaultInjector(this.scenario.faults);
 
+      // Build payment resolver if paymentAdapter is provided.
+      // Otherwise, ScenarioEngine records PAYMENT_REQUIRED as evidence and continues.
+      let paymentResolver: PaymentResolver | undefined;
+      if (this.paymentAdapter) {
+        const adapter = this.paymentAdapter;
+        paymentResolver = async (paymentRequired) => {
+          return adapter.signX402Payment(paymentRequired);
+        };
+      } else if (typeof (this.targetPort as any).sendWithSignature === 'function') {
+        // Target port supports payments, but no paymentAdapter was provided.
+        // This may be intentional (adversarial scenario: buyer refuses to pay),
+        // so we warn instead of throwing.
+        console.warn(
+          `[RunOrchestrator] Target port supports payments (PaymentCapablePort), ` +
+          `but no paymentAdapter was provided. PAYMENT_REQUIRED responses will be ` +
+          `recorded as evidence and the run will continue.`
+        );
+      }
+
       const engine = new ScenarioEngine(
         this.scenario,
         context,
         this.controller,
         faultInjector,
-        this.evidenceCollector
+        this.evidenceCollector,
+        paymentResolver
       );
 
       await engine.execute();

@@ -19,13 +19,15 @@ export class RunOrchestrator {
     evidenceCollector;
     assertionEngine;
     assertions;
-    constructor(scenario, controller, targetPort, assertions) {
+    paymentAdapter;
+    constructor(scenario, controller, targetPort, assertions, paymentAdapter) {
         this.scenario = scenario;
         this.controller = controller;
         this.targetPort = targetPort;
         this.evidenceCollector = new EvidenceCollector();
         this.assertionEngine = new AssertionEngine();
         this.assertions = assertions;
+        this.paymentAdapter = paymentAdapter;
     }
     /**
      * Запуск полного прогона сценария.
@@ -43,7 +45,24 @@ export class RunOrchestrator {
         try {
             await this.controller.connect();
             const faultInjector = new FaultInjector(this.scenario.faults);
-            const engine = new ScenarioEngine(this.scenario, context, this.controller, faultInjector, this.evidenceCollector);
+            // Build payment resolver if paymentAdapter is provided.
+            // Otherwise, ScenarioEngine records PAYMENT_REQUIRED as evidence and continues.
+            let paymentResolver;
+            if (this.paymentAdapter) {
+                const adapter = this.paymentAdapter;
+                paymentResolver = async (paymentRequired) => {
+                    return adapter.signX402Payment(paymentRequired);
+                };
+            }
+            else if (typeof this.targetPort.sendWithSignature === 'function') {
+                // Target port supports payments, but no paymentAdapter was provided.
+                // This may be intentional (adversarial scenario: buyer refuses to pay),
+                // so we warn instead of throwing.
+                console.warn(`[RunOrchestrator] Target port supports payments (PaymentCapablePort), ` +
+                    `but no paymentAdapter was provided. PAYMENT_REQUIRED responses will be ` +
+                    `recorded as evidence and the run will continue.`);
+            }
+            const engine = new ScenarioEngine(this.scenario, context, this.controller, faultInjector, this.evidenceCollector, paymentResolver);
             await engine.execute();
             await this.controller.disconnect();
             const evidence = this.evidenceCollector.getEvidenceSet(runId);
