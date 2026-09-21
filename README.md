@@ -1,6 +1,6 @@
-Zeus Agent Test Lab
+Argus Agent Test Lab
 
-**Zeus Agent Test Lab** is a modular infrastructure for testing AI-agent protocols, agent-based applications, payment flows, and trust systems under normal, degraded, adversarial, and chaotic conditions.
+**Argus Agent Test Lab** is a modular infrastructure for testing AI-agent protocols, agent-based applications, payment flows, and trust systems under normal, degraded, adversarial, and chaotic conditions.
 
 The first target is the **Zeus Secretariat**.
 
@@ -12,7 +12,7 @@ The long-term goal is to turn the laboratory into a reusable **AI Agent Testing 
 
 Most systems are tested against expected behavior.
 
-Zeus Agent Test Lab is designed to test what happens when agents behave badly, networks become unreliable, payments are delayed or abandoned, requests are duplicated, responses disappear, and multiple failures happen at the same time.
+Argus Agent Test Lab is designed to test what happens when agents behave badly, networks become unreliable, payments are delayed or abandoned, requests are duplicated, responses disappear, and multiple failures happen at the same time.
 
 The laboratory should be able to create a controlled **perfect storm** and determine whether the target system preserves its economic, state, execution, and evidence invariants.
 
@@ -712,16 +712,14 @@ Give us an agent/workflow. We'll put it through a controlled failure scenario an
 
 Но ориентир рынка уже показывает, что AI adversarial testing продаётся не как дешёвый developer utility, а может продаваться как assurance/security engagement: например, публичные предложения сейчас находятся от тысяч долларов за fixed audit до нескольких тысяч долларов в месяц за recurring assurance. 
 
-Мой выбор
+
 Сейчас: Managed Audit.
 
 После подтверждения спроса: Managed Audit + Continuous Testing.
 
 Долгосрочно: Self-Service Agent Testing Platform.
 
-И я бы вообще не делал ставку на чистую модель «аренда агента за X запросов». Это слишком легко превратить в товар с ценой за API calls.
-
-Наша ценность гораздо выше:
+Наша ценность:
 
 не количество запросов, а количество проверенных инвариантов и найденных воспроизводимых failure modes.
 
