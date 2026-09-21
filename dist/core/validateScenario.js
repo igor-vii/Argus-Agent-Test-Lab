@@ -1,0 +1,102 @@
+/**
+ * Проверка Rule 1 для одного assertion.
+ *
+ * validSources — множество легальных source'ов для этого сценария:
+ * - testSubject (наблюдения target'а)
+ * - 'engine' (engine events)
+ * - participantId любого участника с ownership === 'ARGUS'
+ *   (эмиссия через respond-fault)
+ *
+ * Возвращает массив ошибок (пустой, если assertion валиден).
+ */
+function validateAssertion(assertion, validSources, testSubject) {
+    const errors = [];
+    const sources = assertion.referencedSources;
+    // Переходный период: если поле отсутствует — проверка не запускается.
+    if (sources === undefined) {
+        return errors;
+    }
+    const kind = assertion.kind ?? 'behavioral';
+    const hasTestSubject = sources.includes(testSubject);
+    const hasEngine = sources.includes('engine');
+    // Проверка на нелегальные источники.
+    const invalid = sources.filter((s) => !validSources.has(s));
+    if (invalid.length > 0) {
+        const validList = Array.from(validSources).join("', '");
+        errors.push({
+            assertionId: assertion.id,
+            rule: `Rule 1: ${kind}`,
+            message: `unknown source(s) in referencedSources: ${invalid.join(', ')} (valid sources for this scenario: '${validList}')`,
+        });
+    }
+    if (kind === 'behavioral') {
+        if (!hasTestSubject) {
+            errors.push({
+                assertionId: assertion.id,
+                rule: 'Rule 1: behavioral',
+                message: `behavioral assertion '${assertion.id}' missing reference to testSubject '${testSubject}'`,
+            });
+        }
+    }
+    else if (kind === 'engine-behavior') {
+        if (hasTestSubject) {
+            errors.push({
+                assertionId: assertion.id,
+                rule: 'Rule 1: engine-behavior',
+                message: `engine-behavior assertion '${assertion.id}' must NOT reference testSubject '${testSubject}'`,
+            });
+        }
+        if (!hasEngine) {
+            errors.push({
+                assertionId: assertion.id,
+                rule: 'Rule 1: engine-behavior',
+                message: `engine-behavior assertion '${assertion.id}' must reference 'engine'`,
+            });
+        }
+    }
+    else if (kind === 'mixed') {
+        if (!hasTestSubject) {
+            errors.push({
+                assertionId: assertion.id,
+                rule: 'Rule 1: mixed',
+                message: `mixed assertion '${assertion.id}' missing reference to testSubject '${testSubject}'`,
+            });
+        }
+        if (!hasEngine) {
+            errors.push({
+                assertionId: assertion.id,
+                rule: 'Rule 1: mixed',
+                message: `mixed assertion '${assertion.id}' missing reference to 'engine'`,
+            });
+        }
+    }
+    return errors;
+}
+/**
+ * Валидация сценария. Проверяет Rule 1 для всех assertions.
+ *
+ * Легальные source'ы:
+ * - testSubject
+ * - 'engine'
+ * - participantId любого участника с ownership === 'ARGUS'
+ */
+export function validateScenario(scenario) {
+    const errors = [];
+    const testSubject = scenario.testSubject;
+    const validSources = new Set();
+    validSources.add(testSubject);
+    validSources.add('engine');
+    for (const participant of scenario.participants) {
+        if (participant.ownership === 'ARGUS') {
+            validSources.add(participant.participantId);
+        }
+    }
+    for (const assertion of scenario.assertions) {
+        errors.push(...validateAssertion(assertion, validSources, testSubject));
+    }
+    return {
+        valid: errors.length === 0,
+        errors,
+    };
+}
+//# sourceMappingURL=validateScenario.js.map

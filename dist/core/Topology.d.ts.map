@@ -1,0 +1,1 @@
+{"version":3,"file":"Topology.d.ts","sourceRoot":"","sources":["../../src/core/Topology.ts"],"names":[],"mappings":"AAAA;;;;;;;GAOG;AACH,MAAM,WAAW,QAAQ;IACvB,KAAK,EAAE,YAAY,EAAE,CAAC;CACvB;AAED,MAAM,WAAW,YAAY;IAC3B,IAAI,EAAE,MAAM,CAAC;IACb,EAAE,EAAE,MAAM,CAAC;IACX,IAAI,EAAE,MAAM,CAAC;CACd"}
