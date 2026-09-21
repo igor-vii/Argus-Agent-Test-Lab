@@ -72,7 +72,7 @@ describe('X402 Full Flow Integration Test', () => {
     const result = await orchestrator.run();
 
     // Verify verdict is PASS
-    expect(result.verdict.status).toBe('PASS');
+    expect(result.verdict?.status).toBe('PASS');
 
     // Verify evidence contains payment_signed_and_retried event
     const evidence = orchestrator.getEvidence();

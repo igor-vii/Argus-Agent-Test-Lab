@@ -2,9 +2,10 @@ import http from 'http';
 import type { AddressInfo } from 'net';
 
 export interface MockServerBehavior {
-  type: '402_with_header' | '402_with_body_only' | '402_invalid_header' | '200' | '500' | 'delay' | '402_with_signature_check';
+  type: '402_with_header' | '402_with_body_only' | '402_invalid_header' | '402_reject_signature' | '200' | '500' | 'delay';
   paymentRequired?: Record<string, unknown>;
   body?: Record<string, unknown>;
+  responseBody?: Record<string, unknown>;
   delayMs?: number;
 }
 
@@ -51,12 +52,30 @@ export class MockX402Server {
             body: body ? JSON.parse(body) : undefined,
           });
 
-          const { type, paymentRequired, body: responseBody, delayMs } = this.behavior;
+          const { type, paymentRequired, responseBody, delayMs } = this.behavior;
 
           const sendResponse = () => {
-            // If request has payment-signature header, treat as paid (return 200)
+            // If request has payment-signature header, check behavior type
             if (headers['payment-signature']) {
-              res.writeHead(200, { 'Content-Type': 'application/json' });
+              // If behavior is 402_reject_signature, return 402 even with signature
+              if (type === '402_reject_signature' && paymentRequired) {
+                const headerValue = Buffer.from(JSON.stringify(paymentRequired)).toString('base64');
+                res.writeHead(402, { 
+                  'Content-Type': 'application/json', 
+                  'payment-required': headerValue 
+                });
+                res.end(JSON.stringify({ error: 'Signature rejected' }));
+                return;
+              }
+              // Otherwise treat as paid (return 200)
+              const paymentResponse = Buffer.from(JSON.stringify({
+                txHash: '0x1234...',
+                status: 'success',
+              })).toString('base64');
+              res.writeHead(200, {
+                'Content-Type': 'application/json',
+                'payment-response': paymentResponse,
+              });
               res.end(JSON.stringify(responseBody || { paid: true, signatureReceived: true }));
               return;
             }
@@ -76,7 +95,7 @@ export class MockX402Server {
                 'Content-Type': 'application/json', 
                 'payment-required': 'not-valid-base64!!!' 
               });
-              res.end(JSON.stringify(body || { error: 'Invalid' }));
+              res.end(JSON.stringify(responseBody || { error: 'Invalid' }));
             } else if (type === '500') {
               res.writeHead(500, { 'Content-Type': 'application/json' });
               res.end(JSON.stringify({ error: 'Internal Server Error' }));
