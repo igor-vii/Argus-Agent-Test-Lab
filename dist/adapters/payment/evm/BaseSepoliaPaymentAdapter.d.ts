@@ -1,4 +1,5 @@
 import { PaymentAdapter, Address, TxHash, Amount, Receipt } from '../PaymentAdapter';
+import { PaymentRequired } from '../../../core/AgentTargetPort';
 /**
  * Base Sepolia PaymentAdapter.
  *
@@ -8,6 +9,7 @@ import { PaymentAdapter, Address, TxHash, Amount, Receipt } from '../PaymentAdap
  * - наблюдение за подтверждением (waitForConfirmation)
  * - проверку баланса (getBalance)
  * - pre-flight check (assertSufficientBalance)
+ * - подпись x402 payment requirements (signX402Payment)
  *
  * НЕ реализует:
  * - платёжную логику (это в Secretariat)
@@ -29,5 +31,27 @@ export declare class BaseSepoliaPaymentAdapter implements PaymentAdapter {
     waitForConfirmation(txHash: TxHash): Promise<Receipt>;
     assertSufficientBalance(address: Address, threshold: Amount): Promise<void>;
     getArgusAddress(): Address;
+    /**
+     * Подписать x402 payment requirements через EIP-712.
+     *
+     * Возвращает Base64-encoded JSON:
+     * {
+     *   x402Version: 2,
+     *   scheme: 'exact',
+     *   network: 'eip155:84532',
+     *   payload: {
+     *     signature: '0x...',
+     *     authorization: {
+     *       from: '0x...',
+     *       to: '0x...',
+     *       value: '10000',
+     *       validAfter: '0',
+     *       validBefore: '1735689600',
+     *       nonce: '0x...'
+     *     }
+     *   }
+     * }
+     */
+    signX402Payment(paymentRequired: PaymentRequired): Promise<string>;
 }
 //# sourceMappingURL=BaseSepoliaPaymentAdapter.d.ts.map

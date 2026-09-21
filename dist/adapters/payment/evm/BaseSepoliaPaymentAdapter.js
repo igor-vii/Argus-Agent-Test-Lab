@@ -1,7 +1,29 @@
 import { createPublicClient, createWalletClient, http, } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 import { baseSepolia } from 'viem/chains';
+import { randomBytes } from 'crypto';
 import { InsufficientBalanceError, } from '../PaymentAdapter';
+// USDC на Base Sepolia
+const USDC_BASE_SEPOLIA = '0x036CbD53842c5426634e7929541eC2318f3dCF7e';
+const CHAIN_ID_BASE_SEPOLIA = 84532;
+// EIP-712 domain для USDC на Base Sepolia
+const USDC_DOMAIN = {
+    name: 'USDC',
+    version: '2',
+    chainId: CHAIN_ID_BASE_SEPOLIA,
+    verifyingContract: USDC_BASE_SEPOLIA,
+};
+// EIP-712 types для EIP-3009 TransferWithAuthorization
+const TRANSFER_WITH_AUTHORIZATION_TYPES = {
+    TransferWithAuthorization: [
+        { name: 'from', type: 'address' },
+        { name: 'to', type: 'address' },
+        { name: 'value', type: 'uint256' },
+        { name: 'validAfter', type: 'uint256' },
+        { name: 'validBefore', type: 'uint256' },
+        { name: 'nonce', type: 'bytes32' },
+    ],
+};
 /**
  * Base Sepolia PaymentAdapter.
  *
@@ -11,6 +33,7 @@ import { InsufficientBalanceError, } from '../PaymentAdapter';
  * - наблюдение за подтверждением (waitForConfirmation)
  * - проверку баланса (getBalance)
  * - pre-flight check (assertSufficientBalance)
+ * - подпись x402 payment requirements (signX402Payment)
  *
  * НЕ реализует:
  * - платёжную логику (это в Secretariat)
@@ -77,6 +100,65 @@ export class BaseSepoliaPaymentAdapter {
     }
     getArgusAddress() {
         return this.account.address;
+    }
+    /**
+     * Подписать x402 payment requirements через EIP-712.
+     *
+     * Возвращает Base64-encoded JSON:
+     * {
+     *   x402Version: 2,
+     *   scheme: 'exact',
+     *   network: 'eip155:84532',
+     *   payload: {
+     *     signature: '0x...',
+     *     authorization: {
+     *       from: '0x...',
+     *       to: '0x...',
+     *       value: '10000',
+     *       validAfter: '0',
+     *       validBefore: '1735689600',
+     *       nonce: '0x...'
+     *     }
+     *   }
+     * }
+     */
+    async signX402Payment(paymentRequired) {
+        const now = Math.floor(Date.now() / 1000);
+        const validAfter = 0n;
+        const validBefore = BigInt(now + (paymentRequired.maxTimeoutSeconds || 3600));
+        // Криптографически стойкий случайный nonce (32 байта)
+        const nonce = `0x${randomBytes(32).toString('hex')}`;
+        const authorization = {
+            from: this.account.address,
+            to: paymentRequired.payTo,
+            value: BigInt(paymentRequired.amount),
+            validAfter,
+            validBefore,
+            nonce,
+        };
+        const signature = await this.account.signTypedData({
+            domain: USDC_DOMAIN,
+            types: TRANSFER_WITH_AUTHORIZATION_TYPES,
+            primaryType: 'TransferWithAuthorization',
+            message: authorization,
+        });
+        const payload = {
+            x402Version: 2,
+            scheme: paymentRequired.scheme,
+            network: paymentRequired.network,
+            payload: {
+                signature,
+                authorization: {
+                    from: authorization.from,
+                    to: authorization.to,
+                    value: authorization.value.toString(),
+                    validAfter: authorization.validAfter.toString(),
+                    validBefore: authorization.validBefore.toString(),
+                    nonce: authorization.nonce,
+                },
+            },
+        };
+        return Buffer.from(JSON.stringify(payload)).toString('base64');
     }
 }
 //# sourceMappingURL=BaseSepoliaPaymentAdapter.js.map

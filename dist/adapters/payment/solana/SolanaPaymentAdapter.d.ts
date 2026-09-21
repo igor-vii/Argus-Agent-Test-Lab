@@ -1,4 +1,5 @@
 import { PaymentAdapter, Address, TxHash, Amount, Receipt } from '../PaymentAdapter';
+import { PaymentRequired } from '../../../core/AgentTargetPort';
 /**
  * Solana PaymentAdapter — заготовка.
  *
@@ -17,5 +18,6 @@ export declare class SolanaPaymentAdapter implements PaymentAdapter {
     getBalance(_address: Address): Promise<Amount>;
     waitForConfirmation(_txHash: TxHash): Promise<Receipt>;
     assertSufficientBalance(_address: Address, _threshold: Amount): Promise<void>;
+    signX402Payment(_paymentRequired: PaymentRequired): Promise<string>;
 }
 //# sourceMappingURL=SolanaPaymentAdapter.d.ts.map

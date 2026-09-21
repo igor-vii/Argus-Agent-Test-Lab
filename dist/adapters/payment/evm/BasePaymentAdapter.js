@@ -22,5 +22,8 @@ export class BasePaymentAdapter {
     async assertSufficientBalance(_address, _threshold) {
         throw new NotImplementedError('base');
     }
+    async signX402Payment(_paymentRequired) {
+        throw new NotImplementedError('base');
+    }
 }
 //# sourceMappingURL=BasePaymentAdapter.js.map

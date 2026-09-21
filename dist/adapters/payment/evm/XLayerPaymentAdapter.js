@@ -21,5 +21,8 @@ export class XLayerPaymentAdapter {
     async assertSufficientBalance(_address, _threshold) {
         throw new NotImplementedError('xlayer');
     }
+    async signX402Payment(_paymentRequired) {
+        throw new NotImplementedError('xlayer');
+    }
 }
 //# sourceMappingURL=XLayerPaymentAdapter.js.map

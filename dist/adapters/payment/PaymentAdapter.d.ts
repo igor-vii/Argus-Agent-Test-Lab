@@ -7,12 +7,15 @@
  * - Получение адреса для приёма (Argus как seller)
  * - Наблюдение за подтверждением в сети
  * - Pre-flight check баланса
+ * - Подпись x402 payment requirements (EIP-3009)
  *
  * НЕ ответственность:
  * - Платёжная логика (это в Secretariat)
  * - Работа с authorization (это в Secretariat)
  * - Facilitator интеграция (это в Secretariat)
+ * - Отправка HTTP-запросов (это в AgentTargetPort)
  */
+import { PaymentRequired } from '../../core/AgentTargetPort';
 export type Address = `0x${string}`;
 export type TxHash = `0x${string}`;
 export type Amount = bigint;
@@ -48,6 +51,17 @@ export interface PaymentAdapter {
      * Бросает InsufficientBalanceError, если меньше.
      */
     assertSufficientBalance(address: Address, threshold: Amount): Promise<void>;
+    /**
+     * Подписать x402 payment requirements (EIP-3009 TransferWithAuthorization).
+     *
+     * Вызывается верхним уровнем (RunOrchestrator), когда X402AgentAdapter
+     * вернул PAYMENT_REQUIRED. Адаптер НЕ платит и НЕ отправляет транзакцию —
+     * он только создаёт подпись.
+     *
+     * @param paymentRequired - требования платежа из PAYMENT-REQUIRED header
+     * @returns Base64-encoded PAYMENT-SIGNATURE payload
+     */
+    signX402Payment(paymentRequired: PaymentRequired): Promise<string>;
 }
 export declare class InsufficientBalanceError extends Error {
     readonly address: Address;

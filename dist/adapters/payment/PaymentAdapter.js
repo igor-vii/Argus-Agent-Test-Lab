@@ -7,11 +7,13 @@
  * - Получение адреса для приёма (Argus как seller)
  * - Наблюдение за подтверждением в сети
  * - Pre-flight check баланса
+ * - Подпись x402 payment requirements (EIP-3009)
  *
  * НЕ ответственность:
  * - Платёжная логика (это в Secretariat)
  * - Работа с authorization (это в Secretariat)
  * - Facilitator интеграция (это в Secretariat)
+ * - Отправка HTTP-запросов (это в AgentTargetPort)
  */
 export class InsufficientBalanceError extends Error {
     address;

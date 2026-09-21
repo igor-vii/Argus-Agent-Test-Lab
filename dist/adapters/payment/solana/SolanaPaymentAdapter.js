@@ -27,5 +27,8 @@ export class SolanaPaymentAdapter {
     async assertSufficientBalance(_address, _threshold) {
         throw new NotImplementedError('solana');
     }
+    async signX402Payment(_paymentRequired) {
+        throw new NotImplementedError('solana');
+    }
 }
 //# sourceMappingURL=SolanaPaymentAdapter.js.map
