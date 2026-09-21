@@ -87,6 +87,19 @@ export declare class AgentController {
      */
     executeInteraction(actionType: string, actionPayload?: unknown, observeType?: string): Promise<InteractionOutcome>;
     setRunId(runId: RunId): void;
+    /**
+     * Execute an action with a payment signature.
+     *
+     * Only works if the underlying port implements PaymentCapablePort.
+     * Controller does NOT know about x402, PaymentAdapter, or payment semantics.
+     * It only knows: "if the port supports sendWithSignature, call it".
+     *
+     * @param type - original action type
+     * @param payload - original action payload
+     * @param paymentSignature - Base64-encoded payment signature
+     * @throws Error if the port does not support sendWithSignature
+     */
+    actWithSignature(type: string, payload: unknown, paymentSignature: string): Promise<InteractionOutcome>;
     disconnect(): Promise<void>;
 }
 //# sourceMappingURL=AgentController.d.ts.map

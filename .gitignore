@@ -2,33 +2,8 @@
 # Build artifacts
 dist/
 build/
+*.js
 *.js.map
+*.d.ts
 *.d.ts.map
-
-# Dependencies
-node_modules/
-
-# Environment
-.env
-.env.local
-*.env.*
-
-# Editors
-.vscode/
-.idea/
-
-# Logs and temp files
-*.log
-*.tmp
-*.swp
-
-# Python
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-.Python
-venv/
-.venv/
-.env
 ```
