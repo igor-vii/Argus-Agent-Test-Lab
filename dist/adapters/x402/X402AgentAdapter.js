@@ -34,10 +34,20 @@ function parsePaymentRequired(response) {
         rawBase64 = headerValue;
         try {
             const decoded = Buffer.from(headerValue, 'base64').toString('utf-8');
-            parsedBody = JSON.parse(decoded);
+            const maybeBody = JSON.parse(decoded);
+            // Validate structure before accepting
+            if (maybeBody.x402Version !== undefined &&
+                Array.isArray(maybeBody.accepts) &&
+                maybeBody.accepts.length > 0) {
+                parsedBody = maybeBody;
+            }
+            else {
+                // Header present but structurally invalid — fall through to body
+                rawBase64 = undefined;
+            }
         }
         catch {
-            // Header present but invalid — fall through to body
+            // Header present but not Base64/JSON — fall through to body
             rawBase64 = undefined;
         }
     }
