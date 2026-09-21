@@ -8,6 +8,18 @@ import { RunContext, RunStatus } from './RunLifecycle';
 import { FaultInjector } from './FaultInjector';
 import { EvidenceCollector } from './EvidenceCollector';
 import { Observation } from './Evidence';
+import { PaymentRequired, ExchangeStatus } from './AgentTargetPort';
+
+/**
+ * Callback for resolving payment requirements.
+ *
+ * ScenarioEngine calls this when an action returns PAYMENT_REQUIRED.
+ * The callback is provided by RunOrchestrator, which knows about
+ * PaymentAdapter. ScenarioEngine does NOT know how signing works.
+ *
+ * Returns a Base64-encoded payment signature (opaque to ScenarioEngine).
+ */
+export type PaymentResolver = (paymentRequired: PaymentRequired) => Promise<string>;
 
 /**
  * Движок исполнения сценариев.
@@ -22,19 +34,22 @@ export class ScenarioEngine {
   private controller: AgentController;
   private faultInjector: FaultInjector;
   private evidenceCollector?: EvidenceCollector;
+  private paymentResolver?: PaymentResolver;
 
   constructor(
     scenario: ScenarioDefinition,
     context: RunContext,
     controller: AgentController,
     faultInjector: FaultInjector,
-    evidenceCollector?: EvidenceCollector
+    evidenceCollector?: EvidenceCollector,
+    paymentResolver?: PaymentResolver
   ) {
     this.scenario = scenario;
     this.context = context;
     this.controller = controller;
     this.faultInjector = faultInjector;
     this.evidenceCollector = evidenceCollector;
+    this.paymentResolver = paymentResolver;
   }
 
   /**
@@ -100,7 +115,75 @@ export class ScenarioEngine {
    */
   private async performAction(action: Action): Promise<void> {
     const payload = action.payload || {};
-    const outcome = await this.controller.act(action.type, payload);
+    let outcome = await this.controller.act(action.type, payload);
+
+    // Handle PAYMENT_REQUIRED via resolver (if provided)
+    if (
+      outcome.status === ExchangeStatus.PAYMENT_REQUIRED &&
+      outcome.exchange?.paymentRequired
+    ) {
+      if (!this.paymentResolver) {
+        // No resolver — record UNKNOWN in evidence, continue
+        if (this.evidenceCollector) {
+          this.evidenceCollector.collect(
+            {
+              source: 'engine',
+              type: 'payment_required_no_resolver',
+              data: {
+                actionType: action.type,
+                paymentRequired: outcome.exchange.paymentRequired,
+              } as Record<string, unknown>,
+              timestamp: Date.now(),
+            },
+            this.context.runId
+          );
+        }
+        return;
+      }
+
+      try {
+        const signature = await this.paymentResolver(outcome.exchange.paymentRequired);
+
+        // Retry with signature
+        outcome = await this.controller.actWithSignature(
+          action.type,
+          payload,
+          signature
+        );
+
+        // Record that payment was signed and retried
+        if (this.evidenceCollector) {
+          this.evidenceCollector.collect(
+            {
+              source: 'engine',
+              type: 'payment_signed_and_retried',
+              data: {
+                actionType: action.type,
+              } as Record<string, unknown>,
+              timestamp: Date.now(),
+            },
+            this.context.runId
+          );
+        }
+      } catch (error) {
+        // Signing or retry failed — record as engine event
+        if (this.evidenceCollector) {
+          this.evidenceCollector.collect(
+            {
+              source: 'engine',
+              type: 'payment_signing_failed',
+              data: {
+                actionType: action.type,
+                error: error instanceof Error ? error.message : String(error),
+              } as Record<string, unknown>,
+              timestamp: Date.now(),
+            },
+            this.context.runId
+          );
+        }
+        return;
+      }
+    }
 
     if (!this.evidenceCollector) {
       return;

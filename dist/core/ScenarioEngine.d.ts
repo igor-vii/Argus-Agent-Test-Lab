@@ -3,6 +3,17 @@ import { ScenarioDefinition } from './ScenarioDefinition';
 import { RunContext } from './RunLifecycle';
 import { FaultInjector } from './FaultInjector';
 import { EvidenceCollector } from './EvidenceCollector';
+import { PaymentRequired } from './AgentTargetPort';
+/**
+ * Callback for resolving payment requirements.
+ *
+ * ScenarioEngine calls this when an action returns PAYMENT_REQUIRED.
+ * The callback is provided by RunOrchestrator, which knows about
+ * PaymentAdapter. ScenarioEngine does NOT know how signing works.
+ *
+ * Returns a Base64-encoded payment signature (opaque to ScenarioEngine).
+ */
+export type PaymentResolver = (paymentRequired: PaymentRequired) => Promise<string>;
 /**
  * Движок исполнения сценариев.
  *
@@ -16,7 +27,8 @@ export declare class ScenarioEngine {
     private controller;
     private faultInjector;
     private evidenceCollector?;
-    constructor(scenario: ScenarioDefinition, context: RunContext, controller: AgentController, faultInjector: FaultInjector, evidenceCollector?: EvidenceCollector);
+    private paymentResolver?;
+    constructor(scenario: ScenarioDefinition, context: RunContext, controller: AgentController, faultInjector: FaultInjector, evidenceCollector?: EvidenceCollector, paymentResolver?: PaymentResolver);
     /**
      * Запуск исполнения сценария.
      */
