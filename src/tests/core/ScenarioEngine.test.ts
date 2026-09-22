@@ -5,6 +5,7 @@ import { AgentController } from '../../core/AgentController';
 import { MockTargetAdapter } from '../../adapters/MockTargetAdapter';
 import { RunContext, RunStatus } from '../../core/RunLifecycle';
 import { FaultInjector } from '../../core/FaultInjector';
+import { ExecutionRegistry } from '../../core/ExecutionRegistry';
 
 describe('ScenarioEngine', () => {
   let engine: ScenarioEngine;
@@ -46,7 +47,9 @@ describe('ScenarioEngine', () => {
       status: RunStatus.CREATED,
     };
 
-    engine = new ScenarioEngine(scenario, context, mockController, faultInjector);
+    const registry = new ExecutionRegistry();
+    registry.register('sut-1', mockController);
+    engine = new ScenarioEngine(scenario, context, registry, faultInjector);
 
     // Execute and verify no errors thrown
     await expect(engine.execute()).resolves.not.toThrow();
@@ -79,7 +82,9 @@ describe('ScenarioEngine', () => {
       status: RunStatus.CREATED,
     };
 
-    engine = new ScenarioEngine(scenario, context, mockController, faultInjector);
+    const registry = new ExecutionRegistry();
+    registry.register('sut-1', mockController);
+    engine = new ScenarioEngine(scenario, context, registry, faultInjector);
     await engine.execute();
 
     expect(context.runId).toBe('run-seed-123');
@@ -114,7 +119,9 @@ describe('ScenarioEngine', () => {
       status: RunStatus.CREATED,
     };
 
-    engine = new ScenarioEngine(scenario, context, mockController, faultInjector);
+    const registry = new ExecutionRegistry();
+    registry.register('sut-1', mockController);
+    engine = new ScenarioEngine(scenario, context, registry, faultInjector);
 
     // Should not throw unhandled error, but status should reflect failure or completion with errors
     await expect(engine.execute()).resolves.not.toThrow();

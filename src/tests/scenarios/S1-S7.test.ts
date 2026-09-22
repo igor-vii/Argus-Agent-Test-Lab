@@ -30,9 +30,22 @@ describe('Canonical Scenarios S1-S7', () => {
         runId: `run_${Date.now()}`
       });
 
+      const controllers = new Map<string, AgentController>();
+      // For S1-S7, all participants are EXTERNAL except buyer-1 which is ARGUS in some scenarios
+      // We'll register the controller for any ARGUS participant
+      for (const p of def.participants) {
+        if (p.ownership === 'ARGUS') {
+          controllers.set(p.participantId, controller);
+        }
+      }
+      // If no ARGUS participants, just use a default key
+      if (controllers.size === 0) {
+        controllers.set('default', controller);
+      }
+
       const assertions = def.assertions || [];
 
-      const orchestrator = new RunOrchestrator(def, controller, targetAdapter, assertions);
+      const orchestrator = new RunOrchestrator(def, controllers, assertions);
       const result = await orchestrator.run();
 
       expect(result.scenarioId).toBe(id);
@@ -51,9 +64,19 @@ describe('Canonical Scenarios S1-S7', () => {
       runId: `run_${Date.now()}`
     });
 
+    const controllers = new Map<string, AgentController>();
+    for (const p of S1_DuplicateRequest.participants) {
+      if (p.ownership === 'ARGUS') {
+        controllers.set(p.participantId, controller);
+      }
+    }
+    if (controllers.size === 0) {
+      controllers.set('default', controller);
+    }
+
     const assertions = S1_DuplicateRequest.assertions || [];
 
-    const orchestrator = new RunOrchestrator(S1_DuplicateRequest, controller, targetAdapter, assertions);
+    const orchestrator = new RunOrchestrator(S1_DuplicateRequest, controllers, assertions);
     const result = await orchestrator.run();
 
     // S1 ожидает PASS, так как идемпотентность работает корректно
@@ -75,9 +98,19 @@ describe('Canonical Scenarios S1-S7', () => {
       runId: `run_${Date.now()}`
     });
 
+    const controllers = new Map<string, AgentController>();
+    for (const p of S6_PaymentRetry.participants) {
+      if (p.ownership === 'ARGUS') {
+        controllers.set(p.participantId, controller);
+      }
+    }
+    if (controllers.size === 0) {
+      controllers.set('default', controller);
+    }
+
     const assertions = S6_PaymentRetry.assertions || [];
 
-    const orchestrator = new RunOrchestrator(S6_PaymentRetry, controller, targetAdapter, assertions);
+    const orchestrator = new RunOrchestrator(S6_PaymentRetry, controllers, assertions);
     const result = await orchestrator.run();
 
     // S6 сейчас INCONCLUSIVE (scaffolding, Variant A)

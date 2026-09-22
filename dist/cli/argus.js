@@ -59,16 +59,22 @@ async function main() {
             process.exit(1);
         }
         try {
-            // Создание адаптера и контроллера
-            const targetAdapter = new MockTargetAdapter('mock');
-            const controller = new AgentController(targetAdapter, {
-                connectionConfig: { transportType: 'mock' },
-                runId: `run_${Date.now()}`
-            });
+            // Создание Map контроллеров для участников ARGUS
+            const controllers = new Map();
+            for (const participant of scenarioDef.participants) {
+                if (participant.ownership !== 'ARGUS')
+                    continue;
+                const targetAdapter = new MockTargetAdapter('mock');
+                const controller = new AgentController(targetAdapter, {
+                    connectionConfig: { transportType: 'mock' },
+                    runId: `run_${Date.now()}_${participant.participantId}`,
+                });
+                controllers.set(participant.participantId, controller);
+            }
             // Assertions из сценария (Model V0: scenarioDef.assertions)
             const assertions = scenarioDef.assertions || [];
             // Запуск оркестратора
-            const orchestrator = new RunOrchestrator(scenarioDef, controller, targetAdapter, assertions);
+            const orchestrator = new RunOrchestrator(scenarioDef, controllers, assertions);
             const result = await orchestrator.run();
             // Вывод результатов
             console.log('\nRun:');

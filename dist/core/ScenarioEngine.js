@@ -13,14 +13,14 @@ import { ExchangeStatus } from './AgentTargetPort';
 export class ScenarioEngine {
     scenario;
     context;
-    controller;
+    registry;
     faultInjector;
     evidenceCollector;
     paymentResolver;
-    constructor(scenario, context, controller, faultInjector, evidenceCollector, paymentResolver) {
+    constructor(scenario, context, registry, faultInjector, evidenceCollector, paymentResolver) {
         this.scenario = scenario;
         this.context = context;
-        this.controller = controller;
+        this.registry = registry;
         this.faultInjector = faultInjector;
         this.evidenceCollector = evidenceCollector;
         this.paymentResolver = paymentResolver;
@@ -76,8 +76,12 @@ export class ScenarioEngine {
      * TIMEOUT), никакого fallback на action.type как observation не происходит.
      */
     async performAction(action) {
+        const controller = this.registry.get(action.actor);
+        if (!controller) {
+            throw new Error(`No controller registered for actor: ${action.actor}`);
+        }
         const payload = action.payload || {};
-        let outcome = await this.controller.act(action.type, payload);
+        let outcome = await controller.act(action.type, payload);
         // Handle PAYMENT_REQUIRED via resolver (if provided)
         if (outcome.status === ExchangeStatus.PAYMENT_REQUIRED &&
             outcome.exchange?.paymentRequired) {
@@ -99,7 +103,7 @@ export class ScenarioEngine {
             try {
                 const signature = await this.paymentResolver(outcome.exchange.paymentRequired);
                 // Retry with signature
-                outcome = await this.controller.actWithSignature(action.type, payload, signature);
+                outcome = await controller.actWithSignature(action.type, payload, signature);
                 // Record that payment was signed and retried
                 if (this.evidenceCollector) {
                     this.evidenceCollector.collect({

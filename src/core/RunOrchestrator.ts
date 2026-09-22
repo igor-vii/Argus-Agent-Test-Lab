@@ -10,9 +10,9 @@ import { EvidenceCollector, EvidenceRecord } from './EvidenceCollector';
 import { AssertionEngine } from './AssertionEngine';
 import { Assertion } from './Assertions';
 import { RunContext, RunStatus, RunResult, generateRunId } from './RunLifecycle';
-import { AgentTargetPort } from './AgentTargetPort';
 import { PaymentAdapter } from '../adapters/payment/PaymentAdapter';
 import { PaymentResolver } from './ScenarioEngine';
+import { ExecutionRegistry } from './ExecutionRegistry';
 
 /**
  * Оркестратор запуска тестового прогона.
@@ -22,8 +22,7 @@ import { PaymentResolver } from './ScenarioEngine';
  */
 export class RunOrchestrator {
   private scenario: ScenarioDefinition;
-  private controller: AgentController;
-  private targetPort: AgentTargetPort;
+  private controllers: Map<string, AgentController>;
   private evidenceCollector: EvidenceCollector;
   private assertionEngine: AssertionEngine;
   private assertions: Assertion[];
@@ -31,14 +30,12 @@ export class RunOrchestrator {
 
   constructor(
     scenario: ScenarioDefinition,
-    controller: AgentController,
-    targetPort: AgentTargetPort,
+    controllers: Map<string, AgentController>,
     assertions: Assertion[],
     paymentAdapter?: PaymentAdapter
   ) {
     this.scenario = scenario;
-    this.controller = controller;
-    this.targetPort = targetPort;
+    this.controllers = controllers;
     this.evidenceCollector = new EvidenceCollector();
     this.assertionEngine = new AssertionEngine();
     this.assertions = assertions;
@@ -61,7 +58,12 @@ export class RunOrchestrator {
     };
 
     try {
-      await this.controller.connect();
+      // Create registry and connect all controllers
+      const registry = new ExecutionRegistry();
+      for (const [actorId, controller] of this.controllers.entries()) {
+        registry.register(actorId, controller);
+        await controller.connect();
+      }
 
       const faultInjector = new FaultInjector(this.scenario.faults);
 
@@ -73,21 +75,12 @@ export class RunOrchestrator {
         paymentResolver = async (paymentRequired) => {
           return adapter.signX402Payment(paymentRequired);
         };
-      } else if (typeof (this.targetPort as any).sendWithSignature === 'function') {
-        // Target port supports payments, but no paymentAdapter was provided.
-        // This may be intentional (adversarial scenario: buyer refuses to pay),
-        // so we warn instead of throwing.
-        console.warn(
-          `[RunOrchestrator] Target port supports payments (PaymentCapablePort), ` +
-          `but no paymentAdapter was provided. PAYMENT_REQUIRED responses will be ` +
-          `recorded as evidence and the run will continue.`
-        );
       }
 
       const engine = new ScenarioEngine(
         this.scenario,
         context,
-        this.controller,
+        registry,
         faultInjector,
         this.evidenceCollector,
         paymentResolver
@@ -95,7 +88,10 @@ export class RunOrchestrator {
 
       await engine.execute();
 
-      await this.controller.disconnect();
+      // Disconnect all controllers
+      for (const controller of this.controllers.values()) {
+        await controller.disconnect();
+      }
 
       const evidence = this.evidenceCollector.getEvidenceSet(runId);
       const assertionResult = this.assertionEngine.evaluate(evidence, this.assertions);
@@ -112,8 +108,17 @@ export class RunOrchestrator {
           reason: assertionResult.reasons.join('; ')
         }
       };
-    } catch (error) {
+    } catch (error: unknown) {
       context.status = RunStatus.FAILED;
+
+      // Disconnect all controllers on error
+      for (const controller of this.controllers.values()) {
+        try {
+          await controller.disconnect();
+        } catch {
+          // Ignore disconnect errors during error handling
+        }
+      }
 
       return {
         runId,

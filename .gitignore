@@ -1,69 +1,22 @@
 ```
-# Build artifacts
-dist/
+# Compiled and build artifacts
 *.js
 *.js.map
 *.d.ts
 *.d.ts.map
-
+dist/
+build/
 # Dependencies
 node_modules/
-
+# Logs and temp files
+*.log
+*.tmp
+*.swp
 # Environment
 .env
 .env.local
 .env.*
-
 # Editors
 .vscode/
 .idea/
-
-# Logs and temp files
-*.log
-*.tmp
-
-# Python (if applicable)
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-
-# Compiled files
-*.o
-*.obj
-*.exe
-*.dll
-*.so
-*.a
-*.out
-
-# Archives
-*.zip
-*.gz
-*.tar
-*.tgz
-*.bz2
-*.xz
-*.7z
-*.rar
-*.zst
-*.lz4
-*.lzh
-*.cab
-*.arj
-*.rpm
-*.deb
-*.Z
-*.lz
-*.lzo
-
-# OS generated files
-.DS_Store
-Thumbs.db
-
-# Testing
-coverage/
-htmlcov/
-.coverage
-.nyc_output/
 ```

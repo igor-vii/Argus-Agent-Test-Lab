@@ -219,8 +219,11 @@ export class X402AgentAdapter implements PaymentCapablePort {
         } as Metadata;
       }
     } catch (error) {
-      exchange.status = ExchangeStatus.FAILURE;
-      exchange.error = error instanceof Error ? error.message : String(error);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      const isTimeout = errorMessage.includes('timeout');
+
+      exchange.status = isTimeout ? ExchangeStatus.TIMEOUT : ExchangeStatus.FAILURE;
+      exchange.error = errorMessage;
       exchange.metadata = {
         errorType: error instanceof Error ? error.constructor.name : 'unknown',
       } as Metadata;
@@ -295,8 +298,11 @@ export class X402AgentAdapter implements PaymentCapablePort {
         exchange.metadata = metadata;
       }
     } catch (error) {
-      exchange.status = ExchangeStatus.FAILURE;
-      exchange.error = error instanceof Error ? error.message : String(error);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      const isTimeout = errorMessage.includes('timeout');
+
+      exchange.status = isTimeout ? ExchangeStatus.TIMEOUT : ExchangeStatus.FAILURE;
+      exchange.error = errorMessage;
       exchange.metadata = {
         errorType: error instanceof Error ? error.constructor.name : 'unknown',
       } as Metadata;

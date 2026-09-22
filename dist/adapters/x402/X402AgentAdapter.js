@@ -180,8 +180,10 @@ export class X402AgentAdapter {
             }
         }
         catch (error) {
-            exchange.status = ExchangeStatus.FAILURE;
-            exchange.error = error instanceof Error ? error.message : String(error);
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            const isTimeout = errorMessage.includes('timeout');
+            exchange.status = isTimeout ? ExchangeStatus.TIMEOUT : ExchangeStatus.FAILURE;
+            exchange.error = errorMessage;
             exchange.metadata = {
                 errorType: error instanceof Error ? error.constructor.name : 'unknown',
             };
@@ -244,8 +246,10 @@ export class X402AgentAdapter {
             }
         }
         catch (error) {
-            exchange.status = ExchangeStatus.FAILURE;
-            exchange.error = error instanceof Error ? error.message : String(error);
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            const isTimeout = errorMessage.includes('timeout');
+            exchange.status = isTimeout ? ExchangeStatus.TIMEOUT : ExchangeStatus.FAILURE;
+            exchange.error = errorMessage;
             exchange.metadata = {
                 errorType: error instanceof Error ? error.constructor.name : 'unknown',
             };

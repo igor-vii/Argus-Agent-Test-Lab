@@ -3,7 +3,6 @@ import { AgentController } from './AgentController';
 import { EvidenceRecord } from './EvidenceCollector';
 import { Assertion } from './Assertions';
 import { RunResult } from './RunLifecycle';
-import { AgentTargetPort } from './AgentTargetPort';
 import { PaymentAdapter } from '../adapters/payment/PaymentAdapter';
 /**
  * Оркестратор запуска тестового прогона.
@@ -13,13 +12,12 @@ import { PaymentAdapter } from '../adapters/payment/PaymentAdapter';
  */
 export declare class RunOrchestrator {
     private scenario;
-    private controller;
-    private targetPort;
+    private controllers;
     private evidenceCollector;
     private assertionEngine;
     private assertions;
     private paymentAdapter?;
-    constructor(scenario: ScenarioDefinition, controller: AgentController, targetPort: AgentTargetPort, assertions: Assertion[], paymentAdapter?: PaymentAdapter);
+    constructor(scenario: ScenarioDefinition, controllers: Map<string, AgentController>, assertions: Assertion[], paymentAdapter?: PaymentAdapter);
     /**
      * Запуск полного прогона сценария.
      */

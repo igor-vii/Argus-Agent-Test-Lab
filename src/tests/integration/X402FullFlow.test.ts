@@ -59,11 +59,14 @@ describe('X402 Full Flow Integration Test', () => {
   });
 
   it('should complete full x402 payment flow: 402 -> sign -> retry -> success', async () => {
+    // Create controllers Map
+    const controllers = new Map<string, AgentController>();
+    controllers.set('buyer-1', controller);
+
     // Create orchestrator with paymentAdapter
     const orchestrator = new RunOrchestrator(
       S8_X402Payment,
-      controller,
-      adapter,
+      controllers,
       [],
       paymentAdapter
     );
@@ -72,7 +75,7 @@ describe('X402 Full Flow Integration Test', () => {
     const result = await orchestrator.run();
 
     // Verify verdict is PASS
-    expect(result.verdict.status).toBe('PASS');
+    expect(result.verdict?.status).toBe('PASS');
 
     // Verify evidence contains payment_signed_and_retried event
     const evidence = orchestrator.getEvidence();

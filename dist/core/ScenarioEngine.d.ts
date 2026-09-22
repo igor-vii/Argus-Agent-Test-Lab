@@ -1,4 +1,4 @@
-import { AgentController } from './AgentController';
+import { ExecutionRegistry } from './ExecutionRegistry';
 import { ScenarioDefinition } from './ScenarioDefinition';
 import { RunContext } from './RunLifecycle';
 import { FaultInjector } from './FaultInjector';
@@ -24,11 +24,11 @@ export type PaymentResolver = (paymentRequired: PaymentRequired) => Promise<stri
 export declare class ScenarioEngine {
     private scenario;
     private context;
-    private controller;
+    private registry;
     private faultInjector;
     private evidenceCollector?;
     private paymentResolver?;
-    constructor(scenario: ScenarioDefinition, context: RunContext, controller: AgentController, faultInjector: FaultInjector, evidenceCollector?: EvidenceCollector, paymentResolver?: PaymentResolver);
+    constructor(scenario: ScenarioDefinition, context: RunContext, registry: ExecutionRegistry, faultInjector: FaultInjector, evidenceCollector?: EvidenceCollector, paymentResolver?: PaymentResolver);
     /**
      * Запуск исполнения сценария.
      */

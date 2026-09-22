@@ -2,7 +2,7 @@
 // src/core/ScenarioEngine.ts
 // ============================================================
 
-import { AgentController } from './AgentController';
+import { ExecutionRegistry } from './ExecutionRegistry';
 import { ScenarioDefinition, Action } from './ScenarioDefinition';
 import { RunContext, RunStatus } from './RunLifecycle';
 import { FaultInjector } from './FaultInjector';
@@ -31,7 +31,7 @@ export type PaymentResolver = (paymentRequired: PaymentRequired) => Promise<stri
 export class ScenarioEngine {
   private scenario: ScenarioDefinition;
   private context: RunContext;
-  private controller: AgentController;
+  private registry: ExecutionRegistry;
   private faultInjector: FaultInjector;
   private evidenceCollector?: EvidenceCollector;
   private paymentResolver?: PaymentResolver;
@@ -39,14 +39,14 @@ export class ScenarioEngine {
   constructor(
     scenario: ScenarioDefinition,
     context: RunContext,
-    controller: AgentController,
+    registry: ExecutionRegistry,
     faultInjector: FaultInjector,
     evidenceCollector?: EvidenceCollector,
     paymentResolver?: PaymentResolver
   ) {
     this.scenario = scenario;
     this.context = context;
-    this.controller = controller;
+    this.registry = registry;
     this.faultInjector = faultInjector;
     this.evidenceCollector = evidenceCollector;
     this.paymentResolver = paymentResolver;
@@ -114,8 +114,13 @@ export class ScenarioEngine {
    * TIMEOUT), никакого fallback на action.type как observation не происходит.
    */
   private async performAction(action: Action): Promise<void> {
+    const controller = this.registry.get(action.actor);
+    if (!controller) {
+      throw new Error(`No controller registered for actor: ${action.actor}`);
+    }
+
     const payload = action.payload || {};
-    let outcome = await this.controller.act(action.type, payload);
+    let outcome = await controller.act(action.type, payload);
 
     // Handle PAYMENT_REQUIRED via resolver (if provided)
     if (
@@ -145,7 +150,7 @@ export class ScenarioEngine {
         const signature = await this.paymentResolver(outcome.exchange.paymentRequired);
 
         // Retry with signature
-        outcome = await this.controller.actWithSignature(
+        outcome = await controller.actWithSignature(
           action.type,
           payload,
           signature
