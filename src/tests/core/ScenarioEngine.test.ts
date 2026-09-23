@@ -130,4 +130,143 @@ describe('ScenarioEngine', () => {
     // Restore original send
     mockTarget.send = originalSend;
   });
+
+  it('should route action.actor to the correct controller', async () => {
+    const buyerTarget = new MockTargetAdapter('buyer-mock');
+    const sellerTarget = new MockTargetAdapter('seller-mock');
+
+    const buyerController = new AgentController(buyerTarget, {
+      connectionConfig: { transportType: 'mock' },
+      runId: 'buyer-run',
+    });
+    const sellerController = new AgentController(sellerTarget, {
+      connectionConfig: { transportType: 'mock' },
+      runId: 'seller-run',
+    });
+
+    await buyerController.connect();
+    await sellerController.connect();
+
+    const registry = new ExecutionRegistry();
+    registry.register('buyer-1', buyerController);
+    registry.register('seller-1', sellerController);
+
+    const scenario: ScenarioDefinition = {
+      id: 'routing-test',
+      name: 'Routing Test',
+      participants: [
+        { participantId: 'buyer-1', protocolRole: 'BUYER', ownership: 'ARGUS' },
+        { participantId: 'seller-1', protocolRole: 'SELLER', ownership: 'ARGUS' },
+      ],
+      topology: { edges: [] },
+      testSubject: 'sut-1',
+      actions: [
+        { actor: 'buyer-1', type: 'BUY_ACTION', payload: {} },
+        { actor: 'seller-1', type: 'SELL_ACTION', payload: {} },
+      ],
+      faults: [],
+      invariants: [],
+      assertions: [],
+      seed: 1,
+    };
+
+    const context: RunContext = {
+      runId: 'routing-run',
+      scenarioId: 'routing-test',
+      seed: 1,
+      startedAt: new Date(),
+      status: RunStatus.CREATED,
+    };
+
+    const engine = new ScenarioEngine(scenario, context, registry, faultInjector);
+    await engine.execute();
+
+    const buyerExchanges = buyerTarget.getExchanges();
+    expect(buyerExchanges.length).toBe(1);
+    expect(buyerExchanges[0].type).toBe('BUY_ACTION');
+
+    const sellerExchanges = sellerTarget.getExchanges();
+    expect(sellerExchanges.length).toBe(1);
+    expect(sellerExchanges[0].type).toBe('SELL_ACTION');
+  });
+
+  it('should throw if action.actor is not registered', async () => {
+    const registry = new ExecutionRegistry();
+
+    const scenario: ScenarioDefinition = {
+      id: 'unknown-actor-test',
+      name: 'Unknown Actor Test',
+      participants: [],
+      topology: { edges: [] },
+      testSubject: 'sut-1',
+      actions: [
+        { actor: 'unknown-actor', type: 'SOME_ACTION', payload: {} },
+      ],
+      faults: [],
+      invariants: [],
+      assertions: [],
+      seed: 1,
+    };
+
+    const context: RunContext = {
+      runId: 'unknown-run',
+      scenarioId: 'unknown-actor-test',
+      seed: 1,
+      startedAt: new Date(),
+      status: RunStatus.CREATED,
+    };
+
+    const engine = new ScenarioEngine(scenario, context, registry, faultInjector);
+
+    await expect(engine.execute()).rejects.toThrow(
+      'No controller registered for actor: unknown-actor'
+    );
+  });
+
+  it('should work with single controller (backward compatibility)', async () => {
+    const singleTarget = new MockTargetAdapter('single-mock');
+    const singleController = new AgentController(singleTarget, {
+      connectionConfig: { transportType: 'mock' },
+      runId: 'single-run',
+    });
+
+    await singleController.connect();
+
+    const registry = new ExecutionRegistry();
+    registry.register('sut-1', singleController);
+
+    const scenario: ScenarioDefinition = {
+      id: 'single-controller-test',
+      name: 'Single Controller Test',
+      participants: [
+        { participantId: 'sut-1', protocolRole: 'SELLER', ownership: 'EXTERNAL' },
+      ],
+      topology: { edges: [] },
+      testSubject: 'sut-1',
+      actions: [
+        { actor: 'sut-1', type: 'ACTION_1', payload: {} },
+        { actor: 'sut-1', type: 'ACTION_2', payload: {} },
+      ],
+      faults: [],
+      invariants: [],
+      assertions: [],
+      seed: 1,
+    };
+
+    const context: RunContext = {
+      runId: 'single-run',
+      scenarioId: 'single-controller-test',
+      seed: 1,
+      startedAt: new Date(),
+      status: RunStatus.CREATED,
+    };
+
+    const engine = new ScenarioEngine(scenario, context, registry, faultInjector);
+    await expect(engine.execute()).resolves.not.toThrow();
+
+    const exchanges = singleTarget.getExchanges();
+    expect(exchanges.length).toBe(2);
+    expect(exchanges[0].type).toBe('ACTION_1');
+    expect(exchanges[1].type).toBe('ACTION_2');
+  });
 });
