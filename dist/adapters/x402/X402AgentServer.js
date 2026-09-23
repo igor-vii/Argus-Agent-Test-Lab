@@ -140,7 +140,14 @@ export class X402AgentServer {
                 {
                     scheme: pr.scheme,
                     network: pr.network,
+                    // Canonical x402 V2 field name (x402/types). Kept for standard clients.
                     maxAmountRequired: pr.maxAmountRequired,
+                    // Alias required by Secretariat's X402Parser (core/x402-parser.ts ->
+                    // X402Accept.amount; acceptToRequirement maps amount -> requirement.amount).
+                    // Without it the parser's filter (a.scheme && a.network && a.amount && a.payTo)
+                    // drops our offer and Stage-A fails with "No payment requirement found".
+                    // See reports/argus-secretariat-*.md (finding F-A3).
+                    amount: pr.maxAmountRequired,
                     resource: url,
                     payTo: pr.payTo,
                     maxTimeoutSeconds: pr.maxTimeoutSeconds ?? 60,

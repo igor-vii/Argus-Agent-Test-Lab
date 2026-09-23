@@ -39,6 +39,7 @@ import {
   submitPayment,
   postJson,
   signAndAdapt,
+  signExactDpiAuthorization,
 } from './helpers/secretariat';
 import { writeJsonReport, timestampSlug } from './helpers/reporting';
 
@@ -48,6 +49,15 @@ import { writeJsonReport, timestampSlug } from './helpers/reporting';
 const TEST_PK = (process.env['ARGUS_TEST_WALLET_PRIVATE_KEY'] ??
   '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80') as `0x${string}`;
 const RPC_URL = process.env['BASE_SEPOLIA_RPC_URL'] ?? 'https://sepolia.base.org';
+
+// EIP-712 domain as resolved by the RUNNING Secretariat (composition root):
+//   name    = ZEUS_EIP3009_DOMAIN_NAME || "USD Coin"
+//   version = ZEUS_EIP3009_DOMAIN_VERSION || "2"
+//   chainId = network->chainId mapping (eip155:84532 -> 84532)
+//   verifyingContract = persisted intent.asset
+// Keep ENV-synced with api-server/.env.local.
+const DOMAIN_NAME = process.env['ZEUS_EIP3009_DOMAIN_NAME'] ?? 'USD Coin';
+const DOMAIN_VERSION = process.env['ZEUS_EIP3009_DOMAIN_VERSION'] ?? '2';
 
 const account = privateKeyToAccount(TEST_PK);
 
@@ -151,6 +161,24 @@ function stageAPolicyFor(server: X402AgentServer, overrides?: Partial<{
   };
 }
 
+// ---------------------------------------------------------------------------
+// Direct Zeus-DB verification (psql against the local zeus database).
+// Read-only SELECTs; used to confirm what Secretariat actually persisted.
+// ENV-driven: ZEUS_DB_URL (default matches the local stand-up).
+// ---------------------------------------------------------------------------
+const ZEUS_DB_URL = process.env['ZEUS_DB_URL'] ?? 'postgres://postgres:postgres@127.0.0.1:5432/zeus';
+
+async function readDpiFromDb(requestId: string): Promise<Record<string, any> | null> {
+  const { execFile } = await import('node:child_process');
+  const sql = `SELECT row_to_json(t) FROM (SELECT settlement_state, authorizer, pay_to, value, asset, network, nonce, valid_after, valid_before FROM payment_intents WHERE request_id = '${requestId.replace(/'/g, "''")}') t`;
+  return await new Promise((resolve) => {
+    execFile('psql', [ZEUS_DB_URL, '-t', '-A', '-c', sql], { timeout: 10_000 }, (err, stdout) => {
+      if (err || !stdout.trim()) resolve(null);
+      else { try { resolve(JSON.parse(stdout.trim())); } catch { resolve(null); } }
+    });
+  });
+}
+
 // ===========================================================================
 // SCENARIO A — Argus as SELLER for Secretariat's Stage-A client
 // ===========================================================================
@@ -193,8 +221,13 @@ describe.skipIf(!secretariatAvailable())('Argus <-> Secretariat live run — Sce
     });
     expect(created.status).toBe(201);
 
-    const requestId = String((created.body as Record<string, unknown>).requestId);
-    const paymentRequired = (created.body as Record<string, unknown>).paymentRequired as Record<string, unknown>;
+    const createdBody = created.body as Record<string, any>;
+    const requestId = String(createdBody.requestId);
+    // NOTE: the HTTP adapter returns ONLY `paymentRequired` {amount,asset,network,payTo,deadline}
+    // — the DPI bindings (nonce/validAfter/validBefore) that Eip3009PaymentVerifier checks are
+    // persisted but NOT exposed. Argus recovers them from the DB view of the intent below.
+    // (Finding F-Z4: public response omits signature-binding fields; see report.)
+    const paymentRequired = createdBody.paymentRequired as Record<string, unknown>;
     expect(paymentRequired).toBeTruthy();
 
     // -- Step 2: status endpoint reflects awaiting state
@@ -211,8 +244,36 @@ describe.skipIf(!secretariatAvailable())('Argus <-> Secretariat live run — Sce
       pass: statusBefore.status === 200 && statusBefore.body.status === 'AWAITING_PAYMENT_SIGNATURE',
     });
 
-    // -- Step 3: Argus signs (EIP-3009 via PaymentAdapter) + adapts format, submits
-    const canonicalPayload = await signAndAdapt(adapter, paymentRequired);
+    // -- Step 3: Argus signs EXACTLY what the intermediary persisted
+    // (DPI nonce/validAfter/validBefore are returned in paymentRequired and are
+    // hard bindings of Eip3009PaymentVerifier — see helper docs + report F-A2).
+    void adapter; // PaymentAdapter self-generated nonce/window is covered by W1 offline check
+    const dpi = await readDpiFromDb(requestId);
+    record({
+      scenario,
+      action: `DB check: payment_intents row for ${requestId}`,
+      argusVerdict: dpi
+        ? `row found: state=${dpi.settlement_state}, authorizer=${dpi.authorizer?.slice(0,10)}…, nonce=${String(dpi.nonce)?.slice(0,10)}…`
+        : 'NO ROW in payment_intents',
+      dbExpectation: 'one payment_intents row, settlement_state PENDING_SIGNATURE',
+      pass: !!dpi && dpi.settlement_state === 'PENDING_SIGNATURE',
+    });
+    expect(dpi, 'DPI must be persisted before signing').toBeTruthy();
+    // Map snake_case DB columns to the camelCase fields the signer expects.
+    const dpiCamel = {
+      value: dpi.value,
+      validAfter: dpi.valid_after,
+      validBefore: dpi.valid_before,
+      nonce: dpi.nonce,
+      payTo: dpi.pay_to ?? dpi.payee,
+      asset: dpi.asset,
+      network: dpi.network,
+    };
+    const canonicalPayload = await signExactDpiAuthorization({
+      privateKey: TEST_PK,
+      paymentRequired: { ...paymentRequired, ...dpiCamel },
+      domain: { name: DOMAIN_NAME, version: DOMAIN_VERSION, chainId: 84532, verifyingContract: String(paymentRequired.asset) },
+    });
     const submitted = await submitPayment(requestId, canonicalPayload);
     record({
       scenario,
@@ -370,7 +431,11 @@ describe.skipIf(!secretariatAvailable())('Argus <-> Secretariat live run — Sce
     const requestId = String((created.body as Record<string, unknown>).requestId);
     const paymentRequired = (created.body as Record<string, unknown>).paymentRequired as Record<string, unknown>;
 
-    const good = await signAndAdapt(adapter, paymentRequired);
+    const good = await signExactDpiAuthorization({
+      privateKey: TEST_PK,
+      paymentRequired,
+      domain: { name: DOMAIN_NAME, version: DOMAIN_VERSION, chainId: 84532, verifyingContract: String(paymentRequired.asset) },
+    });
     // Tamper: flip last hex char of the signature
     const bad = structuredClone(good) as Record<string, unknown>;
     const payloadObj = bad.payload as Record<string, unknown>;
@@ -436,7 +501,11 @@ describe.skipIf(!secretariatAvailable())('Argus <-> Secretariat live run — Sce
     }
     const requestId = String((created.body as Record<string, unknown>).requestId);
     const paymentRequired = (created.body as Record<string, unknown>).paymentRequired as Record<string, unknown>;
-    const payload = await signAndAdapt(adapter, paymentRequired);
+    const payload = await signExactDpiAuthorization({
+      privateKey: TEST_PK,
+      paymentRequired,
+      domain: { name: DOMAIN_NAME, version: DOMAIN_VERSION, chainId: 84532, verifyingContract: String(paymentRequired.asset) },
+    });
     const res = await submitPayment(requestId, payload);
     const code = String((res.body as { error?: { code?: string } }).error?.code ?? '');
     record({

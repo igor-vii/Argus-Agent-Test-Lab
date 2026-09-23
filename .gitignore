@@ -4,5 +4,5 @@ dist/
 # Dependencies
 node_modules/
 
-# Generated reports
+# Test reports and generated files
 reports/

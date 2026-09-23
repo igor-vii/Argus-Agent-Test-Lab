@@ -185,3 +185,99 @@ export async function signAndAdapt(
   const signed = await adapter.signX402Payment(argusPr);
   return toCanonicalV2Payload(signed, secretariatPaymentRequired);
 }
+
+// ---------------------------------------------------------------------------
+// Exact-binding signer (Argus-side integration helper; no core changes)
+// ---------------------------------------------------------------------------
+//
+// Secretariat's Eip3009PaymentVerifier binds the submitted payload against the
+// DURABLE payment intent (DPI), not just the seller terms:
+//   authorization.nonce       === dpi.nonce            (NONCE_MISMATCH)
+//   authorization.validAfter  === dpi.validAfter       (VALID_AFTER_MISMATCH)
+//   authorization.validBefore === dpi.validBefore      (VALID_BEFORE_MISMATCH)
+// while PaymentAdapter.signX402Payment() generates its own random nonce and a
+// fresh validity window. The DPI values are returned by POST /v1/requests in
+// `paymentRequired` (see state-machine buildAwaitingSignatureResult), so the
+// correct integration shape is: SIGN EXACTLY what the intermediary persisted.
+//
+// This helper uses viem directly with the SAME well-known test key that every
+// existing Argus integration test already uses (ENV-driven). It does NOT
+// modify PaymentAdapter/X402AgentAdapter/ExecutionRegistry/etc.
+
+import { privateKeyToAccount } from 'viem/accounts';
+import type { Address, Hex } from 'viem';
+
+const EIP3009_TYPES = {
+  TransferWithAuthorization: [
+    { name: 'from', type: 'address' },
+    { name: 'to', type: 'address' },
+    { name: 'value', type: 'uint256' },
+    { name: 'validAfter', type: 'uint256' },
+    { name: 'validBefore', type: 'uint256' },
+    { name: 'nonce', type: 'bytes32' },
+  ],
+} as const;
+
+export interface DomainOverride {
+  name?: string;
+  version?: string;
+  chainId?: number;
+  verifyingContract?: string;
+}
+
+export async function signExactDpiAuthorization(opts: {
+  privateKey: `0x${string}`;
+  /** paymentRequired object returned by POST /v1/requests (contains DPI bindings). */
+  paymentRequired: Record<string, unknown>;
+  /**
+   * EIP-712 domain override. Secretariat resolves it from env
+   * ZEUS_EIP3009_DOMAIN_NAME/VERSION + network->chainId + asset address.
+   * Keep in sync with the running Secretariat config.
+   */
+  domain: DomainOverride;
+}): Promise<Record<string, unknown>> {
+  const account = privateKeyToAccount(opts.privateKey);
+  const pr = opts.paymentRequired;
+  const authorization = {
+    from: account.address as Address,
+    to: String(pr.payee ?? pr.payTo) as Address,
+    value: BigInt(String(pr.value ?? pr.amount)),
+    validAfter: BigInt(String(pr.validAfter)),
+    validBefore: BigInt(String(pr.validBefore)),
+    nonce: String(pr.nonce) as Hex,
+  };
+  const signature = await account.signTypedData({
+    domain: {
+      name: opts.domain.name ?? 'USD Coin',
+      version: opts.domain.version ?? '2',
+      chainId: BigInt(opts.domain.chainId ?? 84532),
+      verifyingContract: String(opts.domain.verifyingContract ?? pr.asset) as Address,
+    },
+    types: EIP3009_TYPES,
+    primaryType: 'TransferWithAuthorization',
+    message: authorization,
+  });
+
+  return {
+    x402Version: 2,
+    accepted: {
+      scheme: String(pr.scheme ?? 'exact'),
+      network: String(pr.network),
+      asset: String(pr.asset),
+      amount: String(pr.amount),
+      payTo: String(pr.payee ?? pr.payTo),
+      maxTimeoutSeconds: Number(pr.maxTimeoutSeconds ?? 3600),
+    },
+    payload: {
+      signature,
+      authorization: {
+        from: authorization.from,
+        to: authorization.to,
+        value: authorization.value.toString(),
+        validAfter: authorization.validAfter.toString(),
+        validBefore: authorization.validBefore.toString(),
+        nonce: authorization.nonce,
+      },
+    },
+  };
+}
