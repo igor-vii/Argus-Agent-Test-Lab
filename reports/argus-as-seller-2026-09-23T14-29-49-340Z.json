@@ -1,0 +1,231 @@
+{
+  "generatedAt": "2026-09-23T14:29:49.340Z",
+  "mode": "local-loopback-only",
+  "serverUrl": "http://127.0.0.1:34091/resource",
+  "summary": {
+    "total": 1,
+    "pass": 1,
+    "fail": 0,
+    "inconclusive": 0,
+    "skipped": 0
+  },
+  "runs": [
+    {
+      "scenarioId": "S8",
+      "scenarioName": "X402 Payment Flow",
+      "runId": "run_1790173789329_hdb0dpcay",
+      "verdict": "PASS",
+      "evidenceCount": 2
+    }
+  ],
+  "engineEvidence": [
+    {
+      "id": "ev_0",
+      "source": "engine",
+      "type": "payment_signed_and_retried",
+      "data": {
+        "actionType": "request_resource"
+      },
+      "timestamp": 1790173789339,
+      "runId": "run_1790173789329_hdb0dpcay"
+    },
+    {
+      "id": "ev_1",
+      "source": "engine",
+      "type": "action_request_resource",
+      "data": {
+        "resourceId": "res-1"
+      },
+      "timestamp": 1790173789340,
+      "runId": "run_1790173789329_hdb0dpcay"
+    }
+  ],
+  "serverEvidence": [
+    {
+      "source": "x402-server",
+      "type": "payment_required_issued",
+      "data": {
+        "requestId": "x402-req_1790173789143_9zkh7oq",
+        "method": "POST",
+        "url": "/resource"
+      },
+      "timestamp": 1790173789145
+    },
+    {
+      "source": "x402-server",
+      "type": "request_received",
+      "data": {
+        "requestId": "x402-req_1790173789143_9zkh7oq",
+        "method": "POST",
+        "url": "/resource",
+        "hasSignature": false,
+        "responseStatus": 402
+      },
+      "timestamp": 1790173789145
+    },
+    {
+      "source": "x402-server",
+      "type": "payment_required_issued",
+      "data": {
+        "requestId": "x402-req_1790173789248_i8m7986",
+        "method": "POST",
+        "url": "/resource"
+      },
+      "timestamp": 1790173789248
+    },
+    {
+      "source": "x402-server",
+      "type": "request_received",
+      "data": {
+        "requestId": "x402-req_1790173789248_i8m7986",
+        "method": "POST",
+        "url": "/resource",
+        "hasSignature": false,
+        "responseStatus": 402
+      },
+      "timestamp": 1790173789248
+    },
+    {
+      "source": "x402-server",
+      "type": "payment_signature_accepted",
+      "data": {
+        "requestId": "x402-req_1790173789321_om1e2df",
+        "scheme": "exact",
+        "network": "eip155:84532"
+      },
+      "timestamp": 1790173789322
+    },
+    {
+      "source": "x402-server",
+      "type": "request_received",
+      "data": {
+        "requestId": "x402-req_1790173789321_om1e2df",
+        "method": "POST",
+        "url": "/resource",
+        "hasSignature": true,
+        "responseStatus": 200
+      },
+      "timestamp": 1790173789322
+    },
+    {
+      "source": "x402-server",
+      "type": "payment_signature_rejected",
+      "data": {
+        "requestId": "x402-req_1790173789325_gbhff3d",
+        "detail": "missing x402Version"
+      },
+      "timestamp": 1790173789326
+    },
+    {
+      "source": "x402-server",
+      "type": "request_received",
+      "data": {
+        "requestId": "x402-req_1790173789325_gbhff3d",
+        "method": "POST",
+        "url": "/resource",
+        "hasSignature": true,
+        "responseStatus": 402
+      },
+      "timestamp": 1790173789326
+    },
+    {
+      "source": "x402-server",
+      "type": "payment_required_issued",
+      "data": {
+        "requestId": "x402-req_1790173789332_oyskymm",
+        "method": "POST",
+        "url": "/resource"
+      },
+      "timestamp": 1790173789332
+    },
+    {
+      "source": "x402-server",
+      "type": "request_received",
+      "data": {
+        "requestId": "x402-req_1790173789332_oyskymm",
+        "method": "POST",
+        "url": "/resource",
+        "hasSignature": false,
+        "responseStatus": 402
+      },
+      "timestamp": 1790173789332
+    },
+    {
+      "source": "x402-server",
+      "type": "payment_signature_accepted",
+      "data": {
+        "requestId": "x402-req_1790173789338_9wajv1o",
+        "scheme": "exact",
+        "network": "eip155:84532"
+      },
+      "timestamp": 1790173789338
+    },
+    {
+      "source": "x402-server",
+      "type": "request_received",
+      "data": {
+        "requestId": "x402-req_1790173789338_9wajv1o",
+        "method": "POST",
+        "url": "/resource",
+        "hasSignature": true,
+        "responseStatus": 200
+      },
+      "timestamp": 1790173789338
+    }
+  ],
+  "serverRequests": [
+    {
+      "id": "x402-req_1790173789143_9zkh7oq",
+      "method": "POST",
+      "url": "/resource",
+      "hasSignature": false,
+      "responseStatus": 402,
+      "reason": "missing payment-signature"
+    },
+    {
+      "id": "x402-req_1790173789248_i8m7986",
+      "method": "POST",
+      "url": "/resource",
+      "hasSignature": false,
+      "responseStatus": 402,
+      "reason": "missing payment-signature"
+    },
+    {
+      "id": "x402-req_1790173789321_om1e2df",
+      "method": "POST",
+      "url": "/resource",
+      "hasSignature": true,
+      "responseStatus": 200,
+      "reason": "payment-signature accepted"
+    },
+    {
+      "id": "x402-req_1790173789325_gbhff3d",
+      "method": "POST",
+      "url": "/resource",
+      "hasSignature": true,
+      "responseStatus": 402,
+      "reason": "invalid payment-signature: missing x402Version"
+    },
+    {
+      "id": "x402-req_1790173789332_oyskymm",
+      "method": "POST",
+      "url": "/resource",
+      "hasSignature": false,
+      "responseStatus": 402,
+      "reason": "missing payment-signature"
+    },
+    {
+      "id": "x402-req_1790173789338_9wajv1o",
+      "method": "POST",
+      "url": "/resource",
+      "hasSignature": true,
+      "responseStatus": 200,
+      "reason": "payment-signature accepted"
+    }
+  ],
+  "notes": [
+    "Argus seller server completed the x402 cycle against Argus buyer stack.",
+    "Secretariat HttpSellerExecutionAdapter uses the same wire format",
+    "(POST + base64 PAYMENT-SIGNATURE header), so this loop emulates it."
+  ]
+}

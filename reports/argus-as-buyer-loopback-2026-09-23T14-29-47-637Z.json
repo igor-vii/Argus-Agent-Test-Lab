@@ -1,0 +1,46 @@
+{
+  "generatedAt": "2026-09-23T14:29:47.637Z",
+  "mode": "local-loopback-only",
+  "target": "http://localhost:37657",
+  "summary": {
+    "total": 1,
+    "pass": 1,
+    "fail": 0,
+    "inconclusive": 0,
+    "skipped": 0
+  },
+  "runs": [
+    {
+      "scenarioId": "S8",
+      "scenarioName": "X402 Payment Flow",
+      "runId": "run_1790173787539_9xrkh5t5s",
+      "verdict": "PASS",
+      "evidenceCount": 2
+    }
+  ],
+  "evidence": [
+    {
+      "id": "ev_0",
+      "source": "engine",
+      "type": "payment_signed_and_retried",
+      "data": {
+        "actionType": "request_resource"
+      },
+      "timestamp": 1790173787637,
+      "runId": "run_1790173787539_9xrkh5t5s"
+    },
+    {
+      "id": "ev_1",
+      "source": "engine",
+      "type": "action_request_resource",
+      "data": {
+        "resourceId": "res-1"
+      },
+      "timestamp": 1790173787637,
+      "runId": "run_1790173787539_9xrkh5t5s"
+    }
+  ],
+  "notes": [
+    "Loopback x402 cycle: 402 -> sign -> retry -> 200 verified."
+  ]
+}

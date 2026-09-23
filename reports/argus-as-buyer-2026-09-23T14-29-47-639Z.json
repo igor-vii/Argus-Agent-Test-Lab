@@ -1,0 +1,22 @@
+{
+  "generatedAt": "2026-09-23T14:29:47.639Z",
+  "mode": "real-secretariat",
+  "summary": {
+    "total": 1,
+    "pass": 0,
+    "fail": 0,
+    "inconclusive": 0,
+    "skipped": 1
+  },
+  "runs": [
+    {
+      "scenarioId": "S8",
+      "scenarioName": "X402 Payment Flow",
+      "skipped": true,
+      "skipReason": "Secretariat unreachable at undefined"
+    }
+  ],
+  "notes": [
+    "Set SECRETARIAT_URL to a running instance to enable this test."
+  ]
+}
