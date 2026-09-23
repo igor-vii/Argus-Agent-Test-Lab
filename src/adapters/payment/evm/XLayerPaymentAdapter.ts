@@ -6,6 +6,7 @@ import {
   Receipt,
   NotImplementedError,
 } from '../PaymentAdapter';
+import { PaymentRequired } from '../../../core/AgentTargetPort';
 
 /**
  * X Layer PaymentAdapter — заготовка.
@@ -30,6 +31,9 @@ export class XLayerPaymentAdapter implements PaymentAdapter {
     _address: Address,
     _threshold: Amount
   ): Promise<void> {
+    throw new NotImplementedError('xlayer');
+  }
+  async signX402Payment(_paymentRequired: PaymentRequired): Promise<string> {
     throw new NotImplementedError('xlayer');
   }
 }

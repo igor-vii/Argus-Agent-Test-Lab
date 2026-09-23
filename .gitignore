@@ -1,38 +1,22 @@
-# Dependencies
-node_modules/
-
-# Build artifacts
+```
+# Compiled and build artifacts
+*.js
+*.js.map
+*.d.ts
+*.d.ts.map
 dist/
 build/
-target/
-*.tsbuildinfo
-
-# Cache
-.cache/
-.vite/
-
+# Dependencies
+node_modules/
 # Logs and temp files
 *.log
 *.tmp
-*.temp
-
+*.swp
 # Environment
 .env
 .env.local
-*.env.*
-
+.env.*
 # Editors
 .vscode/
 .idea/
-*.swp
-*.swo
-
-# Test coverage
-coverage/
-htmlcov/
-.coverage
-
-# OS
-.DS_Store
-Thumbs.db
-!.env.example
+```

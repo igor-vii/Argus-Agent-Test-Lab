@@ -6,6 +6,7 @@ import {
   Receipt,
   NotImplementedError,
 } from '../PaymentAdapter';
+import { PaymentRequired } from '../../../core/AgentTargetPort';
 
 /**
  * Base (mainnet) PaymentAdapter — заготовка.
@@ -31,6 +32,9 @@ export class BasePaymentAdapter implements PaymentAdapter {
     _address: Address,
     _threshold: Amount
   ): Promise<void> {
+    throw new NotImplementedError('base');
+  }
+  async signX402Payment(_paymentRequired: PaymentRequired): Promise<string> {
     throw new NotImplementedError('base');
   }
 }

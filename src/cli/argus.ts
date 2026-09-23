@@ -68,13 +68,19 @@ async function main(): Promise<void> {
     }
 
     try {
-      // Создание адаптера и контроллера
-      const targetAdapter = new MockTargetAdapter('mock');
+      // Создание Map контроллеров для участников ARGUS
+      const controllers = new Map<string, AgentController>();
 
-      const controller = new AgentController(targetAdapter, {
-        connectionConfig: { transportType: 'mock' },
-        runId: `run_${Date.now()}`
-      });
+      for (const participant of scenarioDef.participants) {
+        if (participant.ownership !== 'ARGUS') continue;
+
+        const targetAdapter = new MockTargetAdapter('mock');
+        const controller = new AgentController(targetAdapter, {
+          connectionConfig: { transportType: 'mock' },
+          runId: `run_${Date.now()}_${participant.participantId}`,
+        });
+        controllers.set(participant.participantId, controller);
+      }
 
       // Assertions из сценария (Model V0: scenarioDef.assertions)
       const assertions: Assertion[] = scenarioDef.assertions || [];
@@ -82,8 +88,7 @@ async function main(): Promise<void> {
       // Запуск оркестратора
       const orchestrator = new RunOrchestrator(
         scenarioDef,
-        controller,
-        targetAdapter,
+        controllers,
         assertions
       );
 

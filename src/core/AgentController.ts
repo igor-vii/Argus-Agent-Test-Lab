@@ -263,6 +263,82 @@ export class AgentController {
     this.currentRunId = runId;
   }
 
+  /**
+   * Execute an action with a payment signature.
+   *
+   * Only works if the underlying port implements PaymentCapablePort.
+   * Controller does NOT know about x402, PaymentAdapter, or payment semantics.
+   * It only knows: "if the port supports sendWithSignature, call it".
+   *
+   * @param type - original action type
+   * @param payload - original action payload
+   * @param paymentSignature - Base64-encoded payment signature
+   * @throws Error if the port does not support sendWithSignature
+   */
+  async actWithSignature(
+    type: string,
+    payload: unknown,
+    paymentSignature: string
+  ): Promise<InteractionOutcome> {
+    if (!this.currentRunId) {
+      throw new Error('RunId not set. Call setRunId() before actWithSignature().');
+    }
+
+    if (!this.isConnected()) {
+      return {
+        runId: this.currentRunId,
+        status: ExchangeStatus.FAILURE,
+        error: 'Not connected to target',
+      };
+    }
+
+    // Check if port supports sendWithSignature (PaymentCapablePort)
+    const port = this.port as unknown as { sendWithSignature?: Function };
+    if (typeof port.sendWithSignature !== 'function') {
+      throw new Error(
+        'Port does not support sendWithSignature (not a PaymentCapablePort)'
+      );
+    }
+
+    const startTime = Date.now();
+
+    try {
+      const actionPromise = port.sendWithSignature(
+        this.currentRunId,
+        type,
+        payload,
+        paymentSignature
+      ) as Promise<Exchange>;
+
+      const timeoutPromise = new Promise<Exchange>((_, reject) => {
+        setTimeout(() => {
+          reject(new Error(`Action timeout after ${this.config.timeoutMs}ms`));
+        }, this.config.timeoutMs);
+      });
+
+      const exchange = await Promise.race([actionPromise, timeoutPromise]);
+      const durationMs = Date.now() - startTime;
+
+      return {
+        runId: this.currentRunId,
+        status: exchange.status,
+        exchange,
+        durationMs,
+      };
+    } catch (error) {
+      const durationMs = Date.now() - startTime;
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      const isTimeout = errorMessage.includes('timeout');
+
+      return {
+        runId: this.currentRunId,
+        status: isTimeout ? ExchangeStatus.TIMEOUT : ExchangeStatus.FAILURE,
+        error: errorMessage,
+        durationMs,
+      };
+    }
+  }
+
   async disconnect(): Promise<void> {
     this.isConnectedFlag = false;
     await this.port.disconnect();

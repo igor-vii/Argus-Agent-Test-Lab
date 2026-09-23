@@ -6,6 +6,7 @@ import {
   Receipt,
   NotImplementedError,
 } from '../PaymentAdapter';
+import { PaymentRequired } from '../../../core/AgentTargetPort';
 
 /**
  * Solana PaymentAdapter — заготовка.
@@ -36,6 +37,9 @@ export class SolanaPaymentAdapter implements PaymentAdapter {
     _address: Address,
     _threshold: Amount
   ): Promise<void> {
+    throw new NotImplementedError('solana');
+  }
+  async signX402Payment(_paymentRequired: PaymentRequired): Promise<string> {
     throw new NotImplementedError('solana');
   }
 }

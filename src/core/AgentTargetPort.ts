@@ -51,6 +51,73 @@ export enum ExchangeStatus {
   FAILURE = 'failure',
   TIMEOUT = 'timeout',
   UNKNOWN = 'unknown',
+  /**
+   * Target returned HTTP 402 Payment Required (or protocol equivalent).
+   * The adapter has parsed the payment requirements but did NOT pay.
+   * Upper layers decide whether to sign and retry.
+   */
+  PAYMENT_REQUIRED = 'payment_required',
+}
+
+/**
+ * x402 V2 payment requirements, parsed from the PAYMENT-REQUIRED header
+ * (or response body, as a fallback).
+ */
+export interface PaymentRequired {
+  /** Raw Base64 string from PAYMENT-REQUIRED header */
+  raw: string;
+
+  /** Parsed JSON body (x402 V2 structure) */
+  parsed: X402PaymentRequiredBody;
+
+  /** Selected scheme (first entry from accepts) */
+  scheme: string;
+
+  /** Network identifier, e.g. 'eip155:84532' */
+  network: string;
+
+  /** Amount in atomic units, e.g. '10000' */
+  amount: string;
+
+  /** Asset contract address, e.g. USDC on Base Sepolia */
+  asset: string;
+
+  /** Recipient address */
+  payTo: string;
+
+  /** Max time allowed for payment, in seconds */
+  maxTimeoutSeconds: number;
+}
+
+/**
+ * Body of the PAYMENT-REQUIRED header (x402 V2).
+ * See https://docs.x402.org for the spec.
+ */
+export interface X402PaymentRequiredBody {
+  x402Version: number;
+  error?: string;
+  resource: {
+    url: string;
+    description?: string;
+    mimeType?: string;
+  };
+  accepts: X402Accept[];
+}
+
+/**
+ * One accepted payment option inside a PAYMENT-REQUIRED body.
+ */
+export interface X402Accept {
+  scheme: string;
+  network: string;
+  maxAmountRequired: string;
+  resource: string;
+  description?: string;
+  mimeType?: string;
+  payTo: string;
+  maxTimeoutSeconds: number;
+  asset: string;
+  extra?: Record<string, unknown>;
 }
 
 /**
@@ -60,30 +127,36 @@ export enum ExchangeStatus {
 export interface Exchange {
   /** Unique identifier for this exchange */
   id: string;
-  
+
   /** Reference to the parent run */
   runId: RunId;
-  
+
   /** Direction of this exchange */
   direction: MessageDirection;
-  
+
   /** Type of operation (e.g., 'request', 'response', 'observation', 'action') */
   type: string;
-  
+
   /** When this exchange was initiated */
   timestamp: Timestamp;
-  
+
   /** Optional payload being sent/received */
   payload?: unknown;
-  
+
   /** Status of this exchange */
   status: ExchangeStatus;
-  
+
   /** Optional error information if status is FAILURE */
   error?: string;
-  
+
   /** Target-agent specific metadata (opaque to ATA) */
   metadata?: Metadata;
+
+  /**
+   * If status is PAYMENT_REQUIRED, this contains the parsed requirements.
+   * Adapter does NOT pay — upper layers decide whether to sign and retry.
+   */
+  paymentRequired?: PaymentRequired;
 }
 
 /**
@@ -209,3 +282,27 @@ export interface AgentTargetPort {
  * Allows dependency injection and testing
  */
 export type AdapterFactory = (targetType: string) => AgentTargetPort;
+
+/**
+ * A port that supports retrying a request with a payment signature.
+ * Only adapters that understand payment-required flows implement this.
+ *
+ * The adapter does NOT sign. The signature is produced by PaymentAdapter
+ * and passed in by an upper layer (ScenarioEngine / RunOrchestrator).
+ */
+export interface PaymentCapablePort extends AgentTargetPort {
+  /**
+   * Retry the original request, attaching a payment signature.
+   *
+   * @param runId - the run this exchange belongs to
+   * @param type - original request type (same as in send())
+   * @param payload - original request payload (same as in send())
+   * @param paymentSignature - Base64-encoded PAYMENT-SIGNATURE payload
+   */
+  sendWithSignature(
+    runId: RunId,
+    type: string,
+    payload: unknown,
+    paymentSignature: string
+  ): Promise<Exchange>;
+}
