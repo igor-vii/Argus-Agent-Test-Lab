@@ -1,8 +1,12 @@
-# Build artifacts
-dist/
-
-# Dependencies
+# Dependency directories
 node_modules/
 
-# Test reports and generated files
+# Test and build artifacts
+dist/
+build/
+coverage/
+htmlcov/
+.vite/
+
+# Generated reports
 reports/

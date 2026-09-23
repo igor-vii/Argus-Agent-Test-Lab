@@ -293,7 +293,15 @@ describe.skipIf(!secretariatAvailable())('Argus <-> Secretariat live run — Sce
     // carries authorizer/nonce/window (finding F-Z4: not present for all
     // deployments, so fall back to the DB view). Normalize NUMERIC decimals.
     const respIntent = (createdBody.paymentIntent ?? {}) as Record<string, unknown>;
-    const normValue = (v: unknown): string => String(BigInt(String(v).split('.')[0] ?? '0'));
+    // NOTE F-A6 (finding): Postgres NUMERIC columns return "100000.000000";
+    // Eip3009PaymentVerifier compares via String(x).toLowerCase() — a raw
+    // decimal string never equals the canonical integer string. The client
+    // MUST normalize decimals itself; the verifier does not. See report.
+    const normValue = (v: unknown): string => {
+      const s = String(v);
+      if (/^\d+$/.test(s)) return s;
+      try { return BigInt(s.split('.')[0] || '0').toString(); } catch { return s; }
+    };
     const dpiCamel = {
       value: normValue(respIntent.value ?? dpi.value),
       validAfter: respIntent.validAfter ?? dpi.valid_after,
