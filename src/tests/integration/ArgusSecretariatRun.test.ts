@@ -288,7 +288,9 @@ describe.skipIf(!secretariatAvailable())('Argus <-> Secretariat live run — Sce
       dbExpectation: 'one payment_intents row, settlement_state PENDING_SIGNATURE',
       pass: !!dpi && dpi.settlement_state === 'PENDING_SIGNATURE',
     });
-    expect(dpi, 'DPI must be persisted before signing').toBeTruthy();
+    if (!dpi) {
+      throw new Error(`DPI row for ${requestId} must exist in payment_intents before signing (aborting scenario)`);
+    }
     // Bind EXACTLY what was persisted. The HTTP response's `paymentIntent`
     // carries authorizer/nonce/window (finding F-Z4: not present for all
     // deployments, so fall back to the DB view). Normalize NUMERIC decimals.
@@ -313,7 +315,11 @@ describe.skipIf(!secretariatAvailable())('Argus <-> Secretariat live run — Sce
     };
     const canonicalPayload = await signExactDpiAuthorization({
       privateKey: TEST_PK,
-      paymentRequired: { ...paymentRequired, ...dpiCamel, amount: dpiCamel.value },
+      // FIX (test bug): `amount` must be bound AFTER spreading — the previous
+      // order let the raw paymentRequired.amount ("100000.000000", NUMERIC)
+      // override the normalized integer string, tripping the verifier's
+      // accepted.amount binding check (VALUE_MISMATCH).
+      paymentRequired: { ...paymentRequired, ...dpiCamel },
       domain: { name: DOMAIN_NAME, version: DOMAIN_VERSION, chainId: chainIdFromNetwork(String(dpi!.network)), verifyingContract: String(paymentRequired.asset) },
     });
     const submitted = await submitPayment(requestId, canonicalPayload);
@@ -483,7 +489,12 @@ describe.skipIf(!secretariatAvailable())('Argus <-> Secretariat live run — Sce
     const boundPrA5 = {
       ...paymentRequired,
       value: normA5(respIntentA5.value ?? dpiA5!.value),
+      // FIX (test bug): bind amount to the NORMALIZED persisted value; a
+      // NUMERIC decimal string ("100000.000000") never equals the canonical
+      // integer string in Eip3009PaymentVerifier (finding F-A4/F-A6).
       amount: normA5(respIntentA5.value ?? dpiA5!.value),
+      payTo: respIntentA5.payTo ?? dpiA5!.pay_to ?? dpiA5!.payee,
+      asset: respIntentA5.asset ?? dpiA5!.asset,
       validAfter: respIntentA5.validAfter ?? dpiA5!.valid_after,
       validBefore: respIntentA5.validBefore ?? dpiA5!.valid_before,
       nonce: respIntentA5.nonce ?? dpiA5!.nonce,
@@ -569,7 +580,10 @@ describe.skipIf(!secretariatAvailable())('Argus <-> Secretariat live run — Sce
     const boundPrA6 = {
       ...paymentRequired,
       value: normA6(respIntentA6.value ?? dpiA6!.value),
+      // FIX (test bug): bind amount to the NORMALIZED persisted value (see A5).
       amount: normA6(respIntentA6.value ?? dpiA6!.value),
+      payTo: respIntentA6.payTo ?? dpiA6!.pay_to ?? dpiA6!.payee,
+      asset: respIntentA6.asset ?? dpiA6!.asset,
       validAfter: respIntentA6.validAfter ?? dpiA6!.valid_after,
       validBefore: respIntentA6.validBefore ?? dpiA6!.valid_before,
       nonce: respIntentA6.nonce ?? dpiA6!.nonce,

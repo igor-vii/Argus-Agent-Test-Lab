@@ -154,7 +154,7 @@ export async function signExactDpiAuthorization(opts) {
     const authorization = {
         from: account.address,
         to: String(pr.payee ?? pr.payTo),
-        value: BigInt(String(pr.amount)),
+        value: BigInt(String(pr.value ?? pr.amount)),
         validAfter: BigInt(String(pr.validAfter)),
         validBefore: BigInt(String(pr.validBefore)),
         nonce: String(pr.nonce),

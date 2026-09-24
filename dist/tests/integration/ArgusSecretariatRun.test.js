@@ -91,7 +91,12 @@ async function startArgusSeller(opts) {
         path: '/resource',
         paymentRequirements: {
             scheme: 'exact',
-            network: opts?.network ?? 'eip155:84532',
+            // NOTE F-Z5: Secretariat's resolvePaymentDomain()/chainIdForNetwork() only
+            // understands canonical names ("base-sepolia"), NOT CAIP-2 ids
+            // ("eip155:84532") — a CAIP-2 network makes the verifier throw and the
+            // client gets an opaque DOMAIN_MISMATCH. So the Argus seller advertises
+            // the canonical form. See report finding F-Z5.
+            network: opts?.network ?? 'base-sepolia',
             maxAmountRequired: opts?.amount ?? '100000',
             payTo: account.address,
             asset: opts?.asset ?? BASE_SEPOLIA_USDC,
@@ -118,6 +123,26 @@ function stageAPolicyFor(server, overrides) {
 // ENV-driven: ZEUS_DB_URL (default matches the local stand-up).
 // ---------------------------------------------------------------------------
 const ZEUS_DB_URL = process.env['ZEUS_DB_URL'] ?? 'postgres://postgres:postgres@127.0.0.1:5432/zeus';
+/**
+ * Mirror of Secretariat's api-server chainIdForNetwork() (secretariat-composition.ts).
+ * NOTE (finding F-Z5): the verifier resolves the EIP-712 chainId from a
+ * canonical network NAME ("base-sepolia"), but the Stage-A policy + persisted
+ * DPI store CAIP-2 ids ("eip155:84532") — chainIdForNetwork throws on CAIP-2,
+ * which surfaces to clients as an opaque DOMAIN_MISMATCH. We keep the seller
+ * advertising "base-sepolia" so both sides agree; see report.
+ */
+function chainIdFromNetwork(network) {
+    switch (network.toLowerCase()) {
+        case 'base':
+        case 'base-mainnet': return 8453;
+        case 'base-sepolia': return 84532;
+        case 'x-layer':
+        case 'xlayer':
+        case 'x-layer-mainnet': return 196;
+        case 'bot-chain': return 677;
+        default: throw new Error(`EIP-3009 domain is not configured for network ${network}`);
+    }
+}
 async function readDpiFromDb(requestId) {
     const { execFile } = await import('node:child_process');
     const sql = `SELECT row_to_json(t) FROM (SELECT settlement_state, authorizer, pay_to, value, asset, network, nonce, valid_after, valid_before FROM payment_intents WHERE request_id = '${requestId.replace(/'/g, "''")}') t`;
@@ -201,6 +226,10 @@ describe.skipIf(!secretariatAvailable())('Argus <-> Secretariat live run — Sce
         // (DPI nonce/validAfter/validBefore are returned in paymentRequired and are
         // hard bindings of Eip3009PaymentVerifier — see helper docs + report F-A2).
         void adapter; // PaymentAdapter self-generated nonce/window is covered by W1 offline check
+        // NOTE F-A4: the persisted intent stores `value` in Postgres NUMERIC format
+        // ("100000.000000"), while Eip3009PaymentVerifier compares strings — so a
+        // client cannot bind accepted.amount without normalizing decimals first.
+        // See report finding F-A4.
         const dpi = await readDpiFromDb(requestId);
         record({
             scenario,
@@ -211,11 +240,45 @@ describe.skipIf(!secretariatAvailable())('Argus <-> Secretariat live run — Sce
             dbExpectation: 'one payment_intents row, settlement_state PENDING_SIGNATURE',
             pass: !!dpi && dpi.settlement_state === 'PENDING_SIGNATURE',
         });
-        expect(dpi, 'DPI must be persisted before signing').toBeTruthy();
+        if (!dpi) {
+            throw new Error(`DPI row for ${requestId} must exist in payment_intents before signing (aborting scenario)`);
+        }
+        // Bind EXACTLY what was persisted. The HTTP response's `paymentIntent`
+        // carries authorizer/nonce/window (finding F-Z4: not present for all
+        // deployments, so fall back to the DB view). Normalize NUMERIC decimals.
+        const respIntent = (createdBody.paymentIntent ?? {});
+        // NOTE F-A6 (finding): Postgres NUMERIC columns return "100000.000000";
+        // Eip3009PaymentVerifier compares via String(x).toLowerCase() — a raw
+        // decimal string never equals the canonical integer string. The client
+        // MUST normalize decimals itself; the verifier does not. See report.
+        const normValue = (v) => {
+            const s = String(v);
+            if (/^\d+$/.test(s))
+                return s;
+            try {
+                return BigInt(s.split('.')[0] || '0').toString();
+            }
+            catch {
+                return s;
+            }
+        };
+        const dpiCamel = {
+            value: normValue(respIntent.value ?? dpi.value),
+            validAfter: respIntent.validAfter ?? dpi.valid_after,
+            validBefore: respIntent.validBefore ?? dpi.valid_before,
+            nonce: respIntent.nonce ?? dpi.nonce,
+            payTo: respIntent.payTo ?? dpi.pay_to ?? dpi.payee,
+            asset: respIntent.asset ?? dpi.asset,
+            network: respIntent.network ?? dpi.network,
+        };
         const canonicalPayload = await signExactDpiAuthorization({
             privateKey: TEST_PK,
-            paymentRequired: { ...paymentRequired, ...dpi },
-            domain: { name: DOMAIN_NAME, version: DOMAIN_VERSION, chainId: 84532, verifyingContract: String(paymentRequired.asset) },
+            // FIX (test bug): `amount` must be bound AFTER spreading — the previous
+            // order let the raw paymentRequired.amount ("100000.000000", NUMERIC)
+            // override the normalized integer string, tripping the verifier's
+            // accepted.amount binding check (VALUE_MISMATCH).
+            paymentRequired: { ...paymentRequired, ...dpiCamel },
+            domain: { name: DOMAIN_NAME, version: DOMAIN_VERSION, chainId: chainIdFromNetwork(String(dpi.network)), verifyingContract: String(paymentRequired.asset) },
         });
         const submitted = await submitPayment(requestId, canonicalPayload);
         record({
@@ -360,10 +423,31 @@ describe.skipIf(!secretariatAvailable())('Argus <-> Secretariat live run — Sce
         }
         const requestId = String(created.body.requestId);
         const paymentRequired = created.body.paymentRequired;
+        // DPI bindings (nonce/validAfter/validBefore) are persisted but NOT exposed
+        // by the HTTP adapter (finding F-Z4) — recover them from the DB view, same
+        // as A1 does.
+        const dpiA5 = await readDpiFromDb(requestId);
+        expect(dpiA5, 'DPI must be persisted before signing').toBeTruthy();
+        const respIntentA5 = (created.body.paymentIntent ?? {});
+        const normA5 = (v) => String(BigInt(String(v).split('.')[0] ?? '0'));
+        const boundPrA5 = {
+            ...paymentRequired,
+            value: normA5(respIntentA5.value ?? dpiA5.value),
+            // FIX (test bug): bind amount to the NORMALIZED persisted value; a
+            // NUMERIC decimal string ("100000.000000") never equals the canonical
+            // integer string in Eip3009PaymentVerifier (finding F-A4/F-A6).
+            amount: normA5(respIntentA5.value ?? dpiA5.value),
+            payTo: respIntentA5.payTo ?? dpiA5.pay_to ?? dpiA5.payee,
+            asset: respIntentA5.asset ?? dpiA5.asset,
+            validAfter: respIntentA5.validAfter ?? dpiA5.valid_after,
+            validBefore: respIntentA5.validBefore ?? dpiA5.valid_before,
+            nonce: respIntentA5.nonce ?? dpiA5.nonce,
+            network: respIntentA5.network ?? dpiA5.network,
+        };
         const good = await signExactDpiAuthorization({
             privateKey: TEST_PK,
-            paymentRequired,
-            domain: { name: DOMAIN_NAME, version: DOMAIN_VERSION, chainId: 84532, verifyingContract: String(paymentRequired.asset) },
+            paymentRequired: boundPrA5,
+            domain: { name: DOMAIN_NAME, version: DOMAIN_VERSION, chainId: chainIdFromNetwork(String(dpiA5.network)), verifyingContract: String(paymentRequired.asset) },
         });
         // Tamper: flip last hex char of the signature
         const bad = structuredClone(good);
@@ -424,10 +508,28 @@ describe.skipIf(!secretariatAvailable())('Argus <-> Secretariat live run — Sce
         }
         const requestId = String(created.body.requestId);
         const paymentRequired = created.body.paymentRequired;
+        // Bind to the persisted DPI (nonce/window not exposed via HTTP — F-Z4),
+        // same recovery as A1/A5.
+        const dpiA6 = await readDpiFromDb(requestId);
+        expect(dpiA6, 'DPI must be persisted before signing').toBeTruthy();
+        const respIntentA6 = (created.body.paymentIntent ?? {});
+        const normA6 = (v) => String(BigInt(String(v).split('.')[0] ?? '0'));
+        const boundPrA6 = {
+            ...paymentRequired,
+            value: normA6(respIntentA6.value ?? dpiA6.value),
+            // FIX (test bug): bind amount to the NORMALIZED persisted value (see A5).
+            amount: normA6(respIntentA6.value ?? dpiA6.value),
+            payTo: respIntentA6.payTo ?? dpiA6.pay_to ?? dpiA6.payee,
+            asset: respIntentA6.asset ?? dpiA6.asset,
+            validAfter: respIntentA6.validAfter ?? dpiA6.valid_after,
+            validBefore: respIntentA6.validBefore ?? dpiA6.valid_before,
+            nonce: respIntentA6.nonce ?? dpiA6.nonce,
+            network: respIntentA6.network ?? dpiA6.network,
+        };
         const payload = await signExactDpiAuthorization({
             privateKey: TEST_PK,
-            paymentRequired,
-            domain: { name: DOMAIN_NAME, version: DOMAIN_VERSION, chainId: 84532, verifyingContract: String(paymentRequired.asset) },
+            paymentRequired: boundPrA6,
+            domain: { name: DOMAIN_NAME, version: DOMAIN_VERSION, chainId: chainIdFromNetwork(String(dpiA6.network)), verifyingContract: String(paymentRequired.asset) },
         });
         const res = await submitPayment(requestId, payload);
         const code = String(res.body.error?.code ?? '');
