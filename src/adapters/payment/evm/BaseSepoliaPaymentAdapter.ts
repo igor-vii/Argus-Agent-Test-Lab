@@ -7,7 +7,6 @@ import {
 } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 import { baseSepolia } from 'viem/chains';
-import { randomBytes } from 'crypto';
 import {
   PaymentAdapter,
   Address,
@@ -16,11 +15,12 @@ import {
   Receipt,
   InsufficientBalanceError,
 } from '../PaymentAdapter';
-import { PaymentRequired } from '../../../core/AgentTargetPort';
+import { SigningBinding, validateSigningBinding } from '../SigningBinding';
 
 // USDC на Base Sepolia
 const USDC_BASE_SEPOLIA = '0x036CbD53842c5426634e7929541eC2318f3dCF7e' as const;
 const CHAIN_ID_BASE_SEPOLIA = 84532;
+const NETWORK_BASE_SEPOLIA = `eip155:${CHAIN_ID_BASE_SEPOLIA}`;
 
 // EIP-712 domain для USDC на Base Sepolia
 const USDC_DOMAIN = {
@@ -144,43 +144,67 @@ export class BaseSepoliaPaymentAdapter implements PaymentAdapter {
   }
 
   /**
-   * Подписать x402 payment requirements через EIP-712.
+   * Подписать x402 payment через EIP-3009, используя EXACT SigningBinding.
    *
-   * Возвращает Base64-encoded JSON:
+   * Возвращает Base64-encoded JSON x402 V2 PaymentPayload:
    * {
    *   x402Version: 2,
-   *   scheme: 'exact',
-   *   network: 'eip155:84532',
+   *   accepted: { scheme, network, asset, amount, payTo, maxTimeoutSeconds },
    *   payload: {
    *     signature: '0x...',
    *     authorization: {
-   *       from: '0x...',
-   *       to: '0x...',
-   *       value: '10000',
-   *       validAfter: '0',
-   *       validBefore: '1735689600',
-   *       nonce: '0x...'
+   *       from, to, value, validAfter, validBefore, nonce  // = exact binding
    *     }
    *   }
    * }
    */
-  async signX402Payment(paymentRequired: PaymentRequired): Promise<string> {
-    const now = Math.floor(Date.now() / 1000);
-    const validAfter = 0n;
-    const validBefore = BigInt(
-      now + (paymentRequired.maxTimeoutSeconds || 3600)
-    );
+  async signX402Payment(binding: SigningBinding): Promise<string> {
+    // Structural validation на Argus-side boundary.
+    validateSigningBinding(binding);
 
-    // Криптографически стойкий случайный nonce (32 байта)
-    const nonce = `0x${randomBytes(32).toString('hex')}` as `0x${string}`;
+    // Network guard: подпись допустима только для canonical Base Sepolia.
+    if (binding.network !== NETWORK_BASE_SEPOLIA) {
+      throw new Error(
+        `SigningBinding network '${binding.network}' is not supported by ` +
+        `BaseSepoliaPaymentAdapter (expected '${NETWORK_BASE_SEPOLIA}')`
+      );
+    }
 
+    // Asset guard: EIP-712 domain зафиксирован под canonical USDC
+    // на Base Sepolia — подписывать binding для другого asset нельзя.
+    if (binding.asset.toLowerCase() !== USDC_BASE_SEPOLIA.toLowerCase()) {
+      throw new Error(
+        `SigningBinding asset '${binding.asset}' does not match canonical ` +
+        `Base Sepolia USDC (${USDC_BASE_SEPOLIA})`
+      );
+    }
+
+    // Authorizer guard: в Мире A у Argus один test wallet; подпись
+    // выдаётся только от его адреса.
+    if (binding.from.toLowerCase() !== this.account.address.toLowerCase()) {
+      throw new Error(
+        `SigningBinding from ${binding.from} does not match the Argus test ` +
+        `wallet ${this.account.address}`
+      );
+    }
+
+    // Window guard: binding должен быть ещё действителен на момент подписи.
+    const nowSec = Math.floor(Date.now() / 1000);
+    if (BigInt(binding.validBefore) <= BigInt(nowSec)) {
+      throw new Error(
+        `SigningBinding validBefore (${binding.validBefore}) is already in the past`
+      );
+    }
+
+    // EXACT binding: nonce / validAfter / validBefore НЕ генерируются
+    // локально — они принадлежат durable payment intent внешнего слоя.
     const authorization = {
-      from: this.account.address,
-      to: paymentRequired.payTo as `0x${string}`,
-      value: BigInt(paymentRequired.amount),
-      validAfter,
-      validBefore,
-      nonce,
+      from: binding.from as Address,
+      to: binding.to as Address,
+      value: BigInt(binding.value),
+      validAfter: BigInt(binding.validAfter),
+      validBefore: BigInt(binding.validBefore),
+      nonce: binding.nonce as `0x${string}`,
     };
 
     const signature = await this.account.signTypedData({
@@ -190,10 +214,24 @@ export class BaseSepoliaPaymentAdapter implements PaymentAdapter {
       message: authorization,
     });
 
+    // accepted — параметры принятого варианта оплаты (x402 V2 envelope).
+    // maxTimeoutSeconds = полная продолжительность окна binding
+    // (validBefore - validAfter). Выводится из самого binding, а не из 402:
+    // adapter не должен зависеть от исходного PaymentRequired.
+    const validAfterSec = Number(authorization.validAfter);
+    const validBeforeSec = Number(authorization.validBefore);
+    const maxTimeoutSeconds = Math.max(0, validBeforeSec - validAfterSec);
+
     const payload = {
       x402Version: 2,
-      scheme: paymentRequired.scheme,
-      network: paymentRequired.network,
+      accepted: {
+        scheme: binding.scheme,
+        network: binding.network,
+        asset: binding.asset,
+        amount: binding.value,
+        payTo: binding.to,
+        maxTimeoutSeconds,
+      },
       payload: {
         signature,
         authorization: {

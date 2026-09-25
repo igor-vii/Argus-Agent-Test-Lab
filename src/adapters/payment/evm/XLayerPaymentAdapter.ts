@@ -6,7 +6,7 @@ import {
   Receipt,
   NotImplementedError,
 } from '../PaymentAdapter';
-import { PaymentRequired } from '../../../core/AgentTargetPort';
+import { SigningBinding } from '../SigningBinding';
 
 /**
  * X Layer PaymentAdapter — заготовка.
@@ -33,7 +33,7 @@ export class XLayerPaymentAdapter implements PaymentAdapter {
   ): Promise<void> {
     throw new NotImplementedError('xlayer');
   }
-  async signX402Payment(_paymentRequired: PaymentRequired): Promise<string> {
+  async signX402Payment(_binding: SigningBinding): Promise<string> {
     throw new NotImplementedError('xlayer');
   }
 }

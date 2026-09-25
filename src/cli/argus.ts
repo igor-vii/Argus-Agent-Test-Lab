@@ -1,8 +1,26 @@
 #!/usr/bin/env node
 
+// Runtime (важно для cross-system harness и CI):
+//
+//   CLI запускается через:
+//     npm run argus -- run <scenarioId>
+//   или напрямую:
+//     npx tsx src/cli/argus.ts run <scenarioId>
+//
+//   Прямой запуск `node dist/cli/argus.js` НЕ поддерживается:
+//   проект компилируется без .js-расширений в относительных
+//   импортах (tsconfig moduleResolution не NodeNext), поэтому
+//   Node ESM не может разрешить import-пути в dist.
+//
+//   Переход на NodeNext (с .js-расширениями в импортах) —
+//   отдельный PR, вне scope текущих изменений.
+
 import { RunOrchestrator } from '../core/RunOrchestrator';
 import { AgentController } from '../core/AgentController';
-import { MockTargetAdapter } from '../adapters/MockTargetAdapter';
+import {
+  TargetAdapterRegistry,
+  readTargetSpecFromEnv,
+} from './TargetAdapterRegistry';
 import { ScenarioRegistry, getScenarioIds } from './ScenarioRegistry';
 import { Assertion } from '../core/Assertions';
 import { validateScenario } from '../core/validateScenario';
@@ -67,16 +85,32 @@ async function main(): Promise<void> {
       process.exit(1);
     }
 
+    // Target-адаптер выбирается через env (ARGUS_TARGET_KIND / ARGUS_TARGET_ENDPOINT).
+    // Если переменные не заданы — поведение идентично baseline (mock).
+    let targetSpec;
+    try {
+      targetSpec = readTargetSpecFromEnv();
+    } catch (error) {
+      console.error(
+        `Error: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
+      process.exit(1);
+    }
+
     try {
       // Создание Map контроллеров для участников ARGUS
       const controllers = new Map<string, AgentController>();
+      const registry = TargetAdapterRegistry.default();
 
       for (const participant of scenarioDef.participants) {
         if (participant.ownership !== 'ARGUS') continue;
 
-        const targetAdapter = new MockTargetAdapter('mock');
+        const targetAdapter = registry.create(targetSpec);
         const controller = new AgentController(targetAdapter, {
-          connectionConfig: { transportType: 'mock' },
+          connectionConfig: {
+            transportType: targetSpec.kind,
+            ...(targetSpec.endpoint ? { endpoint: targetSpec.endpoint } : {}),
+          },
           runId: `run_${Date.now()}_${participant.participantId}`,
         });
         controllers.set(participant.participantId, controller);

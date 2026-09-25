@@ -6,7 +6,7 @@ import {
   Receipt,
   NotImplementedError,
 } from '../PaymentAdapter';
-import { PaymentRequired } from '../../../core/AgentTargetPort';
+import { SigningBinding } from '../SigningBinding';
 
 /**
  * Solana PaymentAdapter — заготовка.
@@ -39,7 +39,7 @@ export class SolanaPaymentAdapter implements PaymentAdapter {
   ): Promise<void> {
     throw new NotImplementedError('solana');
   }
-  async signX402Payment(_paymentRequired: PaymentRequired): Promise<string> {
+  async signX402Payment(_binding: SigningBinding): Promise<string> {
     throw new NotImplementedError('solana');
   }
 }
