@@ -16,7 +16,7 @@
  * - Отправка HTTP-запросов (это в AgentTargetPort)
  */
 
-import { PaymentRequired } from '../../core/AgentTargetPort';
+import { SigningBinding } from './SigningBinding';
 
 export type Address = `0x${string}`;
 export type TxHash = `0x${string}`;
@@ -64,16 +64,23 @@ export interface PaymentAdapter {
   ): Promise<void>;
 
   /**
-   * Подписать x402 payment requirements (EIP-3009 TransferWithAuthorization).
+   * Подписать x402 payment через EIP-3009 TransferWithAuthorization,
+   * используя EXACT SigningBinding, выданный внешним buyer-side
+   * economic layer (Secretariat).
    *
-   * Вызывается верхним уровнем (RunOrchestrator), когда X402AgentAdapter
-   * вернул PAYMENT_REQUIRED. Адаптер НЕ платит и НЕ отправляет транзакцию —
-   * он только создаёт подпись.
+   * Вызывается верхним уровнем (RunOrchestrator -> PaymentResolver),
+   * когда X402AgentAdapter вернул PAYMENT_REQUIRED. Адаптер НЕ платит
+   * и НЕ отправляет транзакцию — он только создаёт подпись.
    *
-   * @param paymentRequired - требования платежа из PAYMENT-REQUIRED header
+   * ГАРАНТИИ:
+   * - nonce / validAfter / validBefore НЕ генерируются локально:
+   *   authorization = exact входной binding;
+   * - результат — Base64-encoded JSON x402 V2 PaymentPayload с accepted.
+   *
+   * @param binding - инструкция на подпись от buyer-side economic layer
    * @returns Base64-encoded PAYMENT-SIGNATURE payload
    */
-  signX402Payment(paymentRequired: PaymentRequired): Promise<string>;
+  signX402Payment(binding: SigningBinding): Promise<string>;
 }
 
 export class InsufficientBalanceError extends Error {

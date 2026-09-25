@@ -1,0 +1,1 @@
+{"version":3,"file":"ScenarioRegistry.d.ts","sourceRoot":"","sources":["../../src/cli/ScenarioRegistry.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,kBAAkB,EAAE,MAAM,4BAA4B,CAAC;AAUhE;;GAEG;AACH,eAAO,MAAM,gBAAgB,EAAE,GAAG,CAAC,MAAM,EAAE,kBAAkB,CAS3D,CAAC;AAEH;;GAEG;AACH,wBAAgB,cAAc,IAAI,MAAM,EAAE,CAEzC;AAED;;GAEG;AACH,wBAAgB,WAAW,CAAC,EAAE,EAAE,MAAM,GAAG,kBAAkB,GAAG,SAAS,CAEtE"}
