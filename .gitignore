@@ -1,15 +1,22 @@
-# Dependencies
-node_modules/
-
-# Build outputs
+```
+# Compiled and build artifacts
+*.js
+*.js.map
+*.d.ts
+*.d.ts.map
 dist/
 build/
-
-# Logs and temporary files
+# Dependencies
+node_modules/
+# Logs and temp files
 *.log
 *.tmp
-
-# Environment variables
+*.swp
+# Environment
 .env
 .env.local
-.env.*.local
+.env.*
+# Editors
+.vscode/
+.idea/
+```
