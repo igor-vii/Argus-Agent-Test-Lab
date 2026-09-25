@@ -13,7 +13,8 @@
     "lint": "eslint src/**/*.ts",
     "typecheck": "tsc --noEmit",
     "cli": "ts-node --esm src/cli/argus.ts",
-    "argus": "tsx src/cli/argus.ts"
+    "argus": "tsx src/cli/argus.ts",
+    "sut-server": "tsx tools/sut-server/server.ts"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
