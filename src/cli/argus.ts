@@ -24,6 +24,8 @@ import {
 import { ScenarioRegistry, getScenarioIds } from './ScenarioRegistry';
 import { Assertion } from '../core/Assertions';
 import { validateScenario } from '../core/validateScenario';
+import { createPaymentAdapter } from '../adapters/payment/PaymentAdapterFactory';
+import type { PaymentAdapter } from '../adapters/payment/PaymentAdapter';
 
 /**
  * Минимальный CLI для Argus Test Lab
@@ -119,11 +121,36 @@ async function main(): Promise<void> {
       // Assertions из сценария (Model V0: scenarioDef.assertions)
       const assertions: Assertion[] = scenarioDef.assertions || [];
 
+      // Payment wiring: только если target kind требует оплату.
+      // При ARGUS_TARGET_KIND=mock — PaymentAdapter не создаётся,
+      // поведение CLI сохраняется (baseline).
+      let paymentAdapter: PaymentAdapter | undefined;
+      if (targetSpec.kind === 'x402' || targetSpec.kind === 'http') {
+        const pk = process.env.ARGUS_TEST_WALLET_PRIVATE_KEY;
+        const rpc = process.env.BASE_SEPOLIA_RPC_URL;
+        if (targetSpec.kind === 'x402' && (!pk || !rpc)) {
+          console.error(
+            'Error: ARGUS_TEST_WALLET_PRIVATE_KEY and BASE_SEPOLIA_RPC_URL are required for ARGUS_TARGET_KIND=x402'
+          );
+          process.exit(1);
+        }
+        if (pk && rpc) {
+          paymentAdapter = createPaymentAdapter({
+            network: 'base-sepolia',
+            rpcUrl: rpc,
+            privateKey: pk as `0x${string}`,
+          });
+        }
+      }
+
       // Запуск оркестратора
       const orchestrator = new RunOrchestrator(
         scenarioDef,
         controllers,
-        assertions
+        assertions,
+        paymentAdapter
+        // bindingSource НЕ передан: используется defaultSigningIntentSource
+        // (test-only placeholder) — wire boundary не фиксируется в Block D.
       );
 
       const result = await orchestrator.run();
