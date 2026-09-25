@@ -12,6 +12,7 @@ import { Assertion } from './Assertions';
 import { RunContext, RunStatus, RunResult, generateRunId } from './RunLifecycle';
 import { PaymentAdapter } from '../adapters/payment/PaymentAdapter';
 import { PaymentResolver } from './ScenarioEngine';
+import { deriveSigningBinding, SigningIntentSource, defaultSigningIntentSource } from '../adapters/payment/SigningBinding';
 import { ExecutionRegistry } from './ExecutionRegistry';
 
 /**
@@ -27,12 +28,14 @@ export class RunOrchestrator {
   private assertionEngine: AssertionEngine;
   private assertions: Assertion[];
   private paymentAdapter?: PaymentAdapter;
+  private bindingSource?: SigningIntentSource;
 
   constructor(
     scenario: ScenarioDefinition,
     controllers: Map<string, AgentController>,
     assertions: Assertion[],
-    paymentAdapter?: PaymentAdapter
+    paymentAdapter?: PaymentAdapter,
+    bindingSource?: SigningIntentSource
   ) {
     this.scenario = scenario;
     this.controllers = controllers;
@@ -40,6 +43,7 @@ export class RunOrchestrator {
     this.assertionEngine = new AssertionEngine();
     this.assertions = assertions;
     this.paymentAdapter = paymentAdapter;
+    this.bindingSource = bindingSource;
   }
 
   /**
@@ -69,11 +73,40 @@ export class RunOrchestrator {
 
       // Build payment resolver if paymentAdapter is provided.
       // Otherwise, ScenarioEngine records PAYMENT_REQUIRED as evidence and continues.
+      //
+      // ВАЖНО (design reasoning, §4.3): PaymentResolver сигнатура НЕ меняется —
+      // ScenarioEngine по-прежнему работает с PaymentRequired (402 от Target).
+      // Единственное место, где PaymentRequired превращается в SigningBinding,
+      // — этот композиционный корень. Пока wire boundary с Secretariat не
+      // зафиксирован (cross-system этап), intent-поля (nonce / validAfter /
+      // validBefore) берутся из внешнего источника через this.bindingSource;
+      // PaymentAdapter обязуется НЕ генерировать их локально.
       let paymentResolver: PaymentResolver | undefined;
       if (this.paymentAdapter) {
         const adapter = this.paymentAdapter;
+        const bindingSource = this.bindingSource ?? defaultSigningIntentSource;
         paymentResolver = async (paymentRequired) => {
-          return adapter.signX402Payment(paymentRequired);
+          // Authorizer: Argus test wallet (если адаптер его раскрывает).
+          const argusAddress = (adapter as { getArgusAddress?: () => string })
+            .getArgusAddress;
+          if (typeof argusAddress !== 'function') {
+            throw new Error(
+              'PaymentAdapter does not expose getArgusAddress(); cannot set SigningBinding.from'
+            );
+          }
+          const intent = bindingSource(paymentRequired);
+          const binding = deriveSigningBinding(
+            {
+              scheme: paymentRequired.scheme,
+              network: paymentRequired.network,
+              amount: paymentRequired.amount,
+              asset: paymentRequired.asset,
+              payTo: paymentRequired.payTo,
+            },
+            argusAddress.call(adapter),
+            intent
+          );
+          return adapter.signX402Payment(binding);
         };
       }
 

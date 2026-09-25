@@ -102,4 +102,52 @@ describe('X402 Full Flow Integration Test', () => {
       JSON.parse(decoded);
     }).not.toThrow();
   });
+
+  it('signed payload carries the external SigningBinding exactly through the full flow', async () => {
+    // External buyer-side intent (в целевой архитектуре — Secretariat;
+    // wire boundary фиксируется на cross-system этапе).
+    const intentNonce = '0x' + 'ef'.repeat(32);
+    const nowSec = Math.floor(Date.now() / 1000);
+    const bindingSource = () => ({
+      nonce: intentNonce,
+      validAfter: String(nowSec),
+      validBefore: String(nowSec + 120),
+    });
+
+    const controllers = new Map<string, AgentController>();
+    controllers.set('buyer-1', controller);
+
+    const orchestrator = new RunOrchestrator(
+      S8_X402Payment,
+      controllers,
+      [],
+      paymentAdapter,
+      bindingSource
+    );
+
+    const result = await orchestrator.run();
+    expect(result.verdict?.status).toBe('PASS');
+
+    const requests = server.getRequests();
+    expect(requests.length).toBe(2);
+
+    const payloadB64 = requests[1].headers['payment-signature'];
+    const decoded = JSON.parse(Buffer.from(payloadB64, 'base64').toString('utf-8'));
+
+    // x402 V2 envelope with accepted
+    expect(decoded.x402Version).toBe(2);
+    expect(decoded.accepted).toBeDefined();
+    expect(decoded.accepted.network).toBe('eip155:84532');
+    expect(decoded.accepted.asset).toBe('0x036CbD53842c5426634e7929541eC2318f3dCF7e');
+    expect(decoded.accepted.amount).toBe('10000');
+    expect(decoded.accepted.payTo).toBe('0x70997970C51812dc3A010C7d01b50e0d17dc79C8');
+
+    // EXACT binding: nonce/window из внешнего источника, НЕ из адаптера
+    expect(decoded.payload.authorization.nonce).toBe(intentNonce);
+    expect(decoded.payload.authorization.validAfter).toBe(String(nowSec));
+    expect(decoded.payload.authorization.validBefore).toBe(String(nowSec + 120));
+    expect(decoded.payload.authorization.from.toLowerCase()).toBe(
+      paymentAdapter.getArgusAddress().toLowerCase()
+    );
+  });
 });
