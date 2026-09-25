@@ -1,0 +1,81 @@
+{
+  "generatedAt": "2026-09-23T14:29:27.837Z",
+  "mode": "local-loopback-only",
+  "summary": {
+    "total": 7,
+    "pass": 7,
+    "fail": 0,
+    "inconclusive": 0,
+    "skipped": 0
+  },
+  "runs": [
+    {
+      "scenarioId": "S1",
+      "scenarioName": "Duplicate Request",
+      "runId": "run_1790173767832_wfi2t29sm",
+      "status": "COMPLETED",
+      "verdict": "PASS",
+      "reason": "",
+      "evidenceCount": 5
+    },
+    {
+      "scenarioId": "S2",
+      "scenarioName": "Payment Before Execution",
+      "runId": "run_1790173767834_dufc8kze1",
+      "status": "COMPLETED",
+      "verdict": "PASS",
+      "reason": "",
+      "evidenceCount": 2
+    },
+    {
+      "scenarioId": "S3",
+      "scenarioName": "Crash After Settlement",
+      "runId": "run_1790173767834_ye32bmyb2",
+      "status": "COMPLETED",
+      "verdict": "PASS",
+      "reason": "",
+      "evidenceCount": 2
+    },
+    {
+      "scenarioId": "S4",
+      "scenarioName": "Seller Timeout",
+      "runId": "run_1790173767834_cqllc314c",
+      "status": "COMPLETED",
+      "verdict": "PASS",
+      "reason": "",
+      "evidenceCount": 2
+    },
+    {
+      "scenarioId": "S5",
+      "scenarioName": "Concurrent Duplicate",
+      "runId": "run_1790173767834_655bn3xog",
+      "status": "COMPLETED",
+      "verdict": "PASS",
+      "reason": "",
+      "evidenceCount": 14
+    },
+    {
+      "scenarioId": "S6",
+      "scenarioName": "Payment Retry",
+      "runId": "run_1790173767834_269ezu8rd",
+      "status": "COMPLETED",
+      "verdict": "PASS",
+      "reason": "",
+      "evidenceCount": 2
+    },
+    {
+      "scenarioId": "S7",
+      "scenarioName": "Lost Delivery",
+      "runId": "run_1790173767834_j74diblcx",
+      "status": "COMPLETED",
+      "verdict": "PASS",
+      "reason": "",
+      "evidenceCount": 3
+    }
+  ],
+  "notes": [
+    "S1-S7 executed over MockTargetAdapter transport (as designed).",
+    "These scenarios model protocol economics inside Argus; they do not",
+    "exercise the Secretariat HTTP surface."
+  ]
+}
