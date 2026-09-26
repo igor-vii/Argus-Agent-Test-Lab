@@ -68,9 +68,12 @@ export class MockX402Server {
                 return;
               }
               // Otherwise treat as paid (return 200)
+              // x402 v2 §5.3.2 SettlementResponse shape (W2/E):
+              // success / transaction / network — не status/txHash.
               const paymentResponse = Buffer.from(JSON.stringify({
-                txHash: '0x1234...',
-                status: 'success',
+                success: true,
+                transaction: '0x1234...',
+                network: 'eip155:84532',
               })).toString('base64');
               res.writeHead(200, {
                 'Content-Type': 'application/json',

@@ -198,14 +198,18 @@ describe('SUT Server fixture (Block C)', () => {
     expect(pr).toBeTruthy();
     const decoded = JSON.parse(Buffer.from(pr!, 'base64').toString('utf8'));
     expect(decoded.x402Version).toBe(2);
+    // x402 v2 §5.1.2: top-level resource REQUIRED; accepts[].amount (не v1 maxAmountRequired)
+    expect(decoded.resource).toMatchObject({ url: 'http://127.0.0.1:3001/do-something' });
     expect(decoded.accepts[0]).toMatchObject({
       scheme: 'exact',
       network: 'eip155:84532',
       asset: USDC_BASE_SEPOLIA,
-      maxAmountRequired: '1000',
+      amount: '1000',
       payTo: SUT_WALLET,
       maxTimeoutSeconds: 60,
     });
+    expect(decoded.accepts[0].maxAmountRequired).toBeUndefined();
+    expect(decoded.accepts[0].resource).toBeUndefined();
   });
 
   it('C2 — с валидной подписью → 200 + payment-response', async () => {
@@ -213,6 +217,17 @@ describe('SUT Server fixture (Block C)', () => {
     const res = await post(payload);
     expect(res.status).toBe(200);
     expect(res.headers.get('payment-response')).toBeTruthy();
+    // x402 v2 §5.3.2 SettlementResponse shape
+    const settlement = JSON.parse(
+      Buffer.from(res.headers.get('payment-response')!, 'base64').toString('utf8'),
+    );
+    expect(settlement).toEqual({
+      success: true,
+      transaction: '0x' + '00'.repeat(32),
+      network: 'eip155:84532',
+    });
+    expect(settlement.status).toBeUndefined();
+    expect(settlement.txHash).toBeUndefined();
     const body = await res.json();
     expect(body.result).toBe('ok');
     expect(body.echo).toEqual({ action: 'test' });

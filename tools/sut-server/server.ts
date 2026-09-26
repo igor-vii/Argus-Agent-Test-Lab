@@ -22,8 +22,12 @@ const USDC_BASE_SEPOLIA = '0x036CbD53842c5426634e7929541eC2318f3dCF7e' as const;
 const CHAIN_ID_BASE_SEPOLIA = 84532;
 const NETWORK_BASE_SEPOLIA = `eip155:${CHAIN_ID_BASE_SEPOLIA}`;
 const SCHEME = 'exact';
-const MAX_AMOUNT_REQUIRED = '1000'; // atomic units USDC = 0.001 USDC
+const PAYMENT_AMOUNT = '1000'; // atomic units USDC = 0.001 USDC (v2 PaymentRequirements.amount)
 const MAX_TIMEOUT_SECONDS = 60;
+const RESOURCE_URL = 'http://127.0.0.1:3001/do-something';
+// Детерминированный fixture identifier для SettlementResponse.transaction
+// (фикстура не выполняет реальный on-chain settlement).
+const FIXTURE_TRANSACTION_ID = '0x' + '00'.repeat(32);
 
 // EIP-712 domain для USDC на Base Sepolia (EIP-3009)
 const USDC_DOMAIN = {
@@ -70,16 +74,18 @@ function respondJson(res: ServerResponse, status: number, body: Record<string, u
   res.end(JSON.stringify(body));
 }
 
-/** payment-required envelope, который SUT выдаёт на 402. */
+/** payment-required envelope, который SUT выдаёт на 402 (x402 v2 §5.1.2). */
 export function buildPaymentRequired(sutWallet: string): string {
   return b64encode({
     x402Version: 2,
+    // top-level resource — REQUIRED в v2 (W3); фактический ресурс = endpoint фикстуры
+    resource: { url: RESOURCE_URL },
     accepts: [
       {
         scheme: SCHEME,
         network: NETWORK_BASE_SEPOLIA,
         asset: USDC_BASE_SEPOLIA,
-        maxAmountRequired: MAX_AMOUNT_REQUIRED,
+        amount: PAYMENT_AMOUNT,
         payTo: sutWallet,
         maxTimeoutSeconds: MAX_TIMEOUT_SECONDS,
       },
@@ -138,8 +144,8 @@ export async function validatePaymentSignature(headerValue: string, sutWallet: s
   if (typeof auth.to !== 'string' || !isAddress(auth.to) || auth.to.toLowerCase() !== sutWallet.toLowerCase()) {
     return { ok: false, status: 402, reason: 'authorization.to does not match SUT wallet' };
   }
-  if (String(auth.value) !== MAX_AMOUNT_REQUIRED) {
-    return { ok: false, status: 402, reason: `authorization.value must equal maxAmountRequired (${MAX_AMOUNT_REQUIRED})` };
+  if (String(auth.value) !== PAYMENT_AMOUNT) {
+    return { ok: false, status: 402, reason: `authorization.value must equal amount (${PAYMENT_AMOUNT})` };
   }
   if (typeof auth.nonce !== 'string' || !NONCE_RE.test(auth.nonce)) {
     return { ok: false, status: 402, reason: 'authorization.nonce must be 0x + 64 hex' };
@@ -224,11 +230,14 @@ export function createSutServer(opts: SutServerOptions): Server {
     let echo: unknown = null;
     try { echo = rawBody.length > 0 ? JSON.parse(rawBody) : null; } catch { echo = rawBody; }
 
+    // x402 v2 §5.3.2 SettlementResponse (success/transaction/network required).
+    // Фикстура не выполняет реальный on-chain settlement: transaction —
+    // детерминированный fixture identifier, а не блокчейн-транзакция.
     respondJson(
       res,
       200,
       { result: 'ok', echo },
-      { 'payment-response': b64encode({ status: 'completed', network: NETWORK_BASE_SEPOLIA }) },
+      { 'payment-response': b64encode({ success: true, transaction: FIXTURE_TRANSACTION_ID, network: NETWORK_BASE_SEPOLIA }) },
     );
   });
 }

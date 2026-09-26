@@ -110,10 +110,8 @@ export interface X402PaymentRequiredBody {
 export interface X402Accept {
   scheme: string;
   network: string;
-  maxAmountRequired: string;
-  resource: string;
-  description?: string;
-  mimeType?: string;
+  /** x402 v2 PaymentRequirements field (spec §5.1.2). NOT v1 'maxAmountRequired'. */
+  amount: string;
   payTo: string;
   maxTimeoutSeconds: number;
   asset: string;

@@ -57,9 +57,12 @@ function parsePaymentRequired(
       const decoded = Buffer.from(headerValue, 'base64').toString('utf-8');
       const maybeBody = JSON.parse(decoded) as Partial<X402PaymentRequiredBody>;
 
-      // Validate structure before accepting
+      // Validate structure before accepting (x402 v2 §5.1.2: top-level
+      // resource is REQUIRED — runtime validation mirrors the TS contract, W4)
       if (
         maybeBody.x402Version !== undefined &&
+        typeof maybeBody.resource === 'object' &&
+        maybeBody.resource !== null &&
         Array.isArray(maybeBody.accepts) &&
         maybeBody.accepts.length > 0
       ) {
@@ -77,7 +80,12 @@ function parsePaymentRequired(
   // Fallback: try response body
   if (!parsedBody && typeof response.data === 'object' && response.data !== null) {
     const body = response.data as Partial<X402PaymentRequiredBody>;
-    if (body.x402Version && Array.isArray(body.accepts)) {
+    if (
+      body.x402Version &&
+      Array.isArray(body.accepts) &&
+      typeof body.resource === 'object' &&
+      body.resource !== null
+    ) {
       parsedBody = body as X402PaymentRequiredBody;
       // Encode body back to Base64 for raw field
       rawBase64 = Buffer.from(JSON.stringify(body)).toString('base64');
@@ -96,7 +104,7 @@ function parsePaymentRequired(
     parsed: parsedBody,
     scheme: firstAccept.scheme,
     network: firstAccept.network,
-    amount: firstAccept.maxAmountRequired,
+    amount: firstAccept.amount,
     asset: firstAccept.asset,
     payTo: firstAccept.payTo,
     maxTimeoutSeconds: firstAccept.maxTimeoutSeconds,

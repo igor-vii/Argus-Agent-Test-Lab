@@ -73,7 +73,7 @@ describe('X402AgentAdapter', () => {
         accepts: [{
           scheme: 'exact',
           network: 'eip155:84532',
-          maxAmountRequired: '10000',
+          amount: '10000',
           resource: 'http://localhost/resource',
           payTo: '0x70997970C51812dc3A010C7d01b50e0d17dc79C8',
           maxTimeoutSeconds: 60,
@@ -104,7 +104,7 @@ describe('X402AgentAdapter', () => {
         accepts: [{
           scheme: 'exact',
           network: 'eip155:84532',
-          maxAmountRequired: '10000',
+          amount: '10000',
           resource: 'http://localhost/resource',
           payTo: '0x70997970C51812dc3A010C7d01b50e0d17dc79C8',
           maxTimeoutSeconds: 60,
@@ -131,7 +131,7 @@ describe('X402AgentAdapter', () => {
         accepts: [{
           scheme: 'exact',
           network: 'eip155:84532',
-          maxAmountRequired: '10000',
+          amount: '10000',
           resource: 'http://localhost/resource',
           payTo: '0x70997970C51812dc3A010C7d01b50e0d17dc79C8',
           maxTimeoutSeconds: 60,
@@ -225,7 +225,7 @@ describe('X402AgentAdapter', () => {
         accepts: [{
           scheme: 'exact',
           network: 'eip155:84532',
-          maxAmountRequired: '10000',
+          amount: '10000',
           resource: 'http://localhost/resource',
           payTo: '0x70997970C51812dc3A010C7d01b50e0d17dc79C8',
           maxTimeoutSeconds: 60,
