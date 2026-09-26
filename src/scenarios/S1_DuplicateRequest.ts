@@ -6,17 +6,21 @@ export const S1_DuplicateRequest: ScenarioDefinition = {
   description: 'Проверка идемпотентности при дублировании запроса',
 
   participants: [
-    { participantId: 'buyer-1', protocolRole: 'BUYER', ownership: 'ARGUS' },
+    { participantId: 'buyer-1', protocolRole: 'CLIENT', ownership: 'ARGUS' },
     {
+      // Block A correction (per-scenario roles): seller-1 отдаёт
+      // protected resource (delivery_sent / delivery_completed) →
+      // RESOURCE_SERVER. Отсутствие своего HTTP endpoint в текущем
+      // wiring — техническое ограничение, не отсутствие роли.
       participantId: 'seller-1',
-      protocolRole: 'SELLER',
+      protocolRole: 'RESOURCE_SERVER',
       // Argus-owned: controllable seller behavior is the source of
       // fault injection, not the subject under test. If seller were
       // EXTERNAL, Argus could not deterministically force it to
       // "not respond" in S4 or to "lose delivery" in S7.
       ownership: 'ARGUS',
     },
-    { participantId: 'sut-1', protocolRole: 'INTERMEDIARY', ownership: 'EXTERNAL' },
+    { participantId: 'sut-1', protocolRole: 'FACILITATOR', ownership: 'EXTERNAL' },
   ],
 
   topology: {

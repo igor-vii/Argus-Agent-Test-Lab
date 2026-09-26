@@ -6,14 +6,19 @@ export const S2_PaymentBeforeExecution: ScenarioDefinition = {
   description: 'Платёж settled раньше, чем seller успевает ответить',
 
   participants: [
-    { participantId: 'buyer-1', protocolRole: 'BUYER', ownership: 'ARGUS' },
+    { participantId: 'buyer-1', protocolRole: 'CLIENT', ownership: 'ARGUS' },
     {
+      // Block A correction (per-scenario roles): seller-1 отдаёт
+      // protected resource (delivery_sent / delivery_completed) →
+      // RESOURCE_SERVER. Отсутствие своего HTTP endpoint —
+      // техническое ограничение wiring, не отсутствие роли.
+      // Rationale см. S1.
       participantId: 'seller-1',
-      protocolRole: 'SELLER',
+      protocolRole: 'RESOURCE_SERVER',
       // см. rationale в S1
       ownership: 'ARGUS',
     },
-    { participantId: 'sut-1', protocolRole: 'INTERMEDIARY', ownership: 'EXTERNAL' },
+    { participantId: 'sut-1', protocolRole: 'FACILITATOR', ownership: 'EXTERNAL' },
   ],
 
   topology: {

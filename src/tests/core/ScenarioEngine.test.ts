@@ -24,7 +24,7 @@ describe('ScenarioEngine', () => {
       id: 'test-scenario',
       name: 'Test Timeline',
       participants: [
-        { participantId: 'sut-1', protocolRole: 'seller', ownership: 'EXTERNAL' }
+        { participantId: 'sut-1', protocolRole: 'RESOURCE_SERVER', ownership: 'EXTERNAL' }
       ],
       topology: { edges: [] },
       testSubject: 'sut-1',
@@ -63,7 +63,7 @@ describe('ScenarioEngine', () => {
       id: 'seed-test',
       name: 'Seed Test',
       participants: [
-        { participantId: 'sut-1', protocolRole: 'seller', ownership: 'EXTERNAL' }
+        { participantId: 'sut-1', protocolRole: 'RESOURCE_SERVER', ownership: 'EXTERNAL' }
       ],
       topology: { edges: [] },
       testSubject: 'sut-1',
@@ -100,7 +100,7 @@ describe('ScenarioEngine', () => {
       id: 'fail-test',
       name: 'Failure Test',
       participants: [
-        { participantId: 'sut-1', protocolRole: 'seller', ownership: 'EXTERNAL' }
+        { participantId: 'sut-1', protocolRole: 'RESOURCE_SERVER', ownership: 'EXTERNAL' }
       ],
       topology: { edges: [] },
       testSubject: 'sut-1',
@@ -155,8 +155,8 @@ describe('ScenarioEngine', () => {
       id: 'routing-test',
       name: 'Routing Test',
       participants: [
-        { participantId: 'buyer-1', protocolRole: 'BUYER', ownership: 'ARGUS' },
-        { participantId: 'seller-1', protocolRole: 'SELLER', ownership: 'ARGUS' },
+        { participantId: 'buyer-1', protocolRole: 'CLIENT', ownership: 'ARGUS' },
+        { participantId: 'seller-1', protocolRole: 'RESOURCE_SERVER', ownership: 'ARGUS' },
       ],
       topology: { edges: [] },
       testSubject: 'sut-1',
@@ -239,7 +239,7 @@ describe('ScenarioEngine', () => {
       id: 'single-controller-test',
       name: 'Single Controller Test',
       participants: [
-        { participantId: 'sut-1', protocolRole: 'SELLER', ownership: 'EXTERNAL' },
+        { participantId: 'sut-1', protocolRole: 'RESOURCE_SERVER', ownership: 'EXTERNAL' },
       ],
       topology: { edges: [] },
       testSubject: 'sut-1',

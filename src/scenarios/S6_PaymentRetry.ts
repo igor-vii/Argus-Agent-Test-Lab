@@ -6,13 +6,18 @@ export const S6_PaymentRetry: ScenarioDefinition = {
   description: 'Adversarial buyer пытается создать новую authorization на UNKNOWN settlement',
 
   participants: [
-    { participantId: 'buyer-1', protocolRole: 'BUYER', ownership: 'ARGUS' },
+    { participantId: 'buyer-1', protocolRole: 'CLIENT', ownership: 'ARGUS' },
     {
+      // Block A correction (per-scenario roles): seller-1 отдаёт
+      // protected resource (delivery_sent / delivery_completed) →
+      // RESOURCE_SERVER. Отсутствие своего HTTP endpoint —
+      // техническое ограничение wiring, не отсутствие роли.
+      // Rationale см. S1.
       participantId: 'seller-1',
-      protocolRole: 'SELLER',
+      protocolRole: 'RESOURCE_SERVER',
       ownership: 'ARGUS', // см. rationale в S1
     },
-    { participantId: 'sut-1', protocolRole: 'INTERMEDIARY', ownership: 'EXTERNAL' },
+    { participantId: 'sut-1', protocolRole: 'FACILITATOR', ownership: 'EXTERNAL' },
   ],
 
   topology: {
