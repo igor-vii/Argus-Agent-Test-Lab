@@ -71,11 +71,11 @@ function respondJson(res: ServerResponse, status: number, body: Record<string, u
 }
 
 /** payment-required envelope, который SUT выдаёт на 402. */
-export function buildPaymentRequired(sutWallet: string): string {
+export function buildPaymentRequired(sutWallet: string, resourceUrl: string = 'http://127.0.0.1/do-something'): string {
   return b64encode({
     x402Version: 2,
     resource: {
-      url: 'http://127.0.0.1/do-something',
+      url: resourceUrl,
       mimeType: 'application/json',
     },
     accepts: [
@@ -214,7 +214,9 @@ export function createSutServer(opts: SutServerOptions): Server {
 
     // Запрос без payment-signature → 402 + payment-required
     if (typeof signatureHeader !== 'string' || signatureHeader.length === 0) {
-      respondJson(res, 402, { error: 'Payment required' }, { 'payment-required': buildPaymentRequired(sutWallet) });
+      const host = req.headers.host ?? '127.0.0.1';
+      const resourceUrl = `http://${host}${req.url ?? '/do-something'}`;
+      respondJson(res, 402, { error: 'Payment required' }, { 'payment-required': buildPaymentRequired(sutWallet, resourceUrl) });
       return;
     }
 
