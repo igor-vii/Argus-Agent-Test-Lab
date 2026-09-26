@@ -22,6 +22,8 @@ export const S8_X402Payment: ScenarioDefinition = {
   actions: [
     {
       actor: 'buyer-1',
+      // Block A audit: request_resource — app-level имя для x402 step 1
+      // (HTTP request to protected resource); canonical rename отложен в подблок A1.
       type: 'request_resource',
       payload: { resourceId: 'res-1' },
     },

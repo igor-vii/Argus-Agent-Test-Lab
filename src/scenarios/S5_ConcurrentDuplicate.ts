@@ -8,13 +8,16 @@ export const S5_ConcurrentDuplicate: ScenarioDefinition = {
   participants: [
     { participantId: 'buyer-1', protocolRole: 'CLIENT', ownership: 'ARGUS' },
     {
-      // Block A audit §6 (variant B): app-level participant —
-      // не отдаёт protected resource по HTTP, в x402 handshake не участвует;
-      // protocolRole не присвоен намеренно (optional field).
+      // Block A correction (per-scenario roles): seller-1 отдаёт
+      // protected resource (delivery_sent / delivery_completed) →
+      // RESOURCE_SERVER. Отсутствие своего HTTP endpoint —
+      // техническое ограничение wiring, не отсутствие роли.
+      // Rationale см. S1.
       participantId: 'seller-1',
+      protocolRole: 'RESOURCE_SERVER',
       ownership: 'ARGUS', // см. rationale в S1
     },
-    { participantId: 'sut-1', protocolRole: 'RESOURCE_SERVER', ownership: 'EXTERNAL' },
+    { participantId: 'sut-1', protocolRole: 'FACILITATOR', ownership: 'EXTERNAL' },
   ],
 
   topology: {

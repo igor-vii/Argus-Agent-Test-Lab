@@ -68,22 +68,28 @@ describe('S1–S8 canonical protocolRole (Block A)', () => {
     }
   });
 
-  it('buyer-1 is CLIENT, sut-1 is RESOURCE_SERVER in all scenarios', () => {
+  it('buyer-1 is CLIENT in all scenarios', () => {
     for (const s of scenarios) {
       const buyer = s.participants.find((p) => p.participantId === 'buyer-1');
-      const sut = s.participants.find((p) => p.participantId === 'sut-1');
       expect(buyer?.protocolRole, s.id).toBe('CLIENT');
-      expect(sut?.protocolRole, s.id).toBe('RESOURCE_SERVER');
     }
   });
 
-  it('seller-1 (S1–S7) has NO protocolRole — app-level participant (audit §6 variant B)', () => {
+  it('sut-1 role is PER-SCENARIO: FACILITATOR in S1–S7, RESOURCE_SERVER in S8', () => {
+    for (const s of scenarios) {
+      const sut = s.participants.find((p) => p.participantId === 'sut-1');
+      const expected = s.id === 'S8' ? 'RESOURCE_SERVER' : 'FACILITATOR';
+      expect(sut?.protocolRole, s.id).toBe(expected);
+    }
+  });
+
+  it('seller-1 (S1–S7) is RESOURCE_SERVER — отдаёт protected resource (delivery)', () => {
     const withSeller = scenarios.filter((s) =>
       s.participants.some((p) => p.participantId === 'seller-1'));
     expect(withSeller.map((s) => s.id)).toEqual(['S1', 'S2', 'S3', 'S4', 'S5', 'S6', 'S7']);
     for (const s of withSeller) {
       const seller = s.participants.find((p) => p.participantId === 'seller-1');
-      expect(seller?.protocolRole, s.id).toBeUndefined();
+      expect(seller?.protocolRole, s.id).toBe('RESOURCE_SERVER');
     }
   });
 });

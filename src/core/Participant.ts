@@ -2,7 +2,12 @@
  * Canonical x402 v2 protocol roles (Block A).
  * Запрещено как protocolRole: BUYER, SELLER, PAYER, PAYEE, INTERMEDIARY,
  * AGENT, PROVIDER, REQUESTER, COUNTERPARTY.
- * FACILITATOR — только тип; facilitator-сценариев нет.
+ *
+ * ВАЖНО: protocolRole — per-scenario, НЕ глобальная роль participantId.
+ * Один participantId может играть разные роли в разных сценариях
+ * (sut-1: FACILITATOR в S1–S7, RESOURCE_SERVER в S8).
+ * Wiring per-participant адаптеров — техническое ограничение текущей
+ * реализации, не семантическое.
  */
 export type ProtocolRole = 'CLIENT' | 'RESOURCE_SERVER' | 'FACILITATOR';
 
@@ -13,8 +18,9 @@ export type ProtocolRole = 'CLIENT' | 'RESOURCE_SERVER' | 'FACILITATOR';
  * Role ≠ Ownership: protocolRole описывает что участник делает, ownership — кто им управляет.
  *
  * protocolRole OPTIONAL: отсутствие поля = app-level participant
- * (не protocol participant; например seller-1 в S1–S7 — orchestrator/executor
- * пост-оплаты, в x402 handshake не участвует).
+ * (не protocol participant). Facilitator опционален в протоколе x402,
+ * поэтому поле может отсутствовать в сценарии (например sut-1 в S8 —
+ * прямая отдача ресурса без посредника).
  */
 export interface Participant {
   participantId: string;       // просто имя, не несёт семантики
