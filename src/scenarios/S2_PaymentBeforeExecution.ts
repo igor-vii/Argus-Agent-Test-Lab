@@ -6,14 +6,16 @@ export const S2_PaymentBeforeExecution: ScenarioDefinition = {
   description: 'Платёж settled раньше, чем seller успевает ответить',
 
   participants: [
-    { participantId: 'buyer-1', protocolRole: 'BUYER', ownership: 'ARGUS' },
+    { participantId: 'buyer-1', protocolRole: 'CLIENT', ownership: 'ARGUS' },
     {
+      // Block A audit §6 (variant B): app-level participant —
+      // не отдаёт protected resource по HTTP, в x402 handshake не участвует;
+      // protocolRole не присвоен намеренно (optional field).
       participantId: 'seller-1',
-      protocolRole: 'SELLER',
       // см. rationale в S1
       ownership: 'ARGUS',
     },
-    { participantId: 'sut-1', protocolRole: 'INTERMEDIARY', ownership: 'EXTERNAL' },
+    { participantId: 'sut-1', protocolRole: 'RESOURCE_SERVER', ownership: 'EXTERNAL' },
   ],
 
   topology: {

@@ -7,8 +7,8 @@ export const S8_X402Payment: ScenarioDefinition = {
   description: 'Buyer получает 402, подписывает через PaymentAdapter, повторяет запрос с payment-signature',
 
   participants: [
-    { participantId: 'buyer-1', protocolRole: 'BUYER', ownership: 'ARGUS' },
-    { participantId: 'sut-1', protocolRole: 'INTERMEDIARY', ownership: 'EXTERNAL' },
+    { participantId: 'buyer-1', protocolRole: 'CLIENT', ownership: 'ARGUS' },
+    { participantId: 'sut-1', protocolRole: 'RESOURCE_SERVER', ownership: 'EXTERNAL' },
   ],
 
   topology: {

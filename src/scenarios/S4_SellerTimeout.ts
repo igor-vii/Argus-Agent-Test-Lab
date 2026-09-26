@@ -6,13 +6,15 @@ export const S4_SellerTimeout: ScenarioDefinition = {
   description: 'Seller никогда не отвечает — проверяем DELIVERY_UNKNOWN, не FAILED/SUCCESS',
 
   participants: [
-    { participantId: 'buyer-1', protocolRole: 'BUYER', ownership: 'ARGUS' },
+    { participantId: 'buyer-1', protocolRole: 'CLIENT', ownership: 'ARGUS' },
     {
+      // Block A audit §6 (variant B): app-level participant —
+      // не отдаёт protected resource по HTTP, в x402 handshake не участвует;
+      // protocolRole не присвоен намеренно (optional field).
       participantId: 'seller-1',
-      protocolRole: 'SELLER',
       ownership: 'ARGUS', // см. rationale в S1
     },
-    { participantId: 'sut-1', protocolRole: 'INTERMEDIARY', ownership: 'EXTERNAL' },
+    { participantId: 'sut-1', protocolRole: 'RESOURCE_SERVER', ownership: 'EXTERNAL' },
   ],
 
   topology: {
