@@ -110,13 +110,10 @@ export interface X402PaymentRequiredBody {
 export interface X402Accept {
   scheme: string;
   network: string;
-  maxAmountRequired: string;
-  resource: string;
-  description?: string;
-  mimeType?: string;
+  amount: string;
+  asset: string;
   payTo: string;
   maxTimeoutSeconds: number;
-  asset: string;
   extra?: Record<string, unknown>;
 }
 
