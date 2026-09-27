@@ -1,4 +1,41 @@
-Argus Agent Test Lab
+# Argus Agent Test Lab
+
+**AI Agent Testing & Reliability**
+
+> **Test whether AI agents and agent-based systems behave correctly when the world goes wrong.**
+
+Argus runs controlled failure scenarios against external targets, captures observable evidence, evaluates explicit assertions, and produces evidence-backed verdicts.
+
+**Agent → Scenario → Target → Evidence → Verdict**
+
+Most agent testing focuses on whether the expected path works. Argus focuses on what happens when **payment, execution, delivery, network behavior, retries, or participant behavior diverge**.
+
+### What Argus tests
+
+- payment and transaction flows
+- retries, duplicates, and idempotency
+- timeouts, crashes, and delayed responses
+- delivery loss and ambiguous outcomes
+- adversarial participant behavior
+- protocol and economic invariants
+- evidence and recovery behavior under failure
+
+### Evidence boundary
+
+Argus is designed to test systems from the **outside**. Evidence is collected from observable target boundaries rather than undocumented internal state. A missing observation is not automatically treated as a failure.
+
+### Current focus
+
+The first target is **Zeus Secretariat**, a payment-orchestration system. Argus is being developed as a reusable testing laboratory rather than as a Secretariat-specific test suite.
+
+### Public documentation
+
+- [What is Argus?](docs/what-is-argus.md)
+- [AI Agent Testing](docs/agent-testing.md)
+- [Evidence and Verdicts](docs/evidence-and-verdicts.md)
+
+---
+
 
 **Argus Agent Test Lab** is a modular infrastructure for testing AI-agent protocols, agent-based applications, payment flows, and trust systems under normal, degraded, adversarial, and chaotic conditions.
 
