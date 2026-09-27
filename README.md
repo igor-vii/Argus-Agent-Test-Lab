@@ -415,486 +415,60 @@ The next milestone is to define and approve **Agent Test Lab Architecture V0** b
 
 
 
-Чистая MVP-модель:
+## MVP model
 
-Scenario
-   │
-   ├── Agent #1: buyer
-   │      └── behavior + faults
-   │
-   ├── Agent #2: seller
-   │      └── behavior + faults
-   │
-   ├── Timeline
-   │
-   ├── Invariants
-   │
-   └── Reproducibility
-          ↓
-      Test Harness
-          ↓
-      Secretariat
-          ↓
- Evidence → Assertions → Verdict
+The minimal test model is:
 
-Fault действительно лучше оставить частью конфигурации конкретного Agent, но на уровне Scenario сделать возможность явно назначить fault другому actor.
+**Agent → Scenario → Target Adapter → Evidence → Assertions → Verdict**
 
-То есть не:
+An Agent is a reusable participant type. Its role, behavior profile, and fault configuration are scenario parameters. A Scenario can assign different controlled faults to different participants.
 
-faults:
-  - actor: buyer-1
-как единственный источник истины, и не только внутри agents.
+Example roles include buyer and seller. Example controlled behaviors include delayed responses, duplicate requests, payment retries, crashes, and lost delivery.
 
-А:
+## Initial economics boundary
 
-agents:
-  - id: buyer-1
-    role: buyer
-    behavior_profile: honest
-    faults: []
+For engineering tests, agent-to-agent payment can use testnet assets and self-funded wallets controlled by the test environment.
 
-  - id: seller-1
-    role: seller
-    behavior_profile: faulty
-    faults:
-      - type: delayed_response
-        trigger:
-          event: delivery.started
-        params:
-          delay_ms: 3000
-Agent — единый тип, role/profile/config — параметры.
+The commercial layer is separate: an external client can purchase a managed audit and receive an evidence-backed report.
 
-Для более сложного сценария harness сможет запустить:
+Client billing is not part of the Scenario Definition.
 
-buyer-1 → honest
-buyer-2 → adversarial
-seller-1 → faulty
-и каждый будет отдельным экземпляром одного Agent.
+## Initial engineering track
 
-По деньгам — решение тоже фиксируем
-Для MVP:
-
-Agent-to-Agent economics:
-
-testnet USDC
-    ↓
-self-funded wallets
-    ↓
-controlled by Test Lab
-Business economics:
-
-client
-  ↓ fiat
-managed audit
-  ↓
-Test Lab report
-Это два совершенно независимых слоя. Не надо сейчас даже пытаться выразить оплату клиента в Scenario Definition.
-
-Сначала минимальный контракт данных:
-
-Agent
-
-Scenario
-
-Fault
-
-EvidenceEvent
-
-Verdict
-
-TargetAdapter
-
-И всё.
-
-
-Теперь я бы добавил в него две дорожки.
-
-Engineering track
-0. Thin Foundation
 1. Minimal Agent Runtime
-2. 5 Fault Primitives
+2. Core fault primitives
 3. Secretariat Target Adapter
-4. Secretariat Scenario Suite
-5. Evidence + Verdict
-Revenue validation track
-Secretariat internal audit
-        ↓
-Demo / case study
-        ↓
-1–3 external paid audits
-        ↓
-узнаём, за что реально платят
-        ↓
-только тогда выбираем
-self-service / managed / hybrid
-        ↓
-автоматизация
-А старые:
+4. Secretariat adversarial scenario suite
+5. Evidence and Verdict pipeline
+6. Internal validation with verified run evidence
 
-Perfect Storm
+## Initial commercial direction
 
-multi-chain
+The first commercial form is intended to be a **managed audit**, not a self-service SaaS platform.
 
-Insurance
+A managed audit means:
 
-Escrow
+**Client system → controlled failure scenarios → observable evidence → evidence-backed report**
 
-Dashboard
+Self-service and continuous testing are longer-term possibilities that should follow evidence of repeatable external demand.
 
-API
+No pricing or market-size claim is treated as validated product evidence at this stage.
 
-billing
+## Roadmap boundary
 
-SaaS
+Post-MVP capabilities may include:
 
-переносятся в Post-MVP / Scale, а не являются обязательными этапами до первых денег.
+- additional external targets
+- more complex fault combinations
+- continuous regression/adversarial testing
+- multi-chain support
+- additional payment adapters
+- dashboard and API
+- self-service execution
+- broader commercial infrastructure
 
-Это важно, потому что рынок сейчас действительно движется в сторону систематического evaluation/observability для agentic AI, но одновременно он ещё очень неоднороден: есть evaluation platforms, observability, security testing и managed assurance — это разные покупательские задачи. 
+These are deliberately separated from the current minimal engineering path.
 
-A. Managed Audit
-Клиент приходит → мы запускаем его систему через наши adversarial-сценарии → выдаём отчёт.
-
-B. Agent-as-a-Service
-Клиент арендует нашего тестирующего агента → получает пакет прогонов/месяц → запускает сам.
-
-A на старте.
-
-A → B
-
-не пытался сразу строить B.
-
-3. Почему Managed Audit быстрее принесёт деньги
-Покупателю сейчас гораздо проще купить:
-
-"$5–10k и через 10 дней вы узнаете, где ваш agent ломается"
-
-чем:
-
-"$500–2,000/месяц, интегрируйте наш testing agent, настройте его, разберитесь с presets, API, credentials, CI..."
-
-Особенно если клиент ещё сам не знает, что именно ему нужно тестировать.
-
-Это уже подтверждается появляющимися предложениями рынка: например, AAT Labs продаёт фиксированный 10-дневный adversarial acceptance test за $7,500, а отдельно предлагает recurring drift monitoring за $3,000/месяц. 
-
-Другой пример — TestMy.AI прямо строит входной продукт вокруг фиксированного аудита без подписки, а continuous assurance оставляет отдельным предложением. 
-
-То есть модель:
-
-Audit → Recurring
-
-не просто теоретическая — она уже естественно формируется на рынке.
-
-4. Плюсы и минусы
-Managed Audit	Agent-as-a-Service
-Первые деньги	🟢 быстро	🔴 медленнее
-Что нужно построить	🟢 мало	🔴 много
-Продажа	🟢 легко объяснить	🟡 сложнее
-Цена одного клиента	🟢 высокая	🟡 ниже
-MRR	🔴 слабее	🟢 сильный
-Масштабирование	🔴 ограничено людьми	🟢 отличное
-Интеграция клиента	🟢 минимальная	🔴 нужна
-Support	🟢 относительно простой	🔴 постоянный
-Customer lock-in	🟡 средний	🟢 высокий
-Требования к UI/API	🟢 почти ноль	🔴 обязательны
-Подходит нашему MVP	🟢 идеально	🔴 пока нет
-5. Где больше денег?
-В долгосрочной перспективе — Agent-as-a-Service / continuous testing.
-
-Но есть ловушка.
-
-Если мы продаём:
-
-1 агент + 1,000 запросов / месяц
-
-мы быстро превращаемся в очередной SaaS с commodity pricing.
-
-А вот если продавать:
-
-Continuous Agent Reliability / Adversarial Assurance
-
-становится гораздо интереснее.
-
-Например:
-
-Launch Audit
-$5–10k
-        ↓
-Continuous Assurance
-$2–5k/mo
-        ↓
-Enterprise
-$10k+/mo
-Это уже не «аренда бота».
-
-Это постоянный слой контроля над агентом.
-
-Рынок уже показывает обе модели: от фиксированных аудитов до recurring assurance-пакетов. Например, Mythos AI Security предлагает recurring assurance от $7,500/месяц, а другие игроки продают continuous AI security/assurance как ежемесячный сервис. 
-
-6. Но есть ещё более интересный вариант — Hybrid
-не выбирал между A и B.
-
-
-                    FREE / LOW-COST
-                         │
-                    Quick Scan
-                         │
-                         ▼
-                 ┌───────────────┐
-                 │  PAID AUDIT   │
-                 │   $5–10k      │
-                 └───────┬───────┘
-                         │
-                 findings / fixes
-                         │
-                         ▼
-              ┌────────────────────┐
-              │ CONTINUOUS TESTING │
-              │    $2–5k / month   │
-              └─────────┬──────────┘
-                        │
-                 growing agent fleet
-                        │
-                        ▼
-              ENTERPRISE / PLATFORM
-То есть аудит становится входным наркотиком, а recurring testing — основным бизнесом.
-
-7. И вот здесь наша текущая архитектура становится очень удачной:
-
-Scenario
-Agent
-Fault
-Target
-Evidence
-Assertion
-Verdict
-Run
-Это одинаково хорошо работает для обоих продуктов.
-
-Managed Audit
-клиент
-  ↓
-мы выбираем Scenario
-  ↓
-Test Lab
-  ↓
-100 runs
-  ↓
-Evidence
-  ↓
-Report
-Self-service
-клиент
-  ↓
-выбирает Scenario
-  ↓
-Test Lab
-  ↓
-100 runs
-  ↓
-Evidence
-  ↓
-Dashboard
-Core один и тот же.
-
-Adversarial Reliability Audit for AI Payment Agents
-
-И обещание примерно такое:
-
-Give us an agent/workflow. We'll put it through a controlled failure scenario and show you what actually happened.
-**Scenario**
-Что подвергали тесту.
-
-**Observed**
-Что реально произошло.
-
-**Evidence**
-Чем это подтверждается.
-
-**Unknown**
-Что система не смогла доказать.
-
-**Impact**
-Какое экономическое/операционное последствие.
-
-**Recommendation**
-Что имеет смысл проверить или исправить.
-
-Это очень хорошая упаковка именно потому, что она **не требует от клиента поверить нам на слово**.
-
-За фиксированный срок мы прогоняем ваш agent/payment workflow через воспроизводимые adversarial scenarios и выдаём evidence-backed report: что должно было произойти, что произошло фактически, где нарушены экономические инварианты и насколько серьёзна проблема.
-
-Это намного понятнее покупателю.
-
-И Secretariat становится нашим первым доказательством, а не просто внутренним проектом.
-
-9. А что с ценой?
-
-Сначала надо провести собственный Secretariat audit и понять:
-
-сколько сценариев реально получается;
-
-сколько времени занимает один audit;
-
-сколько ручной работы;
-
-сколько уникальных findings;
-
-насколько хорош evidence;
-
-что потенциальный клиент считает ценным;
-
-хотят ли они одноразовый аудит или continuous testing.
-
-После первых 2–3 разговоров цена станет гораздо очевиднее.
-
-Но ориентир рынка уже показывает, что AI adversarial testing продаётся не как дешёвый developer utility, а может продаваться как assurance/security engagement: например, публичные предложения сейчас находятся от тысяч долларов за fixed audit до нескольких тысяч долларов в месяц за recurring assurance. 
-
-
-Сейчас: Managed Audit.
-
-После подтверждения спроса: Managed Audit + Continuous Testing.
-
-Долгосрочно: Self-Service Agent Testing Platform.
-
-Наша ценность:
-
-не количество запросов, а количество проверенных инвариантов и найденных воспроизводимых failure modes.
-
-И это очень хорошо ложится на уже придуманный нами формат:
-
-Expected invariant → Actual behavior → Evidence → Verdict.
-
-
-
-Phase 0 — Thin Foundation
-
-Agent interface
-
-Scenario Definition
-
-TargetAdapter
-
-Evidence
-
-Verdict
-
-Run/seed
-
-конфигурация
-
-базовая структура проекта
-
-Phase 1 — Minimal Agent Runtime
-
-один универсальный Agent
-
-role: buyer | seller
-
-behavior_profile
-
-конфигурация
-
-lifecycle
-
-observe/act
-
-deterministic runs
-
-Phase 2 — Fault Injection MVP
-Ровно наши базовые fault primitives:
-
-duplicate request
-
-delayed/unpaid payment
-
-crash after payment
-
-seller timeout
-
-concurrent request
-
-payment retry
-
-lost delivery / DELIVERY_UNKNOWN
-
-Phase 3 — Secretariat Target Adapter
-Первый настоящий target — Secretariat.
-
-Никакой абстрактной «платформы для всего» на этом этапе.
-
-Phase 4 — Secretariat Adversarial Test Suite
-
-7 canonical сценариев:
-
-Duplicate Request
-
-Payment Before Execution
-
-Crash After Settlement
-
-Seller Timeout
-
-Concurrent Duplicate
-
-Payment Retry
-
-Lost Delivery
-
-Каждый сценарий должен давать:
-
-Expected → Actual → Evidence → Verdict
-
-Phase 5 — Internal Validation / Case Study
-
-Прогоняем Lab против нашего собственного Secretariat.
-
-Задача здесь уже не «проверить, что код работает», а получить первый настоящий результат:
-
-какие инварианты Secretariat выдерживает, какие нарушает, какие остаются UNKNOWN/INCONCLUSIVE и какие доказательства Lab способен предоставить.
-
-Phase 6 — External Audit MVP
-
-И вот это я бы прямо внес в roadmap как business milestone, а не software milestone.
-
-Первый внешний клиент получает не SaaS, не dashboard и не тысячу настроек.
-
-Он получает:
-
-мы берём вашего агента/систему → запускаем контролируемые adversarial scenarios → собираем evidence → выдаём audit report.
-
-То есть первая монетизация — Managed Agent Audit.
-
-Phase 7 — Continuous Assurance
-
-Если первые аудиты покажут повторяемый спрос:
-
-initial audit → регулярные regression/adversarial runs → monthly assurance report.
-
-Вот здесь появляется абонентская модель.
-
-Phase 8+ — только после подтверждения спроса
-
-Perfect Storm / Chaos
-
-Insurance adapter
-
-Escrow adapter
-
-другие Zeus targets
-
-multi-chain
-
-payment adapters
-
-dashboard
-
-API
-
-self-service
-
-полноценный commercial platform
-
-То есть мы больше не строим огромный SaaS заранее.
 ## Evidence / case studies
 
-A public case study will be added only when the underlying run evidence is verified and suitable for publication. Argus does not treat prototype UI output as proof of a completed production capability.
+A public case study will be added only when the underlying run evidence is verified and suitable for publication. Prototype UI output or an unverified scenario definition is not treated as proof of completed production capability.
