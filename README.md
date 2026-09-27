@@ -895,3 +895,6 @@ self-service
 полноценный commercial platform
 
 То есть мы больше не строим огромный SaaS заранее.
+## Evidence / case studies
+
+A public case study will be added only when the underlying run evidence is verified and suitable for publication. Argus does not treat prototype UI output as proof of a completed production capability.
