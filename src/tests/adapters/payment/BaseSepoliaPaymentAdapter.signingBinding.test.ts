@@ -45,6 +45,7 @@ describe('BaseSepoliaPaymentAdapter.signX402Payment (SigningBinding)', () => {
       network: 'eip155:84532',
       asset: USDC_BASE_SEPOLIA,
       scheme: 'exact',
+      maxTimeoutSeconds: 60,
       ...overrides,
     };
   }
@@ -98,8 +99,7 @@ describe('BaseSepoliaPaymentAdapter.signX402Payment (SigningBinding)', () => {
     expect(decoded.accepted.amount).toBe(binding.value);
     expect(decoded.accepted.payTo).toBe(binding.to);
     expect(decoded.accepted.scheme).toBe(binding.scheme);
-    expect(typeof decoded.accepted.maxTimeoutSeconds).toBe('number');
-    expect(decoded.accepted.maxTimeoutSeconds).toBeGreaterThan(0);
+    expect(decoded.accepted.maxTimeoutSeconds).toBe(binding.maxTimeoutSeconds);
   });
 
   // ------------------------------------------------------------------
@@ -122,6 +122,13 @@ describe('BaseSepoliaPaymentAdapter.signX402Payment (SigningBinding)', () => {
   // ------------------------------------------------------------------
   // Test A5 — no local rebinding: adapter не подменяет входные поля
   // ------------------------------------------------------------------
+  it('W10: accepted.maxTimeoutSeconds is independent from authorization validity window', async () => {
+    const binding = makeBinding({ validAfter: '1750000000', validBefore: '1900000000', maxTimeoutSeconds: 37 });
+    const decoded = decode(await adapter.signX402Payment(binding));
+    expect(decoded.accepted.maxTimeoutSeconds).toBe(37);
+    expect(decoded.accepted.maxTimeoutSeconds).not.toBe(150000000);
+  });
+
   it('A5: two calls with the same binding produce identical authorization (no local nonce/window regeneration)', async () => {
     const binding = makeBinding();
 

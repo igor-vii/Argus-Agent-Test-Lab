@@ -102,6 +102,7 @@ export class RunOrchestrator {
               amount: paymentRequired.amount,
               asset: paymentRequired.asset,
               payTo: paymentRequired.payTo,
+              maxTimeoutSeconds: paymentRequired.maxTimeoutSeconds,
             },
             argusAddress.call(adapter),
             intent

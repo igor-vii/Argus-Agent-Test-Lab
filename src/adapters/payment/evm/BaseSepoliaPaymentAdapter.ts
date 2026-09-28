@@ -214,13 +214,9 @@ export class BaseSepoliaPaymentAdapter implements PaymentAdapter {
       message: authorization,
     });
 
-    // accepted — параметры принятого варианта оплаты (x402 V2 envelope).
-    // maxTimeoutSeconds = полная продолжительность окна binding
-    // (validBefore - validAfter). Выводится из самого binding, а не из 402:
-    // adapter не должен зависеть от исходного PaymentRequired.
-    const validAfterSec = Number(authorization.validAfter);
-    const validBeforeSec = Number(authorization.validBefore);
-    const maxTimeoutSeconds = Math.max(0, validBeforeSec - validAfterSec);
+    // accepted.maxTimeoutSeconds is a property of the selected x402
+    // PaymentRequirements, not the durable authorization validity window.
+    const maxTimeoutSeconds = binding.maxTimeoutSeconds;
 
     const payload = {
       x402Version: 2,
