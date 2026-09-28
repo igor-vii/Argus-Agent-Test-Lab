@@ -46,7 +46,9 @@ export class EvidenceCollector {
     const record: EvidenceRecord = {
       id: `ev_${this.idCounter++}`,
       source: evidence.source,
-      ...(evidence.actorId ? { actorId: evidence.actorId } : {}),
+      ...(evidence.source !== 'engine' && evidence.actorId
+        ? { actorId: evidence.actorId }
+        : {}),
       type: evidence.type,
       data: evidence.data,
       timestamp: evidence.timestamp,
