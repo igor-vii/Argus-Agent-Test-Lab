@@ -65,6 +65,9 @@ export class RunOrchestrator {
       // Create registry and connect all controllers
       const registry = new ExecutionRegistry();
       for (const [actorId, controller] of this.controllers.entries()) {
+        if (!controller.getParticipantId()) {
+          controller.setParticipantId(actorId);
+        }
         registry.register(actorId, controller);
         await controller.connect();
       }

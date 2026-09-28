@@ -2,7 +2,11 @@
 // src/core/EvidenceCollector.ts
 // ============================================================
 
-import { Evidence } from './Evidence';
+import { Evidence, Observation } from './Evidence';
+
+function isObservation(evidence: Evidence): evidence is Observation {
+  return 'actorId' in evidence;
+}
 
 /**
  * Внутренняя запись evidence.
@@ -12,8 +16,10 @@ import { Evidence } from './Evidence';
 export interface EvidenceRecord {
   /** Уникальный идентификатор записи */
   id: string;
-  /** Source: participantId или 'engine' */
+  /** Source: observed participant (typically scenario.testSubject), or 'engine'. */
   source: string;
+  /** Actor: participant that initiated the action, when known. */
+  actorId?: string;
   /** Type: semantic event type */
   type: string;
   /** Data: observation data */
@@ -44,6 +50,9 @@ export class EvidenceCollector {
     const record: EvidenceRecord = {
       id: `ev_${this.idCounter++}`,
       source: evidence.source,
+      ...(isObservation(evidence) && evidence.actorId
+        ? { actorId: evidence.actorId }
+        : {}),
       type: evidence.type,
       data: evidence.data,
       timestamp: evidence.timestamp,

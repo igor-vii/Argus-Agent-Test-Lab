@@ -60,6 +60,9 @@ export interface ControllerConfig {
 
   /** Optional run identifier (generated if not provided) */
   runId?: RunId;
+
+  /** Runtime participant identity associated with this controller's target observations. */
+  participantId?: string;
 }
 
 /**
@@ -98,6 +101,21 @@ export class AgentController {
 
   getRunId(): RunId | undefined {
     return this.currentRunId;
+  }
+
+  getParticipantId(): string | undefined {
+    return this.config.participantId;
+  }
+
+  setParticipantId(participantId: string): void {
+    this.config.participantId = participantId;
+  }
+
+  private bindParticipantIdentity(exchange: Exchange): Exchange {
+    const participantId = this.config.participantId;
+    if (!participantId) return exchange;
+    exchange.metadata = { ...(exchange.metadata ?? {}), participantId };
+    return exchange;
   }
 
   async connect(): Promise<ConnectionResult> {
@@ -139,7 +157,9 @@ export class AgentController {
         }, this.config.timeoutMs);
       });
 
-      const exchange = await Promise.race([actionPromise, timeoutPromise]);
+      const exchange = this.bindParticipantIdentity(
+        await Promise.race([actionPromise, timeoutPromise])
+      );
       const durationMs = Date.now() - startTime;
 
       return {
@@ -182,7 +202,9 @@ export class AgentController {
     const startTime = Date.now();
 
     try {
-      const exchange = await this.port.receive(this.currentRunId, type, payload);
+      const exchange = this.bindParticipantIdentity(
+        await this.port.receive(this.currentRunId, type, payload)
+      );
       const durationMs = Date.now() - startTime;
 
       return {
@@ -316,7 +338,9 @@ export class AgentController {
         }, this.config.timeoutMs);
       });
 
-      const exchange = await Promise.race([actionPromise, timeoutPromise]);
+      const exchange = this.bindParticipantIdentity(
+        await Promise.race([actionPromise, timeoutPromise])
+      );
       const durationMs = Date.now() - startTime;
 
       return {
