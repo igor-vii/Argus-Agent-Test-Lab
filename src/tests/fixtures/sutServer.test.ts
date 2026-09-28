@@ -202,7 +202,8 @@ describe('SUT Server fixture (Block C)', () => {
       scheme: 'exact',
       network: 'eip155:84532',
       asset: USDC_BASE_SEPOLIA,
-      maxAmountRequired: '1000',
+      amount: '1000',
+      
       payTo: SUT_WALLET,
       maxTimeoutSeconds: 60,
     });

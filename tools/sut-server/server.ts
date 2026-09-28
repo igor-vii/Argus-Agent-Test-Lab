@@ -22,7 +22,7 @@ const USDC_BASE_SEPOLIA = '0x036CbD53842c5426634e7929541eC2318f3dCF7e' as const;
 const CHAIN_ID_BASE_SEPOLIA = 84532;
 const NETWORK_BASE_SEPOLIA = `eip155:${CHAIN_ID_BASE_SEPOLIA}`;
 const SCHEME = 'exact';
-const MAX_AMOUNT_REQUIRED = '1000'; // atomic units USDC = 0.001 USDC
+const PAYMENT_AMOUNT = '1000'; // atomic units USDC = 0.001 USDC
 const MAX_TIMEOUT_SECONDS = 60;
 
 // EIP-712 domain для USDC на Base Sepolia (EIP-3009)
@@ -71,15 +71,19 @@ function respondJson(res: ServerResponse, status: number, body: Record<string, u
 }
 
 /** payment-required envelope, который SUT выдаёт на 402. */
-export function buildPaymentRequired(sutWallet: string): string {
+export function buildPaymentRequired(sutWallet: string, resourceUrl: string = 'http://127.0.0.1/do-something'): string {
   return b64encode({
     x402Version: 2,
+    resource: {
+      url: resourceUrl,
+      mimeType: 'application/json',
+    },
     accepts: [
       {
         scheme: SCHEME,
         network: NETWORK_BASE_SEPOLIA,
+        amount: PAYMENT_AMOUNT,
         asset: USDC_BASE_SEPOLIA,
-        maxAmountRequired: MAX_AMOUNT_REQUIRED,
         payTo: sutWallet,
         maxTimeoutSeconds: MAX_TIMEOUT_SECONDS,
       },
@@ -138,8 +142,8 @@ export async function validatePaymentSignature(headerValue: string, sutWallet: s
   if (typeof auth.to !== 'string' || !isAddress(auth.to) || auth.to.toLowerCase() !== sutWallet.toLowerCase()) {
     return { ok: false, status: 402, reason: 'authorization.to does not match SUT wallet' };
   }
-  if (String(auth.value) !== MAX_AMOUNT_REQUIRED) {
-    return { ok: false, status: 402, reason: `authorization.value must equal maxAmountRequired (${MAX_AMOUNT_REQUIRED})` };
+  if (String(auth.value) !== PAYMENT_AMOUNT) {
+    return { ok: false, status: 402, reason: `authorization.value must equal amount (${PAYMENT_AMOUNT})` };
   }
   if (typeof auth.nonce !== 'string' || !NONCE_RE.test(auth.nonce)) {
     return { ok: false, status: 402, reason: 'authorization.nonce must be 0x + 64 hex' };
@@ -210,7 +214,9 @@ export function createSutServer(opts: SutServerOptions): Server {
 
     // Запрос без payment-signature → 402 + payment-required
     if (typeof signatureHeader !== 'string' || signatureHeader.length === 0) {
-      respondJson(res, 402, { error: 'Payment required' }, { 'payment-required': buildPaymentRequired(sutWallet) });
+      const host = req.headers.host ?? '127.0.0.1';
+      const resourceUrl = `http://${host}${req.url ?? '/do-something'}`;
+      respondJson(res, 402, { error: 'Payment required' }, { 'payment-required': buildPaymentRequired(sutWallet, resourceUrl) });
       return;
     }
 
@@ -228,7 +234,11 @@ export function createSutServer(opts: SutServerOptions): Server {
       res,
       200,
       { result: 'ok', echo },
-      { 'payment-response': b64encode({ status: 'completed', network: NETWORK_BASE_SEPOLIA }) },
+      { 'payment-response': b64encode({
+        success: true,
+        transaction: '0x' + '12'.repeat(32),
+        network: NETWORK_BASE_SEPOLIA,
+      }) },
     );
   });
 }

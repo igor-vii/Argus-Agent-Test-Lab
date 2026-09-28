@@ -69,8 +69,9 @@ export class MockX402Server {
               }
               // Otherwise treat as paid (return 200)
               const paymentResponse = Buffer.from(JSON.stringify({
-                txHash: '0x1234...',
-                status: 'success',
+                success: true,
+                transaction: '0x' + '12'.repeat(32),
+                network: 'eip155:84532',
               })).toString('base64');
               res.writeHead(200, {
                 'Content-Type': 'application/json',
