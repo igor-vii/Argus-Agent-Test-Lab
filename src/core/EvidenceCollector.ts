@@ -2,7 +2,11 @@
 // src/core/EvidenceCollector.ts
 // ============================================================
 
-import { Evidence } from './Evidence';
+import { Evidence, Observation } from './Evidence';
+
+function isObservation(evidence: Evidence): evidence is Observation {
+  return 'actorId' in evidence;
+}
 
 /**
  * Внутренняя запись evidence.
@@ -46,7 +50,7 @@ export class EvidenceCollector {
     const record: EvidenceRecord = {
       id: `ev_${this.idCounter++}`,
       source: evidence.source,
-      ...(evidence.source !== 'engine' && evidence.actorId
+      ...(isObservation(evidence) && evidence.actorId
         ? { actorId: evidence.actorId }
         : {}),
       type: evidence.type,
