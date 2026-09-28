@@ -196,14 +196,19 @@ export class ScenarioEngine {
 
     const now = Date.now();
 
-    // 1. Observations из metadata
+    // 1. Observations из metadata. Participant identity is bound by
+    // AgentController and is authoritative for this exchange.
+    // Fall back to scenario.testSubject for backward-compatible fixtures.
     const observations =
       (outcome.exchange?.metadata?.observations as string[]) || [];
+    const participantId =
+      (outcome.exchange?.metadata?.participantId as string | undefined) ||
+      this.scenario.testSubject;
 
     for (const observationType of observations) {
       this.evidenceCollector.collect(
         {
-          source: this.scenario.testSubject,
+          source: participantId,
           type: observationType,
           data: (outcome.exchange?.payload || {}) as Record<string, unknown>,
           timestamp: now,
