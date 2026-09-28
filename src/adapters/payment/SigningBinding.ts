@@ -39,6 +39,8 @@ export interface SigningBinding {
   asset: string;
   /** схема платежа, e.g. 'exact' */
   scheme: string;
+  /** maxTimeoutSeconds from the selected x402 PaymentRequirements */
+  maxTimeoutSeconds: number;
 }
 
 /**
@@ -66,6 +68,7 @@ export function validateSigningBinding(b: SigningBinding): void {
     '`asset` must be a 0x address'
   );
   require(typeof b.scheme === 'string' && b.scheme.length > 0, '`scheme` is required');
+  require(Number.isInteger(b.maxTimeoutSeconds) && b.maxTimeoutSeconds >= 0, '`maxTimeoutSeconds` must be a non-negative integer');
 }
 
 /**
@@ -129,6 +132,7 @@ export function deriveSigningBinding(
     amount: string;
     asset: string;
     payTo: string;
+    maxTimeoutSeconds: number;
   },
   from: string,
   intent: { nonce: string; validAfter: string; validBefore: string }
@@ -143,5 +147,6 @@ export function deriveSigningBinding(
     network: pr.network,
     asset: pr.asset,
     scheme: pr.scheme,
+    maxTimeoutSeconds: pr.maxTimeoutSeconds,
   };
 }
