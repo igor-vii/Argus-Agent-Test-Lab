@@ -110,6 +110,10 @@ export class ScenarioEngine {
    * 1. Observations из exchange.metadata.observations
    * 2. Engine event: action_<type>
    *
+   * Observation source остаётся scenario.testSubject: это объект наблюдения.
+   * participantId из transport metadata сохраняется как actorId и не
+   * меняет семантику существующих S1-S7 assertions.
+   *
    * NOTE: Если outcome.exchange отсутствует (например, action завершился
    * TIMEOUT), никакого fallback на action.type как observation не происходит.
    */
@@ -196,19 +200,18 @@ export class ScenarioEngine {
 
     const now = Date.now();
 
-    // 1. Observations из metadata. Participant identity is bound by
-    // AgentController and is authoritative for this exchange.
-    // Fall back to scenario.testSubject for backward-compatible fixtures.
+    // Observations belong to the test subject. The controller-bound
+    // participant identity identifies the actor that caused the observation.
     const observations =
       (outcome.exchange?.metadata?.observations as string[]) || [];
-    const participantId =
-      (outcome.exchange?.metadata?.participantId as string | undefined) ||
-      this.scenario.testSubject;
+    const actorId =
+      (outcome.exchange?.metadata?.participantId as string | undefined);
 
     for (const observationType of observations) {
       this.evidenceCollector.collect(
         {
-          source: participantId,
+          source: this.scenario.testSubject,
+          ...(actorId ? { actorId } : {}),
           type: observationType,
           data: (outcome.exchange?.payload || {}) as Record<string, unknown>,
           timestamp: now,
@@ -221,10 +224,10 @@ export class ScenarioEngine {
     this.evidenceCollector.collect(
       {
         source: 'engine',
-        type: `action_${action.type}`,
-        data: payload as Record<string, unknown>,
-        timestamp: now,
-      },
+      type: `action_${action.type}`,
+      data: payload as Record<string, unknown>,
+      timestamp: now,
+    },
       this.context.runId
     );
   }
