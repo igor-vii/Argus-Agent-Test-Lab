@@ -26,8 +26,7 @@ describe('X402 Full Flow Integration Test', () => {
       accepts: [{
         scheme: 'exact',
         network: 'eip155:84532',
-        maxAmountRequired: '10000',
-        resource: 'http://localhost/resource',
+        amount: '10000',
         payTo: '0x70997970C51812dc3A010C7d01b50e0d17dc79C8',
         maxTimeoutSeconds: 60,
         asset: '0x036CbD53842c5426634e7929541eC2318f3dCF7e',
