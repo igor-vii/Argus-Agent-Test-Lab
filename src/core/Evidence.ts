@@ -1,24 +1,29 @@
 /**
  * Evidence — что реально произошло. Два класса источников.
- * 
- * Правила:
- * 1. Observation — от участника. source = participantId.
- * 2. EngineEvent — от инфраструктуры Argus. source = 'engine'.
- * 3. Evidence не делает hierarchy — не говорит, что один источник «правдивее» другого.
- * 4. Evidence не фильтрует по source — сохраняет все наблюдения.
- * 5. Assertion сам решает, какие observations ему нужны.
+ *
+ * Observation:
+ * - source = testSubject: система/участник, чьё поведение наблюдаем.
+ * - actorId = participantId: участник, инициировавший действие, если известен.
+ *
+ * EngineEvent:
+ * - source = 'engine'.
+ *
+ * Evidence не делает hierarchy и не фильтрует по source.
  */
 export type Evidence = Observation | EngineEvent;
 
 export interface Observation {
-  source: string;                       // participantId
+  /** The system/participant being observed (scenario.testSubject). */
+  source: string;
+  /** Participant that initiated the action, when transport identity is available. */
+  actorId?: string;
   type: string;
   data: Record<string, unknown>;
   timestamp: number;
 }
 
 export interface EngineEvent {
-  source: 'engine';                     // специальное значение
+  source: 'engine';
   type: string;
   data: Record<string, unknown>;
   timestamp: number;
