@@ -432,6 +432,48 @@ No category may be inferred only from prose.
 
 ---
 
+## 19a. Confirmed Resolved
+
+- **B0-003** — L0-F2 fault-dispatch contract is present in canonical `main`, including the contract document and `FaultDispatchContract.test.ts`.
+
+No other historical audit item is marked resolved without directly traceable evidence.
+
+## 19b. Deferred
+
+- **B0-004** — L0-F2 coverage gaps → B1.1
+- **B0-005** — lifecycle trigger semantics → B1.2
+- **B0-006** — edge/infrastructure targets → B1.3
+- **B0-007** — responder/type boundary → B1.4
+- **B0-008** — participant live wiring → B2
+- **B0-009** — topology/runtime model → B3
+- **B0-010** — S1–S7 semantic cleanup → B4
+- **B0-011** — infrastructure/CI hygiene → B5
+
+## 19c. Decision Required
+
+- **B0-001** — missing L0-S source evidence
+- **B0-002** — missing L0-F source evidence
+- **B0-012** — audit-trail fragmentation / persistence policy
+- **B0-013** — historical W7 linkage cannot currently be verified from source evidence
+
+## 19d. Wontfix
+
+No current item is classified `WONTFIX-WITH-REASON`.
+
+This is an explicit empty category, not an omitted one.
+
+## 19e. Coverage Gaps
+
+- **B0-004** — four L0-F2 coverage gaps:
+  1. infrastructure-target validation;
+  2. lifecycle no-dispatch spy coverage;
+  3. end-to-end positive fault application through `ScenarioEngine.execute`;
+  4. explicit S1/S5 active-fault structure assertions.
+
+These remain coverage gaps unless new evidence demonstrates a contract defect.
+
+---
+
 ## 20. Final Principle
 
 B0 does not mean everything is solved.
