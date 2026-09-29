@@ -62,12 +62,31 @@ export class RunOrchestrator {
     };
 
     try {
-      // Create registry and connect all controllers
+      // L0a: one controller instance belongs to exactly one participant.
+      // The mapping key is the canonical participantId used by ScenarioEngine.
+      // Reject accidental controller reuse or a conflicting pre-bound identity
+      // before any action is executed.
       const registry = new ExecutionRegistry();
+      const controllerOwners = new Map<AgentController, string>();
+
       for (const [actorId, controller] of this.controllers.entries()) {
-        if (!controller.getParticipantId()) {
-          controller.setParticipantId(actorId);
+        const boundParticipantId = controller.getParticipantId();
+
+        if (boundParticipantId && boundParticipantId !== actorId) {
+          throw new Error(
+            `Controller for participant '${actorId}' is already bound to '${boundParticipantId}'.`
+          );
         }
+
+        const existingOwner = controllerOwners.get(controller);
+        if (existingOwner && existingOwner !== actorId) {
+          throw new Error(
+            `Controller instance is shared by participants '${existingOwner}' and '${actorId}'.`
+          );
+        }
+
+        controller.setParticipantId(actorId);
+        controllerOwners.set(controller, actorId);
         registry.register(actorId, controller);
         await controller.connect();
       }
