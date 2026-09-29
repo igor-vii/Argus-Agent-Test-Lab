@@ -299,4 +299,28 @@ describe('X402AgentAdapter', () => {
       expect(adapter.getEvidences().length).toBe(0);
     });
   });
+
+  describe('configurable HTTP method (W7 regression)', () => {
+    it('should use POST when no method option is configured', async () => {
+      const { url } = await server.start();
+      await adapter.connect({ transportType: 'x402', endpoint: url });
+      await adapter.send('run-1', 'test', {});
+      const reqs = server.getRequests();
+      expect(reqs.length).toBeGreaterThan(0);
+      expect(reqs[reqs.length - 1].method).toBe('POST');
+    });
+
+    it('should use GET when options.method = GET', async () => {
+      const { url } = await server.start();
+      await adapter.connect({
+        transportType: 'x402',
+        endpoint: url,
+        options: { method: 'GET' },
+      });
+      await adapter.send('run-1', 'test', {});
+      const reqs = server.getRequests();
+      expect(reqs.length).toBeGreaterThan(0);
+      expect(reqs[reqs.length - 1].method).toBe('GET');
+    });
+  });
 });
