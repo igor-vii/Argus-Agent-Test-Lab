@@ -9,6 +9,7 @@ import { FaultInjector } from './FaultInjector';
 import { EvidenceCollector } from './EvidenceCollector';
 import { Observation } from './Evidence';
 import { PaymentRequired, ExchangeStatus } from './AgentTargetPort';
+import { validateFaultDispatch } from './validateScenario';
 
 /**
  * Callback for resolving payment requirements.
@@ -56,6 +57,13 @@ export class ScenarioEngine {
    * Запуск исполнения сценария.
    */
   public async execute(): Promise<void> {
+    const dispatchValidation = validateFaultDispatch(this.scenario);
+    if (!dispatchValidation.valid) {
+      throw new Error(
+        `Invalid L0-F2 fault dispatch contract: ${dispatchValidation.errors.map((e) => e.message).join('; ')}`
+      );
+    }
+
     this.context.status = RunStatus.RUNNING;
 
     try {
@@ -77,7 +85,8 @@ export class ScenarioEngine {
    */
   private async executeAction(action: Action): Promise<void> {
     const eventType = `action_${action.type}`;
-    const faults = this.faultInjector.getFaultsForEvent(eventType);
+    const faults = this.faultInjector.getFaultsForEvent(eventType, action.actor);
+    const responders = this.faultInjector.getRespondersForEvent(eventType);
 
     const emitCallback = (observation: Observation) => {
       this.evidenceCollector?.collect(observation, this.context.runId);
@@ -95,7 +104,9 @@ export class ScenarioEngine {
     // Применяем fault'ы цепочкой: fault1(fault2(...faultN(operation))).
     // reduceRight — правый свёртыватель: последний fault оборачивает
     // operation первым, первый fault — последним (снаружи).
-    const chained = faults.reduceRight<() => Promise<void>>(
+    const activeFaults = [...responders, ...faults];
+
+    const chained = activeFaults.reduceRight<() => Promise<void>>(
       (op, fault) => () => this.faultInjector.apply(fault, op, emitCallback),
       baseOperation
     );
