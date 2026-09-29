@@ -19,6 +19,7 @@ import { RunOrchestrator } from '../core/RunOrchestrator';
 import { AgentController } from '../core/AgentController';
 import {
   TargetAdapterRegistry,
+  buildConnectionConfig,
   readTargetSpecFromEnv,
 } from './TargetAdapterRegistry';
 import { ScenarioRegistry, getScenarioIds } from './ScenarioRegistry';
@@ -109,10 +110,8 @@ async function main(): Promise<void> {
 
         const targetAdapter = registry.create(targetSpec);
         const controller = new AgentController(targetAdapter, {
-          connectionConfig: {
-            transportType: targetSpec.kind,
-            ...(targetSpec.endpoint ? { endpoint: targetSpec.endpoint } : {}),
-          },
+          participantId: participant.participantId,
+          connectionConfig: buildConnectionConfig(targetSpec),
           runId: `run_${Date.now()}_${participant.participantId}`,
         });
         controllers.set(participant.participantId, controller);
