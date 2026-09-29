@@ -3,6 +3,7 @@ import { RunOrchestrator } from '../../core/RunOrchestrator';
 import { MockTargetAdapter } from '../../adapters/MockTargetAdapter';
 import { AgentController } from '../../core/AgentController';
 import { validateScenario } from '../../core/validateScenario';
+import { ScenarioDefinition } from '../../core/ScenarioDefinition';
 import { S1_DuplicateRequest } from '../../scenarios/S1_DuplicateRequest';
 import { S2_PaymentBeforeExecution } from '../../scenarios/S2_PaymentBeforeExecution';
 import { S3_CrashAfterSettlement } from '../../scenarios/S3_CrashAfterSettlement';
@@ -10,6 +11,31 @@ import { S4_SellerTimeout } from '../../scenarios/S4_SellerTimeout';
 import { S5_ConcurrentDuplicate } from '../../scenarios/S5_ConcurrentDuplicate';
 import { S6_PaymentRetry } from '../../scenarios/S6_PaymentRetry';
 import { S7_LostDelivery } from '../../scenarios/S7_LostDelivery';
+
+function buildMockControllers(
+  scenario: ScenarioDefinition
+): Map<string, AgentController> {
+  const controllers = new Map<string, AgentController>();
+
+  for (const participant of scenario.participants) {
+    if (participant.ownership !== 'ARGUS') continue;
+
+    const targetAdapter = new MockTargetAdapter('mock');
+    const controller = new AgentController(targetAdapter, {
+      participantId: participant.participantId,
+      connectionConfig: { transportType: 'mock' },
+      runId: `run_${Date.now()}_${participant.participantId}`,
+    });
+
+    controllers.set(participant.participantId, controller);
+  }
+
+  if (controllers.size === 0) {
+    throw new Error(`Scenario ${scenario.id} has no ARGUS-owned participants`);
+  }
+
+  return controllers;
+}
 
 describe('Canonical Scenarios S1-S7', () => {
   const scenarios = [
@@ -24,23 +50,11 @@ describe('Canonical Scenarios S1-S7', () => {
 
   scenarios.forEach(({ id, def }) => {
     it(`${id} - should execute and produce evidence with verdict`, async () => {
-      const targetAdapter = new MockTargetAdapter('mock');
-      const controller = new AgentController(targetAdapter, {
-        connectionConfig: { transportType: 'mock' },
-        runId: `run_${Date.now()}`
-      });
+      const controllers = buildMockControllers(def);
 
-      const controllers = new Map<string, AgentController>();
-      // For S1-S7, all participants are EXTERNAL except buyer-1 which is ARGUS in some scenarios
-      // We'll register the controller for any ARGUS participant
-      for (const p of def.participants) {
-        if (p.ownership === 'ARGUS') {
-          controllers.set(p.participantId, controller);
-        }
-      }
-      // If no ARGUS participants, just use a default key
-      if (controllers.size === 0) {
-        controllers.set('default', controller);
+      expect(new Set(controllers.values()).size).toBe(controllers.size);
+      for (const [participantId, controller] of controllers) {
+        expect(controller.getParticipantId()).toBe(participantId);
       }
 
       const assertions = def.assertions || [];
@@ -58,22 +72,7 @@ describe('Canonical Scenarios S1-S7', () => {
   });
 
   it('S1 - should detect idempotency (PASS expected)', async () => {
-    const targetAdapter = new MockTargetAdapter('mock');
-    const controller = new AgentController(targetAdapter, {
-      connectionConfig: { transportType: 'mock' },
-      runId: `run_${Date.now()}`
-    });
-
-    const controllers = new Map<string, AgentController>();
-    for (const p of S1_DuplicateRequest.participants) {
-      if (p.ownership === 'ARGUS') {
-        controllers.set(p.participantId, controller);
-      }
-    }
-    if (controllers.size === 0) {
-      controllers.set('default', controller);
-    }
-
+    const controllers = buildMockControllers(S1_DuplicateRequest);
     const assertions = S1_DuplicateRequest.assertions || [];
 
     const orchestrator = new RunOrchestrator(S1_DuplicateRequest, controllers, assertions);
@@ -92,22 +91,7 @@ describe('Canonical Scenarios S1-S7', () => {
   });
 
   it('S6 - should be inconclusive (scaffolding)', async () => {
-    const targetAdapter = new MockTargetAdapter('mock');
-    const controller = new AgentController(targetAdapter, {
-      connectionConfig: { transportType: 'mock' },
-      runId: `run_${Date.now()}`
-    });
-
-    const controllers = new Map<string, AgentController>();
-    for (const p of S6_PaymentRetry.participants) {
-      if (p.ownership === 'ARGUS') {
-        controllers.set(p.participantId, controller);
-      }
-    }
-    if (controllers.size === 0) {
-      controllers.set('default', controller);
-    }
-
+    const controllers = buildMockControllers(S6_PaymentRetry);
     const assertions = S6_PaymentRetry.assertions || [];
 
     const orchestrator = new RunOrchestrator(S6_PaymentRetry, controllers, assertions);
