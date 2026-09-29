@@ -6,6 +6,7 @@ import { MockTargetAdapter } from '../../adapters/MockTargetAdapter';
 import { RunContext, RunStatus } from '../../core/RunLifecycle';
 import { FaultInjector } from '../../core/FaultInjector';
 import { ExecutionRegistry } from '../../core/ExecutionRegistry';
+import { Fault } from '../../core/Fault';
 
 describe('ScenarioEngine', () => {
   let engine: ScenarioEngine;
@@ -268,5 +269,106 @@ describe('ScenarioEngine', () => {
     expect(exchanges.length).toBe(2);
     expect(exchanges[0].type).toBe('ACTION_1');
     expect(exchanges[1].type).toBe('ACTION_2');
+  });
+
+  // ============================================================
+  // L0-F2 end-to-end: scenario → execute() → fault applied → effect observed
+  // ============================================================
+
+  const makeFaultScenario = (faults: Fault[]): ScenarioDefinition => ({
+    id: 'e2e-fault-test',
+    name: 'End-to-End Fault Test',
+    participants: [
+      { participantId: 'buyer-1', protocolRole: 'CLIENT', ownership: 'ARGUS' },
+    ],
+    topology: { edges: [] },
+    testSubject: 'sut-1',
+    actions: [
+      { actor: 'buyer-1', type: 'request_payment', payload: { requestId: 'req-e2e' } },
+    ],
+    faults,
+    invariants: [],
+    assertions: [],
+    seed: 1,
+  });
+
+  it('end-to-end: duplicate_request fault on action_request_payment executes the operation twice', async () => {
+    const scenario = makeFaultScenario([
+      {
+        target: { kind: 'participant', participantId: 'buyer-1' },
+        type: 'duplicate_request',
+        trigger: 'action_request_payment',
+        config: { repeat_count: 2 },
+      },
+    ]);
+
+    const context: RunContext = {
+      runId: 'run-e2e-duplicate',
+      scenarioId: scenario.id,
+      seed: scenario.seed,
+      startedAt: new Date(),
+      status: RunStatus.CREATED,
+    };
+
+    const e2eTarget = new MockTargetAdapter('e2e-mock');
+    const e2eController = new AgentController(e2eTarget, {
+      connectionConfig: { transportType: 'mock' },
+      timeoutMs: 30000,
+      runId: context.runId,
+    });
+    await e2eController.connect();
+
+    const registry = new ExecutionRegistry();
+    registry.register('buyer-1', e2eController);
+
+    const injector = new FaultInjector(scenario.faults);
+    const engine = new ScenarioEngine(scenario, context, registry, injector);
+    await engine.execute();
+
+    // The fault was really applied through the full dispatch path:
+    // one declared action executed the underlying operation twice.
+    const exchanges = e2eTarget.getExchanges().filter((e) => e.type === 'request_payment');
+    expect(exchanges).toHaveLength(2);
+    expect(context.status).toBe(RunStatus.COMPLETED);
+  });
+
+  it('end-to-end: crash fault on action_request_payment makes execute() throw', async () => {
+    const scenario = makeFaultScenario([
+      {
+        target: { kind: 'participant', participantId: 'buyer-1' },
+        type: 'crash',
+        trigger: 'action_request_payment',
+        config: {},
+      },
+    ]);
+
+    const context: RunContext = {
+      runId: 'run-e2e-crash',
+      scenarioId: scenario.id,
+      seed: scenario.seed,
+      startedAt: new Date(),
+      status: RunStatus.CREATED,
+    };
+
+    const e2eTarget = new MockTargetAdapter('e2e-crash-mock');
+    const e2eController = new AgentController(e2eTarget, {
+      connectionConfig: { transportType: 'mock' },
+      timeoutMs: 30000,
+      runId: context.runId,
+    });
+    await e2eController.connect();
+
+    const registry = new ExecutionRegistry();
+    registry.register('buyer-1', e2eController);
+
+    const injector = new FaultInjector(scenario.faults);
+    const engine = new ScenarioEngine(scenario, context, registry, injector);
+
+    await expect(engine.execute()).rejects.toThrow('Simulated crash');
+    expect(context.status).toBe(RunStatus.FAILED);
+
+    // The operation ran once before the simulated crash was raised.
+    const exchanges = e2eTarget.getExchanges().filter((e) => e.type === 'request_payment');
+    expect(exchanges).toHaveLength(1);
   });
 });
