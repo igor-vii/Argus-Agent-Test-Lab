@@ -377,7 +377,12 @@ export class X402AgentAdapter implements PaymentCapablePort {
     body?: unknown,
     extraHeaders?: Record<string, string>
   ): Promise<{ status: number; statusText: string; headers: Record<string, string>; data: unknown }> {
-    const method = 'POST';
+    // HTTP method is configurable via transport options; default keeps the
+    // existing POST behavior for all current targets/fixtures.
+    const configuredMethod = typeof this.config?.options?.method === 'string'
+      ? (this.config.options.method as string).toUpperCase()
+      : undefined;
+    const method = configuredMethod ?? 'POST';
     const configHeaders: Record<string, string> = (this.config?.options?.headers as Record<string, string>) ?? {};
     const additionalHeaders: Record<string, string> = extraHeaders ?? {};
     const headers: Record<string, string> = {
@@ -389,7 +394,9 @@ export class X402AgentAdapter implements PaymentCapablePort {
     const fetchOptions: RequestInit = {
       method,
       headers,
-      body: JSON.stringify(body),
+      // GET/HEAD requests cannot carry a body (fetch throws otherwise);
+      // query parameters live in the endpoint URL for such resources.
+      ...(method === 'GET' || method === 'HEAD' ? {} : { body: JSON.stringify(body) }),
     };
 
     const timeoutMs = this.config?.timeoutMs ?? 30000;
