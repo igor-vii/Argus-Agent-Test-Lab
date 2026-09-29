@@ -1,6 +1,12 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { FaultInjector } from '../../core/FaultInjector';
 import { Fault } from '../../core/Fault';
+import { ScenarioEngine } from '../../core/ScenarioEngine';
+import { ScenarioDefinition } from '../../core/ScenarioDefinition';
+import { AgentController } from '../../core/AgentController';
+import { MockTargetAdapter } from '../../adapters/MockTargetAdapter';
+import { RunContext, RunStatus } from '../../core/RunLifecycle';
+import { ExecutionRegistry } from '../../core/ExecutionRegistry';
 
 describe('FaultInjector', () => {
   let injector: FaultInjector;
@@ -122,4 +128,103 @@ describe('FaultInjector', () => {
       expect(injector.getRespondersForEvent('action_request_payment')).toHaveLength(1);
     });
   
+  it('ScenarioEngine never calls getFaultsForEvent with lifecycle triggers', async () => {
+    // Scenario with an action-triggered fault AND declared-only faults on
+    // every L0-F2 lifecycle trigger. The engine must only consult the
+    // injector with action_* event types, never with lifecycle events.
+    const scenario: ScenarioDefinition = {
+      id: 'lifecycle-spy-test',
+      name: 'Lifecycle Spy Test',
+      participants: [
+        { participantId: 'sut-1', protocolRole: 'RESOURCE_SERVER', ownership: 'EXTERNAL' },
+      ],
+      topology: { edges: [] },
+      testSubject: 'sut-1',
+      actions: [
+        { actor: 'sut-1', type: 'request_payment', payload: { requestId: 'req-spy' } },
+      ],
+      faults: [
+        {
+          target: { kind: 'participant', participantId: 'sut-1' },
+          type: 'duplicate_request',
+          trigger: 'action_request_payment',
+          config: { repeat_count: 2 },
+        },
+        // Declared-only lifecycle faults: must not enter active dispatch.
+        {
+          target: { kind: 'participant', participantId: 'sut-1' },
+          type: 'crash',
+          trigger: 'delivery_started',
+          config: {},
+        },
+        {
+          target: { kind: 'participant', participantId: 'sut-1' },
+          type: 'crash',
+          trigger: 'payment_settled',
+          config: {},
+        },
+        {
+          target: { kind: 'participant', participantId: 'sut-1' },
+          type: 'crash',
+          trigger: 'settlement_unknown',
+          config: {},
+        },
+        {
+          target: { kind: 'participant', participantId: 'sut-1' },
+          type: 'crash',
+          trigger: 'delivery_sent',
+          config: {},
+        },
+      ],
+      invariants: [],
+      assertions: [],
+      seed: 7,
+    };
+
+    const context: RunContext = {
+      runId: 'run-lifecycle-spy',
+      scenarioId: scenario.id,
+      seed: scenario.seed,
+      startedAt: new Date(),
+      status: RunStatus.CREATED,
+    };
+
+    const mockTarget = new MockTargetAdapter('lifecycle-spy-mock');
+    const controller = new AgentController(mockTarget, {
+      connectionConfig: { transportType: 'mock' },
+      timeoutMs: 30000,
+      runId: context.runId,
+    });
+    await controller.connect();
+
+    const registry = new ExecutionRegistry();
+    registry.register('sut-1', controller);
+
+    const spyInjector = new FaultInjector(scenario.faults);
+    const getFaultsSpy = vi.spyOn(spyInjector, 'getFaultsForEvent');
+
+    const engine = new ScenarioEngine(scenario, context, registry, spyInjector);
+    await engine.execute();
+
+    // Every call made by the engine used an action_* event type.
+    expect(getFaultsSpy.mock.calls.length).toBeGreaterThan(0);
+    for (const [eventType] of getFaultsSpy.mock.calls) {
+      expect(eventType.startsWith('action_')).toBe(true);
+    }
+
+    // Lifecycle triggers were never passed to getFaultsForEvent —
+    // neither directly nor any other way.
+    const lifecycleTriggers = [
+      'delivery_started',
+      'payment_settled',
+      'settlement_unknown',
+      'delivery_sent',
+    ] as const;
+    for (const trigger of lifecycleTriggers) {
+      expect(getFaultsSpy.mock.calls.filter(([eventType]) => eventType === trigger)).toHaveLength(0);
+    }
+
+    getFaultsSpy.mockRestore();
+  });
+
 });
