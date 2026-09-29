@@ -132,3 +132,54 @@ export function validateScenario(
     errors,
   };
 }
+
+
+/**
+ * L0-F2 fault-dispatch contract validation.
+ *
+ * This is intentionally separate from assertion-source validation so legacy
+ * scenarios may retain declared-only lifecycle faults without becoming
+ * runtime-invalid. Callers that want an executable L0-F2 scenario should
+ * require this result to be valid.
+ */
+export function validateFaultDispatch(scenario: ScenarioDefinition): ValidationResult {
+  const errors: ValidationError[] = [];
+
+  for (const [index, fault] of scenario.faults.entries()) {
+    // respond is baseline participant behavior, not an active fault.
+    if (fault.type === 'respond') {
+      continue;
+    }
+
+    const action = fault.trigger.startsWith('action_')
+      ? scenario.actions.find((candidate) => `action_${candidate.type}` === fault.trigger)
+      : undefined;
+
+    // Lifecycle/event triggers are declared-only in L0-F2.
+    if (!action) {
+      continue;
+    }
+
+    if (fault.target.kind !== 'participant') {
+      errors.push({
+        assertionId: `fault[${index}]`,
+        rule: 'L0-F2: active fault target',
+        message: `active fault trigger '${fault.trigger}' requires participant target; '${fault.target.kind}' is declared-only`,
+      });
+      continue;
+    }
+
+    if (fault.target.participantId !== action.actor) {
+      errors.push({
+        assertionId: `fault[${index}]`,
+        rule: 'L0-F2: target equals actor',
+        message: `active fault '${fault.type}' targets '${fault.target.participantId}' but action actor is '${action.actor}'`,
+      });
+    }
+  }
+
+  return {
+    valid: errors.length === 0,
+    errors,
+  };
+}
