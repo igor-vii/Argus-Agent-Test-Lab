@@ -9,6 +9,7 @@ import { FaultInjector } from './FaultInjector';
 import { EvidenceCollector } from './EvidenceCollector';
 import { Observation } from './Evidence';
 import { PaymentRequired, ExchangeStatus } from './AgentTargetPort';
+import { validateFaultDispatch } from './validateScenario';
 
 /**
  * Callback for resolving payment requirements.
@@ -56,6 +57,13 @@ export class ScenarioEngine {
    * Запуск исполнения сценария.
    */
   public async execute(): Promise<void> {
+    const dispatchValidation = validateFaultDispatch(this.scenario);
+    if (!dispatchValidation.valid) {
+      throw new Error(
+        `Invalid L0-F2 fault dispatch contract: ${dispatchValidation.errors.map((e) => e.message).join('; ')}`
+      );
+    }
+
     this.context.status = RunStatus.RUNNING;
 
     try {
