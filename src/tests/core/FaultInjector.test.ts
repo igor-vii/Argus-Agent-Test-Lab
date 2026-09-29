@@ -86,41 +86,40 @@ describe('FaultInjector', () => {
     await expect(injector.apply(fault, operation))
       .rejects.toThrow('Delivery lost in transit');
   });
+    it('dispatches active participant faults only when target equals action actor', () => {
+      const fault: Fault = {
+        target: { kind: 'participant', participantId: 'buyer-1' },
+        trigger: 'action_request_payment',
+        type: 'duplicate_request',
+        config: { repeat_count: 2 },
+      };
+      injector.registerFault(fault);
+  
+      expect(injector.getFaultsForEvent('action_request_payment', 'buyer-1')).toHaveLength(1);
+      expect(injector.getFaultsForEvent('action_request_payment', 'seller-1')).toHaveLength(0);
+    });
+  
+    it('does not recursively dispatch lifecycle events', () => {
+      injector.registerFault({
+        target: { kind: 'participant', participantId: 'seller-1' },
+        trigger: 'payment_settled',
+        type: 'crash',
+        config: {},
+      });
+  
+      expect(injector.getFaultsForEvent('payment_settled', 'seller-1')).toHaveLength(0);
+    });
+  
+    it('keeps respond as a separate baseline behavior path', () => {
+      injector.registerFault({
+        target: { kind: 'participant', participantId: 'seller-1' },
+        trigger: 'action_request_payment',
+        type: 'respond',
+        config: { emit: 'delivery_sent' },
+      });
+  
+      expect(injector.getFaultsForEvent('action_request_payment', 'buyer-1')).toHaveLength(0);
+      expect(injector.getRespondersForEvent('action_request_payment')).toHaveLength(1);
+    });
+  
 });
-
-
-  it('dispatches active participant faults only when target equals action actor', () => {
-    const fault: Fault = {
-      target: { kind: 'participant', participantId: 'buyer-1' },
-      trigger: 'action_request_payment',
-      type: 'duplicate_request',
-      config: { repeat_count: 2 },
-    };
-    injector.registerFault(fault);
-
-    expect(injector.getFaultsForEvent('action_request_payment', 'buyer-1')).toHaveLength(1);
-    expect(injector.getFaultsForEvent('action_request_payment', 'seller-1')).toHaveLength(0);
-  });
-
-  it('does not recursively dispatch lifecycle events', () => {
-    injector.registerFault({
-      target: { kind: 'participant', participantId: 'seller-1' },
-      trigger: 'payment_settled',
-      type: 'crash',
-      config: {},
-    });
-
-    expect(injector.getFaultsForEvent('payment_settled', 'seller-1')).toHaveLength(0);
-  });
-
-  it('keeps respond as a separate baseline behavior path', () => {
-    injector.registerFault({
-      target: { kind: 'participant', participantId: 'seller-1' },
-      trigger: 'action_request_payment',
-      type: 'respond',
-      config: { emit: 'delivery_sent' },
-    });
-
-    expect(injector.getFaultsForEvent('action_request_payment', 'buyer-1')).toHaveLength(0);
-    expect(injector.getRespondersForEvent('action_request_payment')).toHaveLength(1);
-  });
