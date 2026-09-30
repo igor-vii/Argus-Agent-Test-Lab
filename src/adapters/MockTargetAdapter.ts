@@ -37,10 +37,46 @@ export interface MockTargetConfig extends TargetConnectionConfig {
   
   /** Simulate failure rate (0.0 - 1.0) */
   failureRate?: number;
-  
+
   /** Pre-programmed responses for specific message types */
   cannedResponses?: Record<string, unknown>;
+
+  /**
+   * R2 lifecycle-observation plumbing (see docs/evidence-source-map.md):
+   * per-action-type list of lifecycle observations that the simulated source
+   * (Sut / settlement layer) is configured to report on a successful response.
+   *
+   * This does NOT invent facts: each type here must be a fact the simulated
+   * source would legitimately report (e.g. a facilitator/settlement layer
+   * answering "payment_settled" or "settlement_unknown" about a payment).
+   * The mock merely relays what the scenario configures the source to say.
+   * Unknown/invalid observation types are ignored by the mock itself;
+   * validation lives in core/validateScenario (L0-F2 boundary).
+   */
+  lifecycleObservations?: Record<string, string[]>;
 }
+
+/**
+ * Lifecycle observation types that represent an external economic/delivery
+ * fact reported by the simulated source. Kept as a narrow allow-list so that
+ * no speculative lifecycle emitter can enter the evidence path through the
+ * mock: a type may appear here only if a canonical scenario assertion already
+ * consumes it (docs/evidence-source-map.md, section 2).
+ *
+ * Deliberately absent (no legitimate source yet — see R1 map):
+ * delivery_received (edge-mediated), recovery_completed (crash/restart),
+ * forward_request, unhandled_exception.
+ */
+export const MOCK_LIFECYCLE_OBSERVATION_TYPES: ReadonlySet<string> = new Set([
+  'payment_settled',
+  'settlement_unknown',
+  'success',
+  'failed',
+  'delivery_started',
+  'delivery_sent',
+  'delivery_completed',
+  'delivery_unknown',
+]);
 
 /**
  * Internal state for tracking payment intents by idempotency key
@@ -119,6 +155,13 @@ export class MockTargetAdapter implements AgentTargetPort {
     let responsePayload: unknown = {};
     let observations: string[] = [];
 
+    // Lifecycle observations the simulated source is configured to report.
+    // Filtered through the canonical allow-list so a misconfigured mock cannot
+    // inject arbitrary/speculative evidence types into the evidence path.
+    const configuredLifecycle = (
+      (this.config?.options?.lifecycleObservations as Record<string, string[]> | undefined)?.[type] ?? []
+    ).filter((t) => MOCK_LIFECYCLE_OBSERVATION_TYPES.has(t));
+
     switch (type) {
       case 'request_payment': {
         const idempotencyKey = (payload as any)?.idempotencyKey;
@@ -146,12 +189,16 @@ export class MockTargetAdapter implements AgentTargetPort {
           };
           observations = ['payment_intent_created'];
         }
+        // The settlement layer of the simulated Sut answers with its own
+        // economic state for this request (settled / UNKNOWN / ...), if the
+        // scenario configures it to report one. Appended after intent facts.
+        observations.push(...configuredLifecycle);
         break;
       }
 
       default:
         responsePayload = payload ?? {};
-        observations = [];
+        observations = [...configuredLifecycle];
     }
 
     const exchange: Exchange = {
