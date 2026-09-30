@@ -55,7 +55,7 @@ interface PaymentRequiredBody {
     scheme: string;
     network: string;
     amount: string;
-    payTo?: string;
+    payTo: string;
     asset: string;
     maxTimeoutSeconds: number;
   }>;
@@ -64,7 +64,7 @@ interface PaymentRequiredBody {
 export interface X402SellerAdapterConfig {
   port?: number;
   amount?: string;
-  payTo: string;
+  payTo?: string;
   maxTimeoutSeconds?: number;
 }
 
@@ -73,7 +73,7 @@ export class X402SellerAdapter {
   private port: number;
   private config: Required<X402SellerAdapterConfig>;
 
-  constructor(config: X402SellerAdapterConfig) {
+  constructor(config: X402SellerAdapterConfig = {}) {
     this.port = config.port ?? 0;
     this.config = {
       port: this.port,
@@ -126,7 +126,7 @@ export class X402SellerAdapter {
     body: string,
     session: TestSession,
     expectedPath: string,
-  ): void {
+  ): Promise<void> {
     const method = req.method ?? 'GET';
     const url = req.url ?? '/';
     const headers = this.normalizeHeaders(req.headers);
@@ -185,7 +185,7 @@ export class X402SellerAdapter {
     res.end(JSON.stringify({ error: 'Payment Required' }));
   }
 
-  private handlePaidRequest(
+  private async handlePaidRequest(
     req: http.IncomingMessage,
     res: http.ServerResponse,
     body: string,
