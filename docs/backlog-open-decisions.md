@@ -5,8 +5,6 @@
 **Purpose:** authoritative decision register for unresolved, deferred, and unverifiable findings across the Argus audit phases.
 
 > **Core rule:** no finding disappears silently, and no finding is invented silently.
->
-> This document records what is verified in the canonical repository, what exists only in prior reports, what exists only in conversation, and what cannot currently be traced to evidence.
 
 ---
 
@@ -83,24 +81,6 @@ Every finding must be represented with the following fields:
 
 | ID | Problem / Decision | Category | Source Type | Source | Current Status | Why Deferred / Status Rationale | Owner Phase | Decision Owner |
 |---|---|---|---|---|---|---|---|---|
-
-Additional evidence notes may be added below the table where necessary.
-
-### Status semantics
-
-- **RESOLVED** — resolution is directly verifiable from current canonical `main`.
-- **DEFERRED-TO-PHASE** — intentionally not solved in the current phase; the owning phase is explicit.
-- **WONTFIX-WITH-REASON** — intentionally rejected with an explicit reason.
-- **DECISION-REQUIRED** — a decision or missing evidence is required before the item can legitimately be marked resolved or deferred.
-
-A missing source document is **not** evidence of resolution.
-
----
-
-## 4. Current Backlog
-
-| ID | Problem / Decision | Category | Source Type | Source | Current Status | Why Deferred / Status Rationale | Owner Phase | Decision Owner |
-|---|---|---|---|---|---|---|---|---|
 | B0-001 | L0-S findings cannot currently be verified from canonical main because the prior L0-S document is absent from `main`. | Audit evidence | CONVERSATION | Prior session; source document not present in repo | DECISION-REQUIRED | Do not reconstruct the four L0-S findings from memory. Original evidence is required before resolution can be verified. | B0 / evidence recovery | Architect |
 | B0-002 | L0-F findings cannot currently be verified from canonical main because the prior L0-F document is absent from `main`. | Audit evidence | CONVERSATION | Prior session; source document not present in repo | DECISION-REQUIRED | Do not reconstruct L0-F findings from memory. | B0 / evidence recovery | Architect |
 | B0-003 | L0-F2 fault-dispatch contract is present in canonical main, including contract documentation and tests. | Fault contract | REPO | `docs/l0-f2-fault-dispatch-contract.md`; `src/tests/core/FaultDispatchContract.test.ts` | RESOLVED | Contract implementation was merged into main. Remaining coverage gaps are tracked separately and are not silently treated as contract failures. | B1.1 | Architect |
@@ -117,7 +97,7 @@ A missing source document is **not** evidence of resolution.
 
 ---
 
-## 5. L0-S Evidence Rule
+## 4. L0-S Evidence Rule
 
 The prior L0-S audit document is not present in the current canonical `main`.
 
@@ -136,7 +116,7 @@ This prevents both:
 
 ---
 
-## 6. L0-F Evidence Rule
+## 5. L0-F Evidence Rule
 
 The same rule applies to L0-F.
 
@@ -149,7 +129,7 @@ If the original L0-F report/document is not present in canonical `main`:
 
 ---
 
-## 7. L0-F2 Frozen Contract
+## 6. L0-F2 Frozen Contract
 
 The currently verified L0-F2 state is:
 
@@ -167,7 +147,7 @@ The four known coverage gaps remain separate backlog items and must not be confl
 
 ---
 
-## 8. Lifecycle Decision — B1.2
+## 7. Lifecycle Decision — B1.2
 
 The current state is intentionally frozen as evidence/declaration only.
 
@@ -191,7 +171,7 @@ The decision belongs to B1.2.
 
 ---
 
-## 9. Edge / Infrastructure Targets — B1.3
+## 8. Edge / Infrastructure Targets — B1.3
 
 Current L0-F2 behavior does not provide active edge/infrastructure interception.
 
@@ -203,7 +183,7 @@ No edge runtime is implemented here.
 
 ---
 
-## 10. Participant Wiring — B2
+## 9. Participant Wiring — B2
 
 The next runtime question is:
 
@@ -225,7 +205,7 @@ No Sitecheck dependency is required for B2.
 
 ---
 
-## 11. Topology — B3
+## 10. Topology — B3
 
 Topology remains a declarative/runtime-boundary question.
 
@@ -240,7 +220,7 @@ B0 does not decide this.
 
 ---
 
-## 12. Scenario Semantics — B4
+## 11. Scenario Semantics — B4
 
 B4 owns semantic cleanup of S1–S7, including:
 
@@ -255,7 +235,7 @@ B0 records these as open work and does not alter scenario semantics.
 
 ---
 
-## 12a. Audit Trail Fragmentation
+## 12. Audit Trail Fragmentation
 
 The Argus audit trail currently spans multiple locations:
 
@@ -268,15 +248,6 @@ This fragmentation is itself a finding.
 ### Future persistence rule
 
 Any future audit document that is intended to be authoritative must be committed under `docs/` as part of the phase that produces it.
-
-Examples include:
-
-- L0-S report
-- L0-F report
-- L0-F2 report
-- B0 backlog
-- B1.2 lifecycle decision
-- other phase-level decision records
 
 If a document is intentionally ephemeral, it must be explicitly marked **EPHEMERAL** and must not later be treated as authoritative evidence.
 
@@ -376,8 +347,6 @@ The contract is explicit, but tests do not yet prove an aspect of it.
 
 The four L0-F2 items currently identified are coverage gaps unless new evidence demonstrates otherwise.
 
-They must not be upgraded into contract holes merely because coverage is incomplete.
-
 ---
 
 ## 18. Audit Evidence Policy
@@ -432,48 +401,6 @@ No category may be inferred only from prose.
 
 ---
 
-## 19a. Confirmed Resolved
-
-- **B0-003** — L0-F2 fault-dispatch contract is present in canonical `main`, including the contract document and `FaultDispatchContract.test.ts`.
-
-No other historical audit item is marked resolved without directly traceable evidence.
-
-## 19b. Deferred
-
-- **B0-004** — L0-F2 coverage gaps → B1.1
-- **B0-005** — lifecycle trigger semantics → B1.2
-- **B0-006** — edge/infrastructure targets → B1.3
-- **B0-007** — responder/type boundary → B1.4
-- **B0-008** — participant live wiring → B2
-- **B0-009** — topology/runtime model → B3
-- **B0-010** — S1–S7 semantic cleanup → B4
-- **B0-011** — infrastructure/CI hygiene → B5
-
-## 19c. Decision Required
-
-- **B0-001** — missing L0-S source evidence
-- **B0-002** — missing L0-F source evidence
-- **B0-012** — audit-trail fragmentation / persistence policy
-- **B0-013** — historical W7 linkage cannot currently be verified from source evidence
-
-## 19d. Wontfix
-
-No current item is classified `WONTFIX-WITH-REASON`.
-
-This is an explicit empty category, not an omitted one.
-
-## 19e. Coverage Gaps
-
-- **B0-004** — four L0-F2 coverage gaps:
-  1. infrastructure-target validation;
-  2. lifecycle no-dispatch spy coverage;
-  3. end-to-end positive fault application through `ScenarioEngine.execute`;
-  4. explicit S1/S5 active-fault structure assertions.
-
-These remain coverage gaps unless new evidence demonstrates a contract defect.
-
----
-
 ## 20. Final Principle
 
 B0 does not mean everything is solved.
@@ -492,7 +419,7 @@ And a clean backlog is not permission to erase history.
 
 # R3 CONSOLIDATION ADDENDUM — 2026-09-30
 
-This addendum records the verified state after R3: clean harness merge with per-participant controllers, merged to canonical main as commit fcfca681492fb13fed62bb00629d0a55a3d161c6 (PR #53).
+This addendum records the verified state after R3: clean harness merge with per-participant controllers, merged to canonical main as commit `fcfca681492fb13fed62bb00629d0a55a3d161c6` (PR #53).
 
 **Important scope note:** the R-series is a repair track, not part of the final roadmap dated 2026-09-29. R1/R2/R2.5/R3 arose after A0/A1 as minimal repairs. The next R block is not pre-numbered. Do not infer that the next work item is R4 until the open architectural decisions below are resolved and the next repair block is explicitly defined.
 
@@ -534,17 +461,104 @@ A future **C→A** transition would require the Sut itself to export a terminal 
 
 ### R3-D2 — S6 retry trigger
 
-Current evidence: S6 retry remains attached to lifecycle trigger settlement_unknown, but L0-F2 does not dispatch lifecycle triggers.
+Current evidence before this decision: S6 retry was attached to lifecycle trigger `settlement_unknown`, but L0-F2 does not dispatch lifecycle triggers.
 
-The architectural choices are:
+The R3-D2 feasibility audit established:
 
-**A — Keep declared-only.** S6 remains BLOCKED until another mechanism exists.
+- a direct lifecycle-trigger retry is incompatible with the frozen L0-F2 dispatch boundary;
+- an action-bound retry is technically feasible;
+- the existing `handleRetry()` cannot create fresh authorizations because it repeats the same operation closure and therefore reuses the same idempotency key;
+- an Engine Guard would require new evidence→execution control flow and a new fresh-key retry mechanism;
+- the existing scenario/action model already supports sequential actions with per-action payloads and distinct idempotency keys;
+- S2/S4 provide a canonical precedent for expressing required causal structure through explicit scenario actions without lifecycle dispatch;
+- no lifecycle dispatch, timeout inference, synthetic `settlement_unknown`, or EvidenceCollector-driven control flow is required for the minimal implementation.
 
-**B — Rebind retry to an action trigger.** The retry fault is attached to an existing client action, preserving the frozen L0-F2 dispatch contract.
+### R3-D2 — Architectural decision
 
-**C — Introduce bounded lifecycle dispatch.** Lifecycle evidence becomes an active fault trigger under a separately specified, non-recursive contract.
+**RESOLVED — Option B, implemented as the Explicit Second Action pattern.**
 
-No option is selected by this addendum.
+Canonical semantic shape:
+
+```
+attempt 1
+  client-1: request_payment
+  idempotencyKey = K1
+        ↓
+Sut positively reports settlement_unknown
+        ↓
+attempt 2
+  client-1: request_payment
+  idempotencyKey = K2
+        ↓
+Sut may again report settlement_unknown
+        ↓
+attempt 3
+  client-1: request_payment
+  idempotencyKey = K3
+```
+
+The implementation shall use the existing sequential `Scenario.actions` model and distinct per-action idempotency keys.
+
+**The following are explicitly NOT authorized as part of R3-D2 implementation:**
+
+- lifecycle observation → FaultInjector dispatch;
+- generic EvidenceCollector → execution control flow;
+- timeout/absence → `settlement_unknown` inference;
+- synthetic `settlement_unknown` evidence;
+- modification of L0-F2 dispatch rules;
+- modification of `AgentController` retry behavior;
+- a new retry/authorization subsystem;
+- engine-level evidence guards.
+
+### Why this decision
+
+The explicit-second-action pattern requires the smallest architectural change:
+
+- ScenarioEngine already executes actions sequentially.
+- Action payloads already carry idempotency keys.
+- A distinct idempotency key already creates a distinct payment intent in the current adapter.
+- S2/S4 already establish explicit multi-action scenario structure as the canonical way to express this kind of sequence.
+- Core execution, fault dispatch, evidence collection, validation, and controller behavior remain unchanged.
+
+The Engine Guard alternative remains architecturally possible, but is **not selected for R3-D2** because it would introduce the first evidence→execution interpretation path into the engine and would still require a separate fresh-authorization mechanism.
+
+### Important semantic limitation
+
+The explicit-second-action pattern expresses the intended causal sequence **declaratively through scenario structure**. It does not introduce a generic runtime guard proving that attempt N+1 was dynamically authorized only after a positive `settlement_unknown` observation.
+
+That stronger runtime conditional-execution capability is **not part of R3-D2**.
+
+If future Argus requirements establish a need for general runtime evidence-conditioned execution, that must be opened as a separate architectural decision rather than smuggled into S6.
+
+### R3-D2 implementation boundary
+
+The expected implementation footprint is intentionally narrow:
+
+**Expected source change:**
+- `src/scenarios/S6_PaymentRetry.ts`
+
+**Expected test adjustments, only where existing S6 shape assertions require them:**
+- relevant S6 scaffolding tests;
+- the existing S6 containment/regression test that asserts the old declared-only lifecycle trigger shape.
+
+**Must remain unchanged:**
+- `src/core/ScenarioEngine.ts`
+- `src/core/FaultInjector.ts`
+- `src/core/Fault.ts`
+- `src/core/EvidenceCollector.ts`
+- `src/core/AgentController.ts`
+- `src/core/validateScenario.ts`
+- lifecycle observation allow-lists
+- L0-F2 dispatch contract
+- other S1–S7 semantics outside the S6 change
+
+The exact implementation must still be validated against the current canonical source before coding.
+
+### R3-D2 status
+
+**RESOLVED — architectural decision.**
+
+Implementation is a separate scoped task and is not implied by this decision record.
 
 ### R3-D3 — S5 passive PASS
 
@@ -560,7 +574,7 @@ No option is selected by this addendum.
 |---|---|---|---|
 | R3-001 | delay_ms: 0 is treated as falsy by the existing delayed-response handling and therefore does not represent an explicit zero-delay value. | DEFERRED-TO-PHASE | Next repair block / separate bug fix |
 | R3-002 | Canonical S4 lacks a legitimate runtime source for delivery_unknown; finite-hang execution alone does not establish the terminal observation. | DECISION-REQUIRED | Architect |
-| R3-003 | S6 retry cannot execute under the frozen L0-F2 contract while its trigger remains lifecycle settlement_unknown. | DECISION-REQUIRED | Architect |
+| R3-003 | S6 retry cannot execute under the frozen L0-F2 contract while its trigger remains lifecycle settlement_unknown. | REVISED — RESOLVED BY R3-D2 | Architect |
 | R3-004 | S5 unhandled_exception assertion has a passive-absence PASS condition whose semantic validity is not yet decided. | DECISION-REQUIRED | Architect |
 | R3-005 | R3 per-participant controller identity is corrected and verified in the merged R3 implementation. | RESOLVED | — |
 | R3-006 | S3.1–S3.3 remain outside R3 scope. | DEFERRED-TO-PHASE | Next repair block / roadmap owner |
@@ -577,15 +591,16 @@ R-series work is a repair track created after A0/A1 to close concrete gaps with 
 
 ## Next-step gate
 
-Before implementation of the next repair block:
+R3-D1 and R3-D2 are now resolved.
 
-1. Consolidate the findings above.
-2. Decide R3-D1: delivery_unknown source.
-3. Decide R3-D2: S6 retry trigger.
-4. Decide R3-D3: S5 passive PASS semantics.
-5. Only then define the next R block and its implementation scope.
+Before defining the next R repair block:
 
-**No implementation of delivery-unknown inference, lifecycle dispatch, edge mediation, or S6 retry is authorized by this addendum.**
+1. Decide R3-D3: S5 passive PASS semantics.
+2. Define the scoped R3-D2 implementation task.
+3. Implement and test R3-D2 separately from this decision record.
+4. Only then define any subsequent R repair block from verified remaining findings.
+
+**No implementation of delivery-unknown inference, lifecycle dispatch, edge mediation, or S6 runtime evidence guards is authorized by this addendum.**
 
 ## Real-adapter strategic direction
 
@@ -596,66 +611,3 @@ When that work is scheduled, the preferred proof shape is:
 Argus → real TargetAdapter → real external system → externally observable evidence → Assertion → Verdict
 
 The first real-adapter slice should be one narrow vertical proof. It must not become a mass replacement of MockTargetAdapter, a new transport subsystem, a dashboard, persistence layer, chaos engine, billing system, or new x402 behavior.
-
-
-
----
-
-# R3 DECISION UPDATE — 2026-09-30
-
-This section supersedes the unresolved decision state of **R3-D1 / R3-002** recorded above, while preserving the original historical row and its prior status.
-
-**REVISED-FROM:** DECISION-REQUIRED
-
-**New status:** RESOLVED — C / internal-only Sut state
-
-The capability audit `docs/capability-audit-delivery-unknown.md` established the following from the canonical repository:
-
-1. The Sut has the semantic notion/state of `delivery_unknown`.
-2. In canonical S4, that state is not exposed through an external observable interface.
-3. S4's `sut-1` is a hypothetical/external coordinator in the scenario model; the current harness does not provide a real external Sut endpoint for it.
-4. The canonical hang path emits `delivery_started`, but does not externally emit terminal `delivery_unknown`.
-5. Argus therefore cannot objectively obtain the terminal `delivery_unknown` state from the current Sut boundary.
-6. Deriving `delivery_unknown` from timeout/absence inside Argus would be an Argus-owned temporal inference and would change the Temporal Trust Boundary. That approach is rejected.
-
-## Architectural decision
-
-S4 remains **INCONCLUSIVE by design** under the current external Sut boundary.
-
-No Argus timeout inference, synthetic `delivery_unknown` evidence, lifecycle dispatch, or other workaround is authorized to force S4 to PASS.
-
-The current classification is:
-
-```
-Sut knows delivery_unknown        YES
-        |
-Sut exposes it externally?        NO
-        |
-        C — internal-only Sut state
-```
-
-A future **C → A** transition requires the Sut itself to export a terminal UNKNOWN state through an external observable/protocol interface. Only after that capability exists should the corresponding TargetAdapter mapping be implemented.
-
-## Consequence for R3
-
-- R3-D1 is resolved as an architectural capability finding.
-- R3-002 remains in the historical findings table as DECISION-REQUIRED to preserve the original record.
-- The authoritative current decision is this addendum: **C / internal-only; S4 remains INCONCLUSIVE by design.**
-- No implementation change is authorized by this decision.
-
-## Updated next-step gate
-
-R3-D1 is no longer a pending decision.
-
-Before defining the next repair block, the remaining open R3 decisions are:
-
-1. **R3-D2 — S6 retry trigger:** decide whether to keep declared-only, rebind to an action trigger, or introduce a separately specified lifecycle-dispatch contract.
-2. **R3-D3 — S5 passive PASS:** decide whether absence of `unhandled_exception` evidence is sufficient for PASS or whether positive observation/closure is required.
-
-Only after those decisions are consolidated should the next R repair block be explicitly defined.
-
-The final roadmap remains unchanged:
-
-**B1.2a → B1.2b → B1.3 → B2 → B4 → B6 → B7**
-
-The R-series remains a repair track and must not silently replace or reorder that roadmap.
