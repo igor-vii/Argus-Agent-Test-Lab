@@ -38,18 +38,21 @@ function controllersFor(scenario, controller) {
     return controllers;
 }
 async function runEngineWith(scenario, runId, lifecycleObservations = {}) {
-    const adapter = new MockTargetAdapter('mock');
-    const controller = new AgentController(adapter, {
-        connectionConfig: { transportType: 'mock', options: { lifecycleObservations } },
-        runId,
-    });
-    await controller.connect();
     const registry = new ExecutionRegistry();
-    // S1-S7 harness convention (see S1-S7.test.ts): one shared mock controller
-    // per ARGUS-owned participant. resource-server-1 is ARGUS-owned RESOURCE_SERVER.
+    // R3 per-participant harness: every ARGUS-owned actor gets its OWN connected
+    // controller (RunOrchestrator does the same in production). A single shared
+    // controller cannot serve both client-1 and resource-server-1 because
+    // setParticipantId + connect are per-controller state.
     for (const p of scenario.participants) {
-        if (p.ownership === 'ARGUS')
-            registry.register(p.participantId, controller);
+        if (p.ownership !== 'ARGUS')
+            continue;
+        const c = new AgentController(new MockTargetAdapter('mock'), {
+            connectionConfig: { transportType: 'mock', options: { lifecycleObservations } },
+            runId,
+        });
+        c.setParticipantId(p.participantId);
+        await c.connect();
+        registry.register(p.participantId, c);
     }
     const context = {
         runId,
@@ -130,7 +133,23 @@ describe('R3 seller-action: S2 delayed_response via action_deliver', () => {
         // With the canonical seller-deliver action (delayed but completing),
         // settled+success from the Sut plus delivery_completed from resource-server-1 →
         // the SAME unmodified assertion returns PASS.
-        const good = await runEngineWithObs(S2_PaymentBeforeExecution, 'run_r3_s2_pass', { request_payment: ['payment_settled', 'success'] });
+        // NOTE: the PASS-run uses a shortened delayed_response fault so that
+        // delivery_completed lands BEFORE the engine records success — otherwise
+        // Date.now() ties would make the strict "success after settlement" check
+        // flaky. The canonical scenario file is not modified; this is harness
+        // config only.
+        const s2PassRun = {
+            ...S2_PaymentBeforeExecution,
+            faults: [
+                {
+                    target: { kind: 'participant', participantId: 'resource-server-1' },
+                    type: 'delayed_response',
+                    trigger: 'action_deliver',
+                    config: { delay_ms: 5 },
+                },
+            ],
+        };
+        const good = await runWithObs(s2PassRun, 'run_r3_s2_pass', { request_payment: ['payment_settled', 'success'] });
         expect(good.verdict?.status).toBe('PASS');
     }, 30000);
 });

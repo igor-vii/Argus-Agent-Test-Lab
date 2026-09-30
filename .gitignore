@@ -1,2 +1,5 @@
-# Build artifacts
+# Compiled and build artifacts
 dist/
+
+# Dependencies
+node_modules/

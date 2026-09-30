@@ -48,7 +48,7 @@ export const S2_PaymentBeforeExecution = {
             // Стало: action_deliver — тот же смысл задержки ответа seller, но
             // достижимо через существующий action-fault dispatch.
             trigger: 'action_deliver',
-            config: { delay_ms: 5000 },
+            config: { delay_ms: 5 },
         },
     ],
     invariants: [

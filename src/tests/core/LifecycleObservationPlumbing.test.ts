@@ -63,6 +63,22 @@ async function runEngine(
 
   const registry = new ExecutionRegistry();
   registry.register(opts?.actor ?? 'client-1', controller);
+  // R3 multi-actor harness: if the scenario contains actions from other
+  // ARGUS-owned actors (e.g. resource-server-1 'deliver' in S2/S4), register a
+  // per-participant connected controller for each of them, mirroring what
+  // RunOrchestrator does in production. The primary actor keeps opts.actor's
+  // controller above.
+  for (const p of scenario.participants) {
+    if (p.ownership !== 'ARGUS') continue;
+    if (registry.get(p.participantId)) continue;
+    const extra = new AgentController(new MockTargetAdapter('mock'), {
+      connectionConfig: { transportType: 'mock', options: { lifecycleObservations } },
+      runId,
+    });
+    extra.setParticipantId(p.participantId);
+    await extra.connect();
+    registry.register(p.participantId, extra);
+  }
 
   const context: RunContext = {
     runId,
@@ -87,8 +103,8 @@ async function runEngine(
   await engine.execute();
 
   // Plumbing never routes lifecycle observations through FaultInjector:
-  // lookup happened only for the action trigger.
-  expect(getFaultsSpy.calls).toEqual([`action_${scenario.actions[0].type}`]);
+  // lookup happened only for action_* triggers (one per scenario action).
+  expect(getFaultsSpy.calls).toEqual(scenario.actions.map((a) => `action_${a.type}`));
 
   return { collector, spy: getFaultsSpy };
 }
@@ -147,6 +163,10 @@ describe('R2 lifecycle observation plumbing', () => {
       S2_PaymentBeforeExecution,
       { request_payment: ['payment_settled'] },
       'run_identity',
+      // faults: [] — the canonical delayed_response now fires on action_deliver
+      // (5s) and would stall this engine-level identity run; coexistence with
+      // action-fault dispatch is proven in S2-S4-SellerAction.test.ts.
+      { faults: [] },
     );
 
     const records = collector.getByType('run_identity', 'payment_settled');
@@ -155,8 +175,10 @@ describe('R2 lifecycle observation plumbing', () => {
     expect(records[0].source).toBe('sut-1');         // testSubject association preserved
 
     // Lifecycle observation did NOT enter FaultInjector dispatch: lookup
-    // happened only for the action trigger (L0-F2 boundary).
-    expect(spy.calls).toEqual(['action_request_payment']);
+    // happened only for action_* triggers (L0-F2 boundary). The canonical S2
+    // delayed_response fault fires on the second action ('deliver', R3
+    // seller-action), so this run uses faults: [] to isolate observations.
+    expect(spy.calls).toEqual(['action_request_payment', 'action_deliver']);
   });
 
   it('settlement_unknown enters evidence as its own identity and never becomes failure/success', async () => {
