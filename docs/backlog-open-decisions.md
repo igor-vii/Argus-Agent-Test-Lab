@@ -597,3 +597,65 @@ Argus → real TargetAdapter → real external system → externally observable 
 
 The first real-adapter slice should be one narrow vertical proof. It must not become a mass replacement of MockTargetAdapter, a new transport subsystem, a dashboard, persistence layer, chaos engine, billing system, or new x402 behavior.
 
+
+
+---
+
+# R3 DECISION UPDATE — 2026-09-30
+
+This section supersedes the unresolved decision state of **R3-D1 / R3-002** recorded above, while preserving the original historical row and its prior status.
+
+**REVISED-FROM:** DECISION-REQUIRED
+
+**New status:** RESOLVED — C / internal-only Sut state
+
+The capability audit `docs/capability-audit-delivery-unknown.md` established the following from the canonical repository:
+
+1. The Sut has the semantic notion/state of `delivery_unknown`.
+2. In canonical S4, that state is not exposed through an external observable interface.
+3. S4's `sut-1` is a hypothetical/external coordinator in the scenario model; the current harness does not provide a real external Sut endpoint for it.
+4. The canonical hang path emits `delivery_started`, but does not externally emit terminal `delivery_unknown`.
+5. Argus therefore cannot objectively obtain the terminal `delivery_unknown` state from the current Sut boundary.
+6. Deriving `delivery_unknown` from timeout/absence inside Argus would be an Argus-owned temporal inference and would change the Temporal Trust Boundary. That approach is rejected.
+
+## Architectural decision
+
+S4 remains **INCONCLUSIVE by design** under the current external Sut boundary.
+
+No Argus timeout inference, synthetic `delivery_unknown` evidence, lifecycle dispatch, or other workaround is authorized to force S4 to PASS.
+
+The current classification is:
+
+```
+Sut knows delivery_unknown        YES
+        |
+Sut exposes it externally?        NO
+        |
+        C — internal-only Sut state
+```
+
+A future **C → A** transition requires the Sut itself to export a terminal UNKNOWN state through an external observable/protocol interface. Only after that capability exists should the corresponding TargetAdapter mapping be implemented.
+
+## Consequence for R3
+
+- R3-D1 is resolved as an architectural capability finding.
+- R3-002 remains in the historical findings table as DECISION-REQUIRED to preserve the original record.
+- The authoritative current decision is this addendum: **C / internal-only; S4 remains INCONCLUSIVE by design.**
+- No implementation change is authorized by this decision.
+
+## Updated next-step gate
+
+R3-D1 is no longer a pending decision.
+
+Before defining the next repair block, the remaining open R3 decisions are:
+
+1. **R3-D2 — S6 retry trigger:** decide whether to keep declared-only, rebind to an action trigger, or introduce a separately specified lifecycle-dispatch contract.
+2. **R3-D3 — S5 passive PASS:** decide whether absence of `unhandled_exception` evidence is sufficient for PASS or whether positive observation/closure is required.
+
+Only after those decisions are consolidated should the next R repair block be explicitly defined.
+
+The final roadmap remains unchanged:
+
+**B1.2a → B1.2b → B1.3 → B2 → B4 → B6 → B7**
+
+The R-series remains a repair track and must not silently replace or reorder that roadmap.
