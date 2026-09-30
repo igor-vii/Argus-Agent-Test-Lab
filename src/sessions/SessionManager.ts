@@ -5,7 +5,7 @@
  * No database. No persistence. Sessions expire in memory.
  */
 
-import type { TestMode } from './TestSession';
+import type { SessionStatus, TestMode } from './TestSession';
 import { TestSession } from './TestSession';
 import { X402SellerAdapter } from '../adapters/seller/X402SellerAdapter';
 
@@ -73,7 +73,8 @@ export class SessionManager {
 
     const wasActive = session.status === 'ACTIVE';
     session.checkExpiry();
-    return wasActive && session.status === 'EXPIRED';
+    const statusAfterExpiry: SessionStatus = session.status;
+    return wasActive && statusAfterExpiry === 'EXPIRED';
   }
 
   getResult(sessionId: string) {
