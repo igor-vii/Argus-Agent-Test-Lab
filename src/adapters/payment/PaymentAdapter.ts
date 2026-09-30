@@ -38,7 +38,7 @@ export interface PaymentAdapter {
 
   /**
    * Получить адрес для приёма платежа.
-   * forRole — participantId (например, 'seller-1').
+   * forRole — participantId (например, 'resource-server-1').
    * Адрес определяется по маппингу в адаптере
    * (например, из ENV или из конфига).
    */
