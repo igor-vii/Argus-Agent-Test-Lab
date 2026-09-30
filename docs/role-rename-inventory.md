@@ -1,5 +1,8 @@
 # Role & participantId inventory (R2.5-A)
 
+> **Historical inventory.** This document records a past rename audit and its Secretariat-era terminology. Do not treat Secretariat as the canonical SUT. Current Argus architecture is black-box and SUT-agnostic: the SUT role is discovered from observable behavior and the opposite-side counterparty is selected accordingly.
+
+
 Read-only инвентаризация для будущего rename (R2.5-B). Ничего в этом блоке не изменено.
 
 ## 1. Что проверялось
