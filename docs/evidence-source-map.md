@@ -72,10 +72,10 @@ grep-ом по `src/` (эмитент ≠ декларация в trigger/config
 | 1 | `payment_intent_created` | S1, S5 | Sut | O | S1 `assert_no_duplicate` (sut-1, idempotencyKey='key-1'); S5 `assert_concurrent_single_intent` (sut-1, key='key-5') | Да — `MockTargetAdapter` (O), записывается с source=testSubject | Ничего (для mock-режима; HTTP/Sut-адаптеры должны передавать observations — см. примечание A) |
 | 2 | `payment_intent_reused` | S1 (косвенно, комментарий) | Sut | O | S1 — ожидание второй волны при повторном key | Частично — `MockTargetAdapter` эмитит, но ни одна assertion не матчит тип | Расширить адаптер (для реального Sut); assertions не требуют |
 | 3 | `response_received` | S1 (косвенно, комментарий) | Sut | O | пока никем в assertions не матчится | Частично — эмитится `MockTargetAdapter`, потребителя нет | Ничего (тип уже эмитится; consumer появится с assertions) |
-| 4 | `payment_settled` | S2, S3, S4, S6, S7 | Sut (платёжный провайдер/ledger) | O (по смыслу) | S2 gate; S3 счётчик (0/1/>1); S4 gate+счётчик; S6 основной счётчик PASS/FAIL; S7 anti-duplicate | **Нет** — никто не эмитит | Зависит от Decision 1-adjacent: через Sut-канал — расширить адаптер; ledger-poll внутри Argus — internal. Минимальный путь: расширить адаптер |
-| 5 | `settlement_unknown` | S6 (как trigger faults) | Sut или Argus | O / I / F — нерешено (Decision 1) | S6 использует тип только как lifecycle-trigger объявления; активных assertions на сам тип нет | **Нет** — не эмитит никто; как trigger declared-only (L0-F2) | См. Decision 1: расширить адаптер (a) / правило движка (b) / lifecycle dispatch + fault primitive (c) |
-| 6 | `success` | S2, S4 (антиусловие), S7 (нет) | Sut | O (спорно — Decision 2) | S2 PASS требует success после settled; S4 FAIL при любом success | **Нет** — никто не эмитит evidence-тип `success` | См. Decision 2: если наблюдает Sut — расширить адаптер; internal-вывод запрещён логикой S4 |
-| 7 | `failed` | S4, S7 (антиусловия) | Sut | O (спорно — Decision 2) | S4 FAIL при failed при молчащем seller; S7 FAIL при failed, если seller реально ответил | **Нет** — никто не эмитит | См. Decision 2: расширить адаптер (Sut-канал); internal недопустим (ломает антиусловия) |
+| 4 | `payment_settled` | S2, S3, S4, S6, S7 | Sut (платёжный провайдер/ledger) | O (по смыслу) | S2 gate; S3 счётчик (0/1/>1); S4 gate+счётчик; S6 основной счётчик PASS/FAIL; S7 anti-duplicate | **R2: да (mock-канал)** — симулируемый Sut может сообщить `payment_settled`; канал существует, но ни один канонический сценарий его пока не конфигурирует (см. Примечание B). Реальный Sut-адаптер — ещё нет | Зависит от Decision 1-adjacent: через Sut-канал — расширить адаптер; ledger-poll внутри Argus — internal. Минимальный путь: расширить адаптер |
+| 5 | `settlement_unknown` | S6 (как trigger faults) | Sut или Argus | O / I / F — нерешено (Decision 1) | S6 использует тип только как lifecycle-trigger объявления; активных assertions на сам тип нет | **R2: да (mock-канал)** — observation-канал принимает `settlement_unknown` дословно (UNKNOWN≠FAILURE сохранён); как fault-trigger по-прежнему declared-only (L0-F2). Сам выбор источника — Decision 1 не принят | См. Decision 1: расширить адаптер (a) / правило движка (b) / lifecycle dispatch + fault primitive (c) |
+| 6 | `success` | S2, S4 (антиусловие), S7 (нет) | Sut | O (спорно — Decision 2) | S2 PASS требует success после settled; S4 FAIL при любом success | **Нет** — канал для Sut-сообщённого `success` создан в R2, но ни один сценарий его не использует и никто не эмитит | См. Decision 2: если наблюдает Sut — расширить адаптер (канал готов); internal-вывод запрещён логикой S4 |
+| 7 | `failed` | S4, S7 (антиусловия) | Sut | O (спорно — Decision 2) | S4 FAIL при failed при молчащем seller; S7 FAIL при failed, если seller реально ответил | **Нет** — канал создан в R2, эмиссии нет | См. Decision 2: расширить адаптер (Sut-канал готов); internal недопустим (ломает антиусловия) |
 | 8 | `delivery_started` | S2, S4 (как trigger faults) | seller (начало обработки заказа) | F (частично) / E | trigger в faults S2 (`delayed_response`), S4 (`hang`) | Частично — `FaultInjector` эмитит при применении delayed_response/hang, но эти faults висят на lifecycle-триггерах, которые не диспатчатся (L0-F2) → в рантайме не достигается. См. Decision 3 | Seller-action (a) либо lifecycle dispatch (b) — Decision 3 |
 | 9 | `delivery_completed` | S2 | seller (ответ окончен) | F | S2 `sellerReallyResponded` — условие PASS | Частично — эмитится `FaultInjector.delayed_response` тем же недостижимым путём, что и #8 | То же, что #8 (Decision 3) |
 | 10 | `delivery_sent` | S7 | seller | F (respond-baseline) | S7 `sellerSent` — gate условия | **Да (частично)** — baseline responder `respond` с `config.emit='delivery_sent'` эмитит с source=seller-1 через отдельную совместимую дорожку L0-F2 | Ничего для эмиссии; содержательность требует edge-mediator для #11/#12 |
@@ -93,6 +93,18 @@ grep-ом по `src/` (эмитент ≠ декларация в trigger/config
 наполняли `metadata.observations` — это одно и то же «расширить адаптер».
 
 Итого по таблице: 18 типов.
+
+Примечание B (R2, факт реализации): в `MockTargetAdapter` добавлен конфигурируемый
+Sut-канал lifecycle-наблюдений (`options.lifecycleObservations`, allow-list
+`MOCK_LIFECYCLE_OBSERVATION_TYPES`: payment_settled, settlement_unknown, success,
+failed, delivery_started, delivery_sent, delivery_completed, delivery_unknown).
+Наблюдения проходят по существующему пути metadata.observations → ScenarioEngine →
+EvidenceCollector без переименования (identity сохраняется, source=testSubject).
+Канал — механизм переноса факта, а не источник факта: ни один канонический сценарий
+его пока не конфигурирует, спекулятивных эмиссий нет (строки #4/#5 помечены как
+«канал есть», #6/#7 — «эмиссии нет»). Delivery-типы #8–#12 статус не меняют:
+seller-актор, edge-mediator и lifecycle dispatch по-прежнему отсутствуют.
+Тесты: `src/tests/core/LifecycleObservationPlumbing.test.ts`.
 
 ---
 

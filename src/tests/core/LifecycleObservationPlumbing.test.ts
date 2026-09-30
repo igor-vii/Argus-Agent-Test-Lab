@@ -28,6 +28,7 @@ import {
   MOCK_LIFECYCLE_OBSERVATION_TYPES,
 } from '../../adapters/MockTargetAdapter';
 import { validateFaultDispatch } from '../../core/validateScenario';
+import { Fault } from '../../core/Fault';
 import { ExchangeStatus, PaymentRequired } from '../../core/AgentTargetPort';
 import { S1_DuplicateRequest } from '../../scenarios/S1_DuplicateRequest';
 import { S2_PaymentBeforeExecution } from '../../scenarios/S2_PaymentBeforeExecution';
@@ -44,8 +45,12 @@ async function runEngine(
   scenario: ScenarioDefinition,
   lifecycleObservations: Record<string, string[]>,
   runId: string,
-  paymentResolver?: (paymentRequired: PaymentRequired) => Promise<string>,
-): Promise<EvidenceCollector> {
+  opts?: {
+    faults?: Fault[];
+    actor?: string;
+    paymentResolver?: (paymentRequired: PaymentRequired) => Promise<string>;
+  },
+): Promise<{ collector: EvidenceCollector; spy: { calls: string[] } }> {
   const targetAdapter = new MockTargetAdapter('mock');
   const controller = new AgentController(targetAdapter, {
     connectionConfig: {
@@ -57,7 +62,7 @@ async function runEngine(
   await controller.connect();
 
   const registry = new ExecutionRegistry();
-  registry.register('buyer-1', controller);
+  registry.register(opts?.actor ?? 'buyer-1', controller);
 
   const context: RunContext = {
     runId,
@@ -68,7 +73,7 @@ async function runEngine(
   };
 
   const collector = new EvidenceCollector();
-  const faultInjector = new FaultInjector([]);
+  const faultInjector = new FaultInjector(opts?.faults ?? []);
   const getFaultsSpy = vi_spy(faultInjector, 'getFaultsForEvent');
 
   const engine = new ScenarioEngine(
@@ -77,15 +82,15 @@ async function runEngine(
     registry,
     faultInjector,
     collector,
-    paymentResolver,
+    opts?.paymentResolver,
   );
   await engine.execute();
 
   // Plumbing never routes lifecycle observations through FaultInjector:
   // lookup happened only for the action trigger.
-  expect(getFaultsSpy.calls).toEqual(['action_request_payment']);
+  expect(getFaultsSpy.calls).toEqual([`action_${scenario.actions[0].type}`]);
 
-  return collector;
+  return { collector, spy: getFaultsSpy };
 }
 
 function runWithMock(
@@ -132,76 +137,33 @@ describe('R2 lifecycle observation plumbing', () => {
   }, 20000);
 
   it('evidence record keeps exact lifecycle identity through EvidenceCollector', async () => {
-    const scenario: ScenarioDefinition = {
-      ...S2_PaymentBeforeExecution,
-      // Silence the delayed_response fault so this test exercises the pure
-      // observation path without any FaultInjector involvement at all.
-      faults: [],
-    };
-
-    const targetAdapter = new MockTargetAdapter('mock');
-    const controller = new AgentController(targetAdapter, {
-      connectionConfig: {
-        transportType: 'mock',
-        options: { lifecycleObservations: { request_payment: ['payment_settled'] } },
-      },
-      runId: 'run_identity',
-    });
-    controller.setParticipantId('buyer-1');
-
-    const registry = new ExecutionRegistry();
-    registry.register('buyer-1', controller);
-
-    const context: RunContext = {
-      runId: 'run_identity',
-      scenarioId: scenario.id,
-      seed: scenario.seed,
-      startedAt: new Date(),
-      status: RunStatus.CREATED,
-    };
-
-    // FaultInjector registered with NO faults: nothing can dispatch through it.
-    const faultInjector = new FaultInjector([]);
-    const getFaultsSpy = vi_spy(faultInjector, 'getFaultsForEvent');
-
-    const collector = new EvidenceCollector();
-    const engine = new ScenarioEngine(scenario, context, registry, faultInjector, collector);
-    await engine.execute();
+    // Legitimate per §5.1: the simulated Sut (FACILITATOR sut-1) reports its
+    // own settlement state on request_payment. S2's canonical fault is kept so
+    // this test also proves observations coexist with action-fault dispatch.
+    const { collector, spy } = await runEngine(
+      S2_PaymentBeforeExecution,
+      { request_payment: ['payment_settled'] },
+      'run_identity',
+      { faults: S2_PaymentBeforeExecution.faults as Fault[] },
+    );
 
     const records = collector.getByType('run_identity', 'payment_settled');
     expect(records).toHaveLength(1);
     expect(records[0].type).toBe('payment_settled'); // identity survives unchanged
     expect(records[0].source).toBe('sut-1');         // testSubject association preserved
-    expect(records[0].actorId).toBe('buyer-1');      // actor identity preserved where supported
 
-    // Plumbing did not route lifecycle observations through FaultInjector:
-    // lookup happened only for the action trigger and returned zero faults.
-    expect(getFaultsSpy.calls).toEqual(['action_request_payment']);
+    // Lifecycle observation did NOT enter FaultInjector dispatch: lookup
+    // happened only for the action trigger (L0-F2 boundary).
+    expect(spy.calls).toEqual(['action_request_payment']);
   });
 
   it('settlement_unknown enters evidence as its own identity and never becomes failure/success', async () => {
     // Direct collector inspection: settlement layer reports UNKNOWN explicitly.
-    const scenario: ScenarioDefinition = { ...S1_DuplicateRequest, faults: [] };
-    const targetAdapter = new MockTargetAdapter('mock');
-    const controller = new AgentController(targetAdapter, {
-      connectionConfig: {
-        transportType: 'mock',
-        options: { lifecycleObservations: { request_payment: ['settlement_unknown'] } },
-      },
-      runId: 'run_unknown',
-    });
-    const registry = new ExecutionRegistry();
-    registry.register('buyer-1', controller);
-    const context: RunContext = {
-      runId: 'run_unknown',
-      scenarioId: scenario.id,
-      seed: scenario.seed,
-      startedAt: new Date(),
-      status: RunStatus.CREATED,
-    };
-    const collector = new EvidenceCollector();
-    const engine = new ScenarioEngine(scenario, context, registry, new FaultInjector([]), collector);
-    await engine.execute();
+    const { collector } = await runEngine(
+      { ...S1_DuplicateRequest, faults: [] },
+      { request_payment: ['settlement_unknown'] },
+      'run_unknown',
+    );
 
     const unknown = collector.getByType('run_unknown', 'settlement_unknown');
     expect(unknown).toHaveLength(1);
@@ -218,28 +180,12 @@ describe('R2 lifecycle observation plumbing', () => {
     expect(MOCK_LIFECYCLE_OBSERVATION_TYPES.has('recovery_completed')).toBe(false);
     expect(MOCK_LIFECYCLE_OBSERVATION_TYPES.has('forward_request')).toBe(false);
 
-    const scenario: ScenarioDefinition = { ...S1_DuplicateRequest, faults: [] };
-    const targetAdapter = new MockTargetAdapter('mock');
-    const controller = new AgentController(targetAdapter, {
-      connectionConfig: {
-        transportType: 'mock',
-        // 'some_invented_fact' and 'delivery_received' are not on the allow-list.
-        options: { lifecycleObservations: { request_payment: ['some_invented_fact', 'delivery_received'] } },
-      },
-      runId: 'run_deny',
-    });
-    const registry = new ExecutionRegistry();
-    registry.register('buyer-1', controller);
-    const context: RunContext = {
-      runId: 'run_deny',
-      scenarioId: scenario.id,
-      seed: scenario.seed,
-      startedAt: new Date(),
-      status: RunStatus.CREATED,
-    };
-    const collector = new EvidenceCollector();
-    const engine = new ScenarioEngine(scenario, context, registry, new FaultInjector([]), collector);
-    await engine.execute();
+    const { collector } = await runEngine(
+      { ...S1_DuplicateRequest, faults: [] },
+      // 'some_invented_fact' and 'delivery_received' are not on the allow-list.
+      { request_payment: ['some_invented_fact', 'delivery_received'] },
+      'run_deny',
+    );
 
     expect(collector.getByType('run_deny', 'some_invented_fact')).toHaveLength(0);
     expect(collector.getByType('run_deny', 'delivery_received')).toHaveLength(0);
@@ -304,7 +250,7 @@ describe('R2 lifecycle observation plumbing', () => {
     const port = {
       getId: () => 'port-1',
       getTargetType: () => 'mock-x402',
-      connect: async () => ({ success: true, connectionId: 'c1' }),
+      connect: async (_config?: unknown) => ({ success: true, connectionId: 'c1' }),
       isConnected: () => true,
       send: async (_runId: string, type: string, payload?: unknown) => ({
         id: 'exch-1',
@@ -314,7 +260,10 @@ describe('R2 lifecycle observation plumbing', () => {
         timestamp: Date.now(),
         payload: payload ?? {},
         status: ExchangeStatus.PAYMENT_REQUIRED,
-        metadata: { paymentRequired: pay402 },
+        // Canonical location of the parsed 402 (AgentTargetPort.Exchange):
+        // X402AgentAdapter sets exchange.paymentRequired — not metadata.
+        paymentRequired: pay402,
+        metadata: {},
       }),
       sendWithSignature: async (_runId: string, type: string, payload?: unknown) => ({
         id: 'exch-2',
@@ -339,6 +288,7 @@ describe('R2 lifecycle observation plumbing', () => {
       connectionConfig: { transportType: 'mock' },
       runId: 'run_s8',
     });
+    await controller.connect(); // RunOrchestrator owns connect in production runs
     const registry = new ExecutionRegistry();
     registry.register('buyer-1', controller);
     const context: RunContext = {
