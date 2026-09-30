@@ -28,6 +28,7 @@ import { TestSession, type SessionEvidence } from '../../sessions/TestSession';
 const USDC_BASE_SEPOLIA = '0x036CbD53842c5426634e7929541eC2318f3dCF7e';
 const CHAIN_ID_BASE_SEPOLIA = 84532;
 const NETWORK_BASE_SEPOLIA = `eip155:${CHAIN_ID_BASE_SEPOLIA}`;
+export const DEFAULT_BASE_SEPOLIA_PAY_TO = '0x70997970C51812dc3A010C7d01b50e0d17dc79C8';
 
 const USDC_DOMAIN = {
   name: 'USDC',
@@ -54,7 +55,7 @@ interface PaymentRequiredBody {
     scheme: string;
     network: string;
     amount: string;
-    payTo: string;
+    payTo?: string;
     asset: string;
     maxTimeoutSeconds: number;
   }>;
@@ -77,7 +78,7 @@ export class X402SellerAdapter {
     this.config = {
       port: this.port,
       amount: config.amount ?? '10000',
-      payTo: config.payTo,
+      payTo: config.payTo ?? DEFAULT_BASE_SEPOLIA_PAY_TO,
       maxTimeoutSeconds: config.maxTimeoutSeconds ?? 60,
     };
   }
@@ -89,7 +90,7 @@ export class X402SellerAdapter {
       let body = '';
       req.on('data', (chunk: Buffer) => { body += chunk.toString(); });
       req.on('end', () => {
-        this.handleRequest(req, res, body, session, endpointPath);
+        void this.handleRequest(req, res, body, session, endpointPath);
       });
     });
 
@@ -119,7 +120,7 @@ export class X402SellerAdapter {
   // Request handling
   // -----------------------------------------------------------------------
 
-  private handleRequest(
+  private async handleRequest(
     req: http.IncomingMessage,
     res: http.ServerResponse,
     body: string,
@@ -149,7 +150,7 @@ export class X402SellerAdapter {
     const paymentSignatureHeader = headers['payment-signature'];
 
     if (paymentSignatureHeader) {
-      this.handlePaidRequest(req, res, body, session, headers, paymentSignatureHeader);
+      await this.handlePaidRequest(req, res, body, session, headers, paymentSignatureHeader);
     } else {
       this.handleUnpaidRequest(req, res, body, session, headers);
     }
@@ -191,8 +192,8 @@ export class X402SellerAdapter {
     session: TestSession,
     headers: Record<string, string>,
     paymentSignatureBase64: string,
-  ): void {
-    const validationResult = this.validatePaymentSignature(paymentSignatureBase64);
+  ): Promise<void> {
+    const validationResult = await this.validatePaymentSignatureAsync(paymentSignatureBase64);
 
     const ev: Omit<SessionEvidence, 'session_id'> = {
       timestamp: Date.now(),
@@ -217,6 +218,7 @@ export class X402SellerAdapter {
         'Content-Type': 'application/json',
         'payment-response': paymentResponse,
       });
+      session.complete();
       res.end(JSON.stringify({
         ok: true,
         test_session: session.session_id,
@@ -270,11 +272,8 @@ export class X402SellerAdapter {
 
       const { signature, authorization } = envelope.payload;
 
-      // Use synchronous recovery check via viem
-      // Note: recoverTypedDataAddress is async in viem v2
-      // We handle this by making the validation async-compatible
-      // but for B6 MVP we do structural validation only
-      // Full crypto verification deferred to Qwen-TESTER sandbox
+      // Structural validation only; cryptographic verification is performed
+      // by validatePaymentSignatureAsync before accepting the payment.
 
       // Structural checks
       if (!authorization.from || !authorization.to || !authorization.value) {
@@ -297,10 +296,7 @@ export class X402SellerAdapter {
         return { valid: false, error: 'Invalid signature format (expected 0x + 65 bytes hex)' };
       }
 
-      // NOTE: Full EIP-712 recoverTypedDataAddress verification requires
-      // async context. B6 structural validation passes; crypto verification
-      // is deferred to integration test phase with Qwen-TESTER.
-      // The validatePaymentSignatureAsync method below provides full verification.
+      // Full EIP-712 verification is performed by the async request path.
 
       return { valid: true };
     } catch (err) {
