@@ -487,3 +487,106 @@ An unverifiable resolution is not a resolution.
 A coverage gap is not automatically a contract hole.
 
 And a clean backlog is not permission to erase history.
+
+---
+
+# R3 CONSOLIDATION ADDENDUM — 2026-09-30
+
+This addendum records the verified state after R3: clean harness merge with per-participant controllers, merged to canonical main as commit fcfca681492fb13fed62bb00629d0a55a3d161c6 (PR #53).
+
+**Important scope note:** the R-series is a repair track, not part of the final roadmap dated 2026-09-29. R1/R2/R2.5/R3 arose after A0/A1 as minimal repairs. The next R block is not pre-numbered. Do not infer that the next work item is R4 until the open architectural decisions below are resolved and the next repair block is explicitly defined.
+
+## R3 verified outcomes
+
+| Item | Status | Evidence / consequence |
+|---|---|---|
+| S2 seller-action | RESOLVED FOR R3 | resource-server-1 now performs deliver; delayed_response is attached to action_deliver; delivery_started / delivery_completed use the existing fault emit path. |
+| S4 seller-action | IMPLEMENTED / INCONCLUSIVE | resource-server-1 performs deliver; canonical hang remains duration_ms: -1; finite-hang execution is tested. PASS still requires a legitimate delivery_unknown source. |
+| Per-participant controller wiring | RESOLVED FOR R3 | R3-CLEANUP creates a distinct AgentController per participant. The previous shared-controller defect is not carried into main. |
+| Lifecycle dispatch | UNCHANGED | No lifecycle-trigger fault dispatch was introduced. L0-F2 remains action/participant dispatch only. |
+| S6 retry | BLOCKED | settlement_unknown can arrive through the Sut-observation channel, but lifecycle-trigger fault dispatch remains declared-only. |
+| delay_ms: 0 falsy handling | DEFERRED | The falsy-value behavior in FaultInjector.handleDelayedResponse was identified during R3 and intentionally not absorbed into R3. |
+| S5 passive unhandled_exception PASS | OPEN | Current assertion can PASS when the evidence is simply absent. Whether this is semantically acceptable remains an open decision. |
+| S3.1–S3.3 | DEFERRED | R3 did not attempt to close the remaining S3 atoms. |
+
+## R3 open decisions
+
+### R3-D1 — delivery_unknown source
+
+Current evidence: S4 is INCONCLUSIVE, not PASS, because the canonical finite test path does not establish a legitimate source for delivery_unknown.
+
+The architectural choices are:
+
+**A — Sut observation.** The external Sut reports delivery_unknown as an observation. Argus transports the observation without inventing the state.
+
+**B — Argus temporal inference.** Argus derives delivery_unknown from an explicitly bounded timeout/absence rule. This creates an Argus-owned temporal inference and therefore changes the Temporal Trust Boundary.
+
+**C — Remain declared-only.** No source is added. S4 remains INCONCLUSIVE by design.
+
+No option is selected by this addendum.
+
+### R3-D2 — S6 retry trigger
+
+Current evidence: S6 retry remains attached to lifecycle trigger settlement_unknown, but L0-F2 does not dispatch lifecycle triggers.
+
+The architectural choices are:
+
+**A — Keep declared-only.** S6 remains BLOCKED until another mechanism exists.
+
+**B — Rebind retry to an action trigger.** The retry fault is attached to an existing client action, preserving the frozen L0-F2 dispatch contract.
+
+**C — Introduce bounded lifecycle dispatch.** Lifecycle evidence becomes an active fault trigger under a separately specified, non-recursive contract.
+
+No option is selected by this addendum.
+
+### R3-D3 — S5 passive PASS
+
+Current evidence: assert_no_unhandled_errors passes when no unhandled_exception evidence exists.
+
+The question is whether absence of an error observation is sufficient for PASS, or whether S5 requires a positive observation/closure condition.
+
+No option is selected by this addendum.
+
+## R3 backlog findings
+
+| ID | Finding | Status | Owner |
+|---|---|---|---|
+| R3-001 | delay_ms: 0 is treated as falsy by the existing delayed-response handling and therefore does not represent an explicit zero-delay value. | DEFERRED-TO-PHASE | Next repair block / separate bug fix |
+| R3-002 | Canonical S4 lacks a legitimate runtime source for delivery_unknown; finite-hang execution alone does not establish the terminal observation. | DECISION-REQUIRED | Architect |
+| R3-003 | S6 retry cannot execute under the frozen L0-F2 contract while its trigger remains lifecycle settlement_unknown. | DECISION-REQUIRED | Architect |
+| R3-004 | S5 unhandled_exception assertion has a passive-absence PASS condition whose semantic validity is not yet decided. | DECISION-REQUIRED | Architect |
+| R3-005 | R3 per-participant controller identity is corrected and verified in the merged R3 implementation. | RESOLVED | — |
+| R3-006 | S3.1–S3.3 remain outside R3 scope. | DEFERRED-TO-PHASE | Next repair block / roadmap owner |
+
+## Relationship to the 2026-09-29 roadmap
+
+The final roadmap remains:
+
+**B1.2a → B1.2b → B1.3 → B2 → B4 → B6 → B7**
+
+The R-series must not silently replace or reorder that roadmap.
+
+R-series work is a repair track created after A0/A1 to close concrete gaps with the minimum necessary change. Each subsequent R block must be explicitly defined from verified findings; its number and scope must not be assumed in advance.
+
+## Next-step gate
+
+Before implementation of the next repair block:
+
+1. Consolidate the findings above.
+2. Decide R3-D1: delivery_unknown source.
+3. Decide R3-D2: S6 retry trigger.
+4. Decide R3-D3: S5 passive PASS semantics.
+5. Only then define the next R block and its implementation scope.
+
+**No implementation of delivery-unknown inference, lifecycle dispatch, edge mediation, or S6 retry is authorized by this addendum.**
+
+## Real-adapter strategic direction
+
+The transition from mock-backed execution toward **real external adapters** remains a major objective of the Argus redesign, but it is **not automatically assigned the next R number**.
+
+When that work is scheduled, the preferred proof shape is:
+
+Argus → real TargetAdapter → real external system → externally observable evidence → Assertion → Verdict
+
+The first real-adapter slice should be one narrow vertical proof. It must not become a mass replacement of MockTargetAdapter, a new transport subsystem, a dashboard, persistence layer, chaos engine, billing system, or new x402 behavior.
+
