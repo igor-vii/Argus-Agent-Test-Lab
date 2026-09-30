@@ -35,13 +35,25 @@ export const S4_SellerTimeout: ScenarioDefinition = {
       type: 'request_payment',
       payload: { requestId: 'req-4', idempotencyKey: 'key-4', amount: 100 },
     },
+    {
+      // R3 (Decision 3, variant a): seller как актор отдельного действия.
+      // Seller пытается отдать protected resource; hang на этом действии
+      // означает «seller никогда не отвечает» — достижимо через существующий
+      // L0-F2 action-fault dispatch без lifecycle dispatch.
+      actor: 'seller-1',
+      type: 'deliver',
+      payload: { requestId: 'req-4', resourceId: 'res-4' },
+    },
   ],
 
   faults: [
     {
       target: { kind: 'participant', participantId: 'seller-1' },
       type: 'hang',
-      trigger: 'delivery_started',
+      // Было: trigger 'delivery_started' (lifecycle, declared-only по L0-F2).
+      // Стало: action_deliver — тот же смысл зависшего ответа seller, но
+      // достижимо через существующий action-fault dispatch.
+      trigger: 'action_deliver',
       config: { duration_ms: -1 },
     },
   ],

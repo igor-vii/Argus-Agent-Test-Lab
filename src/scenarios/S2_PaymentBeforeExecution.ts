@@ -36,13 +36,25 @@ export const S2_PaymentBeforeExecution: ScenarioDefinition = {
       type: 'request_payment',
       payload: { requestId: 'req-2', idempotencyKey: 'key-2', amount: 100 },
     },
+    {
+      // R3 (Decision 3, variant a): seller как актор отдельного действия.
+      // Seller отдаёт protected resource — свою часть сделки. Это позволяет
+      // fault delayed_response работать через существующий L0-F2 механизм
+      // (action_* триггер + participant-цель == actor) без lifecycle dispatch.
+      actor: 'seller-1',
+      type: 'deliver',
+      payload: { requestId: 'req-2', resourceId: 'res-2' },
+    },
   ],
 
   faults: [
     {
       target: { kind: 'participant', participantId: 'seller-1' },
       type: 'delayed_response',
-      trigger: 'delivery_started',
+      // Было: trigger 'delivery_started' (lifecycle, declared-only по L0-F2).
+      // Стало: action_deliver — тот же смысл задержки ответа seller, но
+      // достижимо через существующий action-fault dispatch.
+      trigger: 'action_deliver',
       config: { delay_ms: 5000 },
     },
   ],
