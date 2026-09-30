@@ -7,18 +7,14 @@
  *   npx tsx src/cli/session.ts create --mode BUYER --profile x402-buyer-basic
  *   npx tsx src/cli/session.ts status <sessionId>
  *   npx tsx src/cli/session.ts result <sessionId>
- *   npx tsx src/cli/session.ts serve              (start server + wait)
+ *   npx tsx src/cli/session.ts serve
  *
- * This is a minimal CLI for managing Mode A test sessions.
- * It starts an ephemeral X402SellerAdapter and manages sessions in memory.
- *
- * For production use, this would be integrated into the main argus CLI.
- * For MVP, it runs as a standalone process that stays alive to serve requests.
+ * Mode A is in-memory and process-local. A session and its ephemeral seller
+ * endpoint therefore live only for the lifetime of this CLI process.
  */
 
 import { X402SellerAdapter } from '../adapters/seller/X402SellerAdapter';
 import { SessionManager } from '../sessions/SessionManager';
-import { evaluateSessionVerdict } from '../sessions/TestSession';
 
 async function main(): Promise<void> {
   const args = process.argv.slice(2);
@@ -33,13 +29,8 @@ async function main(): Promise<void> {
     process.exit(1);
   }
 
-  // Start seller adapter
   const sellerAdapter = new X402SellerAdapter();
-  const baseUrl = await sellerAdapter.start();
-  console.error(`[session] Seller adapter started at ${baseUrl}`);
-
   const manager = new SessionManager(sellerAdapter);
-  manager.setBaseUrl(baseUrl);
 
   try {
     switch (command) {
@@ -50,7 +41,7 @@ async function main(): Promise<void> {
 
         const mode = modeIdx >= 0 ? args[modeIdx + 1] : 'BUYER';
         const profile = profileIdx >= 0 ? args[profileIdx + 1] : 'x402-buyer-basic';
-        const timeout = timeoutIdx >= 0 ? parseInt(args[timeoutIdx + 1], 10) : 60;
+        const timeout = timeoutIdx >= 0 ? Number.parseInt(args[timeoutIdx + 1], 10) : 60;
 
         if (mode !== 'BUYER' && mode !== 'SELLER') {
           console.error(`Error: Invalid mode '${mode}'. Must be BUYER or SELLER.`);
@@ -63,18 +54,20 @@ async function main(): Promise<void> {
           timeoutSeconds: timeout,
         });
 
+        const endpoint = await sellerAdapter.start(session);
+        manager.setBaseUrl(new URL(endpoint).origin);
+
         console.log(JSON.stringify({
-          sessionId: session.sessionId,
-          testMode: session.testMode,
-          testProfile: session.testProfile,
-          sessionEndpoint: session.sessionEndpoint,
-          expiresAt: new Date(session.expiresAt).toISOString(),
+          session_id: session.session_id,
+          test_mode: session.test_mode,
+          test_profile: session.test_profile,
+          session_endpoint: endpoint,
+          expires_at: new Date(session.expires_at).toISOString(),
           status: session.status,
         }, null, 2));
 
-        // Keep server alive for incoming requests
         console.error('[session] Server running. Press Ctrl+C to stop.');
-        await new Promise(() => {}); // Block forever
+        await new Promise<void>(() => {});
         break;
       }
 
@@ -87,18 +80,18 @@ async function main(): Promise<void> {
 
         const session = manager.getSession(sessionId);
         if (!session) {
-          console.error(`Error: Unknown session '${sessionId}'`);
+          console.error(`Error: Unknown session '${sessionId}' (sessions are process-local)`);
           process.exit(1);
         }
 
         manager.checkExpiry(sessionId);
 
         console.log(JSON.stringify({
-          sessionId: session.sessionId,
+          session_id: session.session_id,
           status: session.status,
-          evidenceCount: session.evidence.length,
-          createdAt: new Date(session.createdAt).toISOString(),
-          expiresAt: new Date(session.expiresAt).toISOString(),
+          evidence_count: session.evidence.length,
+          created_at: new Date(session.created_at).toISOString(),
+          expires_at: new Date(session.expires_at).toISOString(),
         }, null, 2));
         break;
       }
@@ -112,24 +105,30 @@ async function main(): Promise<void> {
 
         const session = manager.getSession(sessionId);
         if (!session) {
-          console.error(`Error: Unknown session '${sessionId}'`);
+          console.error(`Error: Unknown session '${sessionId}' (sessions are process-local)`);
           process.exit(1);
         }
 
         manager.checkExpiry(sessionId);
-        const result = evaluateSessionVerdict(session);
-        console.log(JSON.stringify(result, null, 2));
+        console.log(JSON.stringify(session.getResult(), null, 2));
         break;
       }
 
       case 'serve': {
-        // Just start the server and wait
+        const session = manager.createSession({
+          testMode: 'BUYER',
+          testProfile: 'x402-buyer-basic',
+        });
+        const endpoint = await sellerAdapter.start(session);
+        manager.setBaseUrl(new URL(endpoint).origin);
+
         console.log(JSON.stringify({
           status: 'running',
-          baseUrl,
+          session_id: session.session_id,
+          session_endpoint: endpoint,
         }, null, 2));
         console.error('[session] Server running. Press Ctrl+C to stop.');
-        await new Promise(() => {}); // Block forever
+        await new Promise<void>(() => {});
         break;
       }
 
