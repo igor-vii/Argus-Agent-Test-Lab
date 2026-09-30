@@ -59,6 +59,7 @@ async function runEngine(
     },
     runId,
   });
+  controller.setParticipantId(opts?.actor ?? 'client-1');
   await controller.connect();
 
   const registry = new ExecutionRegistry();
@@ -173,6 +174,12 @@ describe('R2 lifecycle observation plumbing', () => {
     expect(records).toHaveLength(1);
     expect(records[0].type).toBe('payment_settled'); // identity survives unchanged
     expect(records[0].source).toBe('sut-1');         // testSubject association preserved
+    expect(records[0].actorId).toBe('client-1');       // participant identity preserved
+    expect(records[0].data).toEqual({
+      payment_intent: expect.any(Object),
+      reused: false,
+      idempotencyKey: 'key-2',
+    });
 
     // Lifecycle observation did NOT enter FaultInjector dispatch: lookup
     // happened only for action_* triggers (L0-F2 boundary). The canonical S2
@@ -217,6 +224,17 @@ describe('R2 lifecycle observation plumbing', () => {
     expect(collector.getByType('run_deny', 'payment_intent_created')).toHaveLength(1);
   });
 
+  it('absence of a lifecycle observation does not become UNKNOWN evidence', async () => {
+    const { collector } = await runEngine(
+      { ...S1_DuplicateRequest, faults: [] },
+      { request_payment: [] },
+      'run_absence',
+    );
+
+    expect(collector.getByType('run_absence', 'settlement_unknown')).toHaveLength(0);
+    expect(collector.getByType('run_absence', 'payment_settled')).toHaveLength(0);
+  });
+
   it('L0-F2 boundary intact: lifecycle triggers never enter active fault dispatch', () => {
     // Canonical scenarios remain dispatch-valid.
     for (const scenario of [S1_DuplicateRequest, S2_PaymentBeforeExecution, S5_ConcurrentDuplicate]) {
@@ -244,6 +262,30 @@ describe('R2 lifecycle observation plumbing', () => {
     const s5 = await runWithMock(S5_ConcurrentDuplicate, {});
     expect(s5.verdict?.status).toBe('PASS');
   }, 20000);
+
+  it('lifecycle observation type and payload are not rewritten by the evidence path', async () => {
+    const payload = { idempotencyKey: 'key-1', amount: 123, correlationId: 'corr-1' };
+    const { collector } = await runEngine(
+      {
+        ...S1_DuplicateRequest,
+        actions: [{ ...S1_DuplicateRequest.actions[0], payload }],
+        faults: [],
+      },
+      { request_payment: ['payment_settled'] },
+      'run_payload',
+    );
+
+    const record = collector.getByType('run_payload', 'payment_settled')[0];
+    expect(record).toBeDefined();
+    expect(record.type).toBe('payment_settled');
+    expect(record.source).toBe('sut-1');
+    expect(record.actorId).toBe('client-1');
+    expect(record.data).toEqual({
+      payment_intent: expect.any(Object),
+      reused: false,
+      idempotencyKey: 'key-1',
+    });
+  });
 
   it('S8 boundary: signed retry stays engine evidence — never payment_settled', async () => {
     // A port that answers request_resource with PAYMENT_REQUIRED (x402 402)
