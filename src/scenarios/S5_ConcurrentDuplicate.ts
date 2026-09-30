@@ -83,6 +83,12 @@ export const S5_ConcurrentDuplicate: ScenarioDefinition = {
         if (unhandled.length > 0) {
           return { status: 'FAIL', reason: `${unhandled.length} unhandled exceptions on concurrent retry` };
         }
+        if (intents.length === 0) {
+          return {
+            status: 'INCONCLUSIVE',
+            reason: 'absence of unhandled_exception is not evidence of successful intent creation',
+          };
+        }
         return { status: 'PASS' };
       },
     },
