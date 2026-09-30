@@ -39,7 +39,7 @@ class RecordingPort implements AgentTargetPort {
     this.sent.push({ type, payload });
 
     return {
-      id: \`exchange-\${this.name}-\${this.sent.length}\`,
+      id: `exchange-${this.name}-${this.sent.length}`,
       runId,
       direction: MessageDirection.OUTBOUND,
       type,
@@ -54,7 +54,7 @@ class RecordingPort implements AgentTargetPort {
 
   async receive(runId: RunId, type: string, payload?: unknown): Promise<Exchange> {
     return {
-      id: \`receive-\${this.name}\`,
+      id: `receive-${this.name}`,
       runId,
       direction: MessageDirection.INBOUND,
       type,
@@ -71,7 +71,7 @@ class RecordingPort implements AgentTargetPort {
     description?: string
   ): Promise<Evidence> {
     return {
-      id: \`evidence-\${this.name}\`,
+      id: `evidence-${this.name}`,
       runId,
       type,
       timestamp: Date.now(),
@@ -94,10 +94,12 @@ describe('participant → controller → adapter routing', () => {
     const clientController = new AgentController(clientPort, {
       connectionConfig: { transportType: 'test', endpoint: 'client' },
       participantId: 'client-1',
+      runId: 'run-b2-routing',
     });
     const sellerController = new AgentController(sellerPort, {
       connectionConfig: { transportType: 'test', endpoint: 'seller' },
       participantId: 'resource-server-1',
+      runId: 'run-b2-routing',
     });
 
     await clientController.connect();
