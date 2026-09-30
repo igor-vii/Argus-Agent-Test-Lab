@@ -6,14 +6,14 @@ export const S4_SellerTimeout: ScenarioDefinition = {
   description: 'Seller никогда не отвечает — проверяем DELIVERY_UNKNOWN, не FAILED/SUCCESS',
 
   participants: [
-    { participantId: 'buyer-1', protocolRole: 'CLIENT', ownership: 'ARGUS' },
+    { participantId: 'client-1', protocolRole: 'CLIENT', ownership: 'ARGUS' },
     {
-      // Block A correction (per-scenario roles): seller-1 отдаёт
+      // Block A correction (per-scenario roles): resource-server-1 отдаёт
       // protected resource (delivery_sent / delivery_completed) →
       // RESOURCE_SERVER. Отсутствие своего HTTP endpoint —
       // техническое ограничение wiring, не отсутствие роли.
       // Rationale см. S1.
-      participantId: 'seller-1',
+      participantId: 'resource-server-1',
       protocolRole: 'RESOURCE_SERVER',
       ownership: 'ARGUS', // см. rationale в S1
     },
@@ -22,8 +22,8 @@ export const S4_SellerTimeout: ScenarioDefinition = {
 
   topology: {
     edges: [
-      { from: 'buyer-1', to: 'sut-1', kind: 'request' },
-      { from: 'sut-1', to: 'seller-1', kind: 'forward' },
+      { from: 'client-1', to: 'sut-1', kind: 'request' },
+      { from: 'sut-1', to: 'resource-server-1', kind: 'forward' },
     ],
   },
 
@@ -31,17 +31,29 @@ export const S4_SellerTimeout: ScenarioDefinition = {
 
   actions: [
     {
-      actor: 'buyer-1',
+      actor: 'client-1',
       type: 'request_payment',
       payload: { requestId: 'req-4', idempotencyKey: 'key-4', amount: 100 },
+    },
+    {
+      // R3 (Decision 3, variant a): seller как актор отдельного действия.
+      // Seller пытается отдать protected resource; hang на этом действии
+      // означает «seller никогда не отвечает» — достижимо через существующий
+      // L0-F2 action-fault dispatch без lifecycle dispatch.
+      actor: 'resource-server-1',
+      type: 'deliver',
+      payload: { requestId: 'req-4', resourceId: 'res-4' },
     },
   ],
 
   faults: [
     {
-      target: { kind: 'participant', participantId: 'seller-1' },
+      target: { kind: 'participant', participantId: 'resource-server-1' },
       type: 'hang',
-      trigger: 'delivery_started',
+      // Было: trigger 'delivery_started' (lifecycle, declared-only по L0-F2).
+      // Стало: action_deliver — тот же смысл зависшего ответа seller, но
+      // достижимо через существующий action-fault dispatch.
+      trigger: 'action_deliver',
       config: { duration_ms: -1 },
     },
   ],
@@ -58,7 +70,7 @@ export const S4_SellerTimeout: ScenarioDefinition = {
       id: 'assert_timeout_state',
       invariantId: 'timeout_yields_unknown_not_failed',
       kind: 'behavioral',
-      referencedSources: ['sut-1', 'seller-1'],
+      referencedSources: ['sut-1', 'resource-server-1'],
       evaluate: (evidence) => {
         const settled = evidence.find(
           (e) => e.source === 'sut-1' && e.type === 'payment_settled'

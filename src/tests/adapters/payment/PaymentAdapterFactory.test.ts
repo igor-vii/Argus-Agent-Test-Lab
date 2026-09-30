@@ -22,7 +22,7 @@ describe('PaymentAdapterFactory', () => {
       ...baseConfig,
     });
     expect(adapter).toBeDefined();
-    expect(() => adapter.getReceiveAddress('seller-1')).toThrow(NotImplementedError);
+    expect(() => adapter.getReceiveAddress('resource-server-1')).toThrow(NotImplementedError);
   });
 
   it('creates XLayerPaymentAdapter stub for xlayer', () => {

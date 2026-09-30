@@ -7,13 +7,13 @@ export const S8_X402Payment: ScenarioDefinition = {
   description: 'Buyer получает 402, подписывает через PaymentAdapter, повторяет запрос с payment-signature',
 
   participants: [
-    { participantId: 'buyer-1', protocolRole: 'CLIENT', ownership: 'ARGUS' },
+    { participantId: 'client-1', protocolRole: 'CLIENT', ownership: 'ARGUS' },
     { participantId: 'sut-1', protocolRole: 'RESOURCE_SERVER', ownership: 'EXTERNAL' },
   ],
 
   topology: {
     edges: [
-      { from: 'buyer-1', to: 'sut-1', kind: 'request' },
+      { from: 'client-1', to: 'sut-1', kind: 'request' },
     ],
   },
 
@@ -21,7 +21,7 @@ export const S8_X402Payment: ScenarioDefinition = {
 
   actions: [
     {
-      actor: 'buyer-1',
+      actor: 'client-1',
       // Block A audit: request_resource — app-level имя для x402 step 1
       // (HTTP request to protected resource); canonical rename отложен в подблок A1.
       type: 'request_resource',

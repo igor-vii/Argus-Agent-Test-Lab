@@ -279,14 +279,14 @@ const SITECHECK_BOUNDARY: ScenarioDefinition = {
     'payment boundary via the standard Argus pipeline with NO payment ' +
     'resolver; observe, parse and classify HTTP 402 as PAYMENT_REQUIRED.',
   participants: [
-    { participantId: 'buyer-1', protocolRole: 'CLIENT', ownership: 'ARGUS' },
+    { participantId: 'client-1', protocolRole: 'CLIENT', ownership: 'ARGUS' },
     { participantId: 'sitecheck-1', protocolRole: 'RESOURCE_SERVER', ownership: 'EXTERNAL' },
   ],
-  topology: { edges: [{ from: 'buyer-1', to: 'sitecheck-1', kind: 'request' }] },
+  topology: { edges: [{ from: 'client-1', to: 'sitecheck-1', kind: 'request' }] },
   testSubject: 'sitecheck-1',
   actions: [
     {
-      actor: 'buyer-1',
+      actor: 'client-1',
       type: 'request_resource',
       payload: { resourceId: 'sitecheck-audit-example-com' },
     },
@@ -384,7 +384,7 @@ describe.skipIf(skip)('E2E Sitecheck payment-boundary behavioral test (real publ
           endpoint: AUDIT_URL,
           options: { method: 'GET' },
         },
-        runId: `run_${Date.now()}_buyer-1`,
+        runId: `run_${Date.now()}_client-1`,
         timeoutMs: 30_000,
       });
 
@@ -400,8 +400,8 @@ describe.skipIf(skip)('E2E Sitecheck payment-boundary behavioral test (real publ
       };
 
       const registry = new ExecutionRegistry();
-      controller.setParticipantId('buyer-1');
-      registry.register('buyer-1', controller);
+      controller.setParticipantId('client-1');
+      registry.register('client-1', controller);
 
       const collector = new EvidenceCollector();
       const engine = new ScenarioEngine(
