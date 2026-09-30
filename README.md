@@ -100,6 +100,7 @@ Scenarios are controlled and reproducible rather than random chaos.
 
 ## Public documentation
 
+- [Argus Product Boundary](docs/argus-product-boundary.md)
 - [What is Argus?](docs/what-is-argus.md)
 - [AI Agent Testing](docs/agent-testing.md)
 - [Evidence and Verdicts](docs/evidence-and-verdicts.md)
