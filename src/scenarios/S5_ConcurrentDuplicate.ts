@@ -77,6 +77,12 @@ export const S5_ConcurrentDuplicate: ScenarioDefinition = {
       kind: 'behavioral',
       referencedSources: ['sut-1'],
       evaluate: (evidence) => {
+        const intents = evidence.filter(
+          (e) =>
+            e.source === 'sut-1' &&
+            e.type === 'payment_intent_created' &&
+            (e.data as any)?.idempotencyKey === 'key-5'
+        );
         const unhandled = evidence.filter(
           (e) => e.source === 'sut-1' && e.type === 'unhandled_exception'
         );
