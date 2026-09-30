@@ -513,17 +513,24 @@ This addendum records the verified state after R3: clean harness merge with per-
 
 ### R3-D1 — delivery_unknown source
 
-Current evidence: S4 is INCONCLUSIVE, not PASS, because the canonical finite test path does not establish a legitimate source for delivery_unknown.
+The R3 capability audit is now complete. See `docs/capability-audit-delivery-unknown.md`.
 
-The architectural choices are:
+**Verified classification: C — internal-only Sut state.**
 
-**A — Sut observation.** The external Sut reports delivery_unknown as an observation. Argus transports the observation without inventing the state.
+The audit established:
 
-**B — Argus temporal inference.** Argus derives delivery_unknown from an explicitly bounded timeout/absence rule. This creates an Argus-owned temporal inference and therefore changes the Temporal Trust Boundary.
+- Sut has the semantic notion/state of `delivery_unknown`.
+- In canonical S4, that state is not exposed through an external observable interface.
+- S4's `sut-1` is a hypothetical/external coordinator in the scenario model; the current harness does not provide a real external Sut endpoint for it.
+- The canonical hang path emits `delivery_started`, but does not externally emit `delivery_unknown`.
+- Argus therefore cannot objectively obtain the terminal `delivery_unknown` state from the current Sut boundary.
+- Deriving `delivery_unknown` from timeout/absence inside Argus would be an Argus-owned temporal inference and would change the Temporal Trust Boundary. That path is explicitly rejected for this finding.
 
-**C — Remain declared-only.** No source is added. S4 remains INCONCLUSIVE by design.
+**Decision:** S4 remains **INCONCLUSIVE by design** under the current external Sut boundary. No Argus timeout inference is introduced.
 
-No option is selected by this addendum.
+A future **C→A** transition would require the Sut itself to export a terminal UNKNOWN state through an external observable/protocol interface, followed by the corresponding adapter mapping. Until that capability exists, S4 is not a broken PASS test; it is an intentionally unprovable terminal-observation case.
+
+**Status:** the capability question previously marked `DECISION-REQUIRED` is resolved as **C / internal-only**. The remaining product/roadmap question is when, if ever, to build a real Sut contract that exports this state.
 
 ### R3-D2 — S6 retry trigger
 
