@@ -297,14 +297,41 @@ describe('R3 seller-action: S4 hang via action_deliver', () => {
 });
 
 describe('R3 scope containment', () => {
-  it('S6 untouched: retry fault stays declared-only on lifecycle trigger settlement_unknown', () => {
-    const fault = S6_PaymentRetry.faults[0];
-    expect(fault.type).toBe('retry');
-    expect(fault.trigger).toBe('settlement_unknown');
-    expect(isActionTrigger(fault.trigger)).toBe(false);
+  it('R3-D2 Option B: S6 retries are explicit actions; settlement_unknown is observation, never dispatch', () => {
+    // (1) multiple payment actions exist and the scenario remains bounded
+    const paymentActions = S6_PaymentRetry.actions.filter((a) => a.type === 'request_payment');
+    expect(paymentActions.length).toBe(4); // initial attempt + retry_count(3) retries
+    // (2) idempotency keys are distinct (fresh authorization per attempt),
+    // deterministic, no runtime randomness
+    const keys = paymentActions.map((a) => a.payload['idempotencyKey']);
+    expect(keys).toEqual(['key-6', 'key-6-retry-1', 'key-6-retry-2', 'key-6-retry-3']);
+    expect(new Set(keys).size).toBe(4);
+    // (3) the old lifecycle-triggered retry fault is gone: no active fault
+    // dispatch of any kind in S6
+    expect(S6_PaymentRetry.faults).toHaveLength(0);
     const injector = new FaultInjector(S6_PaymentRetry.faults);
-    expect(injector.getFaultsForEvent('settlement_unknown', 'client-1')).toHaveLength(0);
     expect(injector.getFaultsForEvent('action_request_payment', 'client-1')).toHaveLength(0);
+    // L0-F2 protection retained at the vocabulary level: settlement_unknown
+    // remains a declared-only lifecycle trigger — it must never become an
+    // action trigger or an active dispatch input.
+    expect(isActionTrigger('settlement_unknown')).toBe(false);
+    expect(L0F2_LIFECYCLE_TRIGGERS.has('settlement_unknown')).toBe(true);
+    expect(injector.getFaultsForEvent('settlement_unknown', 'client-1')).toHaveLength(0);
+    // (4)/(5) duplicate-settlement detection semantics remain intact
+    const assertion = S6_PaymentRetry.assertions[0];
+    expect(assertion.id).toBe('assert_no_duplicate_settlement');
+    // Behavioral evaluation, not source-text matching: duplicate settlement
+    // from sut-1 must still FAIL, single settlement PASS, none INCONCLUSIVE.
+    const ev = (source: string, type: string) => ({
+      source, type, data: {}, timestamp: 0,
+    });
+    expect(assertion.evaluate([] as never).status).toBe('INCONCLUSIVE');
+    expect(assertion.evaluate([ev('sut-1', 'payment_settled')] as never).status).toBe('PASS');
+    expect(assertion.evaluate([
+      ev('sut-1', 'payment_settled'),
+      ev('sut-1', 'payment_settled'),
+    ] as never).status).toBe('FAIL');
+    expect(S6_PaymentRetry.invariants[0].id).toBe('no_duplicate_payment_on_unknown');
   });
 
   it('S2/S4 assertions blocks unchanged (evaluate functions reference the same canonical logic markers)', () => {

@@ -29,22 +29,42 @@ export const S6_PaymentRetry: ScenarioDefinition = {
 
   testSubject: 'sut-1',
 
+  // R3-D2 (Option B — Explicit Second Action): bounded payment retries are
+  // modeled as explicit sequential Actions, one per attempt, each carrying a
+  // distinct deterministic idempotency key (fresh authorization). The previous
+  // lifecycle-triggered `retry` fault (trigger: 'settlement_unknown') was
+  // declared-only under L0-F2 and never dispatched at runtime
+  // (FaultInjector.getFaultsForEvent refuses non-action triggers), so removing
+  // it changes no execution behavior. settlement_unknown remains an OBSERVATION
+  // vocabulary term (see docs/evidence-source-map.md); it is not a dispatch
+  // trigger here. Boundedness = finite action list (initial attempt +
+  // retry_count(3) retries => 4 attempts total, preserving the established
+  // "attempt 1 + N retries" semantics of handleRetry's retry_count).
   actions: [
     {
       actor: 'client-1',
       type: 'request_payment',
       payload: { requestId: 'req-6', idempotencyKey: 'key-6', amount: 100 },
     },
-  ],
-
-  faults: [
     {
-      target: { kind: 'participant', participantId: 'client-1' },
-      type: 'retry',
-      trigger: 'settlement_unknown',
-      config: { retry_count: 3, new_authorization_each_time: true },
+      actor: 'client-1',
+      type: 'request_payment',
+      payload: { requestId: 'req-6-retry-1', idempotencyKey: 'key-6-retry-1', amount: 100 },
+    },
+    {
+      actor: 'client-1',
+      type: 'request_payment',
+      payload: { requestId: 'req-6-retry-2', idempotencyKey: 'key-6-retry-2', amount: 100 },
+    },
+    {
+      actor: 'client-1',
+      type: 'request_payment',
+      payload: { requestId: 'req-6-retry-3', idempotencyKey: 'key-6-retry-3', amount: 100 },
     },
   ],
+
+  // No active faults: retries are explicit actions (R3-D2 Option B).
+  faults: [],
 
   invariants: [
     {
