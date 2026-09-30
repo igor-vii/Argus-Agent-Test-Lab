@@ -188,6 +188,32 @@ describe('R2 lifecycle observation plumbing', () => {
     expect(spy.calls).toEqual(['action_request_payment', 'action_deliver']);
   });
 
+  it('preserves actorId across multi-actor lifecycle observations without cross-attribution', async () => {
+    const { collector } = await runEngine(
+      S2_PaymentBeforeExecution,
+      {
+        request_payment: ['payment_settled'],
+        deliver: ['delivery_completed'],
+      },
+      'run_multi_actor',
+      { faults: [] },
+    );
+
+    const settled = collector.getByType('run_multi_actor', 'payment_settled');
+    const delivered = collector.getByType('run_multi_actor', 'delivery_completed');
+
+    expect(settled).toHaveLength(1);
+    expect(delivered).toHaveLength(1);
+
+    expect(settled[0].source).toBe('sut-1');
+    expect(settled[0].actorId).toBe('client-1');
+
+    expect(delivered[0].source).toBe('sut-1');
+    expect(delivered[0].actorId).toBe('resource-server-1');
+
+    expect(settled[0].actorId).not.toBe(delivered[0].actorId);
+  });
+
   it('settlement_unknown enters evidence as its own identity and never becomes failure/success', async () => {
     // Direct collector inspection: settlement layer reports UNKNOWN explicitly.
     const { collector } = await runEngine(
