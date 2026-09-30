@@ -611,3 +611,48 @@ When that work is scheduled, the preferred proof shape is:
 Argus → real TargetAdapter → real external system → externally observable evidence → Assertion → Verdict
 
 The first real-adapter slice should be one narrow vertical proof. It must not become a mass replacement of MockTargetAdapter, a new transport subsystem, a dashboard, persistence layer, chaos engine, billing system, or new x402 behavior.
+
+---
+
+# R3 CONSOLIDATION ADDENDUM — 2026-09-30
+
+This addendum records the canonical-main state after the R3 repair track. It does not rewrite the historical B0 entries above.
+
+## R3-D1 — delivery_unknown
+
+**Status: RESOLVED — classification C (internal-only Sut state).**
+
+The S4 Sut (`sut-1`) is an EXTERNAL FACILITATOR with no externally observable endpoint in the current harness. Argus has no objective external evidence channel from which it can obtain a terminal `delivery_unknown` observation. The state may exist as Sut knowledge, but deriving it from timeout or absence would violate the Temporal Trust Boundary.
+
+Future transition C → A requires the Sut to export a terminal UNKNOWN state through an external observable/protocol interface; the TargetAdapter may then map that observation into Argus evidence.
+
+## R3-D2 — S6 payment retry
+
+**Status: RESOLVED — Option B, explicit sequential payment actions.**
+
+The canonical S6 implementation uses exactly **3 total attempts**:
+
+- `key-6`
+- `key-6-retry-1`
+- `key-6-retry-2`
+
+`faults: []`; no lifecycle-trigger dispatch was introduced. `settlement_unknown` remains an observation term rather than a runtime fault-dispatch trigger. This preserves the frozen L0-F2 contract.
+
+## R3-D3 — S5 passive PASS
+
+**Status: RESOLVED.**
+
+`assert_no_unhandled_errors` no longer treats absence of `unhandled_exception` as sufficient evidence. It requires the positive base of exactly one `payment_intent_created`; otherwise the assertion remains INCONCLUSIVE. An observed unhandled exception remains FAIL.
+
+## R3 deferred items
+
+- **R3-001 `delay_ms: 0`** — DEFERRED-TO-PHASE.
+- **R3-006 S3.1–S3.3** — DEFERRED-TO-PHASE.
+
+## R3 closure
+
+R3-D1, R3-D2 and R3-D3 are resolved in canonical `main`. L0-F2 and per-participant controller identity remain intact. No R4 is created by this addendum. The approved roadmap remains:
+
+**B1.2a → B1.2b → B1.3 → B2 → B4 → B6 → B7**.
+
+This addendum is the authoritative canonical-main record for the R3 repair-track decisions and supersedes the earlier unresolved wording only for the R3 items explicitly named above; historical B0 entries remain preserved as audit history.
