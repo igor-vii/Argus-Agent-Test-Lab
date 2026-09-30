@@ -29,22 +29,31 @@ export const S6_PaymentRetry: ScenarioDefinition = {
 
   testSubject: 'sut-1',
 
+  // R3-D2 (Option B — Explicit Second Action): bounded payment retries are
+  // modeled as explicit sequential Actions, one per attempt, each carrying a
+  // distinct deterministic idempotency key (fresh authorization). The previous
+  // lifecycle-triggered retry fault was declared-only under L0-F2 and never
+  // dispatched at runtime. settlement_unknown remains an observation term,
+  // not a dispatch trigger. retry_count(3) is represented as 3 total attempts.
   actions: [
     {
       actor: 'client-1',
       type: 'request_payment',
       payload: { requestId: 'req-6', idempotencyKey: 'key-6', amount: 100 },
     },
-  ],
-
-  faults: [
     {
-      target: { kind: 'participant', participantId: 'client-1' },
-      type: 'retry',
-      trigger: 'settlement_unknown',
-      config: { retry_count: 3, new_authorization_each_time: true },
+      actor: 'client-1',
+      type: 'request_payment',
+      payload: { requestId: 'req-6-retry-1', idempotencyKey: 'key-6-retry-1', amount: 100 },
+    },
+    {
+      actor: 'client-1',
+      type: 'request_payment',
+      payload: { requestId: 'req-6-retry-2', idempotencyKey: 'key-6-retry-2', amount: 100 },
     },
   ],
+
+  faults: [],
 
   invariants: [
     {
