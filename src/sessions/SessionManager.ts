@@ -2,43 +2,24 @@
  * SessionManager — Mode A MVP vertical slice.
  *
  * Manages ephemeral test sessions in memory.
- * No database. No persistence. Sessions expire and are garbage-collected.
+ * No database. No persistence. Sessions expire in memory.
  */
 
-import { randomUUID } from 'crypto';
-import type { TestSession, TestMode, SessionStatus } from './TestSession';
+import type { TestMode } from './TestSession';
+import { TestSession } from './TestSession';
 import { X402SellerAdapter } from '../adapters/seller/X402SellerAdapter';
 
 export interface CreateSessionOptions {
   testMode: TestMode;
   testProfile: string;
-  faultProfile?: 'none' | 'timeout' | 'malformed_response' | 'delivery_loss';
   timeoutSeconds?: number;
-  paymentConfig?: {
-    scheme?: string;
-    network?: string;
-    amount?: string;
-    asset?: string;
-    payTo?: string;
-    maxTimeoutSeconds?: number;
-  };
+  maxInteractions?: number;
 }
 
-const DEFAULT_TIMEOUT_SECONDS = 60;
-
-const DEFAULT_PAYMENT_CONFIG = {
-  scheme: 'exact',
-  network: 'eip155:84532',
-  amount: '10000',
-  asset: '0x036CbD53842c5426634e7929541eC2318f3dCF7e',
-  payTo: '0x70997970C51812dc3A010C7d01b50e0d17dc79C8',
-  maxTimeoutSeconds: 60,
-};
-
 export class SessionManager {
-  private sessions: Map<string, TestSession> = new Map();
-  private sellerAdapter: X402SellerAdapter;
-  private baseUrl: string = '';
+  private readonly sessions = new Map<string, TestSession>();
+  private readonly sellerAdapter: X402SellerAdapter;
+  private baseUrl = '';
 
   constructor(sellerAdapter: X402SellerAdapter) {
     this.sellerAdapter = sellerAdapter;
@@ -48,64 +29,62 @@ export class SessionManager {
    * Set the base URL after the seller adapter has started.
    */
   setBaseUrl(url: string): void {
-    this.baseUrl = url;
+    this.baseUrl = url.replace(/\/$/, '');
   }
 
   /**
-   * Create a new test session.
+   * Create a session using the canonical TestSession class.
+   *
+   * The seller adapter receives the session when start() is called by the
+   * composition layer. SessionManager owns lifecycle/state only.
    */
   createSession(options: CreateSessionOptions): TestSession {
-    const sessionId = randomUUID();
-    const now = Date.now();
-    const timeoutMs = (options.timeoutSeconds ?? DEFAULT_TIMEOUT_SECONDS) * 1000;
+    const session = new TestSession({
+      test_mode: options.testMode,
+      test_profile: options.testProfile,
+      timeout_seconds: options.timeoutSeconds,
+      max_interactions: options.maxInteractions,
+    });
 
-    const session: TestSession = {
-      sessionId,
-      testMode: options.testMode,
-      testProfile: options.testProfile,
-      status: 'ACTIVE',
-      sessionEndpoint: `${this.baseUrl}/sessions/${sessionId}/resource`,
-      createdAt: now,
-      expiresAt: now + timeoutMs,
-      evidence: [],
-      faultProfile: options.faultProfile ?? 'none',
-      paymentConfig: {
-        ...DEFAULT_PAYMENT_CONFIG,
-        ...(options.paymentConfig ?? {}),
-      },
-    };
-
-    this.sessions.set(sessionId, session);
-    this.sellerAdapter.registerSession(session);
-
+    this.sessions.set(session.session_id, session);
     return session;
   }
 
   /**
-   * Get a session by ID.
+   * Return the public endpoint for a session after the adapter has started.
    */
+  getSessionEndpoint(sessionId: string): string | undefined {
+    const session = this.sessions.get(sessionId);
+    if (!session || !this.baseUrl) return undefined;
+    return `${this.baseUrl}${session.getEndpointPath()}`;
+  }
+
   getSession(sessionId: string): TestSession | undefined {
     return this.sessions.get(sessionId);
   }
 
-  /**
-   * List all active sessions.
-   */
   listSessions(): TestSession[] {
     return Array.from(this.sessions.values());
   }
 
-  /**
-   * Check if a session has expired and update its status.
-   */
   checkExpiry(sessionId: string): boolean {
     const session = this.sessions.get(sessionId);
     if (!session) return false;
 
-    if (session.status === 'ACTIVE' && Date.now() > session.expiresAt) {
-      session.status = 'EXPIRED';
-      return true;
-    }
-    return false;
+    const wasActive = session.status === 'ACTIVE';
+    session.checkExpiry();
+    return wasActive && session.status === 'EXPIRED';
+  }
+
+  getResult(sessionId: string) {
+    const session = this.sessions.get(sessionId);
+    return session?.getResult();
+  }
+
+  /**
+   * Expose the adapter only to the bounded Mode A composition layer.
+   */
+  getSellerAdapter(): X402SellerAdapter {
+    return this.sellerAdapter;
   }
 }
