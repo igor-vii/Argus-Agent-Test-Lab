@@ -23,7 +23,7 @@ describe('BaseSepoliaPaymentAdapter.signX402Payment (SigningBinding)', () => {
             rpcUrl: TEST_RPC_URL,
             privateKey: TEST_PRIVATE_KEY,
             receiveAddresses: {
-                'seller-1': SELLER,
+                'resource-server-1': SELLER,
             },
         });
     });

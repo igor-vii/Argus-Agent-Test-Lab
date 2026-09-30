@@ -62,7 +62,7 @@ async function runEngine(
   await controller.connect();
 
   const registry = new ExecutionRegistry();
-  registry.register(opts?.actor ?? 'buyer-1', controller);
+  registry.register(opts?.actor ?? 'client-1', controller);
 
   const context: RunContext = {
     runId,
@@ -138,13 +138,15 @@ describe('R2 lifecycle observation plumbing', () => {
 
   it('evidence record keeps exact lifecycle identity through EvidenceCollector', async () => {
     // Legitimate per §5.1: the simulated Sut (FACILITATOR sut-1) reports its
-    // own settlement state on request_payment. S2's canonical fault is kept so
-    // this test also proves observations coexist with action-fault dispatch.
+    // own settlement state on request_payment. The first action's actor is used
+    // and no faults are injected: S2's canonical delayed_response now fires on
+    // the second action ('deliver', R3 seller-action) and would stall the run.
+    // Coexistence of observations with action-fault dispatch is proven by the
+    // S1/S5 regression test below instead.
     const { collector, spy } = await runEngine(
       S2_PaymentBeforeExecution,
       { request_payment: ['payment_settled'] },
       'run_identity',
-      { faults: S2_PaymentBeforeExecution.faults as Fault[] },
     );
 
     const records = collector.getByType('run_identity', 'payment_settled');
@@ -203,13 +205,13 @@ describe('R2 lifecycle observation plumbing', () => {
     // refuses to dispatch faults registered on non-action triggers.
     const injector = new FaultInjector([
       {
-        target: { kind: 'participant', participantId: 'seller-1' },
+        target: { kind: 'participant', participantId: 'resource-server-1' },
         type: 'hang',
         trigger: 'payment_settled',
         config: { duration_ms: -1 },
       },
     ]);
-    expect(injector.getFaultsForEvent('payment_settled', 'seller-1')).toHaveLength(0);
+    expect(injector.getFaultsForEvent('payment_settled', 'resource-server-1')).toHaveLength(0);
     expect(injector.getRespondersForEvent('payment_settled')).toHaveLength(0);
   });
 
@@ -290,7 +292,7 @@ describe('R2 lifecycle observation plumbing', () => {
     });
     await controller.connect(); // RunOrchestrator owns connect in production runs
     const registry = new ExecutionRegistry();
-    registry.register('buyer-1', controller);
+    registry.register('client-1', controller);
     const context: RunContext = {
       runId: 'run_s8',
       scenarioId: S8_X402Payment.id,

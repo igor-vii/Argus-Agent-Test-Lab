@@ -3,14 +3,14 @@ export const S5_ConcurrentDuplicate = {
     name: 'Concurrent Duplicate',
     description: '5 параллельных запросов с одинаковым idempotencyKey',
     participants: [
-        { participantId: 'buyer-1', protocolRole: 'CLIENT', ownership: 'ARGUS' },
+        { participantId: 'client-1', protocolRole: 'CLIENT', ownership: 'ARGUS' },
         {
-            // Block A correction (per-scenario roles): seller-1 отдаёт
+            // Block A correction (per-scenario roles): resource-server-1 отдаёт
             // protected resource (delivery_sent / delivery_completed) →
             // RESOURCE_SERVER. Отсутствие своего HTTP endpoint —
             // техническое ограничение wiring, не отсутствие роли.
             // Rationale см. S1.
-            participantId: 'seller-1',
+            participantId: 'resource-server-1',
             protocolRole: 'RESOURCE_SERVER',
             ownership: 'ARGUS', // см. rationale в S1
         },
@@ -18,21 +18,21 @@ export const S5_ConcurrentDuplicate = {
     ],
     topology: {
         edges: [
-            { from: 'buyer-1', to: 'sut-1', kind: 'request' },
-            { from: 'sut-1', to: 'seller-1', kind: 'forward' },
+            { from: 'client-1', to: 'sut-1', kind: 'request' },
+            { from: 'sut-1', to: 'resource-server-1', kind: 'forward' },
         ],
     },
     testSubject: 'sut-1',
     actions: [
         {
-            actor: 'buyer-1',
+            actor: 'client-1',
             type: 'request_payment',
             payload: { requestId: 'req-5', idempotencyKey: 'key-5', amount: 100 },
         },
     ],
     faults: [
         {
-            target: { kind: 'participant', participantId: 'buyer-1' },
+            target: { kind: 'participant', participantId: 'client-1' },
             type: 'concurrent_request',
             trigger: 'action_request_payment',
             config: { parallel_count: 5, same_idempotency_key: true },

@@ -1,16 +1,16 @@
 export const S7_LostDelivery = {
     id: 'S7',
     name: 'Lost Delivery',
-    description: 'Seller фактически отвечает (respond), но ответ теряется на edge seller-1 → sut-1',
+    description: 'Seller фактически отвечает (respond), но ответ теряется на edge resource-server-1 → sut-1',
     participants: [
-        { participantId: 'buyer-1', protocolRole: 'CLIENT', ownership: 'ARGUS' },
+        { participantId: 'client-1', protocolRole: 'CLIENT', ownership: 'ARGUS' },
         {
-            // Block A correction (per-scenario roles): seller-1 отдаёт
+            // Block A correction (per-scenario roles): resource-server-1 отдаёт
             // protected resource (delivery_sent / delivery_completed) →
             // RESOURCE_SERVER. Отсутствие своего HTTP endpoint —
             // техническое ограничение wiring, не отсутствие роли.
             // Rationale см. S1.
-            participantId: 'seller-1',
+            participantId: 'resource-server-1',
             protocolRole: 'RESOURCE_SERVER',
             ownership: 'ARGUS', // см. rationale в S1
         },
@@ -18,15 +18,15 @@ export const S7_LostDelivery = {
     ],
     topology: {
         edges: [
-            { from: 'buyer-1', to: 'sut-1', kind: 'request' },
-            { from: 'sut-1', to: 'seller-1', kind: 'forward' },
-            { from: 'seller-1', to: 'sut-1', kind: 'response' },
+            { from: 'client-1', to: 'sut-1', kind: 'request' },
+            { from: 'sut-1', to: 'resource-server-1', kind: 'forward' },
+            { from: 'resource-server-1', to: 'sut-1', kind: 'response' },
         ],
     },
     testSubject: 'sut-1',
     actions: [
         {
-            actor: 'buyer-1',
+            actor: 'client-1',
             type: 'request_payment',
             payload: { requestId: 'req-7', idempotencyKey: 'key-7', amount: 100 },
         },
@@ -36,21 +36,21 @@ export const S7_LostDelivery = {
             // respond — НЕ fault по смыслу (baseline-поведение participant'а),
             // живёт здесь ради единообразия механизма emission
             // (FaultInjector.apply + callback).
-            target: { kind: 'participant', participantId: 'seller-1' },
+            target: { kind: 'participant', participantId: 'resource-server-1' },
             type: 'respond',
             trigger: 'action_request_payment',
             config: { emit: 'delivery_sent' },
             approximated: true,
-            // Mock-режим не различает "переслано seller-1" от
+            // Mock-режим не различает "переслано resource-server-1" от
             // "target ответил" — см. Temporal Trust Boundary addendum.
         },
         {
             // В Mock-режиме V0 этот fault семантически объявлен,
             // но не имеет наблюдаемого эффекта: нет пути от
-            // emission seller-1 к reception sut-1, который можно
+            // emission resource-server-1 к reception sut-1, который можно
             // дропнуть. Станет содержательным при HTTP-интеграции —
             // см. ROADMAP backlog.
-            target: { kind: 'edge', from: 'seller-1', to: 'sut-1' },
+            target: { kind: 'edge', from: 'resource-server-1', to: 'sut-1' },
             type: 'lost_delivery',
             trigger: 'delivery_sent',
             config: { drop_probability: 1.0 },
@@ -67,10 +67,10 @@ export const S7_LostDelivery = {
             id: 'assert_seller_sent_but_sut_never_received',
             invariantId: 'lost_response_yields_unknown_not_duplicate',
             kind: 'behavioral',
-            referencedSources: ['seller-1', 'sut-1'],
+            referencedSources: ['resource-server-1', 'sut-1'],
             evaluate: (evidence) => {
-                const sellerSent = evidence.find((e) => e.source === 'seller-1' && e.type === 'delivery_sent');
-                if (!sellerSent)
+                const resourceServerSent = evidence.find((e) => e.source === 'resource-server-1' && e.type === 'delivery_sent');
+                if (!resourceServerSent)
                     return { status: 'INCONCLUSIVE', reason: 'seller has not sent response yet' };
                 const sutReceived = evidence.find((e) => e.source === 'sut-1' && e.type === 'delivery_received');
                 if (sutReceived)

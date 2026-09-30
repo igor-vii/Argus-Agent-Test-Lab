@@ -45,7 +45,7 @@ describe('AssertionEngine', () => {
     it('should work with Observation and EngineEvent', () => {
         const evidence = [
             {
-                source: 'buyer-1',
+                source: 'client-1',
                 type: 'payment_initiated',
                 data: { amount: 100 },
                 timestamp: Date.now()

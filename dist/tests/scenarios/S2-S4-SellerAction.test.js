@@ -4,9 +4,9 @@
  * Proves ONLY:
  * 1. delayed_response (S2) and hang (S4) become reachable through the
  *    EXISTING L0-F2 action-fault dispatch: trigger 'action_deliver',
- *    participant target === actor ('seller-1'). No lifecycle dispatch.
+ *    participant target === actor ('resource-server-1'). No lifecycle dispatch.
  * 2. The faults produce their canonical evidence via FaultInjector's own
- *    emit path (delivery_started / delivery_completed from seller-1).
+ *    emit path (delivery_started / delivery_completed from resource-server-1).
  * 3. Assertions of S2/S4 are NOT modified; their honest post-R3 status is
  *    asserted (both remain INCONCLUSIVE until Sut-reported success /
  *    terminal-state plumbing lands — see docs/evidence-source-map.md).
@@ -46,7 +46,7 @@ async function runEngineWith(scenario, runId, lifecycleObservations = {}) {
     await controller.connect();
     const registry = new ExecutionRegistry();
     // S1-S7 harness convention (see S1-S7.test.ts): one shared mock controller
-    // per ARGUS-owned participant. seller-1 is ARGUS-owned RESOURCE_SERVER.
+    // per ARGUS-owned participant. resource-server-1 is ARGUS-owned RESOURCE_SERVER.
     for (const p of scenario.participants) {
         if (p.ownership === 'ARGUS')
             registry.register(p.participantId, controller);
@@ -64,11 +64,11 @@ async function runEngineWith(scenario, runId, lifecycleObservations = {}) {
     return collector;
 }
 describe('R3 seller-action: S2 delayed_response via action_deliver', () => {
-    it('scenario shape: second action is deliver from seller-1; fault moved to action_deliver', () => {
+    it('scenario shape: second action is deliver from resource-server-1; fault moved to action_deliver', () => {
         const s2 = S2_PaymentBeforeExecution;
         expect(s2.actions.map((a) => `${a.actor}:${a.type}`)).toEqual([
-            'buyer-1:request_payment',
-            'seller-1:deliver',
+            'client-1:request_payment',
+            'resource-server-1:deliver',
         ]);
         const fault = s2.faults[0];
         expect(fault.type).toBe('delayed_response');
@@ -76,31 +76,31 @@ describe('R3 seller-action: S2 delayed_response via action_deliver', () => {
         expect(isActionTrigger(fault.trigger)).toBe(true);
         expect(L0F2_LIFECYCLE_TRIGGERS.has(fault.trigger)).toBe(false);
         if (fault.target.kind === 'participant') {
-            expect(fault.target.participantId).toBe('seller-1');
+            expect(fault.target.participantId).toBe('resource-server-1');
         }
         else {
             throw new Error('expected participant target');
         }
         expect(validateFaultDispatch(s2).valid).toBe(true);
     });
-    it('fault is reachable via getFaultsForEvent("action_deliver", "seller-1") — no lifecycle dispatch', () => {
+    it('fault is reachable via getFaultsForEvent("action_deliver", "resource-server-1") — no lifecycle dispatch', () => {
         const injector = new FaultInjector(S2_PaymentBeforeExecution.faults);
-        const active = injector.getFaultsForEvent('action_deliver', 'seller-1');
+        const active = injector.getFaultsForEvent('action_deliver', 'resource-server-1');
         expect(active).toHaveLength(1);
         expect(active[0].type).toBe('delayed_response');
         // Same fault must NOT be dispatched for any other actor or lifecycle event:
-        expect(injector.getFaultsForEvent('action_deliver', 'buyer-1')).toHaveLength(0);
-        expect(injector.getFaultsForEvent('delivery_started', 'seller-1')).toHaveLength(0);
+        expect(injector.getFaultsForEvent('action_deliver', 'client-1')).toHaveLength(0);
+        expect(injector.getFaultsForEvent('delivery_started', 'resource-server-1')).toHaveLength(0);
     });
-    it('delayed_response applies: delivery_started + delivery_completed from seller-1 enter evidence', async () => {
+    it('delayed_response applies: delivery_started + delivery_completed from resource-server-1 enter evidence', async () => {
         const collector = await runEngineWith(S2_PaymentBeforeExecution, 'run_r3_s2');
         const started = collector.getByType('run_r3_s2', 'delivery_started');
         const completed = collector.getByType('run_r3_s2', 'delivery_completed');
         // Fault emitted exactly once, with its own source identity preserved:
         expect(started).toHaveLength(1);
-        expect(started[0].source).toBe('seller-1');
+        expect(started[0].source).toBe('resource-server-1');
         expect(completed).toHaveLength(1);
-        expect(completed[0].source).toBe('seller-1');
+        expect(completed[0].source).toBe('resource-server-1');
         expect(started[0].timestamp).toBeLessThanOrEqual(completed[0].timestamp);
         // action_deliver itself executed afterwards (engine event exists):
         expect(collector.getByType('run_r3_s2', 'action_deliver')).toHaveLength(1);
@@ -128,18 +128,18 @@ describe('R3 seller-action: S2 delayed_response via action_deliver', () => {
         expect(bad.verdict?.status).toBe('FAIL');
         expect(bad.verdict?.reason).toContain('without seller actually responding');
         // With the canonical seller-deliver action (delayed but completing),
-        // settled+success from the Sut plus delivery_completed from seller-1 →
+        // settled+success from the Sut plus delivery_completed from resource-server-1 →
         // the SAME unmodified assertion returns PASS.
         const good = await runEngineWithObs(S2_PaymentBeforeExecution, 'run_r3_s2_pass', { request_payment: ['payment_settled', 'success'] });
         expect(good.verdict?.status).toBe('PASS');
     }, 30000);
 });
 describe('R3 seller-action: S4 hang via action_deliver', () => {
-    it('scenario shape: deliver action from seller-1; hang moved to action_deliver; dispatch-valid', () => {
+    it('scenario shape: deliver action from resource-server-1; hang moved to action_deliver; dispatch-valid', () => {
         const s4 = S4_SellerTimeout;
         expect(s4.actions.map((a) => `${a.actor}:${a.type}`)).toEqual([
-            'buyer-1:request_payment',
-            'seller-1:deliver',
+            'client-1:request_payment',
+            'resource-server-1:deliver',
         ]);
         const fault = s4.faults[0];
         expect(fault.type).toBe('hang');
@@ -181,7 +181,7 @@ describe('R3 seller-action: S4 hang via action_deliver', () => {
         // emit callback (identity preserved, source = fault target):
         const started = collector.getByType('run_r3_s4', 'delivery_started');
         expect(started).toHaveLength(1);
-        expect(started[0].source).toBe('seller-1');
+        expect(started[0].source).toBe('resource-server-1');
         // Buyer action completed before the hang:
         expect(collector.getByType('run_r3_s4', 'action_request_payment')).toHaveLength(1);
         // The hung deliver action produced NO engine event (operation never returned).
@@ -203,7 +203,7 @@ describe('R3 seller-action: S4 hang via action_deliver', () => {
             ...S4_SellerTimeout,
             faults: [
                 {
-                    target: { kind: 'participant', participantId: 'seller-1' },
+                    target: { kind: 'participant', participantId: 'resource-server-1' },
                     type: 'hang',
                     trigger: 'action_deliver',
                     config: { duration_ms: 10 },
@@ -233,8 +233,8 @@ describe('R3 scope containment', () => {
         expect(fault.trigger).toBe('settlement_unknown');
         expect(isActionTrigger(fault.trigger)).toBe(false);
         const injector = new FaultInjector(S6_PaymentRetry.faults);
-        expect(injector.getFaultsForEvent('settlement_unknown', 'buyer-1')).toHaveLength(0);
-        expect(injector.getFaultsForEvent('action_request_payment', 'buyer-1')).toHaveLength(0);
+        expect(injector.getFaultsForEvent('settlement_unknown', 'client-1')).toHaveLength(0);
+        expect(injector.getFaultsForEvent('action_request_payment', 'client-1')).toHaveLength(0);
     });
     it('S2/S4 assertions blocks unchanged (evaluate functions reference the same canonical logic markers)', () => {
         const s2src = String(S2_PaymentBeforeExecution.assertions[0].evaluate);

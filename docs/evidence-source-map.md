@@ -78,7 +78,7 @@ grep-ом по `src/` (эмитент ≠ декларация в trigger/config
 | 7 | `failed` | S4, S7 (антиусловия) | Sut | O (спорно — Decision 2) | S4 FAIL при failed при молчащем seller; S7 FAIL при failed, если seller реально ответил | **Нет** — канал создан в R2, эмиссии нет | См. Decision 2: расширить адаптер (Sut-канал готов); internal недопустим (ломает антиусловия) |
 | 8 | `delivery_started` | S2, S4 (как trigger faults) | seller (начало обработки заказа) | F (частично) / E | trigger в faults S2 (`delayed_response`), S4 (`hang`) | Частично — `FaultInjector` эмитит при применении delayed_response/hang, но эти faults висят на lifecycle-триггерах, которые не диспатчатся (L0-F2) → в рантайме не достигается. См. Decision 3 | Seller-action (a) либо lifecycle dispatch (b) — Decision 3 |
 | 9 | `delivery_completed` | S2 | seller (ответ окончен) | F | S2 `sellerReallyResponded` — условие PASS | Частично — эмитится `FaultInjector.delayed_response` тем же недостижимым путём, что и #8 | То же, что #8 (Decision 3) |
-| 10 | `delivery_sent` | S7 | seller | F (respond-baseline) | S7 `sellerSent` — gate условия | **Да (частично)** — baseline responder `respond` с `config.emit='delivery_sent'` эмитит с source=seller-1 через отдельную совместимую дорожку L0-F2 | Ничего для эмиссии; содержательность требует edge-mediator для #11/#12 |
+| 10 | `delivery_sent` | S7 | seller | F (respond-baseline) | S7 `sellerSent` — gate условия | **Да (частично)** — baseline responder `respond` с `config.emit='delivery_sent'` эмитит с source=resource-server-1 (seller-1) через отдельную совместимую дорожку L0-F2 | Ничего для эмиссии; содержательность требует edge-mediator для #11/#12 |
 | 11 | `delivery_received` | S7 | Sut (получил ответ через edge) | E | S7 антиусловие: sut получил то, что должен был потерять | **Нет** — механизма пересечения границы нет | Edge-mediator |
 | 12 | `delivery_unknown` | S4, S7 | Sut (вывод: терминальное состояние не наступило к таймауту) | I или E-опосредованно — нерешено | S4 PASS-цель; S7 PASS-цель | **Нет** — никто не эмитит | Открытый вопрос (раздел 4, Q1): internal-правило движка (timeout→UNKNOWN) либо результат edge-наблюдения |
 | 13 | `recovery_completed` | S3 | Sut (после crash+restart) | O (по смыслу) / инфраструктурный | S3 `recovery` — gate | **Нет** — crash fault (`infrastructure` target) declared-only, restart-цикла нет | Не определено (вне L0-F2; infrastructure interception — non-goal). Для mock — расширение адаптера; по сути — lifecycle-работа движка |
@@ -114,7 +114,7 @@ seller-актор, edge-mediator и lifecycle dispatch по-прежнему о�
 
 ### Decision 1 — `settlement_unknown`: observation или internal?
 
-S6 хочет fault `retry` на buyer-1 с триггером `settlement_unknown`. Чтобы триггер стал
+S6 хочет fault `retry` на client-1 (buyer-1) с триггером `settlement_unknown`. Чтобы триггер стал
 живым, кто-то должен сначала эмитить `settlement_unknown`.
 
 - **(a) Sut сообщает → observation.** Работает через расширение адаптера: Sut отдаёт
@@ -150,20 +150,20 @@ seller). S4 FAIL'ит при любом `success`/`failed`, если seller мо
 
 ### Decision 3 — S4 trigger: `delivery_started` или seller-action?
 
-Fault `hang` в S4 нацелен на seller-1, триггер `delivery_started` — lifecycle, не
+Fault `hang` в S4 нацелен на resource-server-1, триггер `delivery_started` — lifecycle, не
 диспатчится (L0-F2 п.1, п.3: активный participant-fault требует `target.participantId
-=== action.actor`, а actor всех действий — buyer-1). Значит hang seller-1 сейчас
+=== action.actor`, а actor всех действий — client-1). Значит hang resource-server-1 сейчас
 недостижим и `delivery_started`/`delivery_completed`/terminal-цепочка S2/S4 не запускаются.
 
 - **(a) Перенести fault на action от seller:** ввести seller-действие (seller как актёр
-  действия, например `deliver`), fault `hang`/`delayed_response` на participant seller-1
+  действия, например `deliver`), fault `hang`/`delayed_response` на participant resource-server-1
   с триггером `action_deliver`. Минимальное изменение, работает через существующий
   L0-F2-механизм. **Но: требует нового актора действия — это структурное изменение
   сценария, которое в R2 запрещено.** Значит decision 3 — решение архитектора, а не Квена.
 - **(b) Ввести lifecycle dispatch:** события диспатчат faults по lifecycle-триггерам.
   Прямо против L0-F2 (non-goals: recursive dispatch, seller lifecycle emitters). Дорого.
-- **(c) Заменить fault на другой, доступный через action от buyer-1** (например, hang на
-  buyer-1 с `action_request_payment`): технически работает сразу, но тогда молчит buyer,
+- **(c) Заменить fault на другой, доступный через action от client-1** (например, hang на
+  client-1 с `action_request_payment`): технически работает сразу, но тогда молчит buyer,
   а не seller — меняется смысл S4 («Seller Timeout»).
 
 Не выбран.
@@ -192,7 +192,7 @@ Fault `hang` в S4 нацелен на seller-1, триггер `delivery_starte
    evidence-and-verdicts (UNRESOLVED при недостатке данных). Требуется решение: либо
    адаптер начинает эмитить exception-наблюдения, либо assertion получает precondition.
 5. **Проверить, что seller-действие не сломает S1/S5.** Если по Decision 3(a) вводится
-   новое действие от seller-1, оно станет новым `action_deliver` engine-событием и новым
+   новое действие от resource-server-1, оно станет новым `action_deliver` engine-событием и новым
    каналом observations; S1/S5 матчают только `payment_intent_created`/`unhandled_exception`
    с source=sut-1 — формально не конфликтуют, но регрессию надо прогнать после решения.
 

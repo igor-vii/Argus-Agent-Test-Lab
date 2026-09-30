@@ -35,7 +35,7 @@ describe('X402 Full Flow Integration Test', () => {
             rpcUrl: TEST_RPC_URL,
             privateKey: TEST_PRIVATE_KEY,
             receiveAddresses: {
-                'seller-1': '0x70997970C51812dc3A010C7d01b50e0d17dc79C8',
+                'resource-server-1': '0x70997970C51812dc3A010C7d01b50e0d17dc79C8',
             },
         });
         controller = new AgentController(adapter, {
@@ -51,7 +51,7 @@ describe('X402 Full Flow Integration Test', () => {
     it('should complete full x402 payment flow: 402 -> sign -> retry -> success', async () => {
         // Create controllers Map
         const controllers = new Map();
-        controllers.set('buyer-1', controller);
+        controllers.set('client-1', controller);
         // Create orchestrator with paymentAdapter
         const orchestrator = new RunOrchestrator(S8_X402Payment, controllers, [], paymentAdapter);
         // Execute the run
@@ -88,7 +88,7 @@ describe('X402 Full Flow Integration Test', () => {
             validBefore: String(nowSec + 120),
         });
         const controllers = new Map();
-        controllers.set('buyer-1', controller);
+        controllers.set('client-1', controller);
         const orchestrator = new RunOrchestrator(S8_X402Payment, controllers, [], paymentAdapter, bindingSource);
         const result = await orchestrator.run();
         expect(result.verdict?.status).toBe('PASS');

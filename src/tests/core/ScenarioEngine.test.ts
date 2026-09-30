@@ -133,37 +133,37 @@ describe('ScenarioEngine', () => {
   });
 
   it('should route action.actor to the correct controller', async () => {
-    const buyerTarget = new MockTargetAdapter('buyer-mock');
-    const sellerTarget = new MockTargetAdapter('seller-mock');
+    const clientTarget = new MockTargetAdapter('buyer-mock');
+    const resourceServerTarget = new MockTargetAdapter('seller-mock');
 
-    const buyerController = new AgentController(buyerTarget, {
+    const clientController = new AgentController(clientTarget, {
       connectionConfig: { transportType: 'mock' },
       runId: 'buyer-run',
     });
-    const sellerController = new AgentController(sellerTarget, {
+    const resourceServerController = new AgentController(resourceServerTarget, {
       connectionConfig: { transportType: 'mock' },
       runId: 'seller-run',
     });
 
-    await buyerController.connect();
-    await sellerController.connect();
+    await clientController.connect();
+    await resourceServerController.connect();
 
     const registry = new ExecutionRegistry();
-    registry.register('buyer-1', buyerController);
-    registry.register('seller-1', sellerController);
+    registry.register('client-1', clientController);
+    registry.register('resource-server-1', resourceServerController);
 
     const scenario: ScenarioDefinition = {
       id: 'routing-test',
       name: 'Routing Test',
       participants: [
-        { participantId: 'buyer-1', protocolRole: 'CLIENT', ownership: 'ARGUS' },
-        { participantId: 'seller-1', protocolRole: 'RESOURCE_SERVER', ownership: 'ARGUS' },
+        { participantId: 'client-1', protocolRole: 'CLIENT', ownership: 'ARGUS' },
+        { participantId: 'resource-server-1', protocolRole: 'RESOURCE_SERVER', ownership: 'ARGUS' },
       ],
       topology: { edges: [] },
       testSubject: 'sut-1',
       actions: [
-        { actor: 'buyer-1', type: 'BUY_ACTION', payload: {} },
-        { actor: 'seller-1', type: 'SELL_ACTION', payload: {} },
+        { actor: 'client-1', type: 'CLIENT_ACTION', payload: {} },
+        { actor: 'resource-server-1', type: 'RESOURCE_SERVER_ACTION', payload: {} },
       ],
       faults: [],
       invariants: [],
@@ -182,13 +182,13 @@ describe('ScenarioEngine', () => {
     const engine = new ScenarioEngine(scenario, context, registry, faultInjector);
     await engine.execute();
 
-    const buyerExchanges = buyerTarget.getExchanges();
-    expect(buyerExchanges.length).toBe(1);
-    expect(buyerExchanges[0].type).toBe('BUY_ACTION');
+    const clientExchanges = clientTarget.getExchanges();
+    expect(clientExchanges.length).toBe(1);
+    expect(clientExchanges[0].type).toBe('CLIENT_ACTION');
 
-    const sellerExchanges = sellerTarget.getExchanges();
-    expect(sellerExchanges.length).toBe(1);
-    expect(sellerExchanges[0].type).toBe('SELL_ACTION');
+    const resourceServerExchanges = resourceServerTarget.getExchanges();
+    expect(resourceServerExchanges.length).toBe(1);
+    expect(resourceServerExchanges[0].type).toBe('RESOURCE_SERVER_ACTION');
   });
 
   it('should throw if action.actor is not registered', async () => {
@@ -279,12 +279,12 @@ describe('ScenarioEngine', () => {
     id: 'e2e-fault-test',
     name: 'End-to-End Fault Test',
     participants: [
-      { participantId: 'buyer-1', protocolRole: 'CLIENT', ownership: 'ARGUS' },
+      { participantId: 'client-1', protocolRole: 'CLIENT', ownership: 'ARGUS' },
     ],
     topology: { edges: [] },
     testSubject: 'sut-1',
     actions: [
-      { actor: 'buyer-1', type: 'request_payment', payload: { requestId: 'req-e2e' } },
+      { actor: 'client-1', type: 'request_payment', payload: { requestId: 'req-e2e' } },
     ],
     faults,
     invariants: [],
@@ -295,7 +295,7 @@ describe('ScenarioEngine', () => {
   it('end-to-end: duplicate_request fault on action_request_payment executes the operation twice', async () => {
     const scenario = makeFaultScenario([
       {
-        target: { kind: 'participant', participantId: 'buyer-1' },
+        target: { kind: 'participant', participantId: 'client-1' },
         type: 'duplicate_request',
         trigger: 'action_request_payment',
         config: { repeat_count: 2 },
@@ -319,7 +319,7 @@ describe('ScenarioEngine', () => {
     await e2eController.connect();
 
     const registry = new ExecutionRegistry();
-    registry.register('buyer-1', e2eController);
+    registry.register('client-1', e2eController);
 
     const injector = new FaultInjector(scenario.faults);
     const engine = new ScenarioEngine(scenario, context, registry, injector);
@@ -335,7 +335,7 @@ describe('ScenarioEngine', () => {
   it('end-to-end: crash fault on action_request_payment makes execute() throw', async () => {
     const scenario = makeFaultScenario([
       {
-        target: { kind: 'participant', participantId: 'buyer-1' },
+        target: { kind: 'participant', participantId: 'client-1' },
         type: 'crash',
         trigger: 'action_request_payment',
         config: {},
@@ -359,7 +359,7 @@ describe('ScenarioEngine', () => {
     await e2eController.connect();
 
     const registry = new ExecutionRegistry();
-    registry.register('buyer-1', e2eController);
+    registry.register('client-1', e2eController);
 
     const injector = new FaultInjector(scenario.faults);
     const engine = new ScenarioEngine(scenario, context, registry, injector);

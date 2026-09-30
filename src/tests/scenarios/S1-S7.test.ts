@@ -31,7 +31,7 @@ describe('Canonical Scenarios S1-S7', () => {
       });
 
       const controllers = new Map<string, AgentController>();
-      // For S1-S7, all participants are EXTERNAL except buyer-1 which is ARGUS in some scenarios
+      // For S1-S7, all participants are EXTERNAL except client-1 which is ARGUS in some scenarios
       // We'll register the controller for any ARGUS participant
       for (const p of def.participants) {
         if (p.ownership === 'ARGUS') {

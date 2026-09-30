@@ -32,7 +32,7 @@ describe('EvidenceCollector', () => {
             timestamp: Date.now()
         };
         const obs3 = {
-            source: 'buyer-1',
+            source: 'client-1',
             type: 'response_sent',
             data: {},
             timestamp: Date.now()
@@ -45,7 +45,7 @@ describe('EvidenceCollector', () => {
         const sources = evidence.map(e => e.source);
         expect(sources).toContain('sut-1');
         expect(sources).toContain('engine');
-        expect(sources).toContain('buyer-1');
+        expect(sources).toContain('client-1');
     });
     it('should filter by runId', () => {
         const obs1 = {

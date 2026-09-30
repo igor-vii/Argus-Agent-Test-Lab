@@ -28,7 +28,7 @@ describe('L0-F2 fault dispatch contract', () => {
         const scenario = {
             ...S1_DuplicateRequest,
             faults: [{
-                    target: { kind: 'participant', participantId: 'seller-1' },
+                    target: { kind: 'participant', participantId: 'resource-server-1' },
                     type: 'duplicate_request',
                     trigger: 'action_request_payment',
                     config: {},
@@ -42,7 +42,7 @@ describe('L0-F2 fault dispatch contract', () => {
         const scenario = {
             ...S1_DuplicateRequest,
             faults: [{
-                    target: { kind: 'edge', from: 'seller-1', to: 'sut-1' },
+                    target: { kind: 'edge', from: 'resource-server-1', to: 'sut-1' },
                     type: 'lost_delivery',
                     trigger: 'action_request_payment',
                     config: {},

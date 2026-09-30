@@ -32,7 +32,7 @@ describe('ProtocolRole (canonical x402 vocabulary)', () => {
         expect(CANONICAL).toHaveLength(3);
     });
     it('protocolRole is optional — absence means app-level participant', () => {
-        const p = { participantId: 'seller-1', ownership: 'ARGUS' };
+        const p = { participantId: 'resource-server-1', ownership: 'ARGUS' };
         expect(p.protocolRole).toBeUndefined();
     });
 });
@@ -59,10 +59,10 @@ describe('S1–S8 canonical protocolRole (Block A)', () => {
             }
         }
     });
-    it('buyer-1 is CLIENT in all scenarios', () => {
+    it('client-1 is CLIENT in all scenarios', () => {
         for (const s of scenarios) {
-            const buyer = s.participants.find((p) => p.participantId === 'buyer-1');
-            expect(buyer?.protocolRole, s.id).toBe('CLIENT');
+            const client = s.participants.find((p) => p.participantId === 'client-1');
+            expect(client?.protocolRole, s.id).toBe('CLIENT');
         }
     });
     it('sut-1 role is PER-SCENARIO: FACILITATOR in S1–S7, RESOURCE_SERVER in S8', () => {
@@ -72,12 +72,12 @@ describe('S1–S8 canonical protocolRole (Block A)', () => {
             expect(sut?.protocolRole, s.id).toBe(expected);
         }
     });
-    it('seller-1 (S1–S7) is RESOURCE_SERVER — отдаёт protected resource (delivery)', () => {
-        const withSeller = scenarios.filter((s) => s.participants.some((p) => p.participantId === 'seller-1'));
+    it('resource-server-1 (S1–S7) is RESOURCE_SERVER — отдаёт protected resource (delivery)', () => {
+        const withSeller = scenarios.filter((s) => s.participants.some((p) => p.participantId === 'resource-server-1'));
         expect(withSeller.map((s) => s.id)).toEqual(['S1', 'S2', 'S3', 'S4', 'S5', 'S6', 'S7']);
         for (const s of withSeller) {
-            const seller = s.participants.find((p) => p.participantId === 'seller-1');
-            expect(seller?.protocolRole, s.id).toBe('RESOURCE_SERVER');
+            const resourceServer = s.participants.find((p) => p.participantId === 'resource-server-1');
+            expect(resourceServer?.protocolRole, s.id).toBe('RESOURCE_SERVER');
         }
     });
 });

@@ -298,7 +298,7 @@ describe('AgentController', () => {
     // C7 — target agnostic
     describe('C7: Target-agnostic behavior', () => {
         it('should not contain scenario-specific participantIds', () => {
-            // Controller code should not reference any participantId from scenarios (e.g., 'sut-1', 'buyer-1', 'seller-1')
+            // Controller code should not reference any participantId from scenarios (e.g., 'sut-1', 'client-1', 'resource-server-1')
             // This is verified by inspection - no hardcoded participant strings in Controller
             expect(controller.getRunId()).toBe('test-run-123');
             // Controller treats all targets uniformly

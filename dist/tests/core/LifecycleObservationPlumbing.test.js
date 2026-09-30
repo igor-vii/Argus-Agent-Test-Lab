@@ -45,7 +45,7 @@ async function runEngine(scenario, lifecycleObservations, runId, opts) {
     });
     await controller.connect();
     const registry = new ExecutionRegistry();
-    registry.register(opts?.actor ?? 'buyer-1', controller);
+    registry.register(opts?.actor ?? 'client-1', controller);
     const context = {
         runId,
         scenarioId: scenario.id,
@@ -141,13 +141,13 @@ describe('R2 lifecycle observation plumbing', () => {
         // refuses to dispatch faults registered on non-action triggers.
         const injector = new FaultInjector([
             {
-                target: { kind: 'participant', participantId: 'seller-1' },
+                target: { kind: 'participant', participantId: 'resource-server-1' },
                 type: 'hang',
                 trigger: 'payment_settled',
                 config: { duration_ms: -1 },
             },
         ]);
-        expect(injector.getFaultsForEvent('payment_settled', 'seller-1')).toHaveLength(0);
+        expect(injector.getFaultsForEvent('payment_settled', 'resource-server-1')).toHaveLength(0);
         expect(injector.getRespondersForEvent('payment_settled')).toHaveLength(0);
     });
     it('S1/S5 action-fault behavior is not regressed', async () => {
@@ -224,7 +224,7 @@ describe('R2 lifecycle observation plumbing', () => {
         });
         await controller.connect(); // RunOrchestrator owns connect in production runs
         const registry = new ExecutionRegistry();
-        registry.register('buyer-1', controller);
+        registry.register('client-1', controller);
         const context = {
             runId: 'run_s8',
             scenarioId: S8_X402Payment.id,

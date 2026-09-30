@@ -3,13 +3,13 @@ export const S1_DuplicateRequest = {
     name: 'Duplicate Request',
     description: 'Проверка идемпотентности при дублировании запроса',
     participants: [
-        { participantId: 'buyer-1', protocolRole: 'CLIENT', ownership: 'ARGUS' },
+        { participantId: 'client-1', protocolRole: 'CLIENT', ownership: 'ARGUS' },
         {
-            // Block A correction (per-scenario roles): seller-1 отдаёт
+            // Block A correction (per-scenario roles): resource-server-1 отдаёт
             // protected resource (delivery_sent / delivery_completed) →
             // RESOURCE_SERVER. Отсутствие своего HTTP endpoint в текущем
             // wiring — техническое ограничение, не отсутствие роли.
-            participantId: 'seller-1',
+            participantId: 'resource-server-1',
             protocolRole: 'RESOURCE_SERVER',
             // Argus-owned: controllable seller behavior is the source of
             // fault injection, not the subject under test. If seller were
@@ -21,21 +21,21 @@ export const S1_DuplicateRequest = {
     ],
     topology: {
         edges: [
-            { from: 'buyer-1', to: 'sut-1', kind: 'request' },
-            { from: 'sut-1', to: 'seller-1', kind: 'forward' },
+            { from: 'client-1', to: 'sut-1', kind: 'request' },
+            { from: 'sut-1', to: 'resource-server-1', kind: 'forward' },
         ],
     },
     testSubject: 'sut-1',
     actions: [
         {
-            actor: 'buyer-1',
+            actor: 'client-1',
             type: 'request_payment',
             payload: { requestId: 'req-1', idempotencyKey: 'key-1', amount: 100 },
         },
     ],
     faults: [
         {
-            target: { kind: 'participant', participantId: 'buyer-1' },
+            target: { kind: 'participant', participantId: 'client-1' },
             type: 'duplicate_request',
             trigger: 'action_request_payment',
             config: { repeat_count: 2 },
@@ -54,11 +54,11 @@ export const S1_DuplicateRequest = {
             kind: 'behavioral',
             referencedSources: ['sut-1'],
             evaluate: (evidence) => {
-                // S1: buyer-1 sends request_payment twice (duplicate_request fault).
+                // S1: client-1 sends request_payment twice (duplicate_request fault).
                 // MockTargetAdapter emits:
                 //   - 1st call: payment_intent_created
                 //   - 2nd call: payment_intent_reused
-                // Observation source = testSubject (sut-1), not actor (buyer-1).
+                // Observation source = testSubject (sut-1), not actor (client-1).
                 // Assertion: exactly ONE payment_intent_created from sut-1 with idempotencyKey === 'key-1'.
                 const count = evidence.filter((e) => e.source === 'sut-1' &&
                     e.type === 'payment_intent_created' &&

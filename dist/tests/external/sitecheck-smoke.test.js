@@ -64,14 +64,14 @@ const SITECHECK_SMOKE = {
         'and must observe/classify the externally visible behavior: HTTP 402 with ' +
         'a parseable x402 v2 payment requirement.',
     participants: [
-        { participantId: 'buyer-1', protocolRole: 'CLIENT', ownership: 'ARGUS' },
+        { participantId: 'client-1', protocolRole: 'CLIENT', ownership: 'ARGUS' },
         { participantId: 'sitecheck-1', protocolRole: 'RESOURCE_SERVER', ownership: 'EXTERNAL' },
     ],
-    topology: { edges: [{ from: 'buyer-1', to: 'sitecheck-1', kind: 'request' }] },
+    topology: { edges: [{ from: 'client-1', to: 'sitecheck-1', kind: 'request' }] },
     testSubject: 'sitecheck-1',
     actions: [
         {
-            actor: 'buyer-1',
+            actor: 'client-1',
             // Same app-level action name as S8 step 1 (HTTP request to protected resource).
             type: 'request_resource',
             payload: { resourceId: 'sitecheck-audit-example-com' },
@@ -154,7 +154,7 @@ describe.skipIf(skip)('E2E Sitecheck external smoke (real public target)', () =>
                 endpoint: AUDIT_URL,
                 options: { method: 'GET' },
             },
-            runId: `run_${Date.now()}_buyer-1`,
+            runId: `run_${Date.now()}_client-1`,
             timeoutMs: 30_000,
         });
         const connectResult = await controller.connect();
@@ -168,8 +168,8 @@ describe.skipIf(skip)('E2E Sitecheck external smoke (real public target)', () =>
             status: RunStatus.CREATED,
         };
         const registry = new ExecutionRegistry();
-        controller.setParticipantId('buyer-1');
-        registry.register('buyer-1', controller);
+        controller.setParticipantId('client-1');
+        registry.register('client-1', controller);
         const collector = new EvidenceCollector();
         const engine = new ScenarioEngine(SITECHECK_SMOKE, context, registry, new FaultInjector([]), collector
         // NO paymentResolver on purpose: the smoke test does not pay.
