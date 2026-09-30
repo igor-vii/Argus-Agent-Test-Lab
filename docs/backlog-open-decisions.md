@@ -656,3 +656,45 @@ R3-D1, R3-D2 and R3-D3 are resolved in canonical `main`. L0-F2 and per-participa
 **B1.2a → B1.2b → B1.3 → B2 → B4 → B6 → B7**.
 
 This addendum is the authoritative canonical-main record for the R3 repair-track decisions and supersedes the earlier unresolved wording only for the R3 items explicitly named above; historical B0 entries remain preserved as audit history.
+
+# B1.3 — Edge / Infrastructure Fault Boundary — 2026-09-30
+
+## Status
+
+**RESOLVED — declared-only boundary; no active edge/infrastructure dispatch in the current Argus runtime.**
+
+B1.3 closes the decision recorded as B0-006 without introducing a new runtime subsystem.
+
+## Canonical decision
+
+1. L0-F2 remains the active dispatch contract:
+   - active fault dispatch is limited to `action_<type>` triggers;
+   - active fault targets are participant targets;
+   - edge and infrastructure targets are not active dispatch targets.
+2. S7 `lost_delivery` therefore remains a declared scenario condition, not an executable edge fault in the current runtime.
+3. Argus must not infer `delivery_unknown` merely from absence, timeout, or a missing response.
+4. An edge/infrastructure fault becomes executable only when Argus has an actual observable boundary on which the fault can be applied and from which the resulting evidence can be collected.
+5. No edge proxy, network interception layer, infrastructure fault engine, recursive dispatch, or new event bus is introduced by B1.3.
+
+## Verification already present in canonical main
+
+The frozen L0-F2 contract and tests explicitly cover this boundary:
+
+- active edge targets are rejected by validation;
+- active infrastructure targets are rejected by validation;
+- S7 remains valid as a declaration because its `lost_delivery` edge fault is not an active dispatch target;
+- lifecycle/event triggers remain evidence-only.
+
+This is a **capability boundary**, not a missing implementation to be filled speculatively.
+
+## Consequence for later work
+
+The first executable edge/lost-delivery proof belongs to the future external/reference-seller contour, where there is a real observable HTTP boundary.
+
+That work is intentionally deferred to the later roadmap stage where the seller scenario is designed and the scenarios are split into:
+
+- Block A — direct end-to-end;
+- Block B — intermediary/facilitator paths;
+- Block C — abnormal/problem paths such as S3/S7-style divergence.
+
+B1.3 therefore closes the decision without creating another repair stage or expanding the runtime prematurely.
