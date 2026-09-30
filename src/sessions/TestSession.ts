@@ -1,145 +1,174 @@
 /**
  * TestSession — Mode A MVP vertical slice.
  *
- * In-memory session representation for testing an external BUYER agent.
+ * In-memory session for testing an external BUYER agent.
  * Argus acts as ephemeral RESOURCE_SERVER / SELLER.
  *
- * PRINCIPLES:
- * - No database. State is in-memory only.
- * - No autonomous discovery. Role is declared by customer.
- * - Argus controls test conditions, NOT the SUT.
+ * B6 scope: create session, generate endpoint, collect evidence, produce verdict.
+ * No database. No persistence. No multi-tenant isolation.
  */
 
+import { randomUUID } from 'crypto';
+
 export type TestMode = 'BUYER' | 'SELLER';
-export type SessionStatus = 'ACTIVE' | 'COMPLETED' | 'EXPIRED' | 'FAILED';
-export type VerdictStatus = 'PASS' | 'FAIL' | 'UNKNOWN' | 'AMBIGUOUS' | 'DELIVERY_UNKNOWN';
+export type SessionStatus = 'ACTIVE' | 'COMPLETED' | 'EXPIRED';
+export type VerdictStatus = 'PASS' | 'FAIL' | 'UNKNOWN';
 
 export interface SessionEvidence {
-  /** Unique evidence ID within this session */
-  id: string;
-  /** ISO timestamp */
-  timestamp: string;
-  /** Direction relative to Argus seller */
+  session_id: string;
+  timestamp: number;
   direction: 'inbound' | 'outbound';
-  /** HTTP method */
   method: string;
-  /** Request path */
   path: string;
-  /** HTTP status code returned by Argus */
-  statusCode: number;
-  /** Whether PAYMENT-REQUIRED was emitted */
-  paymentRequiredEmitted: boolean;
-  /** Whether PAYMENT-SIGNATURE was received */
-  paymentSignatureReceived: boolean;
-  /** Whether signature validation passed */
-  paymentSignatureValid?: boolean;
-  /** Validation error if signature was invalid */
-  paymentValidationError?: string;
-  /** Raw PAYMENT-SIGNATURE header value (Base64) */
-  rawPaymentSignature?: string;
+  status_code?: number;
+  headers: Record<string, string>;
+  payment_validation_result?: 'valid' | 'invalid' | 'not_present';
+  body_summary?: string;
 }
 
 export interface SessionResult {
-  sessionId: string;
-  testMode: TestMode;
-  testProfile: string;
+  session_id: string;
+  test_mode: TestMode;
+  test_profile: string;
   verdict: VerdictStatus;
   summary: string;
   interactions: SessionEvidence[];
-  economicSummary: {
-    paymentRequiredEmitted: boolean;
-    paymentSignatureReceived: boolean;
-    paymentSignatureValid: boolean;
-    resourceDelivered: boolean;
-  };
-  startedAt: string;
-  finishedAt: string;
+  created_at: number;
+  completed_at?: number;
 }
 
-export interface TestSession {
-  sessionId: string;
-  testMode: TestMode;
-  testProfile: string;
-  status: SessionStatus;
-  sessionEndpoint: string;
-  createdAt: number;
-  expiresAt: number;
-  evidence: SessionEvidence[];
-  /** Fault profile for configurable seller behavior */
-  faultProfile: 'none' | 'timeout' | 'malformed_response' | 'delivery_loss';
-  /** Payment parameters for 402 response */
-  paymentConfig: {
-    scheme: string;
-    network: string;
-    amount: string;
-    asset: string;
-    payTo: string;
-    maxTimeoutSeconds: number;
-  };
+export interface CreateSessionRequest {
+  test_mode: TestMode;
+  test_profile: string;
+  timeout_seconds?: number;
+  max_interactions?: number;
 }
 
-let evidenceCounter = 0;
+export class TestSession {
+  readonly session_id: string;
+  readonly test_mode: TestMode;
+  readonly test_profile: string;
+  readonly created_at: number;
+  readonly expires_at: number;
+  readonly max_interactions: number;
+  private readonly timeout_seconds: number;
 
-export function createSessionEvidence(
-  direction: 'inbound' | 'outbound',
-  method: string,
-  path: string,
-  statusCode: number,
-  opts: Partial<SessionEvidence> = {}
-): SessionEvidence {
-  return {
-    id: `ev_${evidenceCounter++}`,
-    timestamp: new Date().toISOString(),
-    direction,
-    method,
-    path,
-    statusCode,
-    paymentRequiredEmitted: opts.paymentRequiredEmitted ?? false,
-    paymentSignatureReceived: opts.paymentSignatureReceived ?? false,
-    ...opts,
-  };
-}
+  private _status: SessionStatus = 'ACTIVE';
+  private _evidence: SessionEvidence[] = [];
+  private _payment_received = false;
+  private _payment_valid = false;
 
-export function evaluateSessionVerdict(session: TestSession): SessionResult {
-  const hasPaymentRequired = session.evidence.some(e => e.paymentRequiredEmitted);
-  const hasSignature = session.evidence.some(e => e.paymentSignatureReceived);
-  const hasValidSignature = session.evidence.some(e => e.paymentSignatureValid === true);
-  const hasDelivery = hasValidSignature && session.status === 'COMPLETED';
-
-  let verdict: VerdictStatus;
-  let summary: string;
-
-  if (session.evidence.length === 0) {
-    verdict = 'UNKNOWN';
-    summary = 'No interactions received before session expiry';
-  } else if (hasValidSignature && hasDelivery) {
-    verdict = 'PASS';
-    summary = 'SUT correctly requested resource, submitted valid payment, and received resource';
-  } else if (hasSignature && !hasValidSignature) {
-    verdict = 'FAIL';
-    summary = 'SUT submitted payment signature but validation failed';
-  } else if (hasPaymentRequired && !hasSignature) {
-    verdict = 'FAIL';
-    summary = 'SUT received 402 but did not submit PAYMENT-SIGNATURE';
-  } else {
-    verdict = 'UNKNOWN';
-    summary = 'Insufficient evidence to determine pass/fail';
+  constructor(req: CreateSessionRequest) {
+    this.session_id = randomUUID();
+    this.test_mode = req.test_mode;
+    this.test_profile = req.test_profile;
+    this.created_at = Date.now();
+    this.timeout_seconds = req.timeout_seconds ?? 60;
+    this.expires_at = this.created_at + this.timeout_seconds * 1000;
+    this.max_interactions = req.max_interactions ?? 10;
   }
 
-  return {
-    sessionId: session.sessionId,
-    testMode: session.testMode,
-    testProfile: session.testProfile,
-    verdict,
-    summary,
-    interactions: session.evidence,
-    economicSummary: {
-      paymentRequiredEmitted: hasPaymentRequired,
-      paymentSignatureReceived: hasSignature,
-      paymentSignatureValid: hasValidSignature,
-      resourceDelivered: hasDelivery,
-    },
-    startedAt: new Date(session.createdAt).toISOString(),
-    finishedAt: new Date().toISOString(),
-  };
+  get status(): SessionStatus {
+    return this._status;
+  }
+
+  get evidence(): ReadonlyArray<SessionEvidence> {
+    return this._evidence;
+  }
+
+  get isExpired(): boolean {
+    return Date.now() >= this.expires_at;
+  }
+
+  get isComplete(): boolean {
+    return this._status !== 'ACTIVE';
+  }
+
+  /**
+   * Record an inbound interaction from the external BUYER SUT.
+   */
+  recordInteraction(ev: Omit<SessionEvidence, 'session_id'>): void {
+    if (this._status !== 'ACTIVE') return;
+    if (this._evidence.length >= this.max_interactions) {
+      this.complete();
+      return;
+    }
+    this._evidence.push({ ...ev, session_id: this.session_id });
+  }
+
+  /**
+   * Mark that a PAYMENT-SIGNATURE was received and validated.
+   */
+  markPaymentReceived(valid: boolean): void {
+    this._payment_received = true;
+    this._payment_valid = valid;
+  }
+
+  /**
+   * Complete the session and compute verdict.
+   */
+  complete(): SessionResult {
+    if (this._status !== 'ACTIVE') {
+      return this.getResult();
+    }
+    this._status = 'COMPLETED';
+    return this.getResult();
+  }
+
+  /**
+   * Check expiry and auto-complete if expired.
+   */
+  checkExpiry(): void {
+    if (this._status === 'ACTIVE' && this.isExpired) {
+      this._status = 'EXPIRED';
+    }
+  }
+
+  /**
+   * Compute verdict from collected evidence.
+   *
+   * - Valid payment received -> PASS
+   * - Invalid payment or protocol violation -> FAIL
+   * - Insufficient evidence (timeout, no interaction) -> UNKNOWN
+   */
+  getResult(): SessionResult {
+    const hasInbound = this._evidence.some(e => e.direction === 'inbound');
+
+    let verdict: VerdictStatus;
+    let summary: string;
+
+    if (this._payment_received && this._payment_valid) {
+      verdict = 'PASS';
+      summary = 'Valid payment signature received and accepted.';
+    } else if (this._payment_received && !this._payment_valid) {
+      verdict = 'FAIL';
+      summary = 'Payment signature received but validation failed.';
+    } else if (hasInbound && !this._payment_received) {
+      verdict = 'UNKNOWN';
+      summary = 'SUT interacted but no valid payment signature received.';
+    } else {
+      verdict = 'UNKNOWN';
+      summary = this._status === 'EXPIRED'
+        ? 'Session expired without sufficient evidence.'
+        : 'No interactions recorded.';
+    }
+
+    return {
+      session_id: this.session_id,
+      test_mode: this.test_mode,
+      test_profile: this.test_profile,
+      verdict,
+      summary,
+      interactions: [...this._evidence],
+      created_at: this.created_at,
+      completed_at: Date.now(),
+    };
+  }
+
+  /**
+   * Generate the session endpoint URL path.
+   */
+  getEndpointPath(): string {
+    return `/sessions/${this.session_id}/resource`;
+  }
 }
