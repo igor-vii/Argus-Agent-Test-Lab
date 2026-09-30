@@ -24,7 +24,6 @@ export { TargetAdapterRegistry } from './cli/TargetAdapterRegistry';
 export { ScenarioRegistry } from './cli/ScenarioRegistry';
 
 // Mode A MVP vertical slice
-export { X402SellerAdapter } from './adapters/seller/X402SellerAdapter';
+export { X402SellerAdapter, DEFAULT_BASE_SEPOLIA_PAY_TO } from './adapters/seller/X402SellerAdapter';
 export { SessionManager } from './sessions/SessionManager';
 export type { TestSession, SessionResult, SessionEvidence, VerdictStatus } from './sessions/TestSession';
-export { evaluateSessionVerdict, createSessionEvidence } from './sessions/TestSession';
