@@ -4,9 +4,9 @@
 
 > **Test whether AI agents and agent-based systems behave correctly when the world goes wrong.**
 
-Argus is an external testing laboratory for AI agents and agent-based systems. It runs controlled scenarios against observable targets, captures evidence, evaluates explicit assertions, and produces evidence-backed verdicts.
+Argus is an independent black-box testing laboratory for AI agents and agent-based systems. It runs controlled scenarios against observable systems under test (SUTs), captures evidence, evaluates explicit assertions, and produces evidence-backed verdicts.
 
-**Agent → Scenario → Target → Evidence → Verdict**
+**Agent → Scenario → SUT → Evidence → Verdict**
 
 ## What Argus tests
 
@@ -25,48 +25,62 @@ The central question is:
 
 > **What happens when payment, execution, delivery, and participant observations diverge?**
 
-## Evidence boundary
+## Black-box SUT boundary
 
 Argus tests systems from the **outside**.
 
-Evidence is collected from observable target boundaries rather than undocumented internal state. A missing observation is not automatically treated as a failure.
+A SUT is not assumed to be a particular product, implementation, or internal architecture. Argus determines the applicable interaction model from observable protocol and economic behavior and then applies scenarios from the **opposite participant role**.
 
-This distinction is fundamental:
+Conceptually:
+
+```
+                 Black-box SUT
+                       │
+              observable behavior
+                       ↓
+              role / capability probe
+                  ↙           ↘
+             CLIENT       RESOURCE_SERVER
+                │               │
+       seller-side tests   buyer-side tests
+                ↘               ↙
+                  Evidence
+                     ↓
+                   Verdict
+```
+
+If the observable evidence does not establish a unique role, Argus must preserve **UNKNOWN / AMBIGUOUS** rather than guessing.
+
+This is fundamental:
 
 **UNKNOWN ≠ FAILURE**
 
 An unresolved outcome is a test result that may require reconciliation or additional evidence.
 
-## Current target: Zeus Secretariat
+## Secretariat is one SUT, not the target definition
 
-The first external target is **Zeus Secretariat**, the execution and payment-orchestration layer of the Zeus system.
+**Zeus Secretariat is one example of a SUT that Argus can test. It is not Argus's architectural target or product dependency.**
 
-Argus tests the boundary:
+Argus must be useful against unrelated external systems: agent clients, resource servers, payment services, execution systems, and other agent protocols. Historical Secretariat integration work remains useful as a concrete interoperability case study, but it must not define the product boundary.
 
-```
-Request
-  ↓
-Payment
-  ↓
-Settlement
-  ↓
-Execution
-  ↓
-Delivery
-  ↓
-Evidence
-  ↓
-Resolution
-```
+For any given SUT, Argus should be able to operate as the required counterparty:
 
-The goal is not to assume that payment proves execution or that a successful transport response proves delivery. The test system observes the available evidence and evaluates the target's declared invariants.
-
-Argus remains target-agnostic: Secretariat is the first target, not the architectural limit.
+- when the SUT is a **CLIENT / BUYER**, Argus can exercise the resource-server / seller side;
+- when the SUT is a **RESOURCE_SERVER / SELLER**, Argus can exercise the client / buyer side;
+- when the role cannot be established from observable behavior, Argus does not guess.
 
 ## MVP model
 
 ```
-Agent → Scenario → Target Adapter → Evidence → Assertions → Verdict
+SUT → Role/Capability Discovery → Scenario Selection
+                              ↓
+                    Counterparty Adapter
+                              ↓
+                         Evidence
+                              ↓
+                         Assertions
+                              ↓
+                           Verdict
 ```
 
 An Agent is a reusable participant type. Its role, behavior profile, and controlled faults are scenario parameters.
@@ -104,13 +118,13 @@ Observable evidence
 Evidence-backed report
 ```
 
-Self-service and continuous testing are longer-term possibilities. They are deliberately separated from the current minimal engineering path.
+Self-service and continuous testing are longer-term possibilities.
 
 ## Repository boundary
 
-Argus lives in a separate repository from the Zeus production system.
+Argus lives in a separate repository from the systems it tests.
 
-It interacts with targets through defined external interfaces and observable behavior rather than depending on undocumented internal implementation details.
+It interacts with SUTs through defined external interfaces and observable behavior rather than depending on undocumented internal implementation details.
 
 This makes Argus useful for testing:
 
