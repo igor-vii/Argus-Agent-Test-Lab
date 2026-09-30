@@ -1,4 +1,7 @@
-# Argus ⇄ Secretariat — финальный отчёт интеграционного прогона
+# Argus ⇄ Secretariat — final historical integration report
+
+> **Historical case study.** This report documents a specific Argus/Secretariat interoperability run. It is evidence of one SUT integration, not a statement that Secretariat is Argus's primary, default, or required SUT. Current canonical product model: Argus tests arbitrary black-box SUTs and determines the applicable counterparty scenarios from observable role/capability evidence.
+
 
 **Дата:** 2026-09-24 (последний живой прогон: 2026-09-24T05:48:24Z, чистая БД)
 **Стенд:** Argus (`/workspace`, vitest + Node) · Secretariat api-server (`/tmp/zeus`, `scripts/run-local.mjs`, `http://localhost:4021`) · PostgreSQL 15 `zeus` (миграции применены) · режим `ZEUS_SIGNER_MODE=custodial_test`
