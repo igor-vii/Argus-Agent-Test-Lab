@@ -66,12 +66,7 @@ export interface HarnessResult {
   expectedVerdict: B6BVerdictStatus;
 }
 
-export interface HarnessConfig {
-  /** Seller behavior override for specific test cases. */
-  sellerBehavior?: 'normal' | 'error_after_payment' | 'no_response_after_payment';
-  /** Custom payTo address for wrong-recipient tests. */
-  customPayTo?: string;
-}
+
 
 // ---------------------------------------------------------------------------
 // Harness implementation
@@ -79,6 +74,22 @@ export interface HarnessConfig {
 
 /**
  * Start an independent X402SellerAdapter HTTP server for B6-B acceptance testing.
+ */
+export type SellerFaultMode = 'normal' | 'error_after_payment' | 'no_response_after_payment';
+
+export interface HarnessConfig {
+  /** Seller behavior override for specific test cases. */
+  sellerBehavior?: SellerFaultMode;
+  /** Custom payTo address for wrong-recipient tests. */
+  customPayTo?: string;
+}
+
+/**
+ * Start an independent HTTP SUT for B6-B acceptance testing.
+ *
+ * When sellerBehavior is 'error_after_payment' or 'no_response_after_payment',
+ * wraps the X402SellerAdapter with a proxy that intercepts post-payment responses
+ * to simulate delivery failure scenarios. This crosses the real HTTP boundary.
  */
 export async function startB6BSut(config: HarnessConfig = {}): Promise<{
   url: string;
@@ -100,15 +111,83 @@ export async function startB6BSut(config: HarnessConfig = {}): Promise<{
     maxTimeoutSeconds: 30,
   });
 
-  const url = await adapter.start(session);
+  const baseUrl = await adapter.start(session);
+  const faultMode = config.sellerBehavior ?? 'normal';
 
-  // Wrap stop to also complete the session
-  const stop = async () => {
-    session.checkExpiry();
-    await adapter.stop();
-  };
+  let url: string;
+  let stopFn: () => Promise<void>;
 
-  return { url, session, adapter, stop };
+  if (faultMode === 'normal') {
+    url = baseUrl;
+    stopFn = async () => {
+      session.checkExpiry();
+      await adapter.stop();
+    };
+  } else {
+    // Create a proxy HTTP server that forwards to the real adapter
+    // but modifies post-payment responses to simulate fault modes
+    const adapterPort = adapter.getPort();
+    const proxyServer = http.createServer((req, res) => {
+      const options: http.RequestOptions = {
+        hostname: '127.0.0.1',
+        port: adapterPort,
+        path: req.url,
+        method: req.method,
+        headers: req.headers,
+      };
+
+      const proxyReq = http.request(options, (proxyRes) => {
+        let body = '';
+        proxyRes.on('data', (chunk: Buffer) => { body += chunk.toString(); });
+        proxyRes.on('end', () => {
+          const hasPaymentSig = req.headers['payment-signature'] != null;
+
+          if (hasPaymentSig && faultMode === 'error_after_payment') {
+            // Seller accepted payment but returns 500 internal error
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({
+              error: 'Internal server error after payment processing',
+              code: 'DELIVERY_FAILED',
+            }));
+          } else if (hasPaymentSig && faultMode === 'no_response_after_payment') {
+            // Seller accepted payment but never responds (hold connection open)
+            // Client will timeout
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            // Intentionally do NOT call res.end() — simulate hung connection
+            // The client's AbortController timeout will fire
+          } else {
+            // Forward original response unchanged (unpaid requests, etc.)
+            res.writeHead(proxyRes.statusCode ?? 500, proxyRes.headers);
+            res.end(body);
+          }
+        });
+      });
+
+      proxyReq.on('error', (err) => {
+        res.writeHead(502, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: `Proxy error: ${err.message}` }));
+      });
+
+      req.pipe(proxyReq);
+    });
+
+    await new Promise<void>((resolve) => {
+      proxyServer.listen(0, '127.0.0.1', () => {
+        const addr = proxyServer.address() as AddressInfo;
+        const endpointPath = session.getEndpointPath();
+        url = `http://127.0.0.1:${addr.port}${endpointPath}`;
+        resolve();
+      });
+    });
+
+    stopFn = async () => {
+      session.checkExpiry();
+      await new Promise<void>((resolve) => proxyServer.close(() => resolve()));
+      await adapter.stop();
+    };
+  }
+
+  return { url, session, adapter, stop: stopFn };
 }
 
 /**
