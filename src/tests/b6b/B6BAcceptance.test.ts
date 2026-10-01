@@ -30,6 +30,7 @@ import {
   buildMalformedSignature,
   runB6BTestCase,
   type HarnessResult,
+  type SellerFaultMode,
 } from './B6BAcceptanceHarness';
 import type { B6BVerdictStatus } from '../../core/B6BEvidence';
 
@@ -230,5 +231,99 @@ describe('B6-B Acceptance: Argus BUYER vs External SUT', () => {
     const altVerdict = computeB6BVerdict(withoutDelivery);
     // Without delivery evidence, should be DELIVERY_UNKNOWN, not PASS
     expect(altVerdict.status).toBe('DELIVERY_UNKNOWN');
+  });
+
+  // -----------------------------------------------------------------------
+  // R2: Authorization time window enforcement (executable)
+  // -----------------------------------------------------------------------
+
+  it('expired validBefore → FAIL (authorization expired)', async () => {
+    await setupSut();
+    const nowSec = Math.floor(Date.now() / 1000);
+    // Set validBefore to 1 hour ago — definitely expired
+    const expiredSig = await buildPaymentSignature(
+      VALID_PAYER_PK,
+      DEFAULT_PAY_TO,
+      '10000',
+      {
+        validAfter: String(nowSec - 7200),
+        validBefore: String(nowSec - 3600),
+      }
+    );
+    const result = await runB6BTestCase(sutUrl, 'expired-validBefore', expiredSig, 'FAIL');
+    
+    assertResult(result);
+    expect(result.httpStatus).toBe(402);
+    
+    const rejectionEvent = result.evidence.find(e => e.type === 'payment_rejected');
+    expect(rejectionEvent).toBeDefined();
+    const detail = (rejectionEvent?.data as { rejectionDetail?: string })?.rejectionDetail ?? '';
+    expect(detail.toLowerCase()).toContain('expired');
+  });
+
+  it('not-yet-valid validAfter → FAIL (authorization not yet valid)', async () => {
+    await setupSut();
+    const nowSec = Math.floor(Date.now() / 1000);
+    // Set validAfter to 1 hour in the future — not yet valid
+    const futureSig = await buildPaymentSignature(
+      VALID_PAYER_PK,
+      DEFAULT_PAY_TO,
+      '10000',
+      {
+        validAfter: String(nowSec + 3600),
+        validBefore: String(nowSec + 7200),
+      }
+    );
+    const result = await runB6BTestCase(sutUrl, 'not-yet-valid-validAfter', futureSig, 'FAIL');
+    
+    assertResult(result);
+    expect(result.httpStatus).toBe(402);
+    
+    const rejectionEvent = result.evidence.find(e => e.type === 'payment_rejected');
+    expect(rejectionEvent).toBeDefined();
+    const detail = (rejectionEvent?.data as { rejectionDetail?: string })?.rejectionDetail ?? '';
+    expect(detail.toLowerCase()).toContain('not yet valid');
+  });
+
+  // -----------------------------------------------------------------------
+  // R3/F2: Post-payment delivery failure scenarios (end-to-end via HTTP)
+  // -----------------------------------------------------------------------
+
+  it('F2: payment accepted + seller error → DELIVERY_UNKNOWN (not FAILURE)', async () => {
+    // Start SUT with error_after_payment fault mode
+    const sut = await startB6BSut({ sellerBehavior: 'error_after_payment' });
+    sutUrl = sut.url;
+    stopSut = sut.stop;
+    
+    const sig = await buildPaymentSignature(VALID_PAYER_PK, DEFAULT_PAY_TO);
+    const result = await runB6BTestCase(sutUrl, 'f2-error-after-payment', sig, 'DELIVERY_UNKNOWN');
+    
+    // MUST NOT be PASS (delivery was not successful)
+    expect(result.verdict).not.toBe('PASS');
+    // MUST NOT be generic FAIL (payment WAS accepted, delivery failed)
+    // DELIVERY_UNKNOWN is the correct semantic outcome
+    expect(result.verdict).toBe('DELIVERY_UNKNOWN');
+    
+    // Evidence must show payment was submitted
+    const evidenceTypes = result.evidence.map(e => e.type);
+    expect(evidenceTypes).toContain('payment_signature_submitted');
+  });
+
+  it('F2: payment accepted + no response (timeout) → DELIVERY_UNKNOWN (not FAILURE)', async () => {
+    // Start SUT with no_response_after_payment fault mode
+    const sut = await startB6BSut({ sellerBehavior: 'no_response_after_payment' });
+    sutUrl = sut.url;
+    stopSut = sut.stop;
+    
+    const sig = await buildPaymentSignature(VALID_PAYER_PK, DEFAULT_PAY_TO);
+    // Use shorter timeout for this specific test
+    const result = await runB6BTestCase(sutUrl, 'f2-no-response-timeout', sig, 'DELIVERY_UNKNOWN');
+    
+    // MUST NOT be PASS
+    expect(result.verdict).not.toBe('PASS');
+    // MUST be DELIVERY_UNKNOWN or UNKNOWN (timeout = cannot determine delivery)
+    expect(['DELIVERY_UNKNOWN', 'UNKNOWN']).toContain(result.verdict);
+    // MUST NOT be generic FAIL
+    expect(result.verdict).not.toBe('FAIL');
   });
 });
