@@ -698,3 +698,80 @@ That work is intentionally deferred to the later roadmap stage where the seller 
 - Block C — abnormal/problem paths such as S3/S7-style divergence.
 
 B1.3 therefore closes the decision without creating another repair stage or expanding the runtime prematurely.
+
+
+# B6-B CLOSURE — 2026-10-01
+
+## Status
+
+**CLOSED — all B6-B repair gates verified on canonical main.**
+
+B6-B is closed as a technical verification block. No new runtime architecture, payer/session mechanism, lifecycle dispatch, or public API is introduced by this closure.
+
+## Verified canonical state
+
+**Canonical HEAD:** `ec2eb757706501b45cc78b2ed707497837b74104`
+
+Commit:
+
+`fix(b6-b-r4): complete F2 timeout evidence with payment_accepted before timeout`
+
+## Verification gates
+
+| Gate | Result | Evidence |
+|---|---|---|
+| Typecheck | PASS | `npm run typecheck`, exit 0 |
+| Full regression | PASS | 24 test files, 237/237 tests |
+| B6-B suite | PASS | 13/13 tests |
+| F2 error-after-payment | PASS | `DELIVERY_UNKNOWN` with payment acceptance observed before seller error |
+| F2 no-response | PASS | `payment_signature_submitted → payment_accepted → timeout_no_response` |
+| F2 no-response verdict | PASS | `DELIVERY_UNKNOWN` |
+| R4 signer/from mismatch | PASS | HTTP 402 |
+| R5 wrong recipient | PASS | HTTP 402 |
+| Valid payment | PASS | HTTP 200 / delivery proven |
+| Expired authorization | PASS | HTTP 402 |
+| Not-yet-valid authorization | PASS | HTTP 402 |
+| Repository integrity | PASS | HEAD unchanged after verification; worktree clean |
+
+## F2 no-response semantic closure
+
+The timeout path now records `payment_accepted` only when the real upstream seller acceptance callback reports `true`.
+
+The independent counter-check without the callback produced:
+
+```
+payment_signature_submitted → timeout_no_response
+Verdict: UNKNOWN
+```
+
+Therefore timeout, signature presence, and the timeout flag alone do not establish payment acceptance.
+
+`computeB6BVerdict()` remains unchanged. The existing rule requiring both payment acceptance and timeout for `DELIVERY_UNKNOWN` is preserved.
+
+## Scope boundary
+
+B6-B closure does **not** authorize:
+
+- a payer/session identity subsystem;
+- expected-payer architecture;
+- lifecycle-trigger dispatch;
+- evidence-driven execution control flow;
+- timeout-based payment or delivery inference;
+- changes to L0-F2 dispatch semantics;
+- public Argus API expansion;
+- persistence, dashboard, chaos engine, or billing work;
+- a new R-series repair block.
+
+The earlier R4 identity question remains resolved by the existing cryptographic signer/from mismatch test: a signature made by signer A while declaring authorization.from = B is rejected by the real seller boundary. No hypothetical expected payer is introduced.
+
+## Process note
+
+The independent verification used a temporary forensic scratch test which was created and removed during testing. It was not committed and the final worktree was clean. This is recorded as a process note only and does not alter the technical closure result.
+
+## Closure decision
+
+B6-B repair findings are closed against the verified canonical state above.
+
+The next work item must be selected from the approved roadmap or from a newly verified finding. B6-B closure does not itself create or imply an R4 block.
+
+**B6-B: CLOSED.**
