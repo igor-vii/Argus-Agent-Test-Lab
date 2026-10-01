@@ -21,7 +21,6 @@
 
 import http from 'http';
 import type { AddressInfo } from 'net';
-import { recoverTypedDataAddress } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 import { X402SellerAdapter, DEFAULT_BASE_SEPOLIA_PAY_TO } from '../../adapters/seller/X402SellerAdapter';
 import { TestSession, type CreateSessionRequest } from '../../sessions/TestSession';
@@ -96,6 +95,7 @@ export async function startB6BSut(config: HarnessConfig = {}): Promise<{
   session: TestSession;
   adapter: X402SellerAdapter;
   stop: () => Promise<void>;
+  getPaymentAccepted: () => boolean;
 }> {
   const sessionReq: CreateSessionRequest = {
     test_mode: 'BUYER',
@@ -114,8 +114,10 @@ export async function startB6BSut(config: HarnessConfig = {}): Promise<{
   const baseUrl = await adapter.start(session);
   const faultMode = config.sellerBehavior ?? 'normal';
 
-  let url: string;
+  let url: string = '';
   let stopFn: () => Promise<void>;
+  let paymentAccepted = false;
+  const heldResponses = new Set<http.ServerResponse>();
 
   if (faultMode === 'normal') {
     url = baseUrl;
@@ -124,8 +126,7 @@ export async function startB6BSut(config: HarnessConfig = {}): Promise<{
       await adapter.stop();
     };
   } else {
-    // Create a proxy HTTP server that forwards to the real adapter
-    // but modifies post-payment responses to simulate fault modes
+    // Forward to the real seller first; inject faults only after upstream payment acceptance.
     const adapterPort = adapter.getPort();
     const proxyServer = http.createServer((req, res) => {
       const options: http.RequestOptions = {
@@ -141,22 +142,29 @@ export async function startB6BSut(config: HarnessConfig = {}): Promise<{
         proxyRes.on('data', (chunk: Buffer) => { body += chunk.toString(); });
         proxyRes.on('end', () => {
           const hasPaymentSig = req.headers['payment-signature'] != null;
+          const upstreamAccepted = hasPaymentSig
+            && (proxyRes.statusCode ?? 500) >= 200
+            && (proxyRes.statusCode ?? 500) < 300
+            && proxyRes.headers['payment-response'] != null;
 
-          if (hasPaymentSig && faultMode === 'error_after_payment') {
-            // Seller accepted payment but returns 500 internal error
-            res.writeHead(500, { 'Content-Type': 'application/json' });
+          if (upstreamAccepted) paymentAccepted = true;
+
+          if (upstreamAccepted && faultMode === 'error_after_payment') {
+            res.writeHead(500, {
+              'Content-Type': 'application/json',
+              'x-argus-upstream-payment-accepted': 'true',
+            });
             res.end(JSON.stringify({
               error: 'Internal server error after payment processing',
               code: 'DELIVERY_FAILED',
             }));
-          } else if (hasPaymentSig && faultMode === 'no_response_after_payment') {
-            // Seller accepted payment but never responds (hold connection open)
-            // Client will timeout
-            res.writeHead(200, { 'Content-Type': 'application/json' });
-            // Intentionally do NOT call res.end() — simulate hung connection
-            // The client's AbortController timeout will fire
+          } else if (upstreamAccepted && faultMode === 'no_response_after_payment') {
+            heldResponses.add(res);
+            res.writeHead(200, {
+              'Content-Type': 'application/json',
+              'x-argus-upstream-payment-accepted': 'true',
+            });
           } else {
-            // Forward original response unchanged (unpaid requests, etc.)
             res.writeHead(proxyRes.statusCode ?? 500, proxyRes.headers);
             res.end(body);
           }
@@ -182,12 +190,16 @@ export async function startB6BSut(config: HarnessConfig = {}): Promise<{
 
     stopFn = async () => {
       session.checkExpiry();
+      for (const heldResponse of heldResponses) {
+        if (!heldResponse.writableEnded) heldResponse.destroy();
+      }
+      heldResponses.clear();
       await new Promise<void>((resolve) => proxyServer.close(() => resolve()));
       await adapter.stop();
     };
   }
 
-  return { url, session, adapter, stop: stopFn };
+  return { url, session, adapter, stop: stopFn, getPaymentAccepted: () => paymentAccepted };
 }
 
 /**
@@ -201,14 +213,15 @@ export async function buildPaymentSignature(
     nonce?: string;
     validAfter?: string;
     validBefore?: string;
-    to?: string; // override recipient for wrong-recipient test
+    to?: `0x${string}`; // override recipient for wrong-recipient test
+    from?: `0x${string}`; // override declared payer for signer/from mismatch test
   }
 ): Promise<string> {
   const account = privateKeyToAccount(privateKey);
   const nowSec = Math.floor(Date.now() / 1000);
 
   const authorization = {
-    from: account.address,
+    from: overrides?.from ?? account.address,
     to: overrides?.to ?? payTo,
     value: BigInt(amount),
     validAfter: BigInt(overrides?.validAfter ?? String(nowSec)),
@@ -315,6 +328,7 @@ export async function runB6BTestCase(
   caseName: string,
   signatureBase64: string | null, // null = unpaid request
   expectedVerdict: B6BVerdictStatus,
+  getPaymentAccepted?: () => boolean,
 ): Promise<HarnessResult> {
   const evidence: Array<{ type: string; data: Record<string, unknown> }> = [];
 
@@ -327,7 +341,8 @@ export async function runB6BTestCase(
     }
 
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 10000);
+    const timeoutMs = 2000;
+    const timeout = setTimeout(() => controller.abort(), timeoutMs);
 
     let response: Response;
     try {
@@ -351,65 +366,55 @@ export async function runB6BTestCase(
         data: { httpStatus, direction: 'outbound' },
       });
     } else {
-      // Paid request
       evidence.push({
         type: 'payment_signature_submitted',
         data: { actionType: 'request_resource', httpStatus },
       });
 
-      if (httpStatus >= 200 && httpStatus < 300) {
+      const upstreamPaymentAccepted = getPaymentAccepted?.() === true
+        || response.headers.get('x-argus-upstream-payment-accepted') === 'true';
+
+      if (httpStatus >= 200 && httpStatus < 300 && !upstreamPaymentAccepted) {
         const hasBody = body.length > 0;
         const parsed = (() => { try { return JSON.parse(body); } catch { return null; } })();
         const deliveryIndicated = parsed?.ok === true || parsed?.resource != null;
-
         evidence.push({
           type: 'payment_accepted',
-          data: {
-            actionType: 'request_resource',
-            httpStatus,
-            responseBodyPresent: hasBody,
-            paymentResponsePresent: response.headers.has('payment-response'),
-          },
+          data: { actionType: 'request_resource', httpStatus, responseBodyPresent: hasBody, paymentResponsePresent: response.headers.has('payment-response') },
         });
-
         evidence.push({
           type: 'seller_response_received',
-          data: {
-            actionType: 'request_resource',
-            httpStatus,
-            deliveryIndicated,
-            bodySummary: body.substring(0, 200),
-          },
+          data: { actionType: 'request_resource', httpStatus, deliveryIndicated, bodySummary: body.substring(0, 200) },
+        });
+      } else if (upstreamPaymentAccepted && httpStatus !== 402) {
+        evidence.push({
+          type: 'payment_accepted',
+          data: { actionType: 'request_resource', httpStatus, responseBodyPresent: body.length > 0, paymentResponsePresent: false },
+        });
+        evidence.push({
+          type: 'seller_response_received',
+          data: { actionType: 'request_resource', httpStatus, deliveryIndicated: false, bodySummary: body.substring(0, 200) },
         });
       } else if (httpStatus === 402) {
         const parsed = (() => { try { return JSON.parse(body); } catch { return null; } })();
         evidence.push({
           type: 'payment_rejected',
-          data: {
-            actionType: 'request_resource',
-            httpStatus,
-            rejectionDetail: parsed?.detail ?? parsed?.error,
-          },
+          data: { actionType: 'request_resource', httpStatus, rejectionDetail: parsed?.detail ?? parsed?.error },
         });
       } else {
         evidence.push({
           type: 'payment_rejected',
-          data: {
-            actionType: 'request_resource',
-            httpStatus,
-            rejectionDetail: `Unexpected status ${httpStatus}`,
-          },
+          data: { actionType: 'request_resource', httpStatus, rejectionDetail: `Unexpected status ${httpStatus}` },
         });
       }
-    }
   } catch (err) {
     // Timeout or network error
     evidence.push({
       type: 'timeout_no_response',
       data: {
         actionType: 'request_resource',
-        timeoutMs: 10000,
-        paymentWasAccepted: false,
+        timeoutMs,
+        paymentWasAccepted: getPaymentAccepted?.() === true,
       },
     });
   }

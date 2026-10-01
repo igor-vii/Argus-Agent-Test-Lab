@@ -30,14 +30,13 @@ import {
   buildMalformedSignature,
   runB6BTestCase,
   type HarnessResult,
-  type SellerFaultMode,
 } from './B6BAcceptanceHarness';
 import type { B6BVerdictStatus } from '../../core/B6BEvidence';
 
 const VALID_PAYER_PK = '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80' as `0x${string}`;
 const OTHER_SIGNER_PK = '0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d' as `0x${string}`;
 const DEFAULT_PAY_TO = '0x70997970C51812dc3A010C7d01b50e0d17dc79C8';
-const WRONG_RECIPIENT = '0xF582396D1FC7aE0B7C2b3E4A5C6D7E8F9A0B1C2D';
+const WRONG_RECIPIENT = '0x0000000000000000000000000000000000000001';
 
 describe('B6-B Acceptance: Argus BUYER vs External SUT', () => {
   let sutUrl: string;
@@ -103,9 +102,15 @@ describe('B6-B Acceptance: Argus BUYER vs External SUT', () => {
 
   it('wrong signer → FAIL (signer mismatch)', async () => {
     await setupSut();
-    // Sign with OTHER key but claim from = VALID payer address
-    // This creates a real secp256k1 signature that doesn't match declared signer
-    const wrongSignerSig = await buildPaymentSignature(OTHER_SIGNER_PK, DEFAULT_PAY_TO);
+    // Sign with OTHER key but declare VALID payer as authorization.from.
+    // This creates a real EIP-712 signature whose recovered signer differs
+    // from the declared payer address.
+    const wrongSignerSig = await buildPaymentSignature(
+      OTHER_SIGNER_PK,
+      DEFAULT_PAY_TO,
+      '10000',
+      { from: '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266' },
+    );
     const result = await runB6BTestCase(sutUrl, 'wrong-signer', wrongSignerSig, 'FAIL');
     
     assertResult(result);
@@ -296,7 +301,7 @@ describe('B6-B Acceptance: Argus BUYER vs External SUT', () => {
     stopSut = sut.stop;
     
     const sig = await buildPaymentSignature(VALID_PAYER_PK, DEFAULT_PAY_TO);
-    const result = await runB6BTestCase(sutUrl, 'f2-error-after-payment', sig, 'DELIVERY_UNKNOWN');
+    const result = await runB6BTestCase(sutUrl, 'f2-error-after-payment', sig, 'DELIVERY_UNKNOWN', sut.getPaymentAccepted);
     
     // MUST NOT be PASS (delivery was not successful)
     expect(result.verdict).not.toBe('PASS');
@@ -304,9 +309,11 @@ describe('B6-B Acceptance: Argus BUYER vs External SUT', () => {
     // DELIVERY_UNKNOWN is the correct semantic outcome
     expect(result.verdict).toBe('DELIVERY_UNKNOWN');
     
-    // Evidence must show payment was submitted
+    // Evidence must show payment was submitted and accepted before delivery failure.
     const evidenceTypes = result.evidence.map(e => e.type);
     expect(evidenceTypes).toContain('payment_signature_submitted');
+    expect(evidenceTypes).toContain('payment_accepted');
+    expect(evidenceTypes).toContain('seller_response_received');
   });
 
   it('F2: payment accepted + no response (timeout) → DELIVERY_UNKNOWN (not FAILURE)', async () => {
@@ -317,12 +324,15 @@ describe('B6-B Acceptance: Argus BUYER vs External SUT', () => {
     
     const sig = await buildPaymentSignature(VALID_PAYER_PK, DEFAULT_PAY_TO);
     // Use shorter timeout for this specific test
-    const result = await runB6BTestCase(sutUrl, 'f2-no-response-timeout', sig, 'DELIVERY_UNKNOWN');
+    const result = await runB6BTestCase(sutUrl, 'f2-no-response-timeout', sig, 'DELIVERY_UNKNOWN', sut.getPaymentAccepted);
     
     // MUST NOT be PASS
     expect(result.verdict).not.toBe('PASS');
-    // MUST be DELIVERY_UNKNOWN or UNKNOWN (timeout = cannot determine delivery)
-    expect(['DELIVERY_UNKNOWN', 'UNKNOWN']).toContain(result.verdict);
+    // Payment acceptance was observed before the response was withheld.
+    expect(result.verdict).toBe('DELIVERY_UNKNOWN');
+    const evidenceTypes = result.evidence.map(e => e.type);
+    expect(evidenceTypes).toContain('payment_accepted');
+    expect(evidenceTypes).toContain('timeout_no_response');
     // MUST NOT be generic FAIL
     expect(result.verdict).not.toBe('FAIL');
   });
