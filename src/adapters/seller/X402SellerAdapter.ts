@@ -279,7 +279,7 @@ export class X402SellerAdapter {
       if (!authorization.from || !authorization.to || !authorization.value) {
         return { valid: false, error: 'Incomplete authorization fields' };
       }
-      if (!authorization.nonce || !authorization.validAfter || !authorization.validBefore) {
+      if (authorization.nonce === undefined || authorization.nonce === null || authorization.validAfter === undefined || authorization.validAfter === null || authorization.validBefore === undefined || authorization.validBefore === null) {
         return { valid: false, error: 'Missing nonce/validAfter/validBefore' };
       }
 
