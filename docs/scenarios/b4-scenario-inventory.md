@@ -10,16 +10,16 @@ B4.1 is reconnaissance only. No scenario behavior, verdict semantics, engine beh
 
 ## Inventory
 
-| ID | Scenario | Current executability | Current evidence / verdict | Main limitation |
-|---|---|---|---|---|
-| S1 | DuplicateRequest | EXECUTABLE | PASS; one `payment_intent_created`, reused key evidence | None identified in inventory |
-| S2 | PaymentBeforeExecution | PARTIALLY EXECUTABLE | Canonical run INCONCLUSIVE without Sut lifecycle observations; PASS path proven with configured observations | Settlement/success observation channel is harness-configured |
-| S3 | CrashAfterSettlement | NOT EXECUTABLE | Canonical run INCONCLUSIVE; no settlement, recovery, or forward evidence | Infrastructure crash target is declared-only; recovery_completed/forward_request have no emitters |
-| S4 | SellerTimeout | PARTIALLY EXECUTABLE | Canonical infinite hang is non-terminating; PASS requires explicit Sut delivery_unknown | No canonical delivery_unknown source; timeout must not imply UNKNOWN |
-| S5 | ConcurrentDuplicate | EXECUTABLE | PASS; one payment intent created and four reused; no unhandled exception | None identified in inventory |
-| S6 | PaymentRetry | PARTIALLY EXECUTABLE | INCONCLUSIVE; three explicit payment actions exist, but UNKNOWN-rejection invariant is unproven | No canonical settlement_unknown observation |
-| S7 | LostDelivery | NOT EXECUTABLE semantically | INCONCLUSIVE; no reliable lost-delivery evidence | lost_delivery is declared-only/no-op; delivery_received has no emitter |
-| S8 | X402PaymentFlow | EXECUTABLE | PASS-gated on engine evidence; covered by X402FullFlow and lifecycle observation tests | Uses engine evidence; must not be reinterpreted as payment_settled |
+| ID | Scenario | Block | Current executability | Current evidence / verdict | Main limitation |
+|---|---|---|---|---|---|
+| S1 | DuplicateRequest | B | EXECUTABLE | PASS; one `payment_intent_created`, reused key evidence | None identified in inventory |
+| S2 | PaymentBeforeExecution | B | PARTIALLY EXECUTABLE | Canonical run INCONCLUSIVE without Sut lifecycle observations; PASS path proven with configured observations | Settlement/success observation channel is harness-configured |
+| S3 | CrashAfterSettlement | C | NOT EXECUTABLE | Canonical run INCONCLUSIVE; no settlement, recovery, or forward evidence | Infrastructure crash target is declared-only; recovery_completed/forward_request have no emitters |
+| S4 | SellerTimeout | C | PARTIALLY EXECUTABLE | Canonical infinite hang is non-terminating; PASS requires explicit Sut delivery_unknown | No canonical delivery_unknown source; timeout must not imply UNKNOWN |
+| S5 | ConcurrentDuplicate | B | EXECUTABLE | PASS; one payment intent created and four reused; no unhandled exception | None identified in inventory |
+| S6 | PaymentRetry | B | PARTIALLY EXECUTABLE | INCONCLUSIVE; three explicit payment actions exist, but UNKNOWN-rejection invariant is unproven | No canonical settlement_unknown observation |
+| S7 | LostDelivery | B | NOT EXECUTABLE semantically | INCONCLUSIVE; no reliable lost-delivery evidence | lost_delivery is declared-only/no-op; delivery_received has no emitter |
+| S8 | X402PaymentFlow | A | EXECUTABLE | PASS-gated on engine evidence; covered by X402FullFlow and lifecycle observation tests | Uses engine evidence; must not be reinterpreted as payment_settled |
 
 ## Scenario Details
 
@@ -197,6 +197,20 @@ Observed scenario verdicts are PASS / FAIL / INCONCLUSIVE with fail-fast aggrega
 `RunStatus.FAILED` is distinct from an assertion verdict of FAIL.
 
 The inventory does not infer a verdict from missing evidence, timeout alone, or absence of a downstream observation.
+
+## B4.2 Classification Result
+
+The canonical three-block split is frozen for B4:
+
+- **Block A — Direct bilateral:** `CLIENT ↔ RESOURCE_SERVER`. Current scenario: **S8**.
+- **Block B — Intermediated:** `CLIENT → FACILITATOR → RESOURCE_SERVER`. Current scenarios: **S1, S2, S5, S6, S7**.
+- **Block C — Currently not executable as a meaningful scenario:** current Argus cannot produce the evidence chain required by the scenario. Current scenarios: **S3, S4**.
+
+Block C is an execution/evidence boundary classification, not a repair target.
+
+**S7 remains Block B** because its intended topology is explicitly `client-1 → sut-1 → resource-server-1 → sut-1`; its responder/emission anomaly is a candidate defect, not an architecture reclassification.
+
+**S8 remains Block A** because its topology is only `client-1 → sut-1`, with `sut-1` as RESOURCE_SERVER. Its `payment_signed_and_retried` evidence proves only the x402 sign-and-retry control flow, not settlement.
 
 ## Questions for B4.2
 
