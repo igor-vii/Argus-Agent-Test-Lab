@@ -775,3 +775,34 @@ B6-B repair findings are closed against the verified canonical state above.
 The next work item must be selected from the approved roadmap or from a newly verified finding. B6-B closure does not itself create or imply an R4 block.
 
 **B6-B: CLOSED.**
+
+
+# B4 READINESS / CLOSURE AUDIT — 2026-10-01
+
+## Status
+
+**B4 remains OPEN. B7 is gated.**
+
+Canonical main was audited after B6-B closure. The detailed audit is committed at:
+
+`docs/b4-readiness-audit-2026-10-01.md`
+
+### Remaining B4 semantic gaps
+
+- **B4-F1 / S3:** crash/recovery evidence is not executable under the current L0-F2 boundary; `recovery_completed` and post-recovery `forward_request` are absent.
+- **B4-F2 / S4:** canonical seller hang remains non-terminal; `delivery_unknown` is not supplied by the canonical Sut, and timeout/absence must not be converted into UNKNOWN.
+- **B4-F3 / S6:** explicit retry actions respect L0-F2, but the stated UNKNOWN-settlement rejection invariant is not proven because no canonical `settlement_unknown` observation drives the rejection path.
+- **B4-F4 / S7:** `lost_delivery` remains declared-only in Mock V0; there is no edge mediator establishing seller-sent versus Sut-not-received.
+
+### Resolved B4 sub-findings
+
+R3 already resolved participant identity, executable seller actions for S2/S4, S5 passive-PASS semantics, and lifecycle-triggered S6 retry dispatch.
+
+These resolutions do not close B4 as a whole.
+
+### Decision
+
+Do not define or implement B7 yet.
+
+B4 must first receive an explicit closure decision: either close each remaining item through separately authorized, evidence-backed work, or classify the item as deferred with its semantic limitation recorded. No PASS may be manufactured from missing evidence.
+
