@@ -221,12 +221,12 @@ export async function buildPaymentSignature(
   const nowSec = Math.floor(Date.now() / 1000);
 
   const authorization = {
-    from: overrides?.from ?? account.address,
-    to: overrides?.to ?? payTo,
+    from: (overrides?.from ?? account.address) as `0x${string}`,
+    to: (overrides?.to ?? payTo) as `0x${string}`,
     value: BigInt(amount),
     validAfter: BigInt(overrides?.validAfter ?? String(nowSec)),
     validBefore: BigInt(overrides?.validBefore ?? String(nowSec + 300)),
-    nonce: overrides?.nonce ?? ('0x' + 'ab'.repeat(32)),
+    nonce: (overrides?.nonce ?? ('0x' + 'ab'.repeat(32))) as `0x${string}`,
   };
 
   const signature = await account.signTypedData({
@@ -332,6 +332,8 @@ export async function runB6BTestCase(
 ): Promise<HarnessResult> {
   const evidence: Array<{ type: string; data: Record<string, unknown> }> = [];
 
+  const timeoutMs = 2000;
+
   try {
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
@@ -341,7 +343,6 @@ export async function runB6BTestCase(
     }
 
     const controller = new AbortController();
-    const timeoutMs = 2000;
     const timeout = setTimeout(() => controller.abort(), timeoutMs);
 
     let response: Response;
