@@ -407,6 +407,7 @@ export async function runB6BTestCase(
           data: { actionType: 'request_resource', httpStatus, rejectionDetail: `Unexpected status ${httpStatus}` },
         });
       }
+    }
   } catch (err) {
     // Timeout or network error
     evidence.push({
