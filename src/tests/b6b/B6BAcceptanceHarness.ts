@@ -21,7 +21,8 @@
 
 import http from 'http';
 import type { AddressInfo } from 'net';
-import { recoverTypedDataAddress, privateKeyToAccount } from 'viem';
+import { recoverTypedDataAddress } from 'viem';
+import { privateKeyToAccount } from 'viem/accounts';
 import { X402SellerAdapter, DEFAULT_BASE_SEPOLIA_PAY_TO } from '../../adapters/seller/X402SellerAdapter';
 import { TestSession, type CreateSessionRequest } from '../../sessions/TestSession';
 import { computeB6BVerdict, type B6BVerdictStatus } from '../../core/B6BEvidence';
