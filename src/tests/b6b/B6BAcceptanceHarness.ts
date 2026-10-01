@@ -411,12 +411,41 @@ export async function runB6BTestCase(
     }
   } catch (err) {
     // Timeout or network error
+    // If this was a paid request, ensure evidence captures what happened
+    // before the timeout — signature submission and possible upstream acceptance.
+    const wasAccepted = getPaymentAccepted?.() === true;
+
+    if (signatureBase64 !== null) {
+      // Record signature submission if not already recorded in try block
+      if (!evidence.some(e => e.type === 'payment_signature_submitted')) {
+        evidence.push({
+          type: 'payment_signature_submitted',
+          data: { actionType: 'request_resource' },
+        });
+      }
+
+      // Record payment acceptance if upstream seller accepted before timeout
+      // This is NOT inferred from timeout or signature presence — it requires
+      // explicit confirmation via getPaymentAccepted() callback.
+      if (wasAccepted && !evidence.some(e => e.type === 'payment_accepted')) {
+        evidence.push({
+          type: 'payment_accepted',
+          data: {
+            actionType: 'request_resource',
+            httpStatus: 200, // upstream accepted; response never reached client
+            responseBodyPresent: false,
+            paymentResponsePresent: false,
+          },
+        });
+      }
+    }
+
     evidence.push({
       type: 'timeout_no_response',
       data: {
         actionType: 'request_resource',
         timeoutMs,
-        paymentWasAccepted: getPaymentAccepted?.() === true,
+        paymentWasAccepted: wasAccepted,
       },
     });
   }
