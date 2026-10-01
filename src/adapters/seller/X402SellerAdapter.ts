@@ -340,6 +340,25 @@ export class X402SellerAdapter {
         };
       }
 
+      // Enforce authorization time window: validAfter <= now < validBefore
+      const nowSec = BigInt(Math.floor(Date.now() / 1000));
+      const validAfter = BigInt(authorization.validAfter);
+      const validBefore = BigInt(authorization.validBefore);
+
+      if (nowSec < validAfter) {
+        return {
+          valid: false,
+          error: `Authorization not yet valid: current time ${nowSec} < validAfter ${validAfter}`,
+        };
+      }
+
+      if (nowSec >= validBefore) {
+        return {
+          valid: false,
+          error: `Authorization expired: current time ${nowSec} >= validBefore ${validBefore}`,
+        };
+      }
+
       return { valid: true };
     } catch (err) {
       return { valid: false, error: `Crypto verification failed: ${(err as Error).message}` };
