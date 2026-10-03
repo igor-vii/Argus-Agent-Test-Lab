@@ -291,10 +291,25 @@ describe('Block A / S8 — Argus CLIENT → external RESOURCE_SERVER', () => {
       expect(result.verdict?.reason ?? '').toContain('payment not signed and retried');
 
       const evidence = orchestrator.getEvidence();
+
+      // A8.2 semantic contract: payment_signed_and_retried is an ACTION FACT
+      // (the signed retry really happened) and remains present even when the
+      // retry is rejected. Its presence must NOT determine the verdict; the
+      // FAIL above is derived from canonical terminal-outcome evidence below.
       const signedEvent = evidence.find(
         (e) => e.source === 'engine' && e.type === 'payment_signed_and_retried',
       );
-      expect(signedEvent).toBeUndefined();
+      expect(signedEvent).toBeDefined();
+
+      // Canonical negative interaction evidence: the second HTTP 402 after
+      // the signed retry is recorded as the terminal outcome of the retry,
+      // independently of the action fact.
+      const retryOutcome = evidence.find(
+        (e) => e.source === 'engine' && e.type === 'payment_retry_outcome',
+      );
+      expect(retryOutcome).toBeDefined();
+      expect(retryOutcome?.data.statusCode).toBe(402);
+      expect(retryOutcome?.data.httpRejected).toBe(true);
 
       // The negative run crossed the real HTTP boundary twice, and the SUT
       // really rejected the forged signature (not a mock convenience).
