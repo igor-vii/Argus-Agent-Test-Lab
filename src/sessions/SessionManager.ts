@@ -1,8 +1,12 @@
 /**
- * SessionManager — Mode A MVP vertical slice.
+ * SessionManager — Mode A MVP vertical slice (transport/session lifecycle).
  *
  * Manages ephemeral test sessions in memory.
  * No database. No persistence. Sessions expire in memory.
+ *
+ * Block A boundary: lifecycle/endpoint management only. This layer owns no
+ * evidence and computes no verdicts; semantic evaluation lives exclusively
+ * in the canonical EvidenceCollector → AssertionEngine pipeline.
  */
 
 import type { SessionStatus, TestMode } from './TestSession';
@@ -75,11 +79,6 @@ export class SessionManager {
     session.checkExpiry();
     const statusAfterExpiry: SessionStatus = session.status;
     return wasActive && statusAfterExpiry === 'EXPIRED';
-  }
-
-  getResult(sessionId: string) {
-    const session = this.sessions.get(sessionId);
-    return session?.getResult();
   }
 
   /**

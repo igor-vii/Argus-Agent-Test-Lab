@@ -11,7 +11,7 @@ import { AssertionEngine } from './AssertionEngine';
 import { Assertion } from './Assertions';
 import { RunContext, RunStatus, RunResult, generateRunId } from './RunLifecycle';
 import { PaymentAdapter } from '../adapters/payment/PaymentAdapter';
-import { PaymentResolver } from './ScenarioEngine';
+import { PaymentResolver, InboundExecutionWindow } from './ScenarioEngine';
 import { deriveSigningBinding, SigningIntentSource, defaultSigningIntentSource } from '../adapters/payment/SigningBinding';
 import { ExecutionRegistry } from './ExecutionRegistry';
 
@@ -50,6 +50,154 @@ export class RunOrchestrator {
    * Запуск полного прогона сценария.
    */
   public async run(): Promise<RunResult> {
+    return this.runInternal();
+  }
+
+  /**
+   * Block A (S9): run an INBOUND scenario through the SAME canonical
+   * execution / evidence / assertion / verdict pipeline used by outbound
+   * scenarios (run()). The only difference is the execution direction:
+   * instead of executing outbound Actions via ScenarioEngine.execute(),
+   * the orchestrator opens a ScenarioEngine.beginInboundExecution() window,
+   * hands it to the inbound transport adapter (X402SellerAdapter), waits for
+   * the SUT-driven interaction to complete (or time out), closes the window
+   * and then evaluates assertions exactly like run() does:
+   *
+   *   EvidenceCollector.getEvidenceSet(runId) → AssertionEngine.evaluate(...)
+   *
+   * No second evidence model, no second assertion engine, no second verdict.
+   */
+  public async runInbound(
+    startTransport: (window: InboundExecutionWindow, endpointPath: string) => Promise<void>,
+    stopTransport: () => Promise<void>,
+    options: { timeoutMs?: number; completionSignal?: Promise<unknown> } = {}
+  ): Promise<RunResult> {
+    const timeoutMs = options.timeoutMs ?? 30_000;
+    const runId = generateRunId();
+    const startedAt = new Date();
+
+    const context: RunContext = {
+      runId,
+      scenarioId: this.scenario.id,
+      seed: this.scenario.seed,
+      startedAt,
+      status: RunStatus.CREATED,
+    };
+
+    // Same ScenarioEngine construction as run() — same EvidenceCollector,
+    // same payment resolver wiring, same fault injector plumbing.
+    const faultInjector = new FaultInjector(this.scenario.faults);
+    const engine = new ScenarioEngine(
+      this.scenario,
+      context,
+      new ExecutionRegistry(),
+      faultInjector,
+      this.evidenceCollector,
+      undefined
+    );
+
+    let window: InboundExecutionWindow;
+    try {
+      window = engine.beginInboundExecution();
+    } catch (error) {
+      await stopTransport().catch(() => undefined);
+      return {
+        runId,
+        scenarioId: this.scenario.id,
+        status: RunStatus.FAILED,
+        startedAt,
+        finishedAt: new Date(),
+        evidenceCount: this.evidenceCollector.count(runId),
+        verdict: {
+          status: 'INCONCLUSIVE',
+          reason: `Runtime error: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        },
+      };
+    }
+
+    // Ephemeral per-run endpoint path (transport lifecycle only —
+    // mirrors the session-scoped path of the Mode A slice).
+    const endpointPath = `/sessions/${runId}/resource`;
+
+    try {
+      await startTransport(window, endpointPath);
+
+      const completion = options.completionSignal ?? Promise.resolve();
+      let timedOut = false;
+      await Promise.race([
+        completion.then(() => undefined),
+        new Promise<void>((resolve) => {
+          const timer = setTimeout(() => {
+            timedOut = true;
+            resolve();
+          }, timeoutMs);
+          // Do not keep the process alive solely for this timer.
+          if (typeof (timer as { unref?: () => void }).unref === 'function') {
+            (timer as { unref: () => void }).unref();
+          }
+        }),
+      ]);
+
+      // Timeout closes the evidence window; it is NOT automatically a FAIL.
+      // Assertions judge only what was actually observed (§7 semantics).
+      window.close();
+
+      if (timedOut) {
+        this.evidenceCollector.collect(
+          {
+            source: 'engine',
+            type: 'inbound_execution_window_timeout',
+            data: { timeoutMs } as Record<string, unknown>,
+            timestamp: Date.now(),
+          },
+          runId
+        );
+      }
+
+      await stopTransport();
+
+      const evidence = this.evidenceCollector.getEvidenceSet(runId);
+      const assertionResult = this.assertionEngine.evaluate(evidence, this.assertions);
+
+      return {
+        runId,
+        scenarioId: this.scenario.id,
+        status: context.status,
+        startedAt,
+        finishedAt: new Date(),
+        evidenceCount: evidence.length,
+        verdict: {
+          status: assertionResult.status,
+          reason: assertionResult.reasons.join('; '),
+        },
+      };
+    } catch (error) {
+      window.fail(error);
+      try {
+        await stopTransport();
+      } catch {
+        // Ignore transport teardown errors during error handling.
+      }
+
+      return {
+        runId,
+        scenarioId: this.scenario.id,
+        status: RunStatus.FAILED,
+        startedAt,
+        finishedAt: new Date(),
+        evidenceCount: this.evidenceCollector.count(runId),
+        verdict: {
+          status: 'INCONCLUSIVE',
+          reason: `Runtime error: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        },
+      };
+    }
+  }
+
+  /**
+   * Запуск полного прогона сценария (outbound direction).
+   */
+  private async runInternal(): Promise<RunResult> {
     const runId = generateRunId();
     const startedAt = new Date();
 

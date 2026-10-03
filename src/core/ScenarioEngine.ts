@@ -23,6 +23,26 @@ import { validateFaultDispatch } from './validateScenario';
 export type PaymentResolver = (paymentRequired: PaymentRequired) => Promise<string>;
 
 /**
+ * InboundExecutionWindow — the canonical execution boundary handed to an
+ * INBOUND transport adapter (Block A / S9). It exposes exactly three
+ * transport/lifecycle operations and nothing else:
+ *
+ * - record(observation): place a canonical Observation into the SAME
+ *   EvidenceCollector ScenarioEngine uses for outbound scenarios;
+ * - fail(error): mark the run technically FAILED (RunStatus, not a verdict);
+ * - close(): end the evidence window.
+ *
+ * The window computes no verdict, evaluates no assertions, schedules no
+ * actions and owns no second evidence model. Verdict semantics remain the
+ * exclusive job of RunOrchestrator → AssertionEngine.
+ */
+export interface InboundExecutionWindow {
+  record(observation: Observation): void;
+  fail(error: unknown): void;
+  close(): void;
+}
+
+/**
  * Движок исполнения сценариев.
  *
  * Собирает evidence из результатов действий.
@@ -51,6 +71,75 @@ export class ScenarioEngine {
     this.faultInjector = faultInjector;
     this.evidenceCollector = evidenceCollector;
     this.paymentResolver = paymentResolver;
+  }
+
+  /**
+   * The canonical EvidenceCollector this engine feeds observations into.
+   *
+   * Block A (S9): the inbound transport direction needs to place canonical
+   * Observations into the SAME collector instance the engine uses, so that
+   * RunOrchestrator's single assertion/verdict pass covers both directions.
+   * Exposing the already-owned collector introduces no second evidence model.
+   */
+  public getEvidenceCollector(): EvidenceCollector | undefined {
+    return this.evidenceCollector;
+  }
+
+  /**
+   * Canonical execution boundary for INBOUND transports (Block A / S9:
+   * external CLIENT → Argus RESOURCE_SERVER).
+   *
+   * When the SUT initiates the interaction there is no outbound Action for
+   * execute() to run; instead the inbound transport adapter records canonical
+   * Observations directly into the SAME EvidenceCollector this engine uses.
+   * Assertions and the verdict still come exclusively from
+   * RunOrchestrator → AssertionEngine over the collected evidence set —
+   * this method starts no scheduler, computes no verdict and owns no
+   * second evidence model. It is the smallest extension that lets the
+   * existing ScenarioEngine express the inbound direction.
+   *
+   * Lifecycle: RUNNING while the window is open; COMPLETED on close().
+   * A transport error marks the run FAILED (technical status, not a verdict).
+   */
+  public beginInboundExecution(): InboundExecutionWindow {
+    if (this.context.status !== RunStatus.CREATED) {
+      throw new Error(
+        `beginInboundExecution requires status CREATED, got ${this.context.status}`
+      );
+    }
+    if (!this.evidenceCollector) {
+      throw new Error('beginInboundExecution requires an EvidenceCollector');
+    }
+
+    const dispatchValidation = validateFaultDispatch(this.scenario);
+    if (!dispatchValidation.valid) {
+      throw new Error(
+        `Invalid L0-F2 fault dispatch contract: ${dispatchValidation.errors.map((e) => e.message).join('; ')}`
+      );
+    }
+
+    this.context.status = RunStatus.RUNNING;
+
+    const engine = this;
+    return {
+      record(observation: Observation): void {
+        // Transport/lifecycle guard only: never interpret the observation.
+        if (engine.context.status === RunStatus.RUNNING) {
+          engine.evidenceCollector!.collect(observation, engine.context.runId);
+        }
+      },
+      fail(error: unknown): void {
+        if (engine.context.status === RunStatus.RUNNING) {
+          engine.context.status = RunStatus.FAILED;
+        }
+        void error;
+      },
+      close(): void {
+        if (engine.context.status === RunStatus.RUNNING) {
+          engine.context.status = RunStatus.COMPLETED;
+        }
+      },
+    };
   }
 
   /**
@@ -171,7 +260,13 @@ export class ScenarioEngine {
           signature
         );
 
-        // Record that payment was signed and retried
+        // Record that payment was signed and retried.
+        // A8.2 semantic contract: this is an ACTION FACT — it records that
+        // the signed retry was performed. It is NOT a terminal verdict and
+        // must never be interpreted as one by assertions. The terminal
+        // outcome of the retry is recorded separately below as canonical
+        // post-retry evidence (payment_retry_outcome), derived from the
+        // awaited retry exchange using existing ExchangeStatus semantics.
         if (this.evidenceCollector) {
           this.evidenceCollector.collect(
             {
@@ -184,6 +279,52 @@ export class ScenarioEngine {
             },
             this.context.runId
           );
+
+          // Canonical terminal-outcome evidence for the signed retry.
+          // Recorded unconditionally whenever a retry exchange completes
+          // (success or failure), so the terminal result is derivable
+          // independently of the action fact above.
+          const retryStatusCode =
+            typeof outcome.exchange?.metadata?.statusCode === 'number'
+              ? outcome.exchange.metadata.statusCode
+              : undefined;
+          const isHttpInteraction =
+            outcome.status !== ExchangeStatus.FAILURE ||
+            retryStatusCode !== undefined;
+          if (!isHttpInteraction) {
+            // No HTTP response was observed at all (transport-level failure).
+            // Do not manufacture protocol semantics from transport errors.
+            this.evidenceCollector.collect(
+              {
+                source: 'engine',
+                type: 'payment_retry_transport_failure',
+                data: {
+                  actionType: action.type,
+                  error: outcome.error ?? null,
+                } as Record<string, unknown>,
+                timestamp: Date.now(),
+              },
+              this.context.runId
+            );
+          } else {
+            this.evidenceCollector.collect(
+              {
+                source: 'engine',
+                type: 'payment_retry_outcome',
+                data: {
+                  actionType: action.type,
+                  terminalStatus: outcome.status,
+                  statusCode: retryStatusCode ?? null,
+                  // Negative interaction evidence at the HTTP layer: any
+                  // second 402 after the signed retry is negative, whether
+                  // or not its body carried parsable payment requirements.
+                  httpRejected: retryStatusCode === 402,
+                } as Record<string, unknown>,
+                timestamp: Date.now(),
+              },
+              this.context.runId
+            );
+          }
         }
       } catch (error) {
         // Signing or retry failed — record as engine event

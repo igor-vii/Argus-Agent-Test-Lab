@@ -111,7 +111,7 @@ export async function startB6BSut(config: HarnessConfig = {}): Promise<{
     maxTimeoutSeconds: 30,
   });
 
-  const baseUrl = await adapter.start(session);
+  const baseUrl = await adapter.start(session.getEndpointPath());
   const faultMode = config.sellerBehavior ?? 'normal';
 
   let url: string = '';

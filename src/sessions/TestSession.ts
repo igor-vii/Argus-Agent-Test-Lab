@@ -1,41 +1,22 @@
 /**
- * TestSession — Mode A MVP vertical slice.
+ * TestSession — Mode A MVP vertical slice (transport/session LIFECYCLE only).
  *
  * In-memory session for testing an external BUYER agent.
  * Argus acts as ephemeral RESOURCE_SERVER / SELLER.
  *
- * B6 scope: create session, generate endpoint, collect evidence, produce verdict.
- * No database. No persistence. No multi-tenant isolation.
+ * Block A boundary: this class manages session ID, lifecycle, timeout/expiry
+ * and endpoint path ONLY. It deliberately owns NO evidence model and computes
+ * NO verdicts — semantic evidence/assertions/verdicts for Block A scenarios
+ * (S8/S9) converge exclusively on the canonical pipeline:
+ *   EvidenceCollector → AssertionEngine → RunResult.verdict
+ * The former SessionEvidence / SessionResult / getResult() side-channel was
+ * removed because it constituted a second evidence/verdict model.
  */
 
 import { randomUUID } from 'crypto';
 
 export type TestMode = 'BUYER' | 'SELLER';
 export type SessionStatus = 'ACTIVE' | 'COMPLETED' | 'EXPIRED';
-export type VerdictStatus = 'PASS' | 'FAIL' | 'UNKNOWN';
-
-export interface SessionEvidence {
-  session_id: string;
-  timestamp: number;
-  direction: 'inbound' | 'outbound';
-  method: string;
-  path: string;
-  status_code?: number;
-  headers: Record<string, string>;
-  payment_validation_result?: 'valid' | 'invalid' | 'not_present';
-  body_summary?: string;
-}
-
-export interface SessionResult {
-  session_id: string;
-  test_mode: TestMode;
-  test_profile: string;
-  verdict: VerdictStatus;
-  summary: string;
-  interactions: SessionEvidence[];
-  created_at: number;
-  completed_at?: number;
-}
 
 export interface CreateSessionRequest {
   test_mode: TestMode;
@@ -54,9 +35,7 @@ export class TestSession {
   private readonly timeout_seconds: number;
 
   private _status: SessionStatus = 'ACTIVE';
-  private _evidence: SessionEvidence[] = [];
-  private _payment_received = false;
-  private _payment_valid = false;
+  private _interactionCount = 0;
 
   constructor(req: CreateSessionRequest) {
     this.session_id = randomUUID();
@@ -72,8 +51,9 @@ export class TestSession {
     return this._status;
   }
 
-  get evidence(): ReadonlyArray<SessionEvidence> {
-    return this._evidence;
+  /** Lifecycle counter only — NOT an evidence store (see file header). */
+  get interactionCount(): number {
+    return this._interactionCount;
   }
 
   get isExpired(): boolean {
@@ -85,34 +65,23 @@ export class TestSession {
   }
 
   /**
-   * Record an inbound interaction from the external BUYER SUT.
+   * Count an inbound interaction from the external BUYER SUT.
+   * Transport/lifecycle bookkeeping only; stores nothing.
    */
-  recordInteraction(ev: Omit<SessionEvidence, 'session_id'>): void {
+  recordInteraction(): void {
     if (this._status !== 'ACTIVE') return;
-    if (this._evidence.length >= this.max_interactions) {
+    this._interactionCount += 1;
+    if (this._interactionCount >= this.max_interactions) {
       this.complete();
-      return;
     }
-    this._evidence.push({ ...ev, session_id: this.session_id });
   }
 
   /**
-   * Mark that a PAYMENT-SIGNATURE was received and validated.
+   * Complete the session (lifecycle transition only — no verdict computed).
    */
-  markPaymentReceived(valid: boolean): void {
-    this._payment_received = true;
-    this._payment_valid = valid;
-  }
-
-  /**
-   * Complete the session and compute verdict.
-   */
-  complete(): SessionResult {
-    if (this._status !== 'ACTIVE') {
-      return this.getResult();
-    }
+  complete(): void {
+    if (this._status !== 'ACTIVE') return;
     this._status = 'COMPLETED';
-    return this.getResult();
   }
 
   /**
@@ -122,47 +91,6 @@ export class TestSession {
     if (this._status === 'ACTIVE' && this.isExpired) {
       this._status = 'EXPIRED';
     }
-  }
-
-  /**
-   * Compute verdict from collected evidence.
-   *
-   * - Valid payment received -> PASS
-   * - Invalid payment or protocol violation -> FAIL
-   * - Insufficient evidence (timeout, no interaction) -> UNKNOWN
-   */
-  getResult(): SessionResult {
-    const hasInbound = this._evidence.some(e => e.direction === 'inbound');
-
-    let verdict: VerdictStatus;
-    let summary: string;
-
-    if (this._payment_received && this._payment_valid) {
-      verdict = 'PASS';
-      summary = 'Valid payment signature received and accepted.';
-    } else if (this._payment_received && !this._payment_valid) {
-      verdict = 'FAIL';
-      summary = 'Payment signature received but validation failed.';
-    } else if (hasInbound && !this._payment_received) {
-      verdict = 'UNKNOWN';
-      summary = 'SUT interacted but no valid payment signature received.';
-    } else {
-      verdict = 'UNKNOWN';
-      summary = this._status === 'EXPIRED'
-        ? 'Session expired without sufficient evidence.'
-        : 'No interactions recorded.';
-    }
-
-    return {
-      session_id: this.session_id,
-      test_mode: this.test_mode,
-      test_profile: this.test_profile,
-      verdict,
-      summary,
-      interactions: [...this._evidence],
-      created_at: this.created_at,
-      completed_at: Date.now(),
-    };
   }
 
   /**

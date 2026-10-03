@@ -5,8 +5,5 @@ export { TestSession } from './TestSession';
 export type {
   TestMode,
   SessionStatus,
-  VerdictStatus,
-  SessionEvidence,
-  SessionResult,
   CreateSessionRequest,
 } from './TestSession';

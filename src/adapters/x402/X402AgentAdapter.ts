@@ -39,6 +39,33 @@ function generateId(prefix: string): string {
 }
 
 /**
+ * L3 — outbound x402 observation wiring.
+ *
+ * Derive the canonical transport-level observation carrier
+ * (`exchange.metadata.observations: string[]`) from facts Argus directly
+ * observes at the HTTP boundary of a RESPONSE ACTUALLY RECEIVED from the SUT.
+ *
+ * Vocabulary reuses existing accepted observation names only:
+ * - 'http_response_received' — an HTTP response was received (mirrors the
+ *   existing MockTargetAdapter 'response_received' transport observation).
+ * - 'payment_required_received' — the response carried HTTP status 402
+ *   (the canonical inbound counterpart 'payment_required_issued' already
+ *   exists in X402SellerAdapter / S9).
+ *
+ * These records state NOTHING about payment success, settlement, delivery,
+ * or seller correctness — those are not observable from the HTTP response
+ * itself. Transport/timeout paths (no HTTP response observed) produce no
+ * observations.
+ */
+function deriveHttpObservations(response: { status: number }): string[] {
+  const observations = ['http_response_received'];
+  if (response.status === 402) {
+    observations.push('payment_required_received');
+  }
+  return observations;
+}
+
+/**
  * Parse the 'payment-required' header (Base64-encoded JSON) into PaymentRequired.
  * Falls back to parsing the response body if header is missing.
  */
@@ -195,6 +222,10 @@ export class X402AgentAdapter implements PaymentCapablePort {
 
       const response = await this.makeHttpRequest(this.baseUrl, payload);
 
+      // L3: externally observable HTTP facts become canonical transport-level
+      // observations consumed by the existing ScenarioEngine translation loop.
+      const observations = deriveHttpObservations(response);
+
       // Handle HTTP 402 Payment Required
       if (response.status === 402) {
         const paymentRequired = parsePaymentRequired(response);
@@ -205,6 +236,7 @@ export class X402AgentAdapter implements PaymentCapablePort {
         exchange.metadata = {
           statusCode: response.status,
           headers: response.headers,
+          observations,
         } as Metadata;
 
         // If we couldn't parse payment requirements, record as failure
@@ -218,6 +250,7 @@ export class X402AgentAdapter implements PaymentCapablePort {
         exchange.metadata = {
           statusCode: response.status,
           headers: response.headers,
+          observations,
         } as Metadata;
       } else {
         exchange.status = ExchangeStatus.FAILURE;
@@ -225,6 +258,7 @@ export class X402AgentAdapter implements PaymentCapablePort {
         exchange.metadata = {
           statusCode: response.status,
           headers: response.headers,
+          observations,
         } as Metadata;
       }
     } catch (error) {
@@ -276,9 +310,13 @@ export class X402AgentAdapter implements PaymentCapablePort {
 
       // Capture payment-response header if present
       const paymentResponseHeader = response.headers['payment-response'];
+      // L3: same minimal wiring for the signed-retry response — only facts
+      // directly observed at the HTTP boundary, nothing about payment
+      // success/settlement/delivery.
       const metadata: Metadata = {
         statusCode: response.status,
         headers: response.headers,
+        observations: deriveHttpObservations(response),
       };
       if (paymentResponseHeader) {
         metadata.paymentResponse = paymentResponseHeader;

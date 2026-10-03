@@ -1,28 +1,46 @@
 /**
- * X402SellerAdapter - Mode A MVP: Argus as ephemeral RESOURCE_SERVER / SELLER.
+ * X402SellerAdapter — Block A INBOUND TRANSPORT ADAPTER.
+ * Argus as ephemeral RESOURCE_SERVER (S9: external CLIENT → Argus RESOURCE_SERVER).
  *
- * Responsibilities:
+ * Responsibilities (transport + x402 protocol only):
  * - Start an ephemeral HTTP server on a unique port
  * - Emit valid x402 V2 402 Payment Required on first request
- * - Accept and validate PAYMENT-SIGNATURE header
+ * - Accept and validate PAYMENT-SIGNATURE header (existing x402 validation)
  * - Return deterministic resource response after valid payment
- * - Record all interactions as SessionEvidence
+ * - Translate every inbound HTTP interaction into CANONICAL Argus evidence
+ *   (core/Evidence Observation) delivered through the canonical execution
+ *   boundary (ScenarioEngine.beginInboundExecution() window).
+ *
+ * This adapter is NOT a semantic engine: it produces no verdicts. The verdict
+ * for S9 comes exclusively from RunOrchestrator → AssertionEngine over the
+ * canonical EvidenceCollector (see scenarios/S9_X402Seller.ts). In particular,
+ * a validated signature is recorded as validation evidence ONLY — never as
+ * on-chain settlement.
+ *
+ * Backward compatibility (B6-B, Mode A CLI): when started WITHOUT an
+ * execution window (start(endpointPath) form), the adapter behaves exactly
+ * like the legacy standalone seller HTTP server but records NO evidence at
+ * all — the old TestSession/SessionEvidence side-channel was removed because
+ * it constituted a second evidence/verdict model (Block A §6/§7). B6-B
+ * acceptance semantics are computed by its own harness from real HTTP
+ * responses and are unaffected.
  *
  * Reuses:
  * - x402 V2 envelope format from existing codebase conventions
  * - EIP-712 verification via viem (already a dependency)
- * - Evidence model from core/Evidence
+ * - Canonical evidence model from core/Evidence (Observation)
  *
  * Does NOT:
  * - Perform on-chain settlement verification
  * - Support fault injection profiles (B6 scope)
- * - Persist state beyond in-memory TestSession
+ * - Maintain a second evidence/verdict model
  */
 
 import http from 'http';
 import type { AddressInfo } from 'net';
 import { recoverTypedDataAddress } from 'viem';
-import { TestSession, type SessionEvidence } from '../../sessions/TestSession';
+import type { Observation } from '../../core/Evidence';
+import type { InboundExecutionWindow } from '../../core/ScenarioEngine';
 
 // USDC on Base Sepolia - matches existing BaseSepoliaPaymentAdapter constants
 const USDC_BASE_SEPOLIA = '0x036CbD53842c5426634e7929541eC2318f3dCF7e';
@@ -66,7 +84,33 @@ export interface X402SellerAdapterConfig {
   amount?: string;
   payTo?: string;
   maxTimeoutSeconds?: number;
+  /**
+   * Canonical observation source stamp (scenario.testSubject in S9).
+   * Defaults to 'argus-resource-server' for standalone use.
+   */
+  observationSource?: string;
 }
+
+/**
+ * Options accepted by start(). Two forms:
+ *
+ * 1. String form (legacy / B6-B / standalone): endpoint path only.
+ *    No canonical evidence is recorded — the adapter acts purely as an
+ *    independent HTTP x402 seller process boundary.
+ *
+ * 2. Window form (canonical S9 path): an InboundExecutionWindow from
+ *    ScenarioEngine.beginInboundExecution() plus the endpoint path. Every
+ *    inbound HTTP interaction is translated into a canonical Observation
+ *    and recorded through the window into the run's EvidenceCollector.
+ */
+export type SellerStartOptions =
+  | string
+  | {
+      endpointPath: string;
+      window: InboundExecutionWindow;
+      /** Resolved once a paid request has been fully answered (200 or rejection). */
+      onInteractionComplete?: () => void;
+    };
 
 export class X402SellerAdapter {
   private server: http.Server | null = null;
@@ -80,17 +124,18 @@ export class X402SellerAdapter {
       amount: config.amount ?? '10000',
       payTo: config.payTo ?? DEFAULT_BASE_SEPOLIA_PAY_TO,
       maxTimeoutSeconds: config.maxTimeoutSeconds ?? 60,
+      observationSource: config.observationSource ?? 'argus-resource-server',
     };
   }
 
-  async start(session: TestSession): Promise<string> {
-    const endpointPath = session.getEndpointPath();
+  async start(options: SellerStartOptions): Promise<string> {
+    const endpointPath = typeof options === 'string' ? options : options.endpointPath;
 
     this.server = http.createServer((req, res) => {
       let body = '';
       req.on('data', (chunk: Buffer) => { body += chunk.toString(); });
       req.on('end', () => {
-        void this.handleRequest(req, res, body, session, endpointPath);
+        void this.handleRequest(req, res, body, endpointPath, options);
       });
     });
 
@@ -124,24 +169,50 @@ export class X402SellerAdapter {
     req: http.IncomingMessage,
     res: http.ServerResponse,
     body: string,
-    session: TestSession,
     expectedPath: string,
+    startOptions: SellerStartOptions,
   ): Promise<void> {
     const method = req.method ?? 'GET';
     const url = req.url ?? '/';
     const headers = this.normalizeHeaders(req.headers);
 
-    if (url !== expectedPath) {
-      const ev: Omit<SessionEvidence, 'session_id'> = {
+    const record = (type: string, data: Record<string, unknown>): void => {
+      if (typeof startOptions === 'string') return; // legacy mode: no canonical evidence
+      const observation: Observation = {
+        source: this.config.observationSource,
+        type,
+        data: {
+          direction: 'inbound',
+          method,
+          path: url,
+          ...data,
+        },
         timestamp: Date.now(),
-        direction: 'inbound',
-        method,
-        path: url,
-        status_code: 404,
-        headers,
-        payment_validation_result: 'not_present',
       };
-      session.recordInteraction(ev);
+      startOptions.window.record(observation);
+    };
+
+    // Ordering contract (Block A repair §2): every final canonical
+    // observation is recorded via window.record() — synchronously collected
+    // into the shared EvidenceCollector — strictly BEFORE
+    // onInteractionComplete() resolves the run-completion signal. This
+    // guarantees RunOrchestrator.runInbound() never evaluates assertions
+    // before the last inbound observation has been collected.
+    //
+    // Terminal semantics: completion fires ONLY at the terminal paid
+    // interaction (validated 2xx delivery or payment rejection). The unpaid
+    // 402 Payment Required is NOT terminal — the expected signed retry must
+    // still be recordable while the inbound execution window is open.
+    let interactionCompleted = false;
+    const completeInteraction = (): void => {
+      if (typeof startOptions === 'string') return;
+      if (interactionCompleted) return; // fire exactly once
+      interactionCompleted = true;
+      startOptions.onInteractionComplete?.();
+    };
+
+    if (url !== expectedPath) {
+      record('inbound_request_unmatched', { statusCode: 404 });
       res.writeHead(404, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({ error: 'Not found' }));
       return;
@@ -150,33 +221,29 @@ export class X402SellerAdapter {
     const paymentSignatureHeader = headers['payment-signature'];
 
     if (paymentSignatureHeader) {
-      await this.handlePaidRequest(req, res, body, session, headers, paymentSignatureHeader);
+      await this.handlePaidRequest(res, body, headers, paymentSignatureHeader, record, completeInteraction);
     } else {
-      this.handleUnpaidRequest(req, res, body, session, headers);
+      // A9 terminal-completion repair: the unpaid 402 is NOT a terminal
+      // interaction — the expected signed retry must still be recorded while
+      // the inbound execution window is open. Completion happens only at the
+      // terminal paid interaction (success or rejection).
+      this.handleUnpaidRequest(res, body, record);
     }
   }
 
   private handleUnpaidRequest(
-    req: http.IncomingMessage,
     res: http.ServerResponse,
     body: string,
-    session: TestSession,
-    headers: Record<string, string>,
+    record: (type: string, data: Record<string, unknown>) => void,
   ): void {
-    const paymentRequired = this.buildPaymentRequired(session);
+    const paymentRequired = this.buildPaymentRequired();
     const headerValue = Buffer.from(JSON.stringify(paymentRequired)).toString('base64');
 
-    const ev: Omit<SessionEvidence, 'session_id'> = {
-      timestamp: Date.now(),
-      direction: 'inbound',
-      method: req.method ?? 'GET',
-      path: req.url ?? '/',
-      status_code: 402,
-      headers,
-      payment_validation_result: 'not_present',
-      body_summary: body ? body.substring(0, 200) : undefined,
-    };
-    session.recordInteraction(ev);
+    record('payment_required_issued', {
+      statusCode: 402,
+      x402Version: 2,
+      bodySummary: body ? body.substring(0, 200) : undefined,
+    });
 
     res.writeHead(402, {
       'Content-Type': 'application/json',
@@ -186,46 +253,51 @@ export class X402SellerAdapter {
   }
 
   private async handlePaidRequest(
-    req: http.IncomingMessage,
     res: http.ServerResponse,
     body: string,
-    session: TestSession,
     headers: Record<string, string>,
     paymentSignatureBase64: string,
+    record: (type: string, data: Record<string, unknown>) => void,
+    completeInteraction: () => void,
   ): Promise<void> {
+    record('payment_signature_received', {
+      bodySummary: body ? body.substring(0, 200) : undefined,
+      hasPaymentSignatureHeader: true,
+      contentType: headers['content-type'],
+    });
+
     const validationResult = await this.validatePaymentSignatureAsync(paymentSignatureBase64);
 
-    const ev: Omit<SessionEvidence, 'session_id'> = {
-      timestamp: Date.now(),
-      direction: 'inbound',
-      method: req.method ?? 'GET',
-      path: req.url ?? '/',
-      status_code: validationResult.valid ? 200 : 402,
-      headers,
-      payment_validation_result: validationResult.valid ? 'valid' : 'invalid',
-      body_summary: body ? body.substring(0, 200) : undefined,
-    };
-    session.recordInteraction(ev);
-    session.markPaymentReceived(validationResult.valid);
-
     if (validationResult.valid) {
+      // NOTE: this is an authorization-VALIDATION fact at the HTTP/x402
+      // boundary. It is deliberately NOT recorded as settlement (§5/§10).
+      record('payment_signature_validated', { statusCode: 200 });
+
       const paymentResponse = Buffer.from(JSON.stringify({
         success: true,
         network: NETWORK_BASE_SEPOLIA,
       })).toString('base64');
 
+      // Record the final canonical observation BEFORE writing the response
+      // and BEFORE the completion signal (record → collect → resolve order).
+      record('resource_response_delivered', { statusCode: 200 });
+
       res.writeHead(200, {
         'Content-Type': 'application/json',
         'payment-response': paymentResponse,
       });
-      session.complete();
       res.end(JSON.stringify({
         ok: true,
-        test_session: session.session_id,
         resource: 'argus-test-resource',
       }));
+      completeInteraction();
     } else {
-      const paymentRequired = this.buildPaymentRequired(session);
+      record('payment_signature_rejected', {
+        statusCode: 402,
+        validationError: validationResult.error ?? 'unknown',
+      });
+
+      const paymentRequired = this.buildPaymentRequired();
       const headerValue = Buffer.from(JSON.stringify(paymentRequired)).toString('base64');
 
       res.writeHead(402, {
@@ -236,6 +308,7 @@ export class X402SellerAdapter {
         error: 'Invalid payment signature',
         detail: validationResult.error,
       }));
+      completeInteraction();
     }
   }
 
@@ -243,10 +316,10 @@ export class X402SellerAdapter {
   // x402 helpers
   // -----------------------------------------------------------------------
 
-  private buildPaymentRequired(session: TestSession): PaymentRequiredBody {
+  private buildPaymentRequired(): PaymentRequiredBody {
     return {
       x402Version: 2,
-      resource: { url: `http://127.0.0.1:${this.port}${session.getEndpointPath()}` },
+      resource: { url: `http://127.0.0.1:${this.port}/resource` },
       accepts: [{
         scheme: 'exact',
         network: NETWORK_BASE_SEPOLIA,
@@ -375,3 +448,7 @@ export class X402SellerAdapter {
     return result;
   }
 }
+
+// ============================================================
+// КОНЕЦ ФАЙЛА
+// ============================================================

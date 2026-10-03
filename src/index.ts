@@ -23,7 +23,9 @@ export type { SigningBinding } from './adapters/payment/SigningBinding';
 export { TargetAdapterRegistry } from './cli/TargetAdapterRegistry';
 export { ScenarioRegistry } from './cli/ScenarioRegistry';
 
-// Mode A MVP vertical slice
+// Mode A MVP vertical slice (transport/session lifecycle only —
+// Block A: no evidence/verdict semantics live in the session layer;
+// canonical evaluation is EvidenceCollector → AssertionEngine)
 export { X402SellerAdapter, DEFAULT_BASE_SEPOLIA_PAY_TO } from './adapters/seller/X402SellerAdapter';
 export { SessionManager } from './sessions/SessionManager';
-export type { TestSession, SessionResult, SessionEvidence, VerdictStatus } from './sessions/TestSession';
+export type { TestSession, CreateSessionRequest, TestMode, SessionStatus } from './sessions/TestSession';
