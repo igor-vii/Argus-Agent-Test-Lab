@@ -14,7 +14,8 @@ describe('Argus CLI', () => {
     expect(ids).toContain('S6');
     expect(ids).toContain('S7');
     expect(ids).toContain('S8');
-    expect(ids.length).toBe(8);
+    expect(ids).toContain('S9');
+    expect(ids.length).toBe(9);
   });
 
   it('should throw on unknown scenario', async () => {
