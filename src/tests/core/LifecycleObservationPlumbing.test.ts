@@ -408,6 +408,125 @@ describe('R2 lifecycle observation plumbing', () => {
     // ...and NOT reinterpreted/derived as a settlement fact (§9).
     expect(collector.getByType('run_s8', 'payment_settled')).toHaveLength(0);
   });
+
+  it('L3: outbound x402 metadata.observations become canonical testSubject-sourced Observations', async () => {
+    // Same harness as the S8 boundary test above, but the port now populates
+    // the EXISTING carrier (exchange.metadata.observations) exactly like the
+    // L3-wired X402AgentAdapter does on real HTTP responses. The existing
+    // ScenarioEngine translation loop must normalize them into canonical
+    // Observations with source === scenario.testSubject ('sut-1').
+    const pay402: PaymentRequired = {
+      raw: 'cGF5bWVudC1yZXF1aXJlZA==',
+      parsed: {
+        x402Version: 2,
+        resource: { url: 'http://mock/res-1' },
+        accepts: [
+          {
+            scheme: 'exact',
+            network: 'eip155:84532',
+            amount: '100',
+            asset: '0xasset',
+            payTo: '0xpayto',
+            maxTimeoutSeconds: 60,
+          },
+        ],
+      },
+      scheme: 'exact',
+      network: 'eip155:84532',
+      amount: '100',
+      asset: '0xasset',
+      payTo: '0xpayto',
+      maxTimeoutSeconds: 60,
+    };
+    const port = {
+      getId: () => 'port-l3',
+      getTargetType: () => 'mock-x402',
+      connect: async (_config?: unknown) => ({ success: true, connectionId: 'c1' }),
+      isConnected: () => true,
+      send: async (_runId: string, type: string, payload?: unknown) => ({
+        id: 'exch-l3-1',
+        runId: _runId,
+        direction: 'outbound' as never,
+        type,
+        timestamp: Date.now(),
+        payload: payload ?? {},
+        status: ExchangeStatus.PAYMENT_REQUIRED,
+        paymentRequired: pay402,
+        // What X402AgentAdapter.send() now produces for an observed HTTP 402.
+        metadata: {
+          statusCode: 402,
+          observations: ['http_response_received', 'payment_required_received'],
+        },
+      }),
+      sendWithSignature: async (_runId: string, type: string, payload?: unknown) => ({
+        id: 'exch-l3-2',
+        runId: _runId,
+        direction: 'outbound' as never,
+        type,
+        timestamp: Date.now(),
+        payload: payload ?? {},
+        status: ExchangeStatus.SUCCESS,
+        // What X402AgentAdapter.sendWithSignature() now produces for an
+        // observed HTTP 200 retry response.
+        metadata: {
+          statusCode: 200,
+          observations: ['http_response_received'],
+        },
+      }),
+      receive: async () => {
+        throw new Error('unused');
+      },
+      captureEvidence: async () => {
+        throw new Error('unused');
+      },
+      disconnect: async () => {},
+    };
+
+    const controller = new AgentController(port as never, {
+      connectionConfig: { transportType: 'mock' },
+      runId: 'run_l3',
+    });
+    await controller.connect();
+    const registry = new ExecutionRegistry();
+    registry.register('client-1', controller);
+    const context: RunContext = {
+      runId: 'run_l3',
+      scenarioId: S8_X402Payment.id,
+      seed: S8_X402Payment.seed,
+      startedAt: new Date(),
+      status: RunStatus.CREATED,
+    };
+    const collector = new EvidenceCollector();
+    const engine = new ScenarioEngine(
+      S8_X402Payment,
+      context,
+      registry,
+      new FaultInjector([]),
+      collector,
+      async () => 'sig',
+    );
+    await engine.execute();
+
+    // Canonical testSubject-sourced observations reached the collector.
+    const sutRecords = collector.getAllRecords().filter((r) => r.source === 'sut-1');
+    expect(sutRecords.length).toBeGreaterThan(0);
+    const types = sutRecords.map((r) => r.type);
+    expect(types).toContain('http_response_received');
+    expect(types).toContain('payment_required_received');
+    // They are canonical Observation records, not engine events.
+    expect(sutRecords.every((r) => r.actorId === undefined)).toBe(true);
+
+    // A8.2 semantics unchanged: action fact + terminal evidence still engine.
+    const signed = collector.getByType('run_l3', 'payment_signed_and_retried');
+    expect(signed).toHaveLength(1);
+    expect(signed[0].source).toBe('engine');
+    const outcome = collector.getByType('run_l3', 'payment_retry_outcome');
+    expect(outcome).toHaveLength(1);
+    expect(outcome[0].source).toBe('engine');
+    expect(outcome[0].data.terminalStatus).toBe(ExchangeStatus.SUCCESS);
+    // No observation is allowed to claim settlement/delivery/success-of-payment.
+    expect(types.some((t) => /settle|deliver/i.test(t))).toBe(false);
+  });
 });
 
 /**

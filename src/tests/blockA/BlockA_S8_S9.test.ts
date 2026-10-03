@@ -209,6 +209,17 @@ describe('Block A / S8 — Argus CLIENT → external RESOURCE_SERVER', () => {
       // Semantic boundary: control-flow evidence only, never a settlement claim.
       expect(evidence.some((e) => /settle/i.test(e.type))).toBe(false);
 
+      // L3: outbound x402 HTTP-boundary responses now reach the canonical
+      // testSubject observation channel (source === scenario.testSubject).
+      const sutObservations = evidence.filter((e) => e.source === 'sut-1');
+      expect(sutObservations.length).toBeGreaterThan(0);
+      expect(sutObservations.map((e) => e.type)).toContain('http_response_received');
+      expect(sutObservations.map((e) => e.type)).toContain('payment_required_received');
+      // Observation presence did NOT change the verdict path: PASS is still
+      // produced by the unchanged engine-behavior assertion over engine
+      // evidence above.
+      expect(result.verdict?.status).toBe('PASS');
+
       await adapter.disconnect();
     } finally {
       await server.stop();
@@ -316,6 +327,17 @@ describe('Block A / S8 — Argus CLIENT → external RESOURCE_SERVER', () => {
       expect(requestsSeen.length).toBe(2);
       expect(requestsSeen[1]['payment-signature']).toBeDefined();
       expect(evidence.some((e) => /settle/i.test(e.type))).toBe(false);
+
+      // L3 wiring present in the negative path too: both observed HTTP 402s
+      // become testSubject-sourced observations...
+      const sutObservations = evidence.filter((e) => e.source === 'sut-1');
+      expect(sutObservations.length).toBeGreaterThan(0);
+      expect(sutObservations.map((e) => e.type)).toContain('http_response_received');
+      expect(sutObservations.map((e) => e.type)).toContain('payment_required_received');
+      // ...but they do NOT determine the verdict: FAIL above is still derived
+      // solely from payment_retry_outcome (terminal evidence), and observation
+      // presence does not turn the rejected run into PASS.
+      expect(result.verdict?.status).toBe('FAIL');
 
       await adapter.disconnect();
     } finally {

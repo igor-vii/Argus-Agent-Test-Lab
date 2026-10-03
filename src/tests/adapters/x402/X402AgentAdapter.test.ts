@@ -155,6 +155,36 @@ describe('X402AgentAdapter', () => {
       expect(exchange.status).toBe(ExchangeStatus.FAILURE);
       expect(exchange.error).toContain('could not parse');
     });
+
+    // L3 — outbound x402 observation wiring: HTTP-boundary facts received
+    // from the SUT populate the existing metadata.observations carrier.
+    it('should record http_response_received + payment_required_received observations on 402', async () => {
+      const { url } = await server.start();
+      await adapter.connect({ transportType: 'x402', endpoint: url });
+
+      const paymentRequiredBody = {
+        x402Version: 2,
+        resource: { url: 'http://localhost/resource' },
+        accepts: [{
+          scheme: 'exact',
+          network: 'eip155:84532',
+          amount: '10000',
+          payTo: '0x70997970C51812dc3A010C7d01b50e0d17dc79C8',
+          maxTimeoutSeconds: 60,
+          asset: '0x036CbD53842c5426634e7929541eC2318f3dCF7e',
+        }],
+      };
+      server.setBehavior({ type: '402_with_header', paymentRequired: paymentRequiredBody });
+
+      const exchange = await adapter.send('run-1', 'request_resource', { resourceId: 'res-1' });
+
+      const observations = exchange.metadata?.observations as string[];
+      expect(Array.isArray(observations)).toBe(true);
+      expect(observations).toContain('http_response_received');
+      expect(observations).toContain('payment_required_received');
+      // No delivery/settlement/success claims may be manufactured here.
+      expect(observations.some((o) => /settle|deliver|success/i.test(o))).toBe(false);
+    });
   });
 
   describe('send() with other statuses', () => {
@@ -168,6 +198,11 @@ describe('X402AgentAdapter', () => {
 
       expect(exchange.status).toBe(ExchangeStatus.SUCCESS);
       expect(exchange.payload).toEqual({ data: 'success' });
+
+      // L3: a plain HTTP response is still an externally observable fact.
+      const observations = exchange.metadata?.observations as string[];
+      expect(observations).toContain('http_response_received');
+      expect(observations).not.toContain('payment_required_received');
     });
 
     it('should fail with 500 response', async () => {
@@ -180,6 +215,11 @@ describe('X402AgentAdapter', () => {
 
       expect(exchange.status).toBe(ExchangeStatus.FAILURE);
       expect(exchange.error).toContain('HTTP 500');
+
+      // L3: even a failed status was received at the HTTP boundary — but no
+      // delivery/settlement claim is manufactured from it.
+      const observations = exchange.metadata?.observations as string[];
+      expect(observations).toContain('http_response_received');
     });
 
     it('should timeout if response is delayed', async () => {
@@ -192,6 +232,9 @@ describe('X402AgentAdapter', () => {
 
       expect(exchange.status).toBe(ExchangeStatus.TIMEOUT);
       expect(exchange.error).toContain('timeout');
+
+      // L3 negative guard: NO HTTP response was observed → no observation.
+      expect(exchange.metadata?.observations).toBeUndefined();
     });
   });
 
@@ -210,6 +253,11 @@ describe('X402AgentAdapter', () => {
       const requests = server.getRequests();
       expect(requests.length).toBe(1);
       expect(requests[0].headers['payment-signature']).toBe(signature);
+
+      // L3: the signed retry response is also an externally observable fact.
+      const observations = exchange.metadata?.observations as string[];
+      expect(observations).toContain('http_response_received');
+      expect(observations).not.toContain('payment_required_received');
     });
 
     it('should handle 402 if signature is rejected', async () => {
@@ -234,6 +282,11 @@ describe('X402AgentAdapter', () => {
       const exchange = await adapter.sendWithSignature('run-1', 'request_resource', { resourceId: 'res-1' }, signature);
 
       expect(exchange.status).toBe(ExchangeStatus.PAYMENT_REQUIRED);
+
+      // L3: a second observed 402 on the retry is recorded as an observation.
+      const observations = exchange.metadata?.observations as string[];
+      expect(observations).toContain('http_response_received');
+      expect(observations).toContain('payment_required_received');
     });
 
     it('should capture payment-response header in metadata', async () => {

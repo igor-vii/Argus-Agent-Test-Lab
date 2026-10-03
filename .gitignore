@@ -1,2 +1,2 @@
-# Git bundles
-*.bundle
+# Dependencies
+node_modules/
