@@ -45,11 +45,59 @@ export const S8_X402Payment: ScenarioDefinition = {
       kind: 'engine-behavior',
       referencedSources: ['engine'],
       evaluate: (evidence: Evidence[]) => {
+        // A8.2 semantic contract: payment_signed_and_retried is an ACTION
+        // FACT — it records that the signed retry was performed. Its mere
+        // presence is NOT a terminal verdict and must not determine PASS.
         const signed = evidence.find(
           (e) => e.source === 'engine' && e.type === 'payment_signed_and_retried'
         );
-        if (signed) return { status: 'PASS' as const };
-        return { status: 'FAIL' as const, reason: 'payment not signed and retried' };
+        if (!signed) {
+          return { status: 'FAIL' as const, reason: 'payment not signed and retried' };
+        }
+
+        // Terminal outcome is derived independently from canonical
+        // post-retry evidence produced by the retry interaction itself.
+        const outcome = evidence.find(
+          (e) => e.source === 'engine' && e.type === 'payment_retry_outcome'
+        );
+        if (outcome) {
+          const terminalStatus = outcome.data?.terminalStatus;
+          const statusCode = outcome.data?.statusCode;
+          // Any second HTTP 402 after the signed retry is negative
+          // interaction evidence at the HTTP layer, regardless of whether
+          // its body carried parsable payment requirements (AC4/AC5).
+          if (statusCode === 402) {
+            return {
+              status: 'FAIL' as const,
+              reason: 'payment not signed and retried: signed retry rejected with HTTP 402',
+            };
+          }
+          if (terminalStatus !== 'success') {
+            return {
+              status: 'FAIL' as const,
+              reason: `payment not signed and retried: signed retry terminal status '${String(terminalStatus)}'`,
+            };
+          }
+          return { status: 'PASS' as const };
+        }
+
+        // No canonical retry-outcome evidence: either a transport-level
+        // failure occurred (no HTTP response observed at all), or the
+        // terminal result cannot be established. Absence of evidence is
+        // never treated as success.
+        const transportFailure = evidence.find(
+          (e) => e.source === 'engine' && e.type === 'payment_retry_transport_failure'
+        );
+        if (transportFailure) {
+          return {
+            status: 'FAIL' as const,
+            reason: 'payment not signed and retried: transport failure on signed retry',
+          };
+        }
+        return {
+          status: 'FAIL' as const,
+          reason: 'payment not signed and retried: no terminal outcome evidence for signed retry',
+        };
       },
     },
   ],

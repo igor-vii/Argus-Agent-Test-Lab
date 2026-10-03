@@ -260,7 +260,13 @@ export class ScenarioEngine {
           signature
         );
 
-        // Record that payment was signed and retried
+        // Record that payment was signed and retried.
+        // A8.2 semantic contract: this is an ACTION FACT — it records that
+        // the signed retry was performed. It is NOT a terminal verdict and
+        // must never be interpreted as one by assertions. The terminal
+        // outcome of the retry is recorded separately below as canonical
+        // post-retry evidence (payment_retry_outcome), derived from the
+        // awaited retry exchange using existing ExchangeStatus semantics.
         if (this.evidenceCollector) {
           this.evidenceCollector.collect(
             {
@@ -273,6 +279,52 @@ export class ScenarioEngine {
             },
             this.context.runId
           );
+
+          // Canonical terminal-outcome evidence for the signed retry.
+          // Recorded unconditionally whenever a retry exchange completes
+          // (success or failure), so the terminal result is derivable
+          // independently of the action fact above.
+          const retryStatusCode =
+            typeof outcome.exchange?.metadata?.statusCode === 'number'
+              ? outcome.exchange.metadata.statusCode
+              : undefined;
+          const isHttpInteraction =
+            outcome.status !== ExchangeStatus.FAILURE ||
+            retryStatusCode !== undefined;
+          if (!isHttpInteraction) {
+            // No HTTP response was observed at all (transport-level failure).
+            // Do not manufacture protocol semantics from transport errors.
+            this.evidenceCollector.collect(
+              {
+                source: 'engine',
+                type: 'payment_retry_transport_failure',
+                data: {
+                  actionType: action.type,
+                  error: outcome.error ?? null,
+                } as Record<string, unknown>,
+                timestamp: Date.now(),
+              },
+              this.context.runId
+            );
+          } else {
+            this.evidenceCollector.collect(
+              {
+                source: 'engine',
+                type: 'payment_retry_outcome',
+                data: {
+                  actionType: action.type,
+                  terminalStatus: outcome.status,
+                  statusCode: retryStatusCode ?? null,
+                  // Negative interaction evidence at the HTTP layer: any
+                  // second 402 after the signed retry is negative, whether
+                  // or not its body carried parsable payment requirements.
+                  httpRejected: retryStatusCode === 402,
+                } as Record<string, unknown>,
+                timestamp: Date.now(),
+              },
+              this.context.runId
+            );
+          }
         }
       } catch (error) {
         // Signing or retry failed — record as engine event
