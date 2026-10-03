@@ -89,7 +89,7 @@ async function main(): Promise<void> {
         console.log(JSON.stringify({
           session_id: session.session_id,
           status: session.status,
-          evidence_count: session.evidence.length,
+          interaction_count: session.interactionCount,
           created_at: new Date(session.created_at).toISOString(),
           expires_at: new Date(session.expires_at).toISOString(),
         }, null, 2));
@@ -97,6 +97,11 @@ async function main(): Promise<void> {
       }
 
       case 'result': {
+        // Block A boundary: the session layer owns NO verdict. Semantic
+        // evaluation for inbound scenarios lives exclusively in the
+        // canonical pipeline (argus run S9 → EvidenceCollector →
+        // AssertionEngine → RunResult.verdict). This command reports
+        // transport/lifecycle state only.
         const sessionId = args[1];
         if (!sessionId) {
           console.error('Error: Session ID required');
@@ -110,7 +115,12 @@ async function main(): Promise<void> {
         }
 
         manager.checkExpiry(sessionId);
-        console.log(JSON.stringify(session.getResult(), null, 2));
+        console.log(JSON.stringify({
+          session_id: session.session_id,
+          status: session.status,
+          interaction_count: session.interactionCount,
+          note: 'verdicts are produced by `argus run S9` (canonical EvidenceCollector → AssertionEngine pipeline)',
+        }, null, 2));
         break;
       }
 

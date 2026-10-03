@@ -192,10 +192,23 @@ export class X402SellerAdapter {
       startOptions.window.record(observation);
     };
 
+    // Ordering contract (Block A repair §2): every final canonical
+    // observation is recorded via window.record() — synchronously collected
+    // into the shared EvidenceCollector — strictly BEFORE
+    // onInteractionComplete() resolves the run-completion signal. This
+    // guarantees RunOrchestrator.runInbound() never evaluates assertions
+    // before the last inbound observation has been collected.
+    //
+    // Terminal semantics: completion fires ONLY at the terminal paid
+    // interaction (validated 2xx delivery or payment rejection). The unpaid
+    // 402 Payment Required is NOT terminal — the expected signed retry must
+    // still be recordable while the inbound execution window is open.
+    let interactionCompleted = false;
     const completeInteraction = (): void => {
-      if (typeof startOptions !== 'string') {
-        startOptions.onInteractionComplete?.();
-      }
+      if (typeof startOptions === 'string') return;
+      if (interactionCompleted) return; // fire exactly once
+      interactionCompleted = true;
+      startOptions.onInteractionComplete?.();
     };
 
     if (url !== expectedPath) {
@@ -210,7 +223,11 @@ export class X402SellerAdapter {
     if (paymentSignatureHeader) {
       await this.handlePaidRequest(res, body, headers, paymentSignatureHeader, record, completeInteraction);
     } else {
-      this.handleUnpaidRequest(res, body, record, completeInteraction);
+      // A9 terminal-completion repair: the unpaid 402 is NOT a terminal
+      // interaction — the expected signed retry must still be recorded while
+      // the inbound execution window is open. Completion happens only at the
+      // terminal paid interaction (success or rejection).
+      this.handleUnpaidRequest(res, body, record);
     }
   }
 
@@ -218,7 +235,6 @@ export class X402SellerAdapter {
     res: http.ServerResponse,
     body: string,
     record: (type: string, data: Record<string, unknown>) => void,
-    completeInteraction: () => void,
   ): void {
     const paymentRequired = this.buildPaymentRequired();
     const headerValue = Buffer.from(JSON.stringify(paymentRequired)).toString('base64');
@@ -234,7 +250,6 @@ export class X402SellerAdapter {
       'payment-required': headerValue,
     });
     res.end(JSON.stringify({ error: 'Payment Required' }));
-    completeInteraction();
   }
 
   private async handlePaidRequest(
@@ -263,6 +278,10 @@ export class X402SellerAdapter {
         network: NETWORK_BASE_SEPOLIA,
       })).toString('base64');
 
+      // Record the final canonical observation BEFORE writing the response
+      // and BEFORE the completion signal (record → collect → resolve order).
+      record('resource_response_delivered', { statusCode: 200 });
+
       res.writeHead(200, {
         'Content-Type': 'application/json',
         'payment-response': paymentResponse,
@@ -271,7 +290,6 @@ export class X402SellerAdapter {
         ok: true,
         resource: 'argus-test-resource',
       }));
-      record('resource_response_delivered', { statusCode: 200 });
       completeInteraction();
     } else {
       record('payment_signature_rejected', {
