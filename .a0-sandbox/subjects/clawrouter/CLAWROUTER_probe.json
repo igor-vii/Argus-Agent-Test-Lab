@@ -1,0 +1,189 @@
+{
+  "CR1_startup": {
+    "ok": true,
+    "port": 18402,
+    "authMode": "api-key",
+    "walletAddress": "",
+    "startupLog": [
+      "[ClawRouter] Auth: BlockRun API key brk_SANDBOX_FA…ONLY (http://127.0.0.1:8766)",
+      "[ClawRouter] Billing: account credit — top up at https://user.blockrun.ai/dashboard/credits"
+    ],
+    "health": {
+      "status": "ok",
+      "authMode": "api-key",
+      "apiKey": "brk_SANDBOX_FA…ONLY",
+      "gateway": "http://127.0.0.1:8766"
+    }
+  },
+  "CR2_apikey_routing": {
+    "elapsedMs": 64,
+    "clientStatus": 402,
+    "clientBody": "{\"x402Version\":2,\"error\":\"X-PAYMENT header is required\"}",
+    "mockLedger": {
+      "mode": "A",
+      "payments": [],
+      "executions": []
+    },
+    "note": "api-key rail attaches Authorization bearer; no 402 dance occurs here — do NOT infer x402 behavior from this path"
+  },
+  "CR3_wallet_x402": {
+    "clientStatus": 200,
+    "clientBody": "{\"object\":\"chat.completion\",\"model\":\"test-model\",\"choices\":[{\"message\":{\"role\":\"assistant\",\"content\":\"mock-completion\"}}],\"artifact\":\"first-execution-data\",\"executionId\":\"exec_1\",\"paymentId\":\"pay_1\",\"requestId\":\"req_2_1791370942641\",\"idempotencyKey\":null}",
+    "clawrouterLogs": [
+      "[ClawRouter] Payment signed on Base (EVM) (eip155:84532) — $0.010000"
+    ],
+    "mockLedger": {
+      "mode": "A",
+      "payments": [
+        {
+          "paymentId": "pay_1",
+          "requestId": "req_2_1791370942641",
+          "idempotencyKey": null,
+          "timestamp": 1791370942641,
+          "payer": null,
+          "amount": null,
+          "network": null,
+          "scheme": null
+        }
+      ],
+      "executions": [
+        {
+          "executionId": "exec_1",
+          "paymentId": "pay_1",
+          "idempotencyKey": null,
+          "status": "completed",
+          "startedAt": 1791370942641,
+          "completedAt": 1791370942641
+        }
+      ]
+    },
+    "walletAddress": "0x3E802b2593A904Dbb09358a3e2A807660150C9Cf"
+  },
+  "CR4_timeout_after_payment": {
+    "elapsedMs": 300340,
+    "clientView": {
+      "status": null,
+      "fetchError": "TypeError: fetch failed"
+    },
+    "clawrouterLogs": [
+      "[ClawRouter] Payment signed on Base (EVM) (eip155:84532) — $0.010000"
+    ],
+    "mockLedger": {
+      "mode": "B",
+      "payments": [
+        {
+          "paymentId": "pay_1",
+          "requestId": "req_2_1791370942666",
+          "idempotencyKey": null,
+          "timestamp": 1791370942666,
+          "payer": null,
+          "amount": null,
+          "network": null,
+          "scheme": null
+        }
+      ],
+      "executions": [
+        {
+          "executionId": "exec_1",
+          "paymentId": "pay_1",
+          "idempotencyKey": null,
+          "status": "started",
+          "startedAt": 1791370942666,
+          "completedAt": null
+        }
+      ]
+    },
+    "groundTruth": "mock: payment ACCEPTED, execution STARTED, response never sent"
+  },
+  "CR5_500_after_payment": {
+    "clientView": {
+      "status": 500,
+      "body": "{\"error\":{\"message\":\"upstream execution failed (mock)\",\"type\":\"server_error\"},\"executionId\":\"exec_1\",\"paymentId\":\"pay_1\"}"
+    },
+    "clawrouterLogs": [
+      "[ClawRouter] Payment signed on Base (EVM) (eip155:84532) — $0.010000"
+    ],
+    "mockLedger": {
+      "mode": "D",
+      "payments": [
+        {
+          "paymentId": "pay_1",
+          "requestId": "req_2_1791371243019",
+          "idempotencyKey": null,
+          "timestamp": 1791371243020,
+          "payer": null,
+          "amount": null,
+          "network": null,
+          "scheme": null
+        }
+      ],
+      "executions": [
+        {
+          "executionId": "exec_1",
+          "paymentId": "pay_1",
+          "idempotencyKey": null,
+          "status": "failed",
+          "startedAt": 1791371243020,
+          "completedAt": 1791371243020
+        }
+      ]
+    },
+    "groundTruth": "mock: payment ACCEPTED, execution FAILED, HTTP 500 returned"
+  },
+  "CR6_retry_duplicate": {
+    "attempts": [
+      {
+        "status": 200,
+        "body": "{\"object\":\"chat.completion\",\"model\":\"test-model\",\"choices\":[{\"message\":{\"role\":\"assistant\",\"content\":\"mock-completion\"}}],\"artifact\":\"first-execution-data\",\"executionId\":\"exec_1\",\"paymentId\":\"pay_1\",\"requestId\":\"req_2_1791371243041\",\"idempotencyKey\":null}"
+      },
+      {
+        "status": 200,
+        "body": "{\"object\":\"chat.completion\",\"model\":\"test-model\",\"choices\":[{\"message\":{\"role\":\"assistant\",\"content\":\"mock-completion\"}}],\"artifact\":\"first-execution-data\",\"executionId\":\"exec_2\",\"paymentId\":\"pay_2\",\"requestId\":\"req_4_1791371243056\",\"idempotencyKey\":null}"
+      }
+    ],
+    "mockLedger": {
+      "mode": "A",
+      "payments": [
+        {
+          "paymentId": "pay_1",
+          "requestId": "req_2_1791371243041",
+          "idempotencyKey": null,
+          "timestamp": 1791371243041,
+          "payer": null,
+          "amount": null,
+          "network": null,
+          "scheme": null
+        },
+        {
+          "paymentId": "pay_2",
+          "requestId": "req_4_1791371243056",
+          "idempotencyKey": null,
+          "timestamp": 1791371243056,
+          "payer": null,
+          "amount": null,
+          "network": null,
+          "scheme": null
+        }
+      ],
+      "executions": [
+        {
+          "executionId": "exec_1",
+          "paymentId": "pay_1",
+          "idempotencyKey": null,
+          "status": "completed",
+          "startedAt": 1791371243041,
+          "completedAt": 1791371243041
+        },
+        {
+          "executionId": "exec_2",
+          "paymentId": "pay_2",
+          "idempotencyKey": null,
+          "status": "completed",
+          "startedAt": 1791371243056,
+          "completedAt": 1791371243056
+        }
+      ]
+    },
+    "question": "did the CLIENT (ClawRouter) cause two economic executions at the seller for one user action?"
+  }
+}
