@@ -1,0 +1,38 @@
+
+=== P3_HAPPY_PATH (mode A) ===
+canonical verdict : {"status":"PASS","reason":""}
+computeB6BVerdict : {"status":"UNKNOWN","summary":"Insufficient evidence to determine outcome."}
+evidence types    : payment_signed_and_retried, payment_retry_outcome, http_response_received, action_request_resource
+mock ground truth : payments=1 executions=exec_1:started
+raw json          : /tmp/a0-runs/P3_HAPPY_PATH.json
+
+=== S1_TIMEOUT (mode B) ===
+canonical verdict : {"status":"FAIL","reason":"payment not signed and retried: signed retry terminal status 'timeout'"}
+computeB6BVerdict : {"status":"UNKNOWN","summary":"Insufficient evidence to determine outcome."}
+evidence types    : payment_signed_and_retried, payment_retry_outcome, action_request_resource
+mock ground truth : payments=1 executions=exec_1:started
+raw json          : /tmp/a0-runs/S1_TIMEOUT.json
+
+=== S2_RESPONSE_LOST (mode C) ===
+canonical verdict : {"status":"FAIL","reason":"payment not signed and retried: signed retry terminal status 'timeout'"}
+computeB6BVerdict : {"status":"UNKNOWN","summary":"Insufficient evidence to determine outcome."}
+evidence types    : payment_signed_and_retried, payment_retry_outcome, action_request_resource
+mock ground truth : payments=1 executions=exec_1:completed
+raw json          : /tmp/a0-runs/S2_RESPONSE_LOST.json
+
+=== S3_EXEC_FAILURE (mode D) ===
+canonical verdict : {"status":"FAIL","reason":"payment not signed and retried: signed retry terminal status 'failure'"}
+computeB6BVerdict : {"status":"UNKNOWN","summary":"Insufficient evidence to determine outcome."}
+evidence types    : payment_signed_and_retried, payment_retry_outcome, http_response_received, action_request_resource
+mock ground truth : payments=1 executions=exec_1:started
+raw json          : /tmp/a0-runs/S3_EXEC_FAILURE.json
+
+=== S4_RETRY_AFTER_UNKNOWN (mode E, two independent runs) ===
+attempt 1: verdict={"status":"FAIL","reason":"payment not signed and retried: signed retry terminal status 'timeout'"} evidence=[payment_signed_and_retried, payment_retry_outcome, action_request_resource] b6b=UNKNOWN
+attempt 2: verdict={"status":"PASS","reason":""} evidence=[payment_signed_and_retried, payment_retry_outcome, http_response_received, action_request_resource] b6b=UNKNOWN
+mock ground truth : payments=2 executions=exec_1:started,exec_2:started
+
+=== S5_IDEMPOTENT_RETRY (mode F, two independent runs, same idempotency key) ===
+attempt 1: verdict={"status":"PASS","reason":""} payloads={"artifact":"first-execution-data","executionId":"exec_1","paymentId":"pay_1","requestId":"req_2_1791368097810","idempotencyKey":"a0-S5-fixed"}
+attempt 2: verdict={"status":"PASS","reason":""} payloads={"artifact":"replayed-data","executionId":"exec_1","paymentId":"pay_1","replayed":true,"requestId":"req_4_1791368097815","idempotencyKey":"a0-S5-fixed"}
+mock ground truth : payments=2 executions=exec_1:started

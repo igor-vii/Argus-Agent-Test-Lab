@@ -1,0 +1,8 @@
+[1] NO-RESOLVER verdict: {"status":"FAIL","reason":"payment not signed and retried"}
+[1] canonical evidence types: payment_required_no_resolver
+[1] raw exchange observations: ["http_response_received","payment_required_received"] paymentRequired parsed: true statusCode: 402
+[3] DUP attempt1 verdict: {"status":"PASS","reason":""}
+[3] DUP attempt2 verdict: {"status":"PASS","reason":""}
+[3] DUP attempt2 execIds seen by Argus: [null,"exec_2"]
+[3] DUP ground truth: payments=2 executions=exec_1:completed,exec_2:started
+raw json          : /tmp/a0-runs/EXTRA.json

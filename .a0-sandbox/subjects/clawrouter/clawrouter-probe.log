@@ -1,0 +1,16 @@
+[ClawRouter] Auth: BlockRun API key brk_SANDBOX_FA…ONLY (http://127.0.0.1:8766)
+[ClawRouter] Billing: account credit — top up at https://user.blockrun.ai/dashboard/credits
+[ClawRouter] Partner request: POST /v1/partner/echo
+[ClawRouter] Partner response: 402 (42ms)
+[ClawRouter] ⚠ Payment chain is Solana but no mnemonic found — falling back to Base (EVM).
+[ClawRouter]   To fix: run "npx @blockrun/clawrouter wallet recover" if your mnemonic exists,
+[ClawRouter]   or run "npx @blockrun/clawrouter chain base" to switch to EVM.
+[ClawRouter] Response finished with error: Premature close
+[ClawRouter] Partner request: POST /v1/partner/echo
+[ClawRouter] Payment signed on Base (EVM) (eip155:84532) — $0.010000
+[ClawRouter] Partner response: 200 (11ms)
+[ClawRouter] Partner request: POST /v1/partner/echo
+[ClawRouter] Payment signed on Base (EVM) (eip155:84532) — $0.010000
+[ClawRouter] Partner response: 200 (11ms)
+
+=== CLAWROUTER PROBE DONE ===
