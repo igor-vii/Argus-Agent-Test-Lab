@@ -1,0 +1,67 @@
+{
+  "name": "S1_TIMEOUT",
+  "mode": "B",
+  "canonicalVerdict": {
+    "status": "FAIL",
+    "reason": "payment not signed and retried: signed retry terminal status 'timeout'"
+  },
+  "runStatus": "COMPLETED",
+  "evidenceCount": 3,
+  "evidence": [
+    {
+      "source": "engine",
+      "type": "payment_signed_and_retried",
+      "data": {
+        "actionType": "request_resource"
+      },
+      "timestamp": 1791368093744
+    },
+    {
+      "source": "engine",
+      "type": "payment_retry_outcome",
+      "data": {
+        "actionType": "request_resource",
+        "terminalStatus": "timeout",
+        "statusCode": null,
+        "httpRejected": false
+      },
+      "timestamp": 1791368093744
+    },
+    {
+      "source": "engine",
+      "type": "action_request_resource",
+      "data": {
+        "resourceId": "res-1",
+        "idempotencyKey": "a0-S1_TIMEOUT"
+      },
+      "timestamp": 1791368093744
+    }
+  ],
+  "b6bVerdict": {
+    "status": "UNKNOWN",
+    "summary": "Insufficient evidence to determine outcome."
+  },
+  "mockLedgerGroundTruth": {
+    "ledger": {
+      "mode": "B",
+      "payments": [
+        {
+          "paymentId": "pay_1",
+          "requestId": "req_2_1791368091742",
+          "idempotencyKey": "a0-S1_TIMEOUT",
+          "timestamp": 1791368091742
+        }
+      ],
+      "executions": [
+        {
+          "executionId": "exec_1",
+          "paymentId": "pay_1",
+          "idempotencyKey": "a0-S1_TIMEOUT",
+          "status": "started",
+          "startedAt": 1791368091742,
+          "completedAt": null
+        }
+      ]
+    }
+  }
+}

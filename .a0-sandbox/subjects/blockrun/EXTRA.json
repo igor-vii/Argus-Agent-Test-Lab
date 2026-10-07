@@ -1,0 +1,244 @@
+{
+  "noResolver": {
+    "verdict": {
+      "status": "FAIL",
+      "reason": "payment not signed and retried"
+    },
+    "canonicalEvidenceTypes": [
+      "payment_required_no_resolver"
+    ],
+    "rawExchange": {
+      "statusCode": 402,
+      "observations": [
+        "http_response_received",
+        "payment_required_received"
+      ],
+      "paymentRequiredParsed": true
+    }
+  },
+  "duplicateProbe": {
+    "attempt1": {
+      "verdict": {
+        "status": "PASS",
+        "reason": ""
+      },
+      "ev": [
+        {
+          "source": "engine",
+          "type": "payment_signed_and_retried",
+          "data": {
+            "actionType": "request_resource"
+          }
+        },
+        {
+          "source": "engine",
+          "type": "payment_retry_outcome",
+          "data": {
+            "actionType": "request_resource",
+            "terminalStatus": "success",
+            "statusCode": 200,
+            "httpRejected": false
+          }
+        },
+        {
+          "source": "sut-1",
+          "type": "http_response_received",
+          "data": {
+            "artifact": "data-for-res-1",
+            "executionId": "exec_1",
+            "paymentId": "pay_1",
+            "requestId": "req_2_1791368132821",
+            "idempotencyKey": "a0-DUP"
+          }
+        },
+        {
+          "source": "engine",
+          "type": "action_request_resource",
+          "data": {
+            "resourceId": "res-1",
+            "idempotencyKey": "a0-DUP"
+          }
+        }
+      ],
+      "adapterExchanges": [
+        {
+          "status": "payment_required",
+          "statusCode": 402,
+          "observations": [
+            "http_response_received",
+            "payment_required_received"
+          ],
+          "paymentResponseHeader": false,
+          "body": {
+            "x402Version": 2,
+            "error": "X-PAYMENT header is required",
+            "resource": {
+              "url": "http://127.0.0.1:8765/resource?resourceId=res-1",
+              "description": "A0 sandbox mock gate",
+              "mimeType": "application/json"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "base-sepolia",
+                "amount": "10000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ],
+            "_requestId": "req_1_1791368132742"
+          }
+        },
+        {
+          "status": "success",
+          "statusCode": 200,
+          "observations": [
+            "http_response_received"
+          ],
+          "paymentResponseHeader": false,
+          "body": {
+            "artifact": "data-for-res-1",
+            "executionId": "exec_1",
+            "paymentId": "pay_1",
+            "requestId": "req_2_1791368132821",
+            "idempotencyKey": "a0-DUP"
+          }
+        }
+      ]
+    },
+    "attempt2": {
+      "verdict": {
+        "status": "PASS",
+        "reason": ""
+      },
+      "ev": [
+        {
+          "source": "engine",
+          "type": "payment_signed_and_retried",
+          "data": {
+            "actionType": "request_resource"
+          }
+        },
+        {
+          "source": "engine",
+          "type": "payment_retry_outcome",
+          "data": {
+            "actionType": "request_resource",
+            "terminalStatus": "success",
+            "statusCode": 200,
+            "httpRejected": false
+          }
+        },
+        {
+          "source": "sut-1",
+          "type": "http_response_received",
+          "data": {
+            "artifact": "data-for-res-1",
+            "executionId": "exec_2",
+            "paymentId": "pay_2",
+            "requestId": "req_4_1791368132836",
+            "idempotencyKey": "a0-DUP"
+          }
+        },
+        {
+          "source": "engine",
+          "type": "action_request_resource",
+          "data": {
+            "resourceId": "res-1",
+            "idempotencyKey": "a0-DUP"
+          }
+        }
+      ],
+      "adapterExchanges": [
+        {
+          "status": "payment_required",
+          "statusCode": 402,
+          "observations": [
+            "http_response_received",
+            "payment_required_received"
+          ],
+          "paymentResponseHeader": false,
+          "body": {
+            "x402Version": 2,
+            "error": "X-PAYMENT header is required",
+            "resource": {
+              "url": "http://127.0.0.1:8765/resource?resourceId=res-1",
+              "description": "A0 sandbox mock gate",
+              "mimeType": "application/json"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "base-sepolia",
+                "amount": "10000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ],
+            "_requestId": "req_3_1791368132827"
+          }
+        },
+        {
+          "status": "success",
+          "statusCode": 200,
+          "observations": [
+            "http_response_received"
+          ],
+          "paymentResponseHeader": false,
+          "body": {
+            "artifact": "data-for-res-1",
+            "executionId": "exec_2",
+            "paymentId": "pay_2",
+            "requestId": "req_4_1791368132836",
+            "idempotencyKey": "a0-DUP"
+          }
+        }
+      ]
+    },
+    "groundTruth": {
+      "mode": "A",
+      "payments": [
+        {
+          "paymentId": "pay_1",
+          "requestId": "req_2_1791368132821",
+          "idempotencyKey": "a0-DUP",
+          "timestamp": 1791368132821
+        },
+        {
+          "paymentId": "pay_2",
+          "requestId": "req_4_1791368132836",
+          "idempotencyKey": "a0-DUP",
+          "timestamp": 1791368132836
+        }
+      ],
+      "executions": [
+        {
+          "executionId": "exec_1",
+          "paymentId": "pay_1",
+          "idempotencyKey": "a0-DUP",
+          "status": "completed",
+          "startedAt": 1791368132821,
+          "completedAt": 1791368132831
+        },
+        {
+          "executionId": "exec_2",
+          "paymentId": "pay_2",
+          "idempotencyKey": "a0-DUP",
+          "status": "started",
+          "startedAt": 1791368132836,
+          "completedAt": null
+        }
+      ]
+    }
+  }
+}
