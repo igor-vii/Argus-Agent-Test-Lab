@@ -1,0 +1,70 @@
+{
+  "subject": "franklin",
+  "scenario": "S2",
+  "title": "HTTP error after payment (seller execution failure)",
+  "argusAction": {
+    "note": "Argus deliberately drove the Secretariat-mediated flow under these adverse conditions",
+    "facilitatorStatus": "SUBMITTED",
+    "txView": {
+      "confirmed": true,
+      "status": "success"
+    },
+    "authStateView": false,
+    "gatewayFault": {
+      "executionMode": "fail",
+      "failStatus": 500,
+      "honorIdempotency": true,
+      "recoveryCapability": [
+        "EXECUTION_IDEMPOTENT",
+        "RESULT_RETRIEVAL"
+      ]
+    },
+    "requestId": "a1s-franklin-S2",
+    "clientId": "argus-a1s-franklin"
+  },
+  "harnessTimeoutMs": 8000,
+  "secretariatAttempt1": {
+    "result": {
+      "operationId": "op_1791388712514_h7sryf7pb1c",
+      "status": "FAILED",
+      "paymentStatus": "NOT_STARTED",
+      "executionStatus": "NOT_STARTED",
+      "data": null,
+      "evidence": [],
+      "error": "Cannot read properties of undefined (reading '_pool')"
+    },
+    "thrown": null,
+    "durationMs": 2
+  },
+  "gatewayGroundTruthLedger": {
+    "subject": "franklin",
+    "scenario": "",
+    "payments": 0,
+    "executions": [],
+    "executionStates": {},
+    "deliveredResponses": 0,
+    "requests": []
+  },
+  "dbFacts": {
+    "operations": [
+      {
+        "state": "FAILED",
+        "payment_state": "NOT_STARTED",
+        "execution_state": "NOT_STARTED",
+        "delivery_state": "NOT_STARTED"
+      }
+    ],
+    "paymentIntents": [
+      {
+        "settlement_state": "PENDING_SIGNATURE",
+        "tx_hash": null,
+        "value": "1000000",
+        "nonce": "0x834a21b9ebf119d7303f1a9fab3b982d220fbc7f6aa241b21fed0b25fd0b4d54",
+        "probe_count": 0
+      }
+    ],
+    "executionAttempts": [],
+    "evidenceCount": 3,
+    "reconciliationObservations": []
+  }
+}

@@ -1,0 +1,81 @@
+{
+  "subject": "franklin",
+  "scenario": "S8",
+  "title": "Idempotent retry: same requestId re-executed while settlement view unchanged",
+  "argusAction": {
+    "note": "Argus deliberately drove the Secretariat-mediated flow under these adverse conditions",
+    "facilitatorStatus": "SUBMITTED",
+    "txView": {
+      "confirmed": true,
+      "status": "success"
+    },
+    "authStateView": false,
+    "gatewayFault": {
+      "executionMode": "complete",
+      "honorIdempotency": true,
+      "recoveryCapability": [
+        "EXECUTION_IDEMPOTENT",
+        "RESULT_RETRIEVAL"
+      ]
+    },
+    "requestId": "a1s-franklin-S8",
+    "clientId": "argus-a1s-franklin"
+  },
+  "harnessTimeoutMs": 8000,
+  "secretariatAttempt1": {
+    "result": {
+      "operationId": "op_1791388712619_jx5v0geudni",
+      "status": "FAILED",
+      "paymentStatus": "NOT_STARTED",
+      "executionStatus": "NOT_STARTED",
+      "data": null,
+      "evidence": [],
+      "error": "Cannot read properties of undefined (reading '_pool')"
+    },
+    "thrown": null,
+    "durationMs": 3
+  },
+  "secretariatAttempt2": {
+    "result": {
+      "operationId": "op_1791388712619_jx5v0geudni",
+      "status": "FAILED",
+      "paymentStatus": "NOT_STARTED",
+      "executionStatus": "NOT_STARTED",
+      "data": null,
+      "evidence": [],
+      "error": "Cannot read properties of undefined (reading '_pool')"
+    },
+    "thrown": null
+  },
+  "gatewayGroundTruthLedger": {
+    "subject": "franklin",
+    "scenario": "",
+    "payments": 0,
+    "executions": [],
+    "executionStates": {},
+    "deliveredResponses": 0,
+    "requests": []
+  },
+  "dbFacts": {
+    "operations": [
+      {
+        "state": "FAILED",
+        "payment_state": "NOT_STARTED",
+        "execution_state": "NOT_STARTED",
+        "delivery_state": "NOT_STARTED"
+      }
+    ],
+    "paymentIntents": [
+      {
+        "settlement_state": "PENDING_SIGNATURE",
+        "tx_hash": null,
+        "value": "1000000",
+        "nonce": "0xdeaba936f3acc7790167baac9a4181134de37450259f6c6fa2caad9dc2ee8744",
+        "probe_count": 0
+      }
+    ],
+    "executionAttempts": [],
+    "evidenceCount": 3,
+    "reconciliationObservations": []
+  }
+}

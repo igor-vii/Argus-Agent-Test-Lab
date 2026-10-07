@@ -77,6 +77,8 @@ const mockSigner = {
 type TxRes = { confirmed: boolean; status: 'success' | 'reverted' | 'pending' } | null;
 
 interface ScenarioDef {
+    /** HTTP method used against the subject gateway (default POST; GET is an adversarial probe) */
+    method?: 'GET' | 'POST';
   code: string; title: string;
   facilitatorStatus: 'SUBMITTED' | 'REJECTED' | 'UNKNOWN';
   txResult: TxRes; authState: boolean | null;
@@ -138,6 +140,8 @@ async function runTrial(pool: Pool, subject: string, sc: ScenarioDef, attemptTag
   const port = portBase++;
   const fault = { ...sc.gatewayFault, recoveryCapability: PROFILE_HEADERS[subject] };
   const gw = await startSubjectGateway({ port, subject, fault: fault as any });
+  // Fresh ground-truth ledger per trial (gateway keeps a shared map keyed by subject+scenario)
+  await fetch(`http://127.0.0.1:${port}/__reset`, { method: 'POST' }).catch(() => {});
   const store = new PgDurableStore(pool, subject, scenarioCode);
 
   const facilitator = new MockX402FacilitatorClient();
@@ -166,7 +170,7 @@ async function runTrial(pool: Pool, subject: string, sc: ScenarioDef, attemptTag
   };
   const requestId = requestIdOverride ?? `a1s-${subject}-${scenarioCode}`;
   const request = {
-    target: gw.url, method: 'GET', payload: { probe: scenarioCode },
+    target: gw.url, method: sc.method ?? 'POST', payload: { probe: scenarioCode },
     policy, requestId, clientId: `argus-a1s-${subject}`,
   };
 

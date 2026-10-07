@@ -1,0 +1,90 @@
+{
+  "subject": "clawrouter",
+  "scenario": "S9",
+  "title": "Duplicate economic action: second attempt with NEW requestId against non-idempotent seller",
+  "argusAction": {
+    "note": "Argus deliberately drove the Secretariat-mediated flow under these adverse conditions",
+    "facilitatorStatus": "SUBMITTED",
+    "txView": {
+      "confirmed": true,
+      "status": "success"
+    },
+    "authStateView": false,
+    "gatewayFault": {
+      "executionMode": "complete",
+      "honorIdempotency": false
+    },
+    "requestId": "a1s-clawrouter-S9",
+    "clientId": "argus-a1s-clawrouter"
+  },
+  "harnessTimeoutMs": 8000,
+  "secretariatAttempt1": {
+    "result": {
+      "operationId": "op_1791388712465_gxrbh62rdzb",
+      "status": "FAILED",
+      "paymentStatus": "NOT_STARTED",
+      "executionStatus": "NOT_STARTED",
+      "data": null,
+      "evidence": [],
+      "error": "Cannot read properties of undefined (reading '_pool')"
+    },
+    "thrown": null,
+    "durationMs": 52
+  },
+  "secretariatAttempt2": {
+    "result": {
+      "operationId": "op_1791388712476_b799zxfk0bg",
+      "status": "FAILED",
+      "paymentStatus": "NOT_STARTED",
+      "executionStatus": "NOT_STARTED",
+      "data": null,
+      "evidence": [],
+      "error": "Cannot read properties of undefined (reading '_pool')"
+    },
+    "thrown": null
+  },
+  "gatewayGroundTruthLedger": {
+    "subject": "clawrouter",
+    "scenario": "",
+    "payments": 0,
+    "executions": [],
+    "executionStates": {},
+    "deliveredResponses": 0,
+    "requests": []
+  },
+  "dbFacts": {
+    "operations": [
+      {
+        "state": "FAILED",
+        "payment_state": "NOT_STARTED",
+        "execution_state": "NOT_STARTED",
+        "delivery_state": "NOT_STARTED"
+      },
+      {
+        "state": "FAILED",
+        "payment_state": "NOT_STARTED",
+        "execution_state": "NOT_STARTED",
+        "delivery_state": "NOT_STARTED"
+      }
+    ],
+    "paymentIntents": [
+      {
+        "settlement_state": "PENDING_SIGNATURE",
+        "tx_hash": null,
+        "value": "1000000",
+        "nonce": "0x45b8f9efdcafd870aabb0dce621b02597f5612c0a39a25a2411df4d2568215ec",
+        "probe_count": 0
+      },
+      {
+        "settlement_state": "PENDING_SIGNATURE",
+        "tx_hash": null,
+        "value": "1000000",
+        "nonce": "0xcbc3c4af4c1b60359e5e7c2a99fbb0df741199fdc612c071a0697b17368f2e73",
+        "probe_count": 0
+      }
+    ],
+    "executionAttempts": [],
+    "evidenceCount": 6,
+    "reconciliationObservations": []
+  }
+}
