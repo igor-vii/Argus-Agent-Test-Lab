@@ -144,7 +144,7 @@ async function runTrial(pool: Pool, subject: string, sc: ScenarioDef, attemptTag
   await fetch(`http://127.0.0.1:${port}/__reset`, { method: 'POST' }).catch(() => {});
   const store = new PgDurableStore(pool, subject, scenarioCode);
 
-  const facilitator = new MockX402FacilitatorClient();
+  const facilitator = new MockX402FacilitatorClient(store as any);
   facilitator.forceStatus = sc.facilitatorStatus;
   const rpc = new MockMultiRpcChecker();
   if (sc.txResult) rpc.setTxResult('0x_mock_tx_1', sc.txResult as any);
@@ -154,6 +154,7 @@ async function runTrial(pool: Pool, subject: string, sc: ScenarioDef, attemptTag
   const adapters = new Map<string, any>();
   adapters.set('base-sepolia', makeLegacyAdapter('base-sepolia'));
 
+  console.log(`DIAG[${subject}/${scenarioCode}] pool instanceof Pool:`, pool instanceof Pool, '| store.__ownPool:', !!(store as any).__ownPool);
   const secretariat = new Secretariat({
     evidenceStore: store as any,
     signer: mockSigner as any,

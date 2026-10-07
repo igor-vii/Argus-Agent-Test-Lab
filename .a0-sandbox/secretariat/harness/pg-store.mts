@@ -40,14 +40,23 @@ export class PgDurableStore {
     // Bound-function cache: `typeof store.method === 'function'` feature
     // detection in Secretariat works because bound functions are still
     // functions; detached invocation is safe because each fn is pre-bound.
+    // IMPORTANT: `new PgDurableStore(...)` returns this Proxy. Later method
+    // lookups on it must NOT go through Reflect.get with an explicit
+    // receiver=target — that invokes the original prototype method with
+    // receiver=raw instance and BYPASSES this trap entirely for accessor-less
+    // class fields, producing inconsistent `this` chains (observed as
+    // "Cannot read properties of undefined (reading 'updatePaymentIntentStatus')"
+    // when Secretariat destructures store methods). Always resolve from cache
+    // or bind against `target` explicitly inside the trap.
     const fnCache = new Map<string | symbol, any>();
     return new Proxy(self, {
       get(target, prop, _recv) {
         if (prop === 'constructor') return Reflect.get(target, prop);
-        const v = Reflect.get(target, prop, target);
+        if (fnCache.has(prop)) return fnCache.get(prop);
+        const v = Reflect.get(target, prop);
         if (typeof v === 'function') {
-          let b = fnCache.get(prop);
-          if (!b) { b = v.bind(target); fnCache.set(prop, b); }
+          const b = v.bind(target);
+          fnCache.set(prop, b);
           return b;
         }
         return v;
