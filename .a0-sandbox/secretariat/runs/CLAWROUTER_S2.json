@@ -1,0 +1,66 @@
+{
+  "subject": "clawrouter",
+  "scenario": "S2",
+  "title": "HTTP error after payment (seller execution failure)",
+  "argusAction": {
+    "note": "Argus deliberately drove the Secretariat-mediated flow under these adverse conditions",
+    "facilitatorStatus": "SUBMITTED",
+    "txView": {
+      "confirmed": true,
+      "status": "success"
+    },
+    "authStateView": false,
+    "gatewayFault": {
+      "executionMode": "fail",
+      "failStatus": 500,
+      "honorIdempotency": true
+    },
+    "requestId": "a1s-clawrouter-S2",
+    "clientId": "argus-a1s-clawrouter"
+  },
+  "harnessTimeoutMs": 8000,
+  "secretariatAttempt1": {
+    "result": {
+      "operationId": "op_1791388712235_91uqugwlt5",
+      "status": "FAILED",
+      "paymentStatus": "NOT_STARTED",
+      "executionStatus": "NOT_STARTED",
+      "data": null,
+      "evidence": [],
+      "error": "Cannot read properties of undefined (reading '_pool')"
+    },
+    "thrown": null,
+    "durationMs": 3
+  },
+  "gatewayGroundTruthLedger": {
+    "subject": "clawrouter",
+    "scenario": "",
+    "payments": 0,
+    "executions": [],
+    "executionStates": {},
+    "deliveredResponses": 0,
+    "requests": []
+  },
+  "dbFacts": {
+    "operations": [
+      {
+        "state": "FAILED",
+        "payment_state": "NOT_STARTED",
+        "execution_state": "NOT_STARTED",
+        "delivery_state": "NOT_STARTED"
+      }
+    ],
+    "paymentIntents": [
+      {
+        "settlement_state": "PENDING_SIGNATURE",
+        "tx_hash": null,
+        "value": "1000000",
+        "nonce": "0x422322e252003654ec93c8e5b205486f4324a04a689b30e15c125f4b1408df69",
+        "probe_count": 0
+      }
+    ],
+    "executionAttempts": [],
+    "evidenceCount": 3,
+    "reconciliationObservations": []
+  }
+}

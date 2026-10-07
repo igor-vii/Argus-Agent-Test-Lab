@@ -1,0 +1,79 @@
+{
+  "name": "P3_HAPPY_PATH",
+  "mode": "A",
+  "canonicalVerdict": {
+    "status": "PASS",
+    "reason": ""
+  },
+  "runStatus": "COMPLETED",
+  "evidenceCount": 4,
+  "evidence": [
+    {
+      "source": "engine",
+      "type": "payment_signed_and_retried",
+      "data": {
+        "actionType": "request_resource"
+      },
+      "timestamp": 1791368091727
+    },
+    {
+      "source": "engine",
+      "type": "payment_retry_outcome",
+      "data": {
+        "actionType": "request_resource",
+        "terminalStatus": "success",
+        "statusCode": 200,
+        "httpRejected": false
+      },
+      "timestamp": 1791368091728
+    },
+    {
+      "source": "sut-1",
+      "type": "http_response_received",
+      "data": {
+        "artifact": "data-for-res-1",
+        "executionId": "exec_1",
+        "paymentId": "pay_1",
+        "requestId": "req_2_1791368091725",
+        "idempotencyKey": "a0-P3_HAPPY_PATH"
+      },
+      "timestamp": 1791368091728
+    },
+    {
+      "source": "engine",
+      "type": "action_request_resource",
+      "data": {
+        "resourceId": "res-1",
+        "idempotencyKey": "a0-P3_HAPPY_PATH"
+      },
+      "timestamp": 1791368091728
+    }
+  ],
+  "b6bVerdict": {
+    "status": "UNKNOWN",
+    "summary": "Insufficient evidence to determine outcome."
+  },
+  "mockLedgerGroundTruth": {
+    "ledger": {
+      "mode": "A",
+      "payments": [
+        {
+          "paymentId": "pay_1",
+          "requestId": "req_2_1791368091725",
+          "idempotencyKey": "a0-P3_HAPPY_PATH",
+          "timestamp": 1791368091725
+        }
+      ],
+      "executions": [
+        {
+          "executionId": "exec_1",
+          "paymentId": "pay_1",
+          "idempotencyKey": "a0-P3_HAPPY_PATH",
+          "status": "started",
+          "startedAt": 1791368091725,
+          "completedAt": null
+        }
+      ]
+    }
+  }
+}

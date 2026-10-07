@@ -1,0 +1,65 @@
+{
+  "subject": "blockrun",
+  "scenario": "S3",
+  "title": "Timeout after payment accepted (execution started, no response)",
+  "argusAction": {
+    "note": "Argus deliberately drove the Secretariat-mediated flow under these adverse conditions",
+    "facilitatorStatus": "SUBMITTED",
+    "txView": {
+      "confirmed": true,
+      "status": "success"
+    },
+    "authStateView": false,
+    "gatewayFault": {
+      "executionMode": "timeout",
+      "honorIdempotency": true
+    },
+    "requestId": "a1s-blockrun-S3",
+    "clientId": "argus-a1s-blockrun"
+  },
+  "harnessTimeoutMs": 2500,
+  "secretariatAttempt1": {
+    "result": {
+      "operationId": "op_1791388712724_nckxwm2qjib",
+      "status": "FAILED",
+      "paymentStatus": "NOT_STARTED",
+      "executionStatus": "NOT_STARTED",
+      "data": null,
+      "evidence": [],
+      "error": "Cannot read properties of undefined (reading '_pool')"
+    },
+    "thrown": null,
+    "durationMs": 7
+  },
+  "gatewayGroundTruthLedger": {
+    "subject": "blockrun",
+    "scenario": "",
+    "payments": 0,
+    "executions": [],
+    "executionStates": {},
+    "deliveredResponses": 0,
+    "requests": []
+  },
+  "dbFacts": {
+    "operations": [
+      {
+        "state": "FAILED",
+        "payment_state": "NOT_STARTED",
+        "execution_state": "NOT_STARTED",
+        "delivery_state": "NOT_STARTED"
+      }
+    ],
+    "paymentIntents": [
+      {
+        "settlement_state": "PENDING_SIGNATURE",
+        "tx_hash": null,
+        "value": "1000000",
+        "nonce": "0x4c2b31f662c1770b51fcd786520c37ecd28ab1593e52e36ebf7d098143924da7",
+        "probe_count": 0
+      }
+    ],
+    "executionAttempts": [],
+    "evidenceCount": 3,
+    "reconciliationObservations": []
+  }
+}

@@ -1,0 +1,26 @@
+import { Pool } from 'pg';
+const pool = new Pool({ host:'localhost', port:5433, user:'postgres', password:'zeus_sandbox_pw', database:'zeus_secretariat_sandbox' });
+const path = await import('node:path');
+const ZEUS = '/tmp/argus-sandbox/zeus/zeus-secretariat/src';
+const { Secretariat } = await import(path.join(ZEUS, 'core/state-machine.ts'));
+const { PgDurableStore } = await import('./pg-store.mts');
+const store: any = new PgDurableStore(pool, 'probe4', 'P4');
+const facilitatorMod = await import(path.join(ZEUS, 'adapters/x402-facilitator-client.ts'));
+const rpcMod = await import(path.join(ZEUS, 'core/multi-rpc-checker.ts'));
+const reconMod = await import(path.join(ZEUS, 'core/reconciliation-engine.ts'));
+const { startSubjectGateway } = await import('./subject-gateway.mts');
+const gw = await startSubjectGateway({ port: 8901, subject: 'probe4', fault: { executionMode: 'complete', honorIdempotency: true } } as any);
+const fac = new facilitatorMod.MockX402FacilitatorClient(store as any);
+const rpc = new rpcMod.MockMultiRpcChecker();
+rpc.setTxResult('0x_mock_tx_1', { confirmed: true, status: 'success' } as any);
+const recon = new reconMod.ReconciliationEngine(store as any, rpc as any);
+const adapters = new Map();
+adapters.set('base-sepolia', { network:'base-sepolia', async createAuthorization(r:any,s:any,c:any){return {signature:'0xsig',scheme:'exact',timestamp:Date.now(),context:c};}, async submit(){throw new Error('no legacy submit');}, async observeSettlement(){return {settled:false,reason:'UNUSED'};} });
+const sec = new Secretariat({ evidenceStore: store, signer: { signerType:'S', async getAddress(){return '0xP';}, async signPayment(_r:any,c:any){return {operationId:c.operationId,signerType:'S',payer:'0xP',nonce:c.nonce,signature:'0xsig',signedAt:new Date().toISOString()};} }, adapters, settlementAdapter: fac, reconciliationEngine: recon, atomicSettlementHandoff: store });
+const policy = { maxPrice:'1000000', allowedNetworks:['base-sepolia'], allowedAssets:['0x83358AFC21F91A7B8E0BEC6AC3BC3A7C0D33BD01'], authorizationMode:'policy-bound' };
+const res = await sec.execute({ target: gw.url, method:'POST', payload:{probe:'p4'}, policy, requestId:'a1s-probe4-1', clientId:'argus-a1s-probe4' });
+console.log('STATUS', res.status, '| paymentStatus', res.paymentStatus, '| executionStatus', res.executionStatus, '| err', (res as any).error ?? null, '| data?', res.data != null);
+// dump last operation row
+const rows = await pool.query("SELECT state,payment_state,execution_state,delivery_state,error FROM operations WHERE subject='probe4' ORDER BY created_at DESC LIMIT 1");
+console.log('DB op:', JSON.stringify(rows.rows[0]));
+gw.server.close(); await pool.end(); process.exit(0);

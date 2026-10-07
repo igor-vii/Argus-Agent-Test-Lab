@@ -1,0 +1,78 @@
+{
+  "subject": "franklin",
+  "scenario": "S7",
+  "title": "Retry after UNKNOWN submission (facilitator UNKNOWN, then retry)",
+  "argusAction": {
+    "note": "Argus deliberately drove the Secretariat-mediated flow under these adverse conditions",
+    "facilitatorStatus": "UNKNOWN",
+    "txView": null,
+    "authStateView": null,
+    "gatewayFault": {
+      "executionMode": "complete",
+      "honorIdempotency": true,
+      "recoveryCapability": [
+        "EXECUTION_IDEMPOTENT",
+        "RESULT_RETRIEVAL"
+      ]
+    },
+    "requestId": "a1s-franklin-S7",
+    "clientId": "argus-a1s-franklin"
+  },
+  "harnessTimeoutMs": 8000,
+  "secretariatAttempt1": {
+    "result": {
+      "operationId": "op_1791388712588_ncqhv6415j",
+      "status": "FAILED",
+      "paymentStatus": "NOT_STARTED",
+      "executionStatus": "NOT_STARTED",
+      "data": null,
+      "evidence": [],
+      "error": "Cannot read properties of undefined (reading '_pool')"
+    },
+    "thrown": null,
+    "durationMs": 2
+  },
+  "secretariatAttempt2": {
+    "result": {
+      "operationId": "op_1791388712588_ncqhv6415j",
+      "status": "FAILED",
+      "paymentStatus": "NOT_STARTED",
+      "executionStatus": "NOT_STARTED",
+      "data": null,
+      "evidence": [],
+      "error": "Cannot read properties of undefined (reading '_pool')"
+    },
+    "thrown": null
+  },
+  "gatewayGroundTruthLedger": {
+    "subject": "franklin",
+    "scenario": "",
+    "payments": 0,
+    "executions": [],
+    "executionStates": {},
+    "deliveredResponses": 0,
+    "requests": []
+  },
+  "dbFacts": {
+    "operations": [
+      {
+        "state": "FAILED",
+        "payment_state": "NOT_STARTED",
+        "execution_state": "NOT_STARTED",
+        "delivery_state": "NOT_STARTED"
+      }
+    ],
+    "paymentIntents": [
+      {
+        "settlement_state": "PENDING_SIGNATURE",
+        "tx_hash": null,
+        "value": "1000000",
+        "nonce": "0x99ee7f1d08eed2888206809a503b88dda432ef2c1503f419e2b7c9b87a5c0837",
+        "probe_count": 0
+      }
+    ],
+    "executionAttempts": [],
+    "evidenceCount": 3,
+    "reconciliationObservations": []
+  }
+}

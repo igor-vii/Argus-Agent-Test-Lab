@@ -1,0 +1,78 @@
+{
+  "name": "S4_RETRY_AFTER_UNKNOWN",
+  "mode": "E",
+  "runs": [
+    {
+      "attempt": 1,
+      "verdict": {
+        "status": "FAIL",
+        "reason": "payment not signed and retried: signed retry terminal status 'timeout'"
+      },
+      "runId": "run_1791368095779_e03yfi5mc",
+      "evidenceTypes": [
+        "payment_signed_and_retried",
+        "payment_retry_outcome",
+        "action_request_resource"
+      ],
+      "b6b": {
+        "status": "UNKNOWN",
+        "summary": "Insufficient evidence to determine outcome."
+      }
+    },
+    {
+      "attempt": 2,
+      "verdict": {
+        "status": "PASS",
+        "reason": ""
+      },
+      "runId": "run_1791368097787_zwjsrtrjw",
+      "evidenceTypes": [
+        "payment_signed_and_retried",
+        "payment_retry_outcome",
+        "http_response_received",
+        "action_request_resource"
+      ],
+      "b6b": {
+        "status": "UNKNOWN",
+        "summary": "Insufficient evidence to determine outcome."
+      }
+    }
+  ],
+  "mockLedgerGroundTruth": {
+    "ledger": {
+      "mode": "E",
+      "payments": [
+        {
+          "paymentId": "pay_1",
+          "requestId": "req_2_1791368095785",
+          "idempotencyKey": "a0-S4",
+          "timestamp": 1791368095785
+        },
+        {
+          "paymentId": "pay_2",
+          "requestId": "req_4_1791368097796",
+          "idempotencyKey": "a0-S4",
+          "timestamp": 1791368097796
+        }
+      ],
+      "executions": [
+        {
+          "executionId": "exec_1",
+          "paymentId": "pay_1",
+          "idempotencyKey": "a0-S4",
+          "status": "started",
+          "startedAt": 1791368095785,
+          "completedAt": null
+        },
+        {
+          "executionId": "exec_2",
+          "paymentId": "pay_2",
+          "idempotencyKey": "a0-S4",
+          "status": "started",
+          "startedAt": 1791368097796,
+          "completedAt": null
+        }
+      ]
+    }
+  }
+}

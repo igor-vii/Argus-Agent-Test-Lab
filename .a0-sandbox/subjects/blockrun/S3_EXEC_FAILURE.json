@@ -1,0 +1,76 @@
+{
+  "name": "S3_EXEC_FAILURE",
+  "mode": "D",
+  "canonicalVerdict": {
+    "status": "FAIL",
+    "reason": "payment not signed and retried: signed retry terminal status 'failure'"
+  },
+  "runStatus": "COMPLETED",
+  "evidenceCount": 4,
+  "evidence": [
+    {
+      "source": "engine",
+      "type": "payment_signed_and_retried",
+      "data": {
+        "actionType": "request_resource"
+      },
+      "timestamp": 1791368095774
+    },
+    {
+      "source": "engine",
+      "type": "payment_retry_outcome",
+      "data": {
+        "actionType": "request_resource",
+        "terminalStatus": "failure",
+        "statusCode": 500,
+        "httpRejected": false
+      },
+      "timestamp": 1791368095774
+    },
+    {
+      "source": "sut-1",
+      "type": "http_response_received",
+      "data": {
+        "resourceId": "res-1",
+        "idempotencyKey": "a0-S3_EXEC_FAILURE"
+      },
+      "timestamp": 1791368095774
+    },
+    {
+      "source": "engine",
+      "type": "action_request_resource",
+      "data": {
+        "resourceId": "res-1",
+        "idempotencyKey": "a0-S3_EXEC_FAILURE"
+      },
+      "timestamp": 1791368095774
+    }
+  ],
+  "b6bVerdict": {
+    "status": "UNKNOWN",
+    "summary": "Insufficient evidence to determine outcome."
+  },
+  "mockLedgerGroundTruth": {
+    "ledger": {
+      "mode": "D",
+      "payments": [
+        {
+          "paymentId": "pay_1",
+          "requestId": "req_2_1791368095773",
+          "idempotencyKey": "a0-S3_EXEC_FAILURE",
+          "timestamp": 1791368095773
+        }
+      ],
+      "executions": [
+        {
+          "executionId": "exec_1",
+          "paymentId": "pay_1",
+          "idempotencyKey": "a0-S3_EXEC_FAILURE",
+          "status": "started",
+          "startedAt": 1791368095773,
+          "completedAt": null
+        }
+      ]
+    }
+  }
+}

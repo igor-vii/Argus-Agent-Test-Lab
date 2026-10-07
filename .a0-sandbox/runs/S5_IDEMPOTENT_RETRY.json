@@ -1,0 +1,67 @@
+{
+  "name": "S5_IDEMPOTENT_RETRY",
+  "mode": "F",
+  "runs": [
+    {
+      "attempt": 1,
+      "verdict": {
+        "status": "PASS",
+        "reason": ""
+      },
+      "evidenceTypes": [
+        "payment_signed_and_retried",
+        "payment_retry_outcome",
+        "http_response_received",
+        "action_request_resource"
+      ],
+      "payloads": [
+        "{\"artifact\":\"first-execution-data\",\"executionId\":\"exec_1\",\"paymentId\":\"pay_1\",\"requestId\":\"req_2_1791368097810\",\"idempotencyKey\":\"a0-S5-fixed\"}"
+      ]
+    },
+    {
+      "attempt": 2,
+      "verdict": {
+        "status": "PASS",
+        "reason": ""
+      },
+      "evidenceTypes": [
+        "payment_signed_and_retried",
+        "payment_retry_outcome",
+        "http_response_received",
+        "action_request_resource"
+      ],
+      "payloads": [
+        "{\"artifact\":\"replayed-data\",\"executionId\":\"exec_1\",\"paymentId\":\"pay_1\",\"replayed\":true,\"requestId\":\"req_4_1791368097815\",\"idempotencyKey\":\"a0-S5-fixed\"}"
+      ]
+    }
+  ],
+  "mockLedgerGroundTruth": {
+    "ledger": {
+      "mode": "F",
+      "payments": [
+        {
+          "paymentId": "pay_1",
+          "requestId": "req_2_1791368097810",
+          "idempotencyKey": "a0-S5-fixed",
+          "timestamp": 1791368097810
+        },
+        {
+          "paymentId": "pay_2",
+          "requestId": "req_4_1791368097815",
+          "idempotencyKey": "a0-S5-fixed",
+          "timestamp": 1791368097815
+        }
+      ],
+      "executions": [
+        {
+          "executionId": "exec_1",
+          "paymentId": "pay_1",
+          "idempotencyKey": "a0-S5-fixed",
+          "status": "started",
+          "startedAt": 1791368097810,
+          "completedAt": null
+        }
+      ]
+    }
+  }
+}
