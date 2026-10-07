@@ -1,0 +1,7 @@
+
+> @blockrun/franklin@3.49.5 build
+> tsc && node scripts/copy-plugin-assets.mjs
+
+[copy-plugin-assets] no src/plugins-bundled directory, skipping
+[copy-plugin-assets] copied 8 files to dist/skills-bundled/
+build exit: 0
