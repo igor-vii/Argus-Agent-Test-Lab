@@ -1,0 +1,79 @@
+{
+  "scenario": "PAYMENT_ACCEPTED_EXECUTION_TIMEOUT",
+  "argusAdapterIds": [
+    "http-adapter_1791469828260_75p8tv7",
+    "http-adapter_1791469828269_s2ysqow"
+  ],
+  "steps": [
+    {
+      "label": "payment_required_probe",
+      "at": 1791469828260,
+      "elapsedMs": 9,
+      "outcome": "RESPONSE_RECEIVED",
+      "exchangeStatus": "failure",
+      "raw": "{\"id\":\"http-exch_1791469828260_csxlzfk\",\"runId\":\"run_PAYMENT_ACCEPTED_EXECUTION_TIMEOUT_1791469828260\",\"direction\":\"outbound\",\"type\":\"task.mock\",\"timestamp\":1791469828260,\"payload\":{\"task\":\"mock-task\"},\"status\":\"failure\",\"error\":\"HTTP 402: Payment Required\",\"metadata\":{\"errorType\":\"Error\"}}"
+    },
+    {
+      "label": "paid_execution_request",
+      "at": 1791469828269,
+      "elapsedMs": 2503,
+      "outcome": "RESPONSE_RECEIVED",
+      "exchangeStatus": "failure",
+      "raw": "{\"id\":\"http-exch_1791469828269_57w5b2y\",\"runId\":\"run_PAYMENT_ACCEPTED_EXECUTION_TIMEOUT_1791469828269\",\"direction\":\"outbound\",\"type\":\"task.mock\",\"timestamp\":1791469828269,\"payload\":{\"task\":\"mock-task\"},\"status\":\"failure\",\"error\":\"Request timeout after 2500ms\",\"metadata\":{\"errorType\":\"Error\"}}"
+    }
+  ],
+  "serverTruth": {
+    "mode": "PAYMENT_ACCEPTED_EXECUTION_TIMEOUT",
+    "payments": [
+      {
+        "requestId": "req_1791469828270_nxpao",
+        "idemKey": "idem-payment_accepted_execution_timeout-001",
+        "paymentRecordedAt": 1791469828270,
+        "receipt": "mock-receipt-1"
+      }
+    ],
+    "executions": {
+      "idem-payment_accepted_execution_timeout-001": {
+        "requestId": "req_1791469828270_nxpao",
+        "executionId": "exec_1_idem-pay",
+        "paymentAcceptedAt": 1791469828270,
+        "startedAt": 1791469828270,
+        "delivered": false,
+        "failed": false
+      }
+    },
+    "requests": [
+      {
+        "requestId": "req_1791469828265_bjt8h",
+        "method": "POST",
+        "path": "/execute",
+        "at": 1791469828265,
+        "hasPayment": false,
+        "idemKey": "idem-payment_accepted_execution_timeout-001"
+      },
+      {
+        "requestId": "req_1791469828270_nxpao",
+        "method": "POST",
+        "path": "/execute",
+        "at": 1791469828270,
+        "hasPayment": true,
+        "idemKey": "idem-payment_accepted_execution_timeout-001"
+      }
+    ]
+  },
+  "verdictInputs": {
+    "paymentsRecorded": 1,
+    "executionsStarted": 1,
+    "executionsCompleted": 0,
+    "responsesDeliveredToClient": 2
+  },
+  "verdict": {
+    "payment": "KNOWN",
+    "execution": "MAYBE",
+    "delivery": "UNKNOWN",
+    "verdict": "ANOMALY",
+    "note": "Argus must NOT convert to FAILURE/SUCCESS"
+  },
+  "evidenceCount": 0,
+  "evidence": []
+}

@@ -1,0 +1,58 @@
+{
+  "scenario": "HAPPY_PATH",
+  "runId": "run_HAPPY_PATH_1791469782064",
+  "argusAdapter": "http-adapter_1791469782064_xwolnoa",
+  "steps": [
+    {
+      "label": "payment_required_probe",
+      "at": 1791469782065,
+      "outcome": "RESPONSE_RECEIVED",
+      "exchangeStatus": "failure",
+      "raw": "{\"id\":\"http-exch_1791469782065_k6jy5qf\",\"runId\":\"run_HAPPY_PATH_1791469782064\",\"direction\":\"outbound\",\"type\":{\"payload\":{\"task\":\"mock-task\"}},\"timestamp\":1791469782065,\"status\":\"failure\",\"error\":\"HTTP 402: Payment Required\",\"metadata\":{\"errorType\":\"Error\"}}"
+    },
+    {
+      "label": "paid_execution_request",
+      "at": 1791469782075,
+      "outcome": "RESPONSE_RECEIVED",
+      "exchangeStatus": "failure",
+      "raw": "{\"id\":\"http-exch_1791469782075_s9hmt6z\",\"runId\":\"run_HAPPY_PATH_1791469782064\",\"direction\":\"outbound\",\"type\":{\"payload\":{\"task\":\"mock-task\"},\"headers\":{\"x-payment\":\"mock-signed-payment-1\"}},\"timestamp\":1791469782075,\"status\":\"failure\",\"error\":\"HTTP 402: Payment Required\",\"metadata\":{\"errorType\":\"Error\"}}"
+    }
+  ],
+  "serverTruth": {
+    "mode": "HAPPY_PATH",
+    "payments": [],
+    "executions": {},
+    "requests": [
+      {
+        "requestId": "req_1791469782072_7841t",
+        "method": "POST",
+        "path": "/execute",
+        "at": 1791469782072,
+        "hasPayment": false,
+        "idemKey": "idem-happy_path-001"
+      },
+      {
+        "requestId": "req_1791469782076_tzey2",
+        "method": "POST",
+        "path": "/execute",
+        "at": 1791469782076,
+        "hasPayment": false,
+        "idemKey": "idem-happy_path-001"
+      }
+    ]
+  },
+  "verdictInputs": {
+    "paymentsRecorded": 0,
+    "executionsStarted": 0,
+    "executionsCompleted": 0,
+    "responsesDeliveredToClient": 2
+  },
+  "verdict": {
+    "payment": "UNKNOWN",
+    "execution": "OBSERVED",
+    "delivery": "PROVEN",
+    "verdict": "SUCCESS_CANDIDATE"
+  },
+  "evidenceCount": 0,
+  "evidence": []
+}

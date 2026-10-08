@@ -1,0 +1,79 @@
+{
+  "scenario": "HAPPY_PATH",
+  "argusAdapterIds": [
+    "http-adapter_1791469824887_kygn8ya",
+    "http-adapter_1791469824897_0yx3o4k"
+  ],
+  "steps": [
+    {
+      "label": "payment_required_probe",
+      "at": 1791469824887,
+      "elapsedMs": 10,
+      "outcome": "RESPONSE_RECEIVED",
+      "exchangeStatus": "failure",
+      "raw": "{\"id\":\"http-exch_1791469824887_3msoxek\",\"runId\":\"run_HAPPY_PATH_1791469824887\",\"direction\":\"outbound\",\"type\":\"task.mock\",\"timestamp\":1791469824887,\"payload\":{\"task\":\"mock-task\"},\"status\":\"failure\",\"error\":\"HTTP 402: Payment Required\",\"metadata\":{\"errorType\":\"Error\"}}"
+    },
+    {
+      "label": "paid_execution_request",
+      "at": 1791469824897,
+      "elapsedMs": 3,
+      "outcome": "RESPONSE_RECEIVED",
+      "exchangeStatus": "success",
+      "raw": "{\"id\":\"http-exch_1791469824897_zegdmpj\",\"runId\":\"run_HAPPY_PATH_1791469824897\",\"direction\":\"outbound\",\"type\":\"task.mock\",\"timestamp\":1791469824897,\"payload\":{\"requestId\":\"req_1791469824899_8xfir\",\"executionId\":\"exec_1_idem-hap\",\"status\":\"COMPLETED\",\"artifact\":\"mock-completion-proof\",\"payments\":[\"mock-receipt-1\"]},\"status\":\"success\",\"metadata\":{\"statusCode\":200,\"headers\":{\"connection\":\"keep-alive\",\"content-length\":\"157\",\"content-type\":\"application/json\",\"date\":\"Thu, 08 Oct 2026 14:30:24 GMT\",\"keep-alive\":\"timeout=5\",\"x-request-id\":\"req_1791469824899_8xfir\"}}}"
+    }
+  ],
+  "serverTruth": {
+    "mode": "HAPPY_PATH",
+    "payments": [
+      {
+        "requestId": "req_1791469824899_8xfir",
+        "idemKey": "idem-happy_path-001",
+        "paymentRecordedAt": 1791469824899,
+        "receipt": "mock-receipt-1"
+      }
+    ],
+    "executions": {
+      "idem-happy_path-001": {
+        "requestId": "req_1791469824899_8xfir",
+        "executionId": "exec_1_idem-hap",
+        "paymentAcceptedAt": 1791469824899,
+        "startedAt": 1791469824899,
+        "delivered": true,
+        "failed": false,
+        "completedAt": 1791469824899
+      }
+    },
+    "requests": [
+      {
+        "requestId": "req_1791469824892_yqfto",
+        "method": "POST",
+        "path": "/execute",
+        "at": 1791469824892,
+        "hasPayment": false,
+        "idemKey": "idem-happy_path-001"
+      },
+      {
+        "requestId": "req_1791469824899_8xfir",
+        "method": "POST",
+        "path": "/execute",
+        "at": 1791469824899,
+        "hasPayment": true,
+        "idemKey": "idem-happy_path-001"
+      }
+    ]
+  },
+  "verdictInputs": {
+    "paymentsRecorded": 1,
+    "executionsStarted": 1,
+    "executionsCompleted": 1,
+    "responsesDeliveredToClient": 2
+  },
+  "verdict": {
+    "payment": "KNOWN",
+    "execution": "OBSERVED",
+    "delivery": "PROVEN",
+    "verdict": "SUCCESS_CANDIDATE"
+  },
+  "evidenceCount": 0,
+  "evidence": []
+}
