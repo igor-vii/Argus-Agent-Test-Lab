@@ -1,0 +1,104 @@
+{
+  "scenario": "IDEMPOTENT_RETRY",
+  "argusAdapterIds": [
+    "http-adapter_1791469853693_as56tn4",
+    "http-adapter_1791469853750_cdy32lo",
+    "http-adapter_1791469853754_zeca59t"
+  ],
+  "steps": [
+    {
+      "label": "payment_required_probe",
+      "at": 1791469853693,
+      "elapsedMs": 57,
+      "outcome": "RESPONSE_RECEIVED",
+      "exchangeStatus": "failure",
+      "raw": "{\"id\":\"http-exch_1791469853693_o1uygm7\",\"runId\":\"run_IDEMPOTENT_RETRY_1791469853693\",\"direction\":\"outbound\",\"type\":\"task.mock\",\"timestamp\":1791469853693,\"payload\":{\"task\":\"mock-task\"},\"status\":\"failure\",\"error\":\"HTTP 402: Payment Required\",\"metadata\":{\"errorType\":\"Error\"}}"
+    },
+    {
+      "label": "paid_execution_request",
+      "at": 1791469853750,
+      "elapsedMs": 4,
+      "outcome": "RESPONSE_RECEIVED",
+      "exchangeStatus": "success",
+      "raw": "{\"id\":\"http-exch_1791469853750_wuq7k0j\",\"runId\":\"run_IDEMPOTENT_RETRY_1791469853750\",\"direction\":\"outbound\",\"type\":\"task.mock\",\"timestamp\":1791469853750,\"payload\":{\"requestId\":\"req_1791469853752_z5pw2\",\"executionId\":\"exec_1_idem-ide\",\"status\":\"COMPLETED\",\"artifact\":\"mock-completion-proof\",\"payments\":[\"mock-receipt-1\"]},\"status\":\"success\",\"metadata\":{\"statusCode\":200,\"headers\":{\"connection\":\"keep-alive\",\"content-length\":\"157\",\"content-type\":\"application/json\",\"date\":\"Thu, 08 Oct 2026 14:30:53 GMT\",\"keep-alive\":\"timeout=5\",\"x-request-id\":\"req_1791469853752_z5pw2\"}}}"
+    },
+    {
+      "label": "retry_after_unknown",
+      "at": 1791469853754,
+      "elapsedMs": 2,
+      "outcome": "RESPONSE_RECEIVED",
+      "exchangeStatus": "success",
+      "raw": "{\"id\":\"http-exch_1791469853754_le634jg\",\"runId\":\"run_IDEMPOTENT_RETRY_1791469853754\",\"direction\":\"outbound\",\"type\":\"task.mock\",\"timestamp\":1791469853754,\"payload\":{\"requestId\":\"req_1791469853755_amn1t\",\"executionId\":\"exec_1_idem-ide\",\"status\":\"COMPLETED\",\"duplicatePaymentAccepted\":true,\"idempotentReplay\":true,\"payments\":[\"mock-receipt-1\",\"mock-receipt-2\"]},\"status\":\"success\",\"metadata\":{\"statusCode\":200,\"headers\":{\"connection\":\"keep-alive\",\"content-length\":\"195\",\"content-type\":\"application/json\",\"date\":\"Thu, 08 Oct 2026 14:30:53 GMT\",\"keep-alive\":\"timeout=5\",\"x-request-id\":\"req_1791469853755_amn1t\"}}}"
+    }
+  ],
+  "serverTruth": {
+    "mode": "IDEMPOTENT_RETRY",
+    "payments": [
+      {
+        "requestId": "req_1791469853752_z5pw2",
+        "idemKey": "idem-idempotent_retry-001",
+        "paymentRecordedAt": 1791469853752,
+        "receipt": "mock-receipt-1"
+      },
+      {
+        "requestId": "req_1791469853755_amn1t",
+        "idemKey": "idem-idempotent_retry-001",
+        "paymentRecordedAt": 1791469853755,
+        "receipt": "mock-receipt-2"
+      }
+    ],
+    "executions": {
+      "idem-idempotent_retry-001": {
+        "requestId": "req_1791469853752_z5pw2",
+        "executionId": "exec_1_idem-ide",
+        "paymentAcceptedAt": 1791469853752,
+        "startedAt": 1791469853752,
+        "delivered": true,
+        "failed": false,
+        "completedAt": 1791469853752
+      }
+    },
+    "requests": [
+      {
+        "requestId": "req_1791469853745_sy9zr",
+        "method": "POST",
+        "path": "/execute",
+        "at": 1791469853745,
+        "hasPayment": false,
+        "idemKey": "idem-idempotent_retry-001"
+      },
+      {
+        "requestId": "req_1791469853752_z5pw2",
+        "method": "POST",
+        "path": "/execute",
+        "at": 1791469853752,
+        "hasPayment": true,
+        "idemKey": "idem-idempotent_retry-001"
+      },
+      {
+        "requestId": "req_1791469853755_amn1t",
+        "method": "POST",
+        "path": "/execute",
+        "at": 1791469853755,
+        "hasPayment": true,
+        "idemKey": "idem-idempotent_retry-001"
+      }
+    ]
+  },
+  "verdictInputs": {
+    "paymentsRecorded": 2,
+    "executionsStarted": 1,
+    "executionsCompleted": 1,
+    "responsesDeliveredToClient": 3
+  },
+  "verdict": {
+    "payments": "KNOWN x2",
+    "executions": 1,
+    "duplicateEconomicAction": false,
+    "idempotentReplay": true,
+    "retryOutcome": "RESPONSE_RECEIVED",
+    "verdict": "SAFE_IDEMPOTENT_RETRY"
+  },
+  "evidenceCount": 0,
+  "evidence": []
+}
