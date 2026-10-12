@@ -1,0 +1,41 @@
++ echo '=== Stage C: install/build evidence (documented commands from package.json) ==='
+=== Stage C: install/build evidence (documented commands from package.json) ===
++ date -u
+Mon Oct 12 06:32:43 UTC 2026
++ echo
+
++ echo '--- command: npm ci --no-audit --no-fund (cwd /workspace/sandbox-franklin-f1-retry/franklin, HEAD 45b026c4...) ---'
+--- command: npm ci --no-audit --no-fund (cwd /workspace/sandbox-franklin-f1-retry/franklin, HEAD 45b026c4...) ---
++ echo 'exit code: 0'
+exit code: 0
++ echo 'summary: added 1176 packages in 60s (deprecation warnings only)'
+summary: added 1176 packages in 60s (deprecation warnings only)
++ tail -6 /tmp/npmci.log
+npm warn deprecated glob@7.2.3: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+npm warn deprecated boolean@3.2.0: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
+npm warn deprecated uuid@8.3.2: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).
+npm warn deprecated eslint@9.39.5: This version is no longer supported. Please see https://eslint.org/version-support for other options.
+
+added 1176 packages in 60s
++ echo
+
++ echo '--- command: npm run build (= tsc && node scripts/copy-plugin-assets.mjs) ---'
+--- command: npm run build (= tsc && node scripts/copy-plugin-assets.mjs) ---
++ echo 'exit code: 0'
+exit code: 0
++ cat /tmp/build.log
+
+> @blockrun/franklin@3.49.6 build
+> tsc && node scripts/copy-plugin-assets.mjs
+
+[copy-plugin-assets] no src/plugins-bundled directory, skipping
+[copy-plugin-assets] copied 8 files to dist/skills-bundled/
++ echo
+
++ echo '--- artifacts present ---'
+--- artifacts present ---
++ awk '{print $NF, $5"B"}'
++ ls -la dist/hooks/runner.js dist/agent/streaming-executor.js dist/tools/spend-tools.js
+dist/agent/streaming-executor.js 19904B
+dist/hooks/runner.js 6848B
+dist/tools/spend-tools.js 4226B
