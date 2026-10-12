@@ -1,0 +1,60 @@
++ echo '=== Stage B: dynamic PreSpend deny test log ==='
+=== Stage B: dynamic PreSpend deny test log ===
++ date -u
+Mon Oct 12 06:33:49 UTC 2026
++ echo
+
++ echo 'Subject: @blockrun/franklin 3.49.6 @ 45b026c4ee93a4a34cb15cfa8a008ae6b89becd6 (unmodified; git status clean verified post-run below)'
+Subject: @blockrun/franklin 3.49.6 @ 45b026c4ee93a4a34cb15cfa8a008ae6b89becd6 (unmodified; git status clean verified post-run below)
++ echo 'Test harness (test-only, outside upstream tree): /workspace/sandbox-franklin-f1-retry/f1-prespend-deny-test.mjs'
+Test harness (test-only, outside upstream tree): /workspace/sandbox-franklin-f1-retry/f1-prespend-deny-test.mjs
++ echo 'Hook config/script (test-only): /workspace/sandbox-franklin-f1-retry/test-home/.blockrun/hooks/f1-deny.{json,sh}'
+Hook config/script (test-only): /workspace/sandbox-franklin-f1-retry/test-home/.blockrun/hooks/f1-deny.{json,sh}
++ echo 'Command: HOME=/workspace/sandbox-franklin-f1-retry/test-home node f1-prespend-deny-test.mjs'
+Command: HOME=/workspace/sandbox-franklin-f1-retry/test-home node f1-prespend-deny-test.mjs
++ echo 'Exit code: 0 (node_exit=0)'
+Exit code: 0 (node_exit=0)
++ echo
+
++ sed -n '/\[1\]/,/ALL ASSERTIONS/p'
++ cat /tmp/f1test2.log
+[1] spend-tool registry checks (pure functions, official module)
+    isSpendTool(JupiterSwap)=true, estimateSpendUsd=7.5 USD
+[2] official loader discovers the test hook from $HOME/.blockrun/hooks
+    loaded: [ 'PreSpend:f1-deny.json:user' ]
+[3] real HookEngine + real StreamingExecutor.collectResults (production pipeline)
+[4] observed executor result:
+    isError = true
+    output  = "Spend blocked by a user hook: ARGUS_F1_PRESPEND_DENY_TEST. Do not retry the same call — explain what you were trying to spend and ask the user how to proceed."
+[5] enforcement check: tool handler must NOT have executed
+    handlerExecuted = false
+[6] hook-side evidence (envelope received on stdin)
+    hookEventName = PreSpend | spend = {"estimatedUsd":7.5,"tool":"JupiterSwap","params":{"input_mint":"USDC","amount":7.5}}
+[7] Franklin audit record (~/.blockrun/approvals.jsonl under test HOME)
+    {"ts":1791786818056,"sessionId":"f1-prespend-deny-session","kind":"hook","subject":"JupiterSwap","decision":"deny","by":"hook:f1-deny.json","reason":"ARGUS_F1_PRESPEND_DENY_TEST"}
+[8] negative control: same pipeline with FRANKLIN_HOOKS=0-equivalent (no engine)
+    without hook engine, stub handler ran: true (expected true)
+F1-DYNAMIC-TEST: ALL ASSERTIONS PASSED
++ echo
+
++ echo '--- hook-side event log (stdin envelope captured by the hook itself) ---'
+--- hook-side event log (stdin envelope captured by the hook itself) ---
++ cat /workspace/sandbox-franklin-f1-retry/franklin-prespend-deny-2026-10-12-retry/f1_prespend_event.jsonl
+{"hookEventName":"PreSpend","sessionId":"f1-prespend-deny-session","cwd":"/workspace/sandbox-franklin-f1-retry/test-home","timestamp":"2026-10-12T06:33:38.048Z","toolName":"JupiterSwap","toolInput":{"input_mint":"USDC","amount":7.5},"spend":{"estimatedUsd":7.5,"tool":"JupiterSwap","params":{"input_mint":"USDC","amount":7.5}}}+ echo
+
++ echo '--- Franklin approvals audit record (written by dist/hooks/runner.js -> appendApprovalRecord) ---'
+--- Franklin approvals audit record (written by dist/hooks/runner.js -> appendApprovalRecord) ---
++ cat /workspace/sandbox-franklin-f1-retry/test-home/.blockrun/approvals.jsonl
+{"ts":1791786818056,"sessionId":"f1-prespend-deny-session","kind":"hook","subject":"JupiterSwap","decision":"deny","by":"hook:f1-deny.json","reason":"ARGUS_F1_PRESPEND_DENY_TEST"}
++ echo
+
++ echo '--- upstream tree integrity after test ---'
+--- upstream tree integrity after test ---
++ cd /workspace/sandbox-franklin-f1-retry/franklin
++ grep -v '^?? node_modules'
++ git --no-pager status --porcelain
++ grep -v '^?? dist'
+++ git --no-pager diff --stat
+++ wc -l
++ echo 'tracked-file modifications: 0 lines (0 = none)'
+tracked-file modifications: 0 lines (0 = none)

@@ -1,0 +1,12 @@
+{
+  "hooks": {
+    "PreSpend": [
+      {
+        "hooks": [
+          { "type": "command", "command": "f1-deny.sh", "timeout": 5,
+            "env": { "F1_HOOK_LOG": "/workspace/sandbox-franklin-f1-retry/franklin-prespend-deny-2026-10-12-retry" } }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,74 @@
++ echo 'F1-RETRY environment & provenance record'
+F1-RETRY environment & provenance record
+++ date -u +%FT%TZ
++ echo 'captured_utc: 2026-10-12T06:54:32Z'
+captured_utc: 2026-10-12T06:54:32Z
++ echo
+
++ echo '== Sandbox =='
+== Sandbox ==
++ echo 'evidence dir: /workspace/franklin-prespend-deny-2026-10-12-retry (outside Argus sources; under /workspace per harness requirement)'
+evidence dir: /workspace/franklin-prespend-deny-2026-10-12-retry (outside Argus sources; under /workspace per harness requirement)
++ echo 'franklin clone: /tmp/sandbox-franklin/franklin (isolated, disposable)'
+franklin clone: /tmp/sandbox-franklin/franklin (isolated, disposable)
+++ grep PRETTY_NAME
+++ cat /etc/os-release
+++ uname -r
++ echo 'OS: PRETTY_NAME="Debian GNU/Linux 12 (bookworm)" ; kernel: 4.19.91-c8dfc93.al7.x86_64'
+OS: PRETTY_NAME="Debian GNU/Linux 12 (bookworm)" ; kernel: 4.19.91-c8dfc93.al7.x86_64
+++ node --version
+++ npm --version
+++ git --no-pager --version
++ echo 'node: v20.20.2 ; npm: 10.8.2 ; git: git version 2.39.5'
+node: v20.20.2 ; npm: 10.8.2 ; git: git version 2.39.5
++ echo 'network: github.com HTTP 200, api.github.com HTTP 200 (pre-checked)'
+network: github.com HTTP 200, api.github.com HTTP 200 (pre-checked)
++ echo
+
++ echo '== Provenance =='
+== Provenance ==
++ git --no-pager remote -v
+origin	https://github.com/BlockRunAI/Franklin.git (fetch)
+origin	https://github.com/BlockRunAI/Franklin.git (push)
+++ git --no-pager branch --show-current
++ echo 'branch: main'
+branch: main
+++ git --no-pager rev-parse HEAD
++ echo 'HEAD: 45b026c4ee93a4a34cb15cfa8a008ae6b89becd6'
+HEAD: 45b026c4ee93a4a34cb15cfa8a008ae6b89becd6
++ git --no-pager log -1 '--format=commit_date: %ad%nsubject: %s'
+commit_date: Sun Oct 11 17:04:30 2026 -0500
+subject: chore(brand): refresh the snapshot — the markers were rendering a stale catalog (#207)
+++ git --no-pager status --porcelain
+++ wc -l
++ echo 'worktree_dirty_lines: 0'
+worktree_dirty_lines: 0
++ echo
+
++ node -e 'const p=require('\''./package.json'\'');console.log('\''package:'\'',p.name,'\''version:'\'',p.version);console.log('\''engines:'\'',JSON.stringify(p.engines));console.log('\''bin:'\'',JSON.stringify(p.bin))'
+package: @blockrun/franklin version: 3.49.6
+engines: {"node":">=20.19.0"}
+bin: {"franklin":"dist/index.js"}
+++ node -e 'console.log(require('\''./package-lock.json'\'').lockfileVersion)'
+++ node -e 'console.log(require('\''./package-lock.json'\'').name)'
+++ node -e 'console.log(require('\''./package-lock.json'\'').version)'
++ echo 'lockfile: v3 name=@blockrun/franklin version=3.49.6'
+lockfile: v3 name=@blockrun/franklin version=3.49.6
++ echo
+
++ echo '== Identity verification =='
+== Identity verification ==
++ echo 'package name @blockrun/franklin (NOT unrelated npm '\''franklin'\'' v2.0.20 react form library)'
+package name @blockrun/franklin (NOT unrelated npm 'franklin' v2.0.20 react form library)
++ echo 'README head: '\''Franklin Agent ... The AI agent with a wallet.'\'' + npm badge shields.io/npm/v/@blockrun/franklin'
+README head: 'Franklin Agent ... The AI agent with a wallet.' + npm badge shields.io/npm/v/@blockrun/franklin
++ echo
+
++ echo '== Argus repo untouched check =='
+== Argus repo untouched check ==
+++ cd /workspace
+++ git --no-pager rev-parse HEAD
++ echo 'Argus HEAD still: e7bba2aa62cacaf2d2377826797e90ef00c0235c'
+Argus HEAD still: e7bba2aa62cacaf2d2377826797e90ef00c0235c
++ echo 'No commits/push/PR/merge performed.'
+No commits/push/PR/merge performed.

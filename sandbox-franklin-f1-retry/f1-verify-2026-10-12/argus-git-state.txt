@@ -1,0 +1,107 @@
++ echo 'F1-VERIFY read-only snapshot — captured 2026-10-12T07:0xZ (see date below)'
+F1-VERIFY read-only snapshot — captured 2026-10-12T07:0xZ (see date below)
++ date -u
+Mon Oct 12 07:01:59 UTC 2026
++ echo
+
++ echo '== git rev-parse HEAD =='
+== git rev-parse HEAD ==
++ git --no-pager rev-parse HEAD
+e7bba2aa62cacaf2d2377826797e90ef00c0235c
++ echo '== branch =='
+== branch ==
++ git --no-pager branch --show-current
+qwen-code-4bc672ac-3e10-4fb7-9c03-81492df799b6
++ echo '== git status --short =='
+== git status --short ==
++ git --no-pager status --short
+M  .gitignore
+A  franklin-prespend-deny-2026-10-12-retry/00-environment-and-provenance.txt
+A  franklin-prespend-deny-2026-10-12-retry/01-hook-api-and-safety.md
+A  franklin-prespend-deny-2026-10-12-retry/04-signing-payment-safety-evidence.md
+A  franklin-prespend-deny-2026-10-12-retry/05-report.md
+A  franklin-prespend-deny-2026-10-12-retry/06-completion-checks.txt
+A  franklin-prespend-deny-2026-10-12-retry/SHA256SUMS.txt
+A  franklin-prespend-deny-2026-10-12-retry/deny-hook.sh
+A  franklin-prespend-deny-2026-10-12-retry/f1-prespend-deny.json
+A  franklin-prespend-deny-2026-10-12-retry/run-test.mjs
+A  franklin-prespend-deny-2026-10-12/00-pre-snapshot.txt
+A  franklin-prespend-deny-2026-10-12/01-stageA-verification.log
+A  franklin-prespend-deny-2026-10-12/02-stageA-negative-control.log
+A  franklin-prespend-deny-2026-10-12/03-stageB-decision.md
+A  franklin-prespend-deny-2026-10-12/04-report.md
+A  sandbox-franklin-f1-retry/f1-prespend-deny-test.mjs
+A  sandbox-franklin-f1-retry/franklin
+A  sandbox-franklin-f1-retry/franklin-prespend-deny-2026-10-12-retry.f1_prespend_event.jsonl
+A  sandbox-franklin-f1-retry/franklin-prespend-deny-2026-10-12-retry/00-environment-and-provenance.txt
+A  sandbox-franklin-f1-retry/franklin-prespend-deny-2026-10-12-retry/01-hook-api-and-safety.md
+A  sandbox-franklin-f1-retry/franklin-prespend-deny-2026-10-12-retry/02-install-build.log
+A  sandbox-franklin-f1-retry/franklin-prespend-deny-2026-10-12-retry/03-hook-test.log
+A  sandbox-franklin-f1-retry/franklin-prespend-deny-2026-10-12-retry/04-signing-payment-safety-evidence.md
+A  sandbox-franklin-f1-retry/franklin-prespend-deny-2026-10-12-retry/05-report.md
+A  sandbox-franklin-f1-retry/franklin-prespend-deny-2026-10-12-retry/SHA256SUMS.txt
+A  sandbox-franklin-f1-retry/franklin-prespend-deny-2026-10-12-retry/f1-deny-hook-config.json.copy
+A  sandbox-franklin-f1-retry/franklin-prespend-deny-2026-10-12-retry/f1-deny-hook-script.sh.copy
+A  sandbox-franklin-f1-retry/franklin-prespend-deny-2026-10-12-retry/f1-prespend-deny-test.mjs.copy
+A  sandbox-franklin-f1-retry/franklin-prespend-deny-2026-10-12-retry/f1_prespend_event.jsonl
+A  sandbox-franklin-f1-retry/test-home/.blockrun/approvals.jsonl
+A  sandbox-franklin-f1-retry/test-home/.blockrun/hooks/f1-deny.json
+A  sandbox-franklin-f1-retry/test-home/.blockrun/hooks/f1-deny.sh
+?? sandbox-franklin-f1-retry/f1-verify-2026-10-12/
++ echo '== git diff --cached --name-status =='
+== git diff --cached --name-status ==
++ git --no-pager diff --cached --name-status
+M	.gitignore
+A	franklin-prespend-deny-2026-10-12-retry/00-environment-and-provenance.txt
+A	franklin-prespend-deny-2026-10-12-retry/01-hook-api-and-safety.md
+A	franklin-prespend-deny-2026-10-12-retry/04-signing-payment-safety-evidence.md
+A	franklin-prespend-deny-2026-10-12-retry/05-report.md
+A	franklin-prespend-deny-2026-10-12-retry/06-completion-checks.txt
+A	franklin-prespend-deny-2026-10-12-retry/SHA256SUMS.txt
+A	franklin-prespend-deny-2026-10-12-retry/deny-hook.sh
+A	franklin-prespend-deny-2026-10-12-retry/f1-prespend-deny.json
+A	franklin-prespend-deny-2026-10-12-retry/run-test.mjs
+A	franklin-prespend-deny-2026-10-12/00-pre-snapshot.txt
+A	franklin-prespend-deny-2026-10-12/01-stageA-verification.log
+A	franklin-prespend-deny-2026-10-12/02-stageA-negative-control.log
+A	franklin-prespend-deny-2026-10-12/03-stageB-decision.md
+A	franklin-prespend-deny-2026-10-12/04-report.md
+A	sandbox-franklin-f1-retry/f1-prespend-deny-test.mjs
+A	sandbox-franklin-f1-retry/franklin
+A	sandbox-franklin-f1-retry/franklin-prespend-deny-2026-10-12-retry.f1_prespend_event.jsonl
+A	sandbox-franklin-f1-retry/franklin-prespend-deny-2026-10-12-retry/00-environment-and-provenance.txt
+A	sandbox-franklin-f1-retry/franklin-prespend-deny-2026-10-12-retry/01-hook-api-and-safety.md
+A	sandbox-franklin-f1-retry/franklin-prespend-deny-2026-10-12-retry/02-install-build.log
+A	sandbox-franklin-f1-retry/franklin-prespend-deny-2026-10-12-retry/03-hook-test.log
+A	sandbox-franklin-f1-retry/franklin-prespend-deny-2026-10-12-retry/04-signing-payment-safety-evidence.md
+A	sandbox-franklin-f1-retry/franklin-prespend-deny-2026-10-12-retry/05-report.md
+A	sandbox-franklin-f1-retry/franklin-prespend-deny-2026-10-12-retry/SHA256SUMS.txt
+A	sandbox-franklin-f1-retry/franklin-prespend-deny-2026-10-12-retry/f1-deny-hook-config.json.copy
+A	sandbox-franklin-f1-retry/franklin-prespend-deny-2026-10-12-retry/f1-deny-hook-script.sh.copy
+A	sandbox-franklin-f1-retry/franklin-prespend-deny-2026-10-12-retry/f1-prespend-deny-test.mjs.copy
+A	sandbox-franklin-f1-retry/franklin-prespend-deny-2026-10-12-retry/f1_prespend_event.jsonl
+A	sandbox-franklin-f1-retry/test-home/.blockrun/approvals.jsonl
+A	sandbox-franklin-f1-retry/test-home/.blockrun/hooks/f1-deny.json
+A	sandbox-franklin-f1-retry/test-home/.blockrun/hooks/f1-deny.sh
++ echo '== git diff --name-status =='
+== git diff --name-status ==
++ git --no-pager diff --name-status
++ echo '(empty section above = no unstaged tracked changes)'
+(empty section above = no unstaged tracked changes)
++ echo '== .gitignore worktree bytes =='
+== .gitignore worktree bytes ==
++ od -c .gitignore
+0000000   *   .   l   o   g  \n
+0000006
++ echo '== index entries of interest =='
+== index entries of interest ==
++ grep -E '\.gitignore|sandbox-franklin-f1-retry/franklin$'
++ git --no-pager ls-files --stage
+100644 397b4a7624e35fa60563a9c03b1213d93f7b6546 0	.gitignore
+160000 45b026c4ee93a4a34cb15cfa8a008ae6b89becd6 0	sandbox-franklin-f1-retry/franklin
+100644 48a58e61d502fc14c03979b4ee476f71dc1c23cf 0	src/tests/external/.gitignore
++ echo '== reflog =='
+== reflog ==
++ git --no-pager reflog --date=iso
+e7bba2a HEAD@{2026-10-12 06:03:35 +0000}: checkout: moving from main to qwen-code-4bc672ac-3e10-4fb7-9c03-81492df799b6
+e7bba2a HEAD@{2026-10-12 06:03:35 +0000}: clone: from https://github.com/igor-vii/Argus-Agent-Test-Lab.git

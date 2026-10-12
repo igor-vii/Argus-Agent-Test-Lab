@@ -1,0 +1,16 @@
+# TASK F1 — Pre-Snapshot (recorded before any test action)
+Recorded (UTC): 2026-10-12T06:06:55Z
+
+## Sandbox state at start of task
+- Working dir: /workspace (Qwen Code sandbox, separate from product code paths)
+- HEAD: e7bba2aa62cacaf2d2377826797e90ef00c0235c
+- Branch: qwen-code-4bc672ac-3e10-4fb7-9c03-81492df799b6
+- git status (porcelain, must be empty = clean tree):
+?? franklin-prespend-deny-2026-10-12/
+(end of porcelain output — empty above means working tree clean)
+- Single commit in history: e7bba2a docs: preserve Russian Argus-Secretariat report
+- Tags/stashes: none
+
+## Commit policy for this task
+- No commits, no push, no PR, no merge performed or planned.
+- All new artifacts live only in this directory; existing files untouched.

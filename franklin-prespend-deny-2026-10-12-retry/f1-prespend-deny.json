@@ -1,0 +1,11 @@
+{
+  "hooks": {
+    "PreSpend": [
+      {
+        "hooks": [
+          { "type": "command", "command": "/tmp/f1-testkit/deny-hook.sh", "timeout": 5 }
+        ]
+      }
+    ]
+  }
+}

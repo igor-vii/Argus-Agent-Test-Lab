@@ -1,0 +1,16 @@
+# TASK F1 — Stage A: Negative control (PreSpend grep re-run with paths)
+Run (UTC): 2026-10-12T06:07:17Z
+
+$ find / -iname '*prespend*' -not -path '/proc/*' -not -path '/sys/*'
+/workspace/franklin-prespend-deny-2026-10-12
+-> the only hit is this task's own results directory name; no PreSpend implementation exists anywhere in the sandbox.
+
+$ git -C /workspace log --all --diff-filter=A --name-only --pretty=format: | sort -u | wc -l
+0
+-> Franklin-related files ever added to any commit in history: 0
+
+## Conclusion of Stage A
+- Required artifacts franklin-static-audit.md / franklin-install.log / franklin-build.log / SUBJECTS-MANIFEST.md: ABSENT (filesystem + full git history).
+- The referenced 'current version of Franklin' cannot be identified: no source, no package lock entry, no manifest, no prior audit trail in this sandbox.
+- Public npm package named 'franklin' v2.0.20 is an unrelated React/Redux form factory (2017); it has no payment/PreSpend semantics and must NOT be substituted as the test subject.
+- Therefore the officially supported PreSpend mechanism of the Franklin under test cannot be confirmed from documentation or code available here.

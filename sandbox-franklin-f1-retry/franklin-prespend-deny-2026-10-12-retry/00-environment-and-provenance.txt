@@ -1,0 +1,41 @@
++ echo 'TASK F1-RETRY environment & provenance'
+TASK F1-RETRY environment & provenance
++ date -u
+Mon Oct 12 06:30:10 UTC 2026
++ echo '--- sandbox: /workspace/sandbox-franklin-f1-retry (separate from Argus working tree /workspace; Argus untouched)'
+--- sandbox: /workspace/sandbox-franklin-f1-retry (separate from Argus working tree /workspace; Argus untouched)
++ uname -a
+Linux c-6acc782d-01ed1602-08b178be6eb3 4.19.91-c8dfc93.al7.x86_64 #1 SMP Tue Sep 26 10:25:51 UTC 2023 x86_64 GNU/Linux
++ node --version
+v20.20.2
++ npm --version
+10.8.2
++ git --no-pager --version
+git version 2.39.5
++ echo '--- network: github.com HTTP/2 200 OK at clone time'
+--- network: github.com HTTP/2 200 OK at clone time
++ echo '--- subject:'
+--- subject:
++ cd /workspace/sandbox-franklin-f1-retry/franklin
++ git --no-pager remote -v
+origin	https://github.com/BlockRunAI/Franklin (fetch)
+origin	https://github.com/BlockRunAI/Franklin (push)
+++ git --no-pager branch --show-current
++ echo branch=main
+branch=main
+++ git --no-pager rev-parse HEAD
++ echo HEAD=45b026c4ee93a4a34cb15cfa8a008ae6b89becd6
+HEAD=45b026c4ee93a4a34cb15cfa8a008ae6b89becd6
++ git --no-pager log -1 --format=commit_date=%ad%ncommit_subject=%s
+commit_date=Sun Oct 11 17:04:30 2026 -0500
+commit_subject=chore(brand): refresh the snapshot — the markers were rendering a stale catalog (#207)
++++ git --no-pager status --porcelain
+++ '[' -z '' ']'
+++ echo clean
++ echo worktree_status=clean
+worktree_status=clean
++ node -e 'const p=require('\''./package.json'\'');console.log('\''package='\''+p.name,'\''version='\''+p.version,'\''engines='\''+JSON.stringify(p.engines))'
+package=@blockrun/franklin version=3.49.6 engines={"node":">=20.19.0"}
+++ node -e 'console.log(require('\''./package-lock.json'\'').lockfileVersion)'
++ echo lockfileVersion=3
+lockfileVersion=3

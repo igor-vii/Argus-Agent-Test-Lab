@@ -1,0 +1,1 @@
+{"hookEventName":"PreSpend","sessionId":"f1-prespend-deny-session","cwd":"/workspace/sandbox-franklin-f1-retry/test-home","timestamp":"2026-10-12T06:33:20.984Z","toolName":"JupiterSwap","toolInput":{"input_mint":"USDC","amount":7.5},"spend":{"estimatedUsd":7.5,"tool":"JupiterSwap","params":{"input_mint":"USDC","amount":7.5}}}

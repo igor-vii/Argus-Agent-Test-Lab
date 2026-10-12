@@ -1,0 +1,40 @@
+# TASK F1 — Stage A: Artifact & Mechanism Verification Log
+Run (UTC): 2026-10-12T06:07:04Z
+
+## A1. Search for required Franklin artifacts (franklin-static-audit.md, franklin-install.log, franklin-build.log, SUBJECTS-MANIFEST.md)
+
+$ find / -iname '*franklin*' (excluding /proc,/sys)
+0
+-> matches outside this new results dir: 0 (only hit was the results dir itself, excluded above)
+
+$ find / -iname 'SUBJECTS-MANIFEST*'
+0
+-> matches: 0
+
+$ find / -iname '*prespend*'
+1
+-> matches: 0
+
+## A2. Search inside repo working tree and full git history
+$ grep -ril franklin . --exclude-dir=.git
+0
+-> matches: 0
+$ grep -ril prespend|blockrun . --exclude-dir=.git
+0
+-> matches: 0
+$ git log --oneline --all
+e7bba2a docs: preserve Russian Argus-Secretariat report
+-> single commit; no branch/tag/stash contains Franklin artifacts:
+branches:   main * qwen-code-4bc672ac-3e10-4fb7-9c03-81492df799b6 
+tags: 0
+stash entries: 0
+
+## A3. Identify what npm package 'franklin' actually is (candidate identity check)
+version = '2.0.20'
+description = 'A React/Redux form factory '
+repository = { type: 'git', url: 'git+https://github.com/contrarian/franklin.git' }
+homepage = 'https://github.com/contrarian/franklin#readme'
+
+## A4. Network availability probe (sandbox has egress; recorded for reproducibility)
+HTTP/2 200 
+date: Mon, 12 Oct 2026 06:07:10 GMT
