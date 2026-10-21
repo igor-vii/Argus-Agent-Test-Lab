@@ -1,0 +1,79 @@
+{
+  "scenario": "PAYMENT_ACCEPTED_EXECUTION_FAILURE",
+  "argusAdapterIds": [
+    "http-adapter_1791469837368_wsehvz1",
+    "http-adapter_1791469837379_l3c46vr"
+  ],
+  "steps": [
+    {
+      "label": "payment_required_probe",
+      "at": 1791469837368,
+      "elapsedMs": 11,
+      "outcome": "RESPONSE_RECEIVED",
+      "exchangeStatus": "failure",
+      "raw": "{\"id\":\"http-exch_1791469837368_74g6b52\",\"runId\":\"run_PAYMENT_ACCEPTED_EXECUTION_FAILURE_1791469837368\",\"direction\":\"outbound\",\"type\":\"task.mock\",\"timestamp\":1791469837368,\"payload\":{\"task\":\"mock-task\"},\"status\":\"failure\",\"error\":\"HTTP 402: Payment Required\",\"metadata\":{\"errorType\":\"Error\"}}"
+    },
+    {
+      "label": "paid_execution_request",
+      "at": 1791469837379,
+      "elapsedMs": 3,
+      "outcome": "RESPONSE_RECEIVED",
+      "exchangeStatus": "failure",
+      "raw": "{\"id\":\"http-exch_1791469837379_nzb69vy\",\"runId\":\"run_PAYMENT_ACCEPTED_EXECUTION_FAILURE_1791469837379\",\"direction\":\"outbound\",\"type\":\"task.mock\",\"timestamp\":1791469837379,\"payload\":{\"task\":\"mock-task\"},\"status\":\"failure\",\"error\":\"HTTP 500: Internal Server Error\",\"metadata\":{\"errorType\":\"Error\"}}"
+    }
+  ],
+  "serverTruth": {
+    "mode": "PAYMENT_ACCEPTED_EXECUTION_FAILURE",
+    "payments": [
+      {
+        "requestId": "req_1791469837380_hc515",
+        "idemKey": "idem-payment_accepted_execution_failure-001",
+        "paymentRecordedAt": 1791469837380,
+        "receipt": "mock-receipt-1"
+      }
+    ],
+    "executions": {
+      "idem-payment_accepted_execution_failure-001": {
+        "requestId": "req_1791469837380_hc515",
+        "executionId": "exec_1_idem-pay",
+        "paymentAcceptedAt": 1791469837380,
+        "startedAt": 1791469837380,
+        "delivered": false,
+        "failed": true,
+        "completedAt": 1791469837380
+      }
+    },
+    "requests": [
+      {
+        "requestId": "req_1791469837376_p2suh",
+        "method": "POST",
+        "path": "/execute",
+        "at": 1791469837376,
+        "hasPayment": false,
+        "idemKey": "idem-payment_accepted_execution_failure-001"
+      },
+      {
+        "requestId": "req_1791469837380_hc515",
+        "method": "POST",
+        "path": "/execute",
+        "at": 1791469837380,
+        "hasPayment": true,
+        "idemKey": "idem-payment_accepted_execution_failure-001"
+      }
+    ]
+  },
+  "verdictInputs": {
+    "paymentsRecorded": 1,
+    "executionsStarted": 1,
+    "executionsCompleted": 1,
+    "responsesDeliveredToClient": 2
+  },
+  "verdict": {
+    "payment": "KNOWN",
+    "execution": "OBSERVED_FAILED",
+    "delivery": "PROVEN",
+    "verdict": "FAILURE_WITH_EVIDENCE"
+  },
+  "evidenceCount": 0,
+  "evidence": []
+}
