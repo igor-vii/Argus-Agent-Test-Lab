@@ -272,6 +272,8 @@ async function main() {
   const fixture = {
     fixture: "S-BS-06 x PR #3920 cross-check (acceptance matrix A1-A9 vs the PR's own expectedAmount control)",
     upstream_issue: "https://github.com/x402-foundation/x402/issues/3866",
+    pr_head: "2b4cc47c6e30b42469351e2a21f72bdaa74d31ad",
+    rerun_note: "re-run after vendor remediation commit 2b4cc47 (all five review items closed; A5 recipient binding)",
     pull_request: {
       repo: "gobeyondfj-cmd/x402",
       branch: "feat/expected-amount",

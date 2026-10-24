@@ -1,6 +1,8 @@
 {
   "fixture": "S-BS-06 x PR #3920 cross-check (acceptance matrix A1-A9 vs the PR's own expectedAmount control)",
   "upstream_issue": "https://github.com/x402-foundation/x402/issues/3866",
+  "pr_head": "2b4cc47c6e30b42469351e2a21f72bdaa74d31ad",
+  "rerun_note": "re-run after vendor remediation commit 2b4cc47 (all five review items closed; A5 recipient binding)",
   "pull_request": {
     "repo": "gobeyondfj-cmd/x402",
     "branch": "feat/expected-amount",
@@ -82,7 +84,7 @@
       "verdict": "PASS",
       "timeline": [
         {
-          "at": "2026-10-24T09:12:20.904Z",
+          "at": "2026-10-24T19:44:25.127Z",
           "type": "probe_start",
           "control_under_test": "PR #3920 SpendControls.expectedAmount (@x402/core built from feat/expected-amount @4232cf6)",
           "url": "http://127.0.0.1:4450/weather",
@@ -95,12 +97,12 @@
           "note": "rejection logic is the PR's own; this harness adds observation only (signer counts, verbatim errors)"
         },
         {
-          "at": "2026-10-24T09:12:20.904Z",
+          "at": "2026-10-24T19:44:25.128Z",
           "type": "cycle_start",
           "cycle": 1
         },
         {
-          "at": "2026-10-24T09:12:20.940Z",
+          "at": "2026-10-24T19:44:25.164Z",
           "type": "quote_offered",
           "cycle_context_url": "http://127.0.0.1:4450/weather",
           "requirements": {
@@ -126,7 +128,7 @@
           }
         },
         {
-          "at": "2026-10-24T09:12:20.944Z",
+          "at": "2026-10-24T19:44:25.167Z",
           "type": "signer_call",
           "call_index": 1,
           "signer_entry": "signTypedData",
@@ -139,13 +141,13 @@
           },
           "to": "0x9999999999999999999999999999999999999999",
           "value": "10000",
-          "from": "0xb37E10EcaD4ADD9b8D6B8095d506E1a5e84f99f0",
+          "from": "0x883A1FD85E1307bED2B84c02afe858a44b37Fc34",
           "valid_after": "0",
-          "valid_before": "1792833200",
-          "nonce": "0xf014b68c…9e04(len66)"
+          "valid_before": "1792871125",
+          "nonce": "0xa492bfda…4b70(len66)"
         },
         {
-          "at": "2026-10-24T09:12:20.952Z",
+          "at": "2026-10-24T19:44:25.176Z",
           "type": "cycle_result",
           "cycle": 1,
           "http": 200,
@@ -156,12 +158,12 @@
           }
         },
         {
-          "at": "2026-10-24T09:12:20.952Z",
+          "at": "2026-10-24T19:44:25.176Z",
           "type": "cycle_start",
           "cycle": 2
         },
         {
-          "at": "2026-10-24T09:12:20.954Z",
+          "at": "2026-10-24T19:44:25.179Z",
           "type": "quote_offered",
           "cycle_context_url": "http://127.0.0.1:4450/weather",
           "requirements": {
@@ -187,7 +189,7 @@
           }
         },
         {
-          "at": "2026-10-24T09:12:20.955Z",
+          "at": "2026-10-24T19:44:25.179Z",
           "type": "signer_call",
           "call_index": 2,
           "signer_entry": "signTypedData",
@@ -200,13 +202,13 @@
           },
           "to": "0x9999999999999999999999999999999999999999",
           "value": "10000",
-          "from": "0xb37E10EcaD4ADD9b8D6B8095d506E1a5e84f99f0",
+          "from": "0x883A1FD85E1307bED2B84c02afe858a44b37Fc34",
           "valid_after": "0",
-          "valid_before": "1792833200",
-          "nonce": "0x72962c66…000d(len66)"
+          "valid_before": "1792871125",
+          "nonce": "0xb134638f…e943(len66)"
         },
         {
-          "at": "2026-10-24T09:12:20.958Z",
+          "at": "2026-10-24T19:44:25.182Z",
           "type": "cycle_result",
           "cycle": 2,
           "http": 200,
@@ -276,7 +278,7 @@
       "verdict": "PASS",
       "timeline": [
         {
-          "at": "2026-10-24T09:12:27.003Z",
+          "at": "2026-10-24T19:44:31.195Z",
           "type": "probe_start",
           "control_under_test": "PR #3920 SpendControls.expectedAmount (@x402/core built from feat/expected-amount @4232cf6)",
           "url": "http://127.0.0.1:4451/weather",
@@ -289,12 +291,12 @@
           "note": "rejection logic is the PR's own; this harness adds observation only (signer counts, verbatim errors)"
         },
         {
-          "at": "2026-10-24T09:12:27.004Z",
+          "at": "2026-10-24T19:44:31.196Z",
           "type": "cycle_start",
           "cycle": 1
         },
         {
-          "at": "2026-10-24T09:12:27.042Z",
+          "at": "2026-10-24T19:44:31.232Z",
           "type": "quote_offered",
           "cycle_context_url": "http://127.0.0.1:4451/weather",
           "requirements": {
@@ -320,7 +322,7 @@
           }
         },
         {
-          "at": "2026-10-24T09:12:27.046Z",
+          "at": "2026-10-24T19:44:31.236Z",
           "type": "signer_call",
           "call_index": 1,
           "signer_entry": "signTypedData",
@@ -333,13 +335,13 @@
           },
           "to": "0x9999999999999999999999999999999999999999",
           "value": "10000",
-          "from": "0xd49577bbd0EE546e2B5CDE3cBB8081B4232004c0",
+          "from": "0x6ea514750EFF3e9881dA0cd0ad9D5671008Efa56",
           "valid_after": "0",
-          "valid_before": "1792833207",
-          "nonce": "0x5934fd28…6c6d(len66)"
+          "valid_before": "1792871131",
+          "nonce": "0x7049542c…826d(len66)"
         },
         {
-          "at": "2026-10-24T09:12:27.055Z",
+          "at": "2026-10-24T19:44:31.244Z",
           "type": "cycle_result",
           "cycle": 1,
           "http": 200,
@@ -350,12 +352,12 @@
           }
         },
         {
-          "at": "2026-10-24T09:12:27.055Z",
+          "at": "2026-10-24T19:44:31.244Z",
           "type": "cycle_start",
           "cycle": 2
         },
         {
-          "at": "2026-10-24T09:12:27.058Z",
+          "at": "2026-10-24T19:44:31.247Z",
           "type": "quote_offered",
           "cycle_context_url": "http://127.0.0.1:4451/weather",
           "requirements": {
@@ -381,7 +383,7 @@
           }
         },
         {
-          "at": "2026-10-24T09:12:27.059Z",
+          "at": "2026-10-24T19:44:31.247Z",
           "type": "cycle_error",
           "cycle": 2,
           "error": "Failed to create payment payload: quote-check-rejected: quote_mismatch_vs_expected: amount 10000 -> 100000. The server-declared amount does not match the caller-anchored price expectation. Adjust spendControls.expectedAmount, raise expectedAmountTolerance for legitimate repricing, or set expectedAmount: false to disable.",
@@ -448,7 +450,7 @@
       "verdict": "PASS",
       "timeline": [
         {
-          "at": "2026-10-24T09:12:33.120Z",
+          "at": "2026-10-24T19:44:37.247Z",
           "type": "probe_start",
           "control_under_test": "PR #3920 SpendControls.expectedAmount (@x402/core built from feat/expected-amount @4232cf6)",
           "url": "http://127.0.0.1:4452/weather",
@@ -461,12 +463,12 @@
           "note": "rejection logic is the PR's own; this harness adds observation only (signer counts, verbatim errors)"
         },
         {
-          "at": "2026-10-24T09:12:33.120Z",
+          "at": "2026-10-24T19:44:37.248Z",
           "type": "cycle_start",
           "cycle": 1
         },
         {
-          "at": "2026-10-24T09:12:33.159Z",
+          "at": "2026-10-24T19:44:37.284Z",
           "type": "quote_offered",
           "cycle_context_url": "http://127.0.0.1:4452/weather",
           "requirements": {
@@ -492,7 +494,7 @@
           }
         },
         {
-          "at": "2026-10-24T09:12:33.163Z",
+          "at": "2026-10-24T19:44:37.287Z",
           "type": "signer_call",
           "call_index": 1,
           "signer_entry": "signTypedData",
@@ -505,13 +507,13 @@
           },
           "to": "0x9999999999999999999999999999999999999999",
           "value": "10000",
-          "from": "0x69Ef1A0995ee289f59C9630673B5449c2ECC8e84",
+          "from": "0xd47988d7b3BA7cC165321bd176f66E92b897dED0",
           "valid_after": "0",
-          "valid_before": "1792833213",
-          "nonce": "0x53a136a4…1088(len66)"
+          "valid_before": "1792871137",
+          "nonce": "0x102983c4…f624(len66)"
         },
         {
-          "at": "2026-10-24T09:12:33.172Z",
+          "at": "2026-10-24T19:44:37.295Z",
           "type": "cycle_result",
           "cycle": 1,
           "http": 200,
@@ -522,12 +524,12 @@
           }
         },
         {
-          "at": "2026-10-24T09:12:33.173Z",
+          "at": "2026-10-24T19:44:37.295Z",
           "type": "cycle_start",
           "cycle": 2
         },
         {
-          "at": "2026-10-24T09:12:33.179Z",
+          "at": "2026-10-24T19:44:37.298Z",
           "type": "quote_offered",
           "cycle_context_url": "http://127.0.0.1:4452/weather",
           "requirements": {
@@ -553,7 +555,7 @@
           }
         },
         {
-          "at": "2026-10-24T09:12:33.180Z",
+          "at": "2026-10-24T19:44:37.298Z",
           "type": "cycle_error",
           "cycle": 2,
           "error": "Failed to create payment payload: quote-check-rejected: quote_mismatch_vs_expected: amount 10000 -> 5000. The server-declared amount does not match the caller-anchored price expectation. Adjust spendControls.expectedAmount, raise expectedAmountTolerance for legitimate repricing, or set expectedAmount: false to disable.",
@@ -622,7 +624,7 @@
       "verdict": "PASS",
       "timeline": [
         {
-          "at": "2026-10-24T09:12:39.173Z",
+          "at": "2026-10-24T19:44:43.267Z",
           "type": "probe_start",
           "control_under_test": "PR #3920 SpendControls.expectedAmount (@x402/core built from feat/expected-amount @4232cf6)",
           "url": "http://127.0.0.1:4453/weather",
@@ -635,12 +637,12 @@
           "note": "rejection logic is the PR's own; this harness adds observation only (signer counts, verbatim errors)"
         },
         {
-          "at": "2026-10-24T09:12:39.174Z",
+          "at": "2026-10-24T19:44:43.268Z",
           "type": "cycle_start",
           "cycle": 1
         },
         {
-          "at": "2026-10-24T09:12:39.212Z",
+          "at": "2026-10-24T19:44:43.304Z",
           "type": "quote_offered",
           "cycle_context_url": "http://127.0.0.1:4453/weather",
           "requirements": {
@@ -666,7 +668,7 @@
           }
         },
         {
-          "at": "2026-10-24T09:12:39.214Z",
+          "at": "2026-10-24T19:44:43.306Z",
           "type": "cycle_error",
           "cycle": 1,
           "error": "Failed to create payment payload: quote-check-rejected: quote_mismatch_vs_expected: amount 10000 -> 100000. The server-declared amount does not match the caller-anchored price expectation. Adjust spendControls.expectedAmount, raise expectedAmountTolerance for legitimate repricing, or set expectedAmount: false to disable.",
@@ -674,12 +676,12 @@
           "quote_mismatch": null
         },
         {
-          "at": "2026-10-24T09:12:39.214Z",
+          "at": "2026-10-24T19:44:43.306Z",
           "type": "cycle_start",
           "cycle": 2
         },
         {
-          "at": "2026-10-24T09:12:39.217Z",
+          "at": "2026-10-24T19:44:43.309Z",
           "type": "quote_offered",
           "cycle_context_url": "http://127.0.0.1:4453/weather",
           "requirements": {
@@ -705,7 +707,7 @@
           }
         },
         {
-          "at": "2026-10-24T09:12:39.218Z",
+          "at": "2026-10-24T19:44:43.309Z",
           "type": "cycle_error",
           "cycle": 2,
           "error": "Failed to create payment payload: quote-check-rejected: quote_mismatch_vs_expected: amount 10000 -> 100000. The server-declared amount does not match the caller-anchored price expectation. Adjust spendControls.expectedAmount, raise expectedAmountTolerance for legitimate repricing, or set expectedAmount: false to disable.",
@@ -741,12 +743,17 @@
       "matrix_row": "payTo substitution, SAME amount: matrix requires rejection before the signer (binding = full tuple, not just the number)",
       "observed": {
         "signer_values": [
-          "10000",
           "10000"
         ],
-        "signer_call_count": 2,
+        "signer_call_count": 1,
         "quote_rejections": [],
-        "other_rejections": [],
+        "other_rejections": [
+          {
+            "cycle": 2,
+            "error_name": "Error",
+            "error": "Failed to create payment payload: quote-check-rejected: quote_recipient_mismatch: payTo 0x9999999999999999999999999999999999999999 -> 0x2222222222222222222222222222222222222222 on a known quote. The server-declared recipient does not match the recipient bound at the client's first commitment for this resource. Paying a new recipient requires a fresh client (or spendControls: false) — recipient substitution otherwise stays rejected."
+          }
+        ],
         "per_cycle": [
           {
             "cycle": 1,
@@ -759,21 +766,18 @@
           },
           {
             "cycle": 2,
-            "http": 200,
-            "receipt": {
-              "success": true,
-              "transaction": "0xabababababababababababababababababababababababababababababababab",
-              "network": "eip155:84532"
-            }
+            "error": "Failed to create payment payload: quote-check-rejected: quote_recipient_mismatch: payTo 0x9999999999999999999999999999999999999999 -> 0x2222222222222222222222222222222222222222 on a known quote. The server-declared recipient does not match the recipient bound at the client's first commitment for this resource. Paying a new recipient requires a fresh client (or spendControls: false) — recipient substitution otherwise stays rejected.",
+            "error_name": "Error",
+            "quote_mismatch": null
           }
         ],
         "client_rc": 0,
         "stand_verdict": "FAIL"
       },
-      "verdict": "FAIL",
+      "verdict": "PASS",
       "timeline": [
         {
-          "at": "2026-10-24T09:12:45.254Z",
+          "at": "2026-10-24T19:44:49.330Z",
           "type": "probe_start",
           "control_under_test": "PR #3920 SpendControls.expectedAmount (@x402/core built from feat/expected-amount @4232cf6)",
           "url": "http://127.0.0.1:4454/weather",
@@ -786,12 +790,12 @@
           "note": "rejection logic is the PR's own; this harness adds observation only (signer counts, verbatim errors)"
         },
         {
-          "at": "2026-10-24T09:12:45.254Z",
+          "at": "2026-10-24T19:44:49.331Z",
           "type": "cycle_start",
           "cycle": 1
         },
         {
-          "at": "2026-10-24T09:12:45.291Z",
+          "at": "2026-10-24T19:44:49.369Z",
           "type": "quote_offered",
           "cycle_context_url": "http://127.0.0.1:4454/weather",
           "requirements": {
@@ -817,7 +821,7 @@
           }
         },
         {
-          "at": "2026-10-24T09:12:45.294Z",
+          "at": "2026-10-24T19:44:49.372Z",
           "type": "signer_call",
           "call_index": 1,
           "signer_entry": "signTypedData",
@@ -830,13 +834,13 @@
           },
           "to": "0x9999999999999999999999999999999999999999",
           "value": "10000",
-          "from": "0x0D7fB16ffd960f4d8d5471f69a690dAF9Ef9c516",
+          "from": "0x6768b27F16F64461FE3E55b4a61B6A352665F103",
           "valid_after": "0",
-          "valid_before": "1792833225",
-          "nonce": "0x756d0f13…4ddf(len66)"
+          "valid_before": "1792871149",
+          "nonce": "0xd1567f12…c5b7(len66)"
         },
         {
-          "at": "2026-10-24T09:12:45.303Z",
+          "at": "2026-10-24T19:44:49.382Z",
           "type": "cycle_result",
           "cycle": 1,
           "http": 200,
@@ -847,12 +851,12 @@
           }
         },
         {
-          "at": "2026-10-24T09:12:45.303Z",
+          "at": "2026-10-24T19:44:49.382Z",
           "type": "cycle_start",
           "cycle": 2
         },
         {
-          "at": "2026-10-24T09:12:45.308Z",
+          "at": "2026-10-24T19:44:49.384Z",
           "type": "quote_offered",
           "cycle_context_url": "http://127.0.0.1:4454/weather",
           "requirements": {
@@ -878,41 +882,19 @@
           }
         },
         {
-          "at": "2026-10-24T09:12:45.309Z",
-          "type": "signer_call",
-          "call_index": 2,
-          "signer_entry": "signTypedData",
-          "primary_type": "TransferWithAuthorization",
-          "domain": {
-            "name": "USDC",
-            "version": "2",
-            "chainId": 84532,
-            "verifyingContract": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
-          },
-          "to": "0x2222222222222222222222222222222222222222",
-          "value": "10000",
-          "from": "0x0D7fB16ffd960f4d8d5471f69a690dAF9Ef9c516",
-          "valid_after": "0",
-          "valid_before": "1792833225",
-          "nonce": "0x084b84e2…d6ca(len66)"
-        },
-        {
-          "at": "2026-10-24T09:12:45.313Z",
-          "type": "cycle_result",
+          "at": "2026-10-24T19:44:49.384Z",
+          "type": "cycle_error",
           "cycle": 2,
-          "http": 200,
-          "receipt_served": {
-            "success": true,
-            "transaction": "0xabababababababababababababababababababababababababababababababab",
-            "network": "eip155:84532"
-          }
+          "error": "Failed to create payment payload: quote-check-rejected: quote_recipient_mismatch: payTo 0x9999999999999999999999999999999999999999 -> 0x2222222222222222222222222222222222222222 on a known quote. The server-declared recipient does not match the recipient bound at the client's first commitment for this resource. Paying a new recipient requires a fresh client (or spendControls: false) — recipient substitution otherwise stays rejected.",
+          "error_name": "Error",
+          "quote_mismatch": null
         }
       ],
       "stand": {
         "stand_verdict": "FAIL",
         "stand_reasons": [
           "FAIL (attempt 1):",
-          "платежей зафиксировано: 2; запросов: 4; окно наблюдения: 2500ms",
+          "платежей зафиксировано: 1; запросов: 3; окно наблюдения: 2500ms",
           "FAIL: СУТ заплатил по завышенным требованиям (value=10000; решение В2)"
         ]
       }
@@ -936,12 +918,17 @@
       "matrix_row": "payTo substitution + raised amount under first-accepted: payTo is part of the quote key, so the variant key has no anchor — matrix still requires rejection before the signer",
       "observed": {
         "signer_values": [
-          "10000",
-          "50000"
+          "10000"
         ],
-        "signer_call_count": 2,
+        "signer_call_count": 1,
         "quote_rejections": [],
-        "other_rejections": [],
+        "other_rejections": [
+          {
+            "cycle": 2,
+            "error_name": "Error",
+            "error": "Failed to create payment payload: quote-check-rejected: quote_recipient_mismatch: payTo 0x9999999999999999999999999999999999999999 -> 0x2222222222222222222222222222222222222222 on a known quote. The server-declared recipient does not match the recipient bound at the client's first commitment for this resource. Paying a new recipient requires a fresh client (or spendControls: false) — recipient substitution otherwise stays rejected."
+          }
+        ],
         "per_cycle": [
           {
             "cycle": 1,
@@ -954,21 +941,18 @@
           },
           {
             "cycle": 2,
-            "http": 200,
-            "receipt": {
-              "success": true,
-              "transaction": "0xabababababababababababababababababababababababababababababababab",
-              "network": "eip155:84532"
-            }
+            "error": "Failed to create payment payload: quote-check-rejected: quote_recipient_mismatch: payTo 0x9999999999999999999999999999999999999999 -> 0x2222222222222222222222222222222222222222 on a known quote. The server-declared recipient does not match the recipient bound at the client's first commitment for this resource. Paying a new recipient requires a fresh client (or spendControls: false) — recipient substitution otherwise stays rejected.",
+            "error_name": "Error",
+            "quote_mismatch": null
           }
         ],
         "client_rc": 0,
         "stand_verdict": "FAIL"
       },
-      "verdict": "FAIL",
+      "verdict": "PASS",
       "timeline": [
         {
-          "at": "2026-10-24T09:12:51.284Z",
+          "at": "2026-10-24T19:44:55.436Z",
           "type": "probe_start",
           "control_under_test": "PR #3920 SpendControls.expectedAmount (@x402/core built from feat/expected-amount @4232cf6)",
           "url": "http://127.0.0.1:4455/weather",
@@ -981,12 +965,12 @@
           "note": "rejection logic is the PR's own; this harness adds observation only (signer counts, verbatim errors)"
         },
         {
-          "at": "2026-10-24T09:12:51.285Z",
+          "at": "2026-10-24T19:44:55.437Z",
           "type": "cycle_start",
           "cycle": 1
         },
         {
-          "at": "2026-10-24T09:12:51.320Z",
+          "at": "2026-10-24T19:44:55.474Z",
           "type": "quote_offered",
           "cycle_context_url": "http://127.0.0.1:4455/weather",
           "requirements": {
@@ -1012,7 +996,7 @@
           }
         },
         {
-          "at": "2026-10-24T09:12:51.323Z",
+          "at": "2026-10-24T19:44:55.478Z",
           "type": "signer_call",
           "call_index": 1,
           "signer_entry": "signTypedData",
@@ -1025,13 +1009,13 @@
           },
           "to": "0x9999999999999999999999999999999999999999",
           "value": "10000",
-          "from": "0x095d378026B0B83EBf3d136F851cfb050A249dcD",
+          "from": "0xF3Cc2C118F60520Eb1DA696846bfe02F04AC9cf6",
           "valid_after": "0",
-          "valid_before": "1792833231",
-          "nonce": "0xa26270af…0fe6(len66)"
+          "valid_before": "1792871155",
+          "nonce": "0xadf34a33…cd42(len66)"
         },
         {
-          "at": "2026-10-24T09:12:51.332Z",
+          "at": "2026-10-24T19:44:55.487Z",
           "type": "cycle_result",
           "cycle": 1,
           "http": 200,
@@ -1042,12 +1026,12 @@
           }
         },
         {
-          "at": "2026-10-24T09:12:51.332Z",
+          "at": "2026-10-24T19:44:55.487Z",
           "type": "cycle_start",
           "cycle": 2
         },
         {
-          "at": "2026-10-24T09:12:51.336Z",
+          "at": "2026-10-24T19:44:55.490Z",
           "type": "quote_offered",
           "cycle_context_url": "http://127.0.0.1:4455/weather",
           "requirements": {
@@ -1073,41 +1057,19 @@
           }
         },
         {
-          "at": "2026-10-24T09:12:51.337Z",
-          "type": "signer_call",
-          "call_index": 2,
-          "signer_entry": "signTypedData",
-          "primary_type": "TransferWithAuthorization",
-          "domain": {
-            "name": "USDC",
-            "version": "2",
-            "chainId": 84532,
-            "verifyingContract": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
-          },
-          "to": "0x2222222222222222222222222222222222222222",
-          "value": "50000",
-          "from": "0x095d378026B0B83EBf3d136F851cfb050A249dcD",
-          "valid_after": "0",
-          "valid_before": "1792833231",
-          "nonce": "0xf509365d…e7ba(len66)"
-        },
-        {
-          "at": "2026-10-24T09:12:51.340Z",
-          "type": "cycle_result",
+          "at": "2026-10-24T19:44:55.490Z",
+          "type": "cycle_error",
           "cycle": 2,
-          "http": 200,
-          "receipt_served": {
-            "success": true,
-            "transaction": "0xabababababababababababababababababababababababababababababababab",
-            "network": "eip155:84532"
-          }
+          "error": "Failed to create payment payload: quote-check-rejected: quote_recipient_mismatch: payTo 0x9999999999999999999999999999999999999999 -> 0x2222222222222222222222222222222222222222 on a known quote. The server-declared recipient does not match the recipient bound at the client's first commitment for this resource. Paying a new recipient requires a fresh client (or spendControls: false) — recipient substitution otherwise stays rejected.",
+          "error_name": "Error",
+          "quote_mismatch": null
         }
       ],
       "stand": {
         "stand_verdict": "FAIL",
         "stand_reasons": [
           "FAIL (attempt 1):",
-          "платежей зафиксировано: 2; запросов: 4; окно наблюдения: 2500ms",
+          "платежей зафиксировано: 1; запросов: 3; окно наблюдения: 2500ms",
           "FAIL: СУТ заплатил по завышенным требованиям (value=10000; решение В2)"
         ]
       }
@@ -1160,7 +1122,7 @@
       "verdict": "PASS",
       "timeline": [
         {
-          "at": "2026-10-24T09:12:57.346Z",
+          "at": "2026-10-24T19:45:01.531Z",
           "type": "probe_start",
           "control_under_test": "PR #3920 SpendControls.expectedAmount (@x402/core built from feat/expected-amount @4232cf6)",
           "url": "http://127.0.0.1:4456/weather",
@@ -1173,12 +1135,12 @@
           "note": "rejection logic is the PR's own; this harness adds observation only (signer counts, verbatim errors)"
         },
         {
-          "at": "2026-10-24T09:12:57.346Z",
+          "at": "2026-10-24T19:45:01.532Z",
           "type": "cycle_start",
           "cycle": 1
         },
         {
-          "at": "2026-10-24T09:12:57.383Z",
+          "at": "2026-10-24T19:45:01.570Z",
           "type": "quote_offered",
           "cycle_context_url": "http://127.0.0.1:4456/weather",
           "requirements": {
@@ -1204,7 +1166,7 @@
           }
         },
         {
-          "at": "2026-10-24T09:12:57.385Z",
+          "at": "2026-10-24T19:45:01.571Z",
           "type": "cycle_error",
           "cycle": 1,
           "error": "Failed to create payment payload: All payment requirements were rejected by spendControls.maxAmountPerPayment ($1, including USDC). Raise maxAmountPerPayment, set it to false to disable, set allowedAssets[].maxAmountPerPayment for a per-asset atomic cap, or set spendControls: false to disable all spend controls.",
@@ -1212,12 +1174,12 @@
           "quote_mismatch": null
         },
         {
-          "at": "2026-10-24T09:12:57.385Z",
+          "at": "2026-10-24T19:45:01.572Z",
           "type": "cycle_start",
           "cycle": 2
         },
         {
-          "at": "2026-10-24T09:12:57.388Z",
+          "at": "2026-10-24T19:45:01.575Z",
           "type": "quote_offered",
           "cycle_context_url": "http://127.0.0.1:4456/weather",
           "requirements": {
@@ -1243,7 +1205,7 @@
           }
         },
         {
-          "at": "2026-10-24T09:12:57.390Z",
+          "at": "2026-10-24T19:45:01.577Z",
           "type": "signer_call",
           "call_index": 1,
           "signer_entry": "signTypedData",
@@ -1256,13 +1218,13 @@
           },
           "to": "0x9999999999999999999999999999999999999999",
           "value": "10000",
-          "from": "0xcE5B5c0d29556613B7d3AF5a29270fC71D22085b",
+          "from": "0xB3D4205755abDeA8284Ce328d18c48565968a209",
           "valid_after": "0",
-          "valid_before": "1792833237",
-          "nonce": "0xfd2ea1d7…4c79(len66)"
+          "valid_before": "1792871161",
+          "nonce": "0x2d63cff1…1fa6(len66)"
         },
         {
-          "at": "2026-10-24T09:12:57.399Z",
+          "at": "2026-10-24T19:45:01.586Z",
           "type": "cycle_result",
           "cycle": 2,
           "http": 200,
@@ -1335,7 +1297,7 @@
       "verdict": "PASS",
       "timeline": [
         {
-          "at": "2026-10-24T09:13:03.386Z",
+          "at": "2026-10-24T19:45:07.573Z",
           "type": "probe_start",
           "control_under_test": "PR #3920 SpendControls.expectedAmount (@x402/core built from feat/expected-amount @4232cf6)",
           "url": "http://127.0.0.1:4457/weather",
@@ -1348,12 +1310,12 @@
           "note": "rejection logic is the PR's own; this harness adds observation only (signer counts, verbatim errors)"
         },
         {
-          "at": "2026-10-24T09:13:03.387Z",
+          "at": "2026-10-24T19:45:07.574Z",
           "type": "cycle_start",
           "cycle": 1
         },
         {
-          "at": "2026-10-24T09:13:03.425Z",
+          "at": "2026-10-24T19:45:07.612Z",
           "type": "quote_offered",
           "cycle_context_url": "http://127.0.0.1:4457/weather",
           "requirements": {
@@ -1379,7 +1341,7 @@
           }
         },
         {
-          "at": "2026-10-24T09:13:03.428Z",
+          "at": "2026-10-24T19:45:07.616Z",
           "type": "signer_call",
           "call_index": 1,
           "signer_entry": "signTypedData",
@@ -1392,13 +1354,13 @@
           },
           "to": "0x9999999999999999999999999999999999999999",
           "value": "10000",
-          "from": "0xCc47d6c66f415bb6674a565533810a888Cd6E4E4",
+          "from": "0x6440b3Af641B09981c89fd0db7D1D7eA81abE48B",
           "valid_after": "0",
-          "valid_before": "1792833243",
-          "nonce": "0xe888c937…c417(len66)"
+          "valid_before": "1792871167",
+          "nonce": "0x5f9b41d7…b931(len66)"
         },
         {
-          "at": "2026-10-24T09:13:03.437Z",
+          "at": "2026-10-24T19:45:07.626Z",
           "type": "cycle_result",
           "cycle": 1,
           "http": 200,
@@ -1409,12 +1371,12 @@
           }
         },
         {
-          "at": "2026-10-24T09:13:03.437Z",
+          "at": "2026-10-24T19:45:07.626Z",
           "type": "cycle_start",
           "cycle": 2
         },
         {
-          "at": "2026-10-24T09:13:03.442Z",
+          "at": "2026-10-24T19:45:07.631Z",
           "type": "quote_offered",
           "cycle_context_url": "http://127.0.0.1:4457/weather",
           "requirements": {
@@ -1440,7 +1402,7 @@
           }
         },
         {
-          "at": "2026-10-24T09:13:03.443Z",
+          "at": "2026-10-24T19:45:07.631Z",
           "type": "cycle_error",
           "cycle": 2,
           "error": "Failed to create payment payload: All payment requirements were rejected by spendControls: only default assets or entries in spendControls.allowedAssets are allowed. Add an allowedAssets entry for non-default tokens, set allowedAssets: true, or set spendControls: false.",
@@ -1510,7 +1472,7 @@
       "verdict": "PASS",
       "timeline": [
         {
-          "at": "2026-10-24T09:13:09.415Z",
+          "at": "2026-10-24T19:45:13.678Z",
           "type": "probe_start",
           "control_under_test": "PR #3920 SpendControls.expectedAmount (@x402/core built from feat/expected-amount @4232cf6)",
           "url": "http://127.0.0.1:4458/weather",
@@ -1523,12 +1485,12 @@
           "note": "rejection logic is the PR's own; this harness adds observation only (signer counts, verbatim errors)"
         },
         {
-          "at": "2026-10-24T09:13:09.416Z",
+          "at": "2026-10-24T19:45:13.679Z",
           "type": "cycle_start",
           "cycle": 1
         },
         {
-          "at": "2026-10-24T09:13:09.454Z",
+          "at": "2026-10-24T19:45:13.720Z",
           "type": "quote_offered",
           "cycle_context_url": "http://127.0.0.1:4458/weather",
           "requirements": {
@@ -1554,7 +1516,7 @@
           }
         },
         {
-          "at": "2026-10-24T09:13:09.457Z",
+          "at": "2026-10-24T19:45:13.724Z",
           "type": "signer_call",
           "call_index": 1,
           "signer_entry": "signTypedData",
@@ -1567,13 +1529,13 @@
           },
           "to": "0x9999999999999999999999999999999999999999",
           "value": "10000",
-          "from": "0x1d40E6e0569a20372780c7f61DE9F7E9A1bFfb03",
+          "from": "0xC794a2F911f5Cf2a993227ECc3BC0A43dD017fe0",
           "valid_after": "0",
-          "valid_before": "1792833249",
-          "nonce": "0xa4f83850…9f49(len66)"
+          "valid_before": "1792871173",
+          "nonce": "0x2e015772…7364(len66)"
         },
         {
-          "at": "2026-10-24T09:13:09.466Z",
+          "at": "2026-10-24T19:45:13.733Z",
           "type": "cycle_result",
           "cycle": 1,
           "http": 200,
@@ -1584,12 +1546,12 @@
           }
         },
         {
-          "at": "2026-10-24T09:13:09.466Z",
+          "at": "2026-10-24T19:45:13.733Z",
           "type": "cycle_start",
           "cycle": 2
         },
         {
-          "at": "2026-10-24T09:13:09.470Z",
+          "at": "2026-10-24T19:45:13.738Z",
           "type": "quote_offered",
           "cycle_context_url": "http://127.0.0.1:4458/weather",
           "requirements": {
@@ -1615,7 +1577,7 @@
           }
         },
         {
-          "at": "2026-10-24T09:13:09.471Z",
+          "at": "2026-10-24T19:45:13.738Z",
           "type": "cycle_error",
           "cycle": 2,
           "error": "Failed to create payment payload: All payment requirements were rejected by spendControls: only default assets or entries in spendControls.allowedAssets are allowed. Add an allowedAssets entry for non-default tokens, set allowedAssets: true, or set spendControls: false.",
@@ -1682,7 +1644,7 @@
       "verdict": "PASS",
       "timeline": [
         {
-          "at": "2026-10-24T09:13:15.463Z",
+          "at": "2026-10-24T19:45:19.745Z",
           "type": "probe_start",
           "control_under_test": "PR #3920 SpendControls.expectedAmount (@x402/core built from feat/expected-amount @4232cf6)",
           "url": "http://127.0.0.1:4459/weather",
@@ -1704,12 +1666,12 @@
           "note": "rejection logic is the PR's own; this harness adds observation only (signer counts, verbatim errors)"
         },
         {
-          "at": "2026-10-24T09:13:15.464Z",
+          "at": "2026-10-24T19:45:19.745Z",
           "type": "cycle_start",
           "cycle": 1
         },
         {
-          "at": "2026-10-24T09:13:15.500Z",
+          "at": "2026-10-24T19:45:19.781Z",
           "type": "quote_offered",
           "cycle_context_url": "http://127.0.0.1:4459/weather",
           "requirements": {
@@ -1735,7 +1697,7 @@
           }
         },
         {
-          "at": "2026-10-24T09:13:15.503Z",
+          "at": "2026-10-24T19:45:19.785Z",
           "type": "signer_call",
           "call_index": 1,
           "signer_entry": "signTypedData",
@@ -1748,13 +1710,13 @@
           },
           "to": "0x9999999999999999999999999999999999999999",
           "value": "10000",
-          "from": "0x1aBDc43ae97ae0f2f22085D7289ABe0E2Fa6D6Ae",
+          "from": "0x2e1b0Fc222f7cdd52A43a8816F5e2dA85ca44050",
           "valid_after": "0",
-          "valid_before": "1792833255",
-          "nonce": "0x803f25c1…7afb(len66)"
+          "valid_before": "1792871179",
+          "nonce": "0xb456383d…55b2(len66)"
         },
         {
-          "at": "2026-10-24T09:13:15.512Z",
+          "at": "2026-10-24T19:45:19.793Z",
           "type": "cycle_result",
           "cycle": 1,
           "http": 200,
@@ -1765,12 +1727,12 @@
           }
         },
         {
-          "at": "2026-10-24T09:13:15.512Z",
+          "at": "2026-10-24T19:45:19.794Z",
           "type": "cycle_start",
           "cycle": 2
         },
         {
-          "at": "2026-10-24T09:13:15.514Z",
+          "at": "2026-10-24T19:45:19.796Z",
           "type": "quote_offered",
           "cycle_context_url": "http://127.0.0.1:4459/weather2",
           "requirements": {
@@ -1796,7 +1758,7 @@
           }
         },
         {
-          "at": "2026-10-24T09:13:15.515Z",
+          "at": "2026-10-24T19:45:19.797Z",
           "type": "cycle_error",
           "cycle": 2,
           "error": "Failed to create payment payload: quote-check-rejected: quote_mismatch_vs_expected: amount 10000 -> 50000. The server-declared amount does not match the caller-anchored price expectation. Adjust spendControls.expectedAmount, raise expectedAmountTolerance for legitimate repricing, or set expectedAmount: false to disable.",
@@ -1859,7 +1821,7 @@
       "verdict": "PASS",
       "timeline": [
         {
-          "at": "2026-10-24T09:13:21.501Z",
+          "at": "2026-10-24T19:45:25.805Z",
           "type": "probe_start",
           "control_under_test": "PR #3920 SpendControls.expectedAmount (@x402/core built from feat/expected-amount @4232cf6)",
           "url": "http://127.0.0.1:4460/weather",
@@ -1881,12 +1843,12 @@
           "note": "rejection logic is the PR's own; this harness adds observation only (signer counts, verbatim errors)"
         },
         {
-          "at": "2026-10-24T09:13:21.501Z",
+          "at": "2026-10-24T19:45:25.806Z",
           "type": "cycle_start",
           "cycle": 1
         },
         {
-          "at": "2026-10-24T09:13:21.536Z",
+          "at": "2026-10-24T19:45:25.847Z",
           "type": "quote_offered",
           "cycle_context_url": "http://127.0.0.1:4460/weather",
           "requirements": {
@@ -1912,7 +1874,7 @@
           }
         },
         {
-          "at": "2026-10-24T09:13:21.540Z",
+          "at": "2026-10-24T19:45:25.851Z",
           "type": "signer_call",
           "call_index": 1,
           "signer_entry": "signTypedData",
@@ -1925,13 +1887,13 @@
           },
           "to": "0x9999999999999999999999999999999999999999",
           "value": "10000",
-          "from": "0xA9734a940A7eF76E533D7E3EB4b71eC7c639a80f",
+          "from": "0x63A090532e8f138d07816278dB74F042bB3747Ad",
           "valid_after": "0",
-          "valid_before": "1792833261",
-          "nonce": "0x36ad1ecc…b9e6(len66)"
+          "valid_before": "1792871185",
+          "nonce": "0xfa18c06b…f6f8(len66)"
         },
         {
-          "at": "2026-10-24T09:13:21.549Z",
+          "at": "2026-10-24T19:45:25.860Z",
           "type": "cycle_result",
           "cycle": 1,
           "http": 200,
@@ -1942,12 +1904,12 @@
           }
         },
         {
-          "at": "2026-10-24T09:13:21.549Z",
+          "at": "2026-10-24T19:45:25.860Z",
           "type": "cycle_start",
           "cycle": 2
         },
         {
-          "at": "2026-10-24T09:13:21.555Z",
+          "at": "2026-10-24T19:45:25.863Z",
           "type": "quote_offered",
           "cycle_context_url": "http://127.0.0.1:4460/weather",
           "requirements": {
@@ -1973,7 +1935,7 @@
           }
         },
         {
-          "at": "2026-10-24T09:13:21.556Z",
+          "at": "2026-10-24T19:45:25.863Z",
           "type": "signer_call",
           "call_index": 2,
           "signer_entry": "signTypedData",
@@ -1986,13 +1948,13 @@
           },
           "to": "0x9999999999999999999999999999999999999999",
           "value": "10000",
-          "from": "0xA9734a940A7eF76E533D7E3EB4b71eC7c639a80f",
+          "from": "0x63A090532e8f138d07816278dB74F042bB3747Ad",
           "valid_after": "0",
-          "valid_before": "1792833261",
-          "nonce": "0xa1075ad5…a4e4(len66)"
+          "valid_before": "1792871185",
+          "nonce": "0x9a11c635…ce30(len66)"
         },
         {
-          "at": "2026-10-24T09:13:21.559Z",
+          "at": "2026-10-24T19:45:25.867Z",
           "type": "cycle_result",
           "cycle": 2,
           "http": 200,
@@ -2062,7 +2024,7 @@
       "verdict": "PASS",
       "timeline": [
         {
-          "at": "2026-10-24T09:13:27.527Z",
+          "at": "2026-10-24T19:45:31.860Z",
           "type": "probe_start",
           "control_under_test": "PR #3920 SpendControls.expectedAmount (@x402/core built from feat/expected-amount @4232cf6)",
           "url": "http://127.0.0.1:4461/weather",
@@ -2075,12 +2037,12 @@
           "note": "rejection logic is the PR's own; this harness adds observation only (signer counts, verbatim errors)"
         },
         {
-          "at": "2026-10-24T09:13:27.527Z",
+          "at": "2026-10-24T19:45:31.860Z",
           "type": "cycle_start",
           "cycle": 1
         },
         {
-          "at": "2026-10-24T09:13:27.563Z",
+          "at": "2026-10-24T19:45:31.896Z",
           "type": "quote_offered",
           "cycle_context_url": "http://127.0.0.1:4461/weather",
           "requirements": {
@@ -2106,7 +2068,7 @@
           }
         },
         {
-          "at": "2026-10-24T09:13:27.567Z",
+          "at": "2026-10-24T19:45:31.900Z",
           "type": "signer_call",
           "call_index": 1,
           "signer_entry": "signTypedData",
@@ -2119,13 +2081,13 @@
           },
           "to": "0x9999999999999999999999999999999999999999",
           "value": "10000",
-          "from": "0xbcDeADb8543834f45322e11Cc264d4aF60dD5209",
+          "from": "0x57c2e2B4ca621bcA57105e5Ecb1240F9dD063f7C",
           "valid_after": "0",
-          "valid_before": "1792833267",
-          "nonce": "0xbbab4a77…d40f(len66)"
+          "valid_before": "1792871191",
+          "nonce": "0xe3482fbe…4a8c(len66)"
         },
         {
-          "at": "2026-10-24T09:13:27.576Z",
+          "at": "2026-10-24T19:45:31.909Z",
           "type": "cycle_result",
           "cycle": 1,
           "http": 200,
@@ -2136,12 +2098,12 @@
           }
         },
         {
-          "at": "2026-10-24T09:13:27.576Z",
+          "at": "2026-10-24T19:45:31.909Z",
           "type": "cycle_start",
           "cycle": 2
         },
         {
-          "at": "2026-10-24T09:13:27.581Z",
+          "at": "2026-10-24T19:45:31.915Z",
           "type": "quote_offered",
           "cycle_context_url": "http://127.0.0.1:4461/weather",
           "requirements": {
@@ -2167,7 +2129,7 @@
           }
         },
         {
-          "at": "2026-10-24T09:13:27.582Z",
+          "at": "2026-10-24T19:45:31.915Z",
           "type": "cycle_error",
           "cycle": 2,
           "error": "Failed to create payment payload: quote-check-rejected: quote_mismatch_vs_accepted: amount 10000 -> 100000. The server-declared amount does not match the caller-anchored price expectation. Adjust spendControls.expectedAmount, raise expectedAmountTolerance for legitimate repricing, or set expectedAmount: false to disable.",
@@ -2190,7 +2152,7 @@
     "A2": "pass",
     "A3": "pass",
     "A4": "pass",
-    "A5": "fail",
+    "A5": "pass",
     "A6": "pass",
     "A7": "pass",
     "A8": "pass",
@@ -2198,8 +2160,8 @@
   },
   "summary": {
     "total": 12,
-    "pass": 10,
-    "fail": 2,
+    "pass": 12,
+    "fail": 0,
     "harness_error": 0
   }
 }
