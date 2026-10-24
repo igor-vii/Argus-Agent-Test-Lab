@@ -1,6 +1,6 @@
 {
   "registry": "argus-agent-test-lab",
-  "chain_head": "f290aa17cb214db0...",
+  "chain_head": "8aa4e18aa23e2aff...",
   "records": [
     {
       "seq": "0000",
@@ -220,6 +220,49 @@
       ],
       "notes": "Closes the #3866 reviewer round-2 asks (NSPG13 2026-10-22; TKCollective 2026-10-24): (1) unchanged-quote positive case WITH control mode enabled — signs x2, zero rejections, gate does not break the honest case; (2) per-field change battery — payTo rejected by control before signer, asset/network rejected by the client's own spendControls (observe-mode mirrors prove the built-in guard), resource/method change = new binding with caller-expectation coverage; (3) mid-session price DROP (bait-down) rejected before signer; (4) anchor integrity — a rejected quote never becomes the accepted anchor (signer x0, rejected x2); (5) case semantics renamed: quote-change sessions are two completed mocked cycles, not a lost-response retry. Context: independent corroboration of #3866 by three third-party implementations (Boundra replay 6/6 cross-checks; TKCollective Tanilo hook tests; 402Shield doc-only mapping), zero maintainer engagement on the thread as of 2026-10-24.",
       "signature": "N4/+5NMoERF88vXg7euc3vVU1bL2rAzd7aue+U1Te4GOHerYTD883jh22e7vOiBc0GnXU22tLf1YAP01RQ4QDA=="
+    },
+    {
+      "seq": "0004",
+      "record_id": "argus-seal-0004",
+      "issued_at": "2026-10-24T19:49:22.405Z",
+      "signer_key_id": "argus-lab-2026q4r2",
+      "prev_record_hash": "f290aa17cb214db085d8fea5fe928342da85b38edff9f46901c2146e6498affc",
+      "type": "seal",
+      "title": "PR #3920 cross-check re-run — acceptance matrix A1–A9 fully met (remediation @2b4cc47)",
+      "subject": {
+        "repo": "gobeyondfj-cmd/x402 (PR #3920 -> x402-foundation/x402)",
+        "sut_note": "@x402/core built from PR branch feat/expected-amount @ 2b4cc47c6e30b42469351e2a21f72bdaa74d31ad (commits verified, signed); rejection logic = the PR's own SpendControls.expectedAmount; same S-BS-06 fault-injection stand as seal #0003, settlement mocked, per-session throwaway unfunded wallets",
+        "lab_run_commit": "e7cff38b",
+        "lab_run_branch": "block-b/pr3920-crosscheck"
+      },
+      "scenarios": [
+        {
+          "id": "A1–A9",
+          "name": "Pr3920CrosscheckRerun",
+          "verdict": "PASS",
+          "checks": "12/12 sessions PASS; matrix rollup 9/9; A5 closed in both modes (payTo substitution on known quote rejected pre-signer: quote_recipient_mismatch; re-anchor at substituted recipient prevented, base anchor intact; signer values contain only the legitimate payment)",
+          "findings": []
+        }
+      ],
+      "run_ts": "",
+      "self_run": true,
+      "findings_summary": [
+        {
+          "id": "F2x",
+          "severity": "info",
+          "title": "Vendor remediation verified: all five cross-check review items closed in commit 2b4cc47 (A5 recipient binding; network/scheme drift tests; method-outside-key docs; first-accepted caveat; typed-error DX). No conformance gaps remain on the acceptance matrix. Residual (non-blocking): typed error reaches the caller as a wrapped Error message with the typed reason verbatim; .cause path covered by vendor http-wrapper tests"
+        }
+      ],
+      "notes": "Re-run of the cross-check first recorded at 2b9db821 (8/9, A5 open in both modes). Vendor closed all five items in commit 2b4cc47 and requested a re-run; battery-pr3920.mjs rebuilt against the patched head; fixture records pr_head and rerun_note.",
+      "evidence": [
+        {
+          "kind": "file",
+          "path": "docs/block-b/fixtures/S-BS-06/s-bs-06-pr3920-crosscheck.fixture.json",
+          "sha256": "f6afa3daebba8d1c69021d67dba46a48ace8ca10e8f7fd394e55ec5a0f7e127d"
+        }
+      ],
+      "repo_root": ".",
+      "signature": "Ac3Xp8Chn+2L0ImKst1yMpnuQRrlcEb2ApP2CzLkXZukFhNf47/ghRPiFAJ1hdWQxO7lUiGcyUhmb++bQSveBQ=="
     }
   ]
 }
