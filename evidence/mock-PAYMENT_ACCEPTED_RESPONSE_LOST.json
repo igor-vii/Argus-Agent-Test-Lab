@@ -1,0 +1,79 @@
+{
+  "scenario": "PAYMENT_ACCEPTED_RESPONSE_LOST",
+  "argusAdapterIds": [
+    "http-adapter_1791469833983_8j49zh8",
+    "http-adapter_1791469833992_o03x0kz"
+  ],
+  "steps": [
+    {
+      "label": "payment_required_probe",
+      "at": 1791469833983,
+      "elapsedMs": 9,
+      "outcome": "RESPONSE_RECEIVED",
+      "exchangeStatus": "failure",
+      "raw": "{\"id\":\"http-exch_1791469833983_la09wgk\",\"runId\":\"run_PAYMENT_ACCEPTED_RESPONSE_LOST_1791469833983\",\"direction\":\"outbound\",\"type\":\"task.mock\",\"timestamp\":1791469833983,\"payload\":{\"task\":\"mock-task\"},\"status\":\"failure\",\"error\":\"HTTP 402: Payment Required\",\"metadata\":{\"errorType\":\"Error\"}}"
+    },
+    {
+      "label": "paid_execution_request",
+      "at": 1791469833992,
+      "elapsedMs": 54,
+      "outcome": "RESPONSE_RECEIVED",
+      "exchangeStatus": "failure",
+      "raw": "{\"id\":\"http-exch_1791469833992_zz8qxgp\",\"runId\":\"run_PAYMENT_ACCEPTED_RESPONSE_LOST_1791469833992\",\"direction\":\"outbound\",\"type\":\"task.mock\",\"timestamp\":1791469833992,\"payload\":{\"task\":\"mock-task\"},\"status\":\"failure\",\"error\":\"fetch failed\",\"metadata\":{\"errorType\":\"TypeError\"}}"
+    }
+  ],
+  "serverTruth": {
+    "mode": "PAYMENT_ACCEPTED_RESPONSE_LOST",
+    "payments": [
+      {
+        "requestId": "req_1791469833994_5huj2",
+        "idemKey": "idem-payment_accepted_response_lost-001",
+        "paymentRecordedAt": 1791469833994,
+        "receipt": "mock-receipt-1"
+      }
+    ],
+    "executions": {
+      "idem-payment_accepted_response_lost-001": {
+        "requestId": "req_1791469833994_5huj2",
+        "executionId": "exec_1_idem-pay",
+        "paymentAcceptedAt": 1791469833994,
+        "startedAt": 1791469833994,
+        "delivered": false,
+        "failed": false,
+        "completedAt": 1791469834045
+      }
+    },
+    "requests": [
+      {
+        "requestId": "req_1791469833989_k9f1h",
+        "method": "POST",
+        "path": "/execute",
+        "at": 1791469833989,
+        "hasPayment": false,
+        "idemKey": "idem-payment_accepted_response_lost-001"
+      },
+      {
+        "requestId": "req_1791469833994_5huj2",
+        "method": "POST",
+        "path": "/execute",
+        "at": 1791469833994,
+        "hasPayment": true,
+        "idemKey": "idem-payment_accepted_response_lost-001"
+      }
+    ]
+  },
+  "verdictInputs": {
+    "paymentsRecorded": 1,
+    "executionsStarted": 1,
+    "executionsCompleted": 1,
+    "responsesDeliveredToClient": 2
+  },
+  "verdict": {
+    "payment": "KNOWN",
+    "execution": "POSSIBLY_OBSERVED",
+    "delivery": "UNKNOWN",
+    "verdict": "ANOMALY"
+  },
+  "evidenceCount": 0,
+  "evidence": []
+}
