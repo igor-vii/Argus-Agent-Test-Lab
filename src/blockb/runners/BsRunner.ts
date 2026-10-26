@@ -69,12 +69,25 @@ import type {
   NonAtomicAmountServed,
   NonAtomicControlOutcomes,
   SutTypedRejection,
+  BlockRunNanoProbe,
+  BlockRunNanoServed,
+  BlockRunNanoControlOutcomes,
+  BlockRunRecoveryObservation,
 } from './BlockBRunnerTypes';
 import { ATTACKER_PAYTO } from './BlockBRunnerTypes';
 
 /** Детерминированные адреса гонки S-BS-14 (канон проб A10a/A10b). */
 export const BINDING_RACE_PAYTO_A = '0x1111111111111111111111111111111111111111';
 export const BINDING_RACE_PAYTO_B = '0x2222222222222222222222222222222222222222';
+
+/**
+ * S-BS-19:Circle GatewayWallet (polygon mainnet, eip155:137) — публичный
+ * on-chain-констант; СУТ пинит verifyingContract к нему, стенд отдаёт его же
+ * (или подменённый в контроле-2). Сверяется с CHAIN_CONFIGS в тесте.
+ */
+export const CIRCLE_GATEWAY_WALLET_POLYGON = '0x77777777Dcc4d5A8B6E418Fd04D8997ef11000eE';
+/** S-BS-19: USDC polygon mainnet (атомарные единицы, 6 decimals). */
+export const USDC_POLYGON = '0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359';
 
 /**
  * Параллельный запуск клиентских попыток (новая способность волны 2.5,
@@ -140,6 +153,13 @@ export interface BsRunnerOptions {
   readonly sutTypedRejections?: readonly SutTypedRejection[];
   /** S-BS-15: resolved payload (инспекция, не catch — резолвится УСПЕХОМ). */
   readonly sutResolvedPayload?: { readonly amount?: string; readonly payTo?: string };
+  /** Проба S-BS-19 (волна 4): батарея против реального SDK @blockrun/nano-client.
+   *  Без пробы — канонический дефолт слага: variant 'payto-substitution'. */
+  readonly blockRunNano?: BlockRunNanoProbe;
+  /** S-BS-19: клиентские факты варианта lost-response-recovery. */
+  readonly blockRunRecoveryObservation?: BlockRunRecoveryObservation;
+  /** S-BS-19: исходы контрола 1–3 (обязательны для PASS). */
+  readonly blockRunNanoControls?: BlockRunNanoControlOutcomes;
   /** Окно наблюдения после первого платежа, мс (дефолт 2000; CLI — 120000). */
   readonly observeWindowMs?: number;
   /** Ожидание первого запроса СУТ, мс (дефолт 30000). */
@@ -162,6 +182,8 @@ interface BsSessionInternal {
   /* Пробы волны 2.5 (S-BS-14/15). */
   bindingRaceServed: BindingRaceServed[];
   nonAtomicAmountServed?: NonAtomicAmountServed;
+  /* Проба волны 4 (S-BS-19, BlockRun nano). */
+  blockRunNanoServed: BlockRunNanoServed[];
   /* Факты сценариев волны 2 (заполняются скриптами). */
   verifyRejections: number;
   resourceEchoMismatch: boolean;
@@ -281,6 +303,7 @@ export class BsRunner {
       lostResponseServed: false,
       maliciousFirstAcceptServed: [],
       bindingRaceServed: [],
+      blockRunNanoServed: [],
       verifyRejections: 0,
       resourceEchoMismatch: false,
       prematureReceiptServed: false,
@@ -435,6 +458,13 @@ export class BsRunner {
         ? { bindingRaceServed: [...session.bindingRaceServed] }
         : {}),
       ...(session.nonAtomicAmountServed ? { nonAtomicAmountServed: session.nonAtomicAmountServed } : {}),
+      ...(session.blockRunNanoServed.length > 0
+        ? { blockRunNanoServed: [...session.blockRunNanoServed] }
+        : {}),
+      ...(this.options.blockRunRecoveryObservation
+        ? { blockRunRecoveryObservation: this.options.blockRunRecoveryObservation }
+        : {}),
+      ...(this.options.blockRunNanoControls ? { blockRunNanoControls: this.options.blockRunNanoControls } : {}),
       ...(this.options.bindingRaceControls ? { bindingRaceControls: this.options.bindingRaceControls } : {}),
       ...(this.options.nonAtomicControls ? { nonAtomicControls: this.options.nonAtomicControls } : {}),
       ...(this.options.sutSignerCalls !== undefined ? { sutSignerCalls: this.options.sutSignerCalls } : {}),
@@ -462,6 +492,18 @@ export class BsRunner {
         req.on('end', () => {
           void body;
           session.requestCount += 1;
+
+          // S-BS-19 (контрол-3 async-replay): poll переигрывает ТО ЖЕ
+          // authorization через x-payment — отвечаем completed+settled;
+          // новая подпись НЕ запрашивается (это и есть предмет контроля).
+          const pollHeader = req.headers['x-payment'];
+          if (slug === 'blockrun-nano-recovery-battery' && typeof pollHeader === 'string' && pollHeader.length > 0) {
+            const receipt = { success: true, transaction: session.settleTxHash, network: 'eip155:137' };
+            res.writeHead(200, { 'Content-Type': 'application/json', 'payment-response': base64(receipt) });
+            res.end(JSON.stringify({ id: 'sbs19-job-1', status: 'completed', payment: { status: 'settled' } }));
+            return;
+          }
+
           const paymentHeader = req.headers['payment-signature'];
           const resourceUrl = `http://${req.headers.host ?? 'localhost'}${req.url ?? '/'}`;
 
@@ -591,6 +633,39 @@ export class BsRunner {
         const pin = probe?.pin ?? price;
         const reqs = buildRequirements(resourceUrl, amount, 'canonical block-b resource');
         session.nonAtomicAmountServed = { amount, payTo: CANONICAL_PAYTO, pin, kind };
+        res.writeHead(402, {
+          'Content-Type': 'application/json',
+          'payment-required': base64(reqs),
+        });
+        res.end(JSON.stringify(reqs));
+        return true;
+      }
+
+      case 'blockrun-nano-recovery-battery': {
+        // S-BS-19 (волна 4): диалект @blockrun/nano-client (Circle Gateway
+        // batched x402, EIP-712 TransferWithAuthorization). Требования
+        // структурно валидны; состав диктует вариант пробы.
+        // verifyingContract — РЕАЛЬНЫЙ Circle GatewayWallet (СУТ пинит его;
+        // контрол-2 подменяет — проверка пина).
+        const probe = this.options.blockRunNano;
+        const variant = probe?.variant ?? 'payto-substitution';
+        const contact = session.blockRunNanoServed.length + 1;
+        const amount = probe?.amount ?? '10000';
+        const payTo =
+          variant === 'payto-substitution'
+            ? (probe?.payTo ?? ATTACKER_PAYTO)
+            : (probe?.payTo ?? CANONICAL_PAYTO);
+        const network = probe?.network ?? 'eip155:137';
+        const asset = probe?.asset ?? USDC_POLYGON;
+        const verifyingContract = probe?.verifyingContract ?? CIRCLE_GATEWAY_WALLET_POLYGON;
+        const reqs = buildRequirements(resourceUrl, amount, 'canonical block-b resource', { payTo, network, asset });
+        // extra → диалект Circle Gateway batched (проверяется СУТ ДО подписи).
+        (reqs.accepts[0] as unknown as Record<string, unknown>).extra = {
+          name: 'GatewayWalletBatched',
+          version: '1',
+          verifyingContract,
+        };
+        session.blockRunNanoServed.push({ contact, variant, amount, payTo, network, verifyingContract });
         res.writeHead(402, {
           'Content-Type': 'application/json',
           'payment-required': base64(reqs),
@@ -799,6 +874,31 @@ export class BsRunner {
           'Content-Type': 'application/json',
           'payment-response': base64(receipt),
         });
+        res.end(JSON.stringify(resourceBody));
+        return;
+      }
+
+      case 'blockrun-nano-recovery-battery': {
+        // S-BS-19: поведение на подписанный запрос диктует вариант пробы.
+        const variant = this.options.blockRunNano?.variant ?? 'payto-substitution';
+        if (variant === 'lost-response-recovery') {
+          // Подпись зафиксирована (выше); соединение рвётся ДО ответа —
+          // для СУТ это сетевая ошибка при paymentSigned=true (unknown
+          // outcome). Восстановимость меряет драйвер СУТ (observation).
+          res.destroy();
+          return;
+        }
+        if (variant === 'async-replay') {
+          // 202 = authorized, not settled: задача с poll_url; settle — на
+          // первом completed-poll ТО ЖЕ authorization (см. poll-перехват).
+          res.writeHead(202, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ id: 'sbs19-job-1', status: 'queued', poll_url: '/api/v1/videos/jobs/sbs19-job-1' }));
+          return;
+        }
+        // payto-substitution / overcharge-default / decimal / contract-pin:
+        // честный 200 + квитанция (подпись принята — факт уже записан).
+        const receipt = { success: true, transaction: session.settleTxHash, network: 'eip155:137' };
+        res.writeHead(200, { 'Content-Type': 'application/json', 'payment-response': base64(receipt) });
         res.end(JSON.stringify(resourceBody));
         return;
       }

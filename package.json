@@ -18,6 +18,7 @@
     "sut-server": "tsx tools/sut-server/server.ts"
   },
   "devDependencies": {
+    "@blockrun/nano-client": "0.8.0",
     "@types/node": "^20.0.0",
     "ts-node": "^10.9.0",
     "typescript": "^5.3.0",

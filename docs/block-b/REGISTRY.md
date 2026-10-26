@@ -1,4 +1,4 @@
-# Блок B — полный реестр сценариев (33)
+# Блок B — полный реестр сценариев (34)
 
 > Источник истины по маркировке и составу. Устаревшая маркировка
 > `S-B-BC-NN` / `S-B-BS-NN` заменена на `S-BC-NN` / `S-BS-NN` (буква блока
@@ -40,9 +40,15 @@
 - **Волна 3 (3 карты, 2026-10-24)** — переносы демо-сценариев на x402
   (S-BS-16/17/18 ← Block D S10/S11 и секретариатный S-ZS-02); см. capture
   notes ниже.
+- **Волна 4 (1 карта, 2026-10-26)** — S-BS-19: первая карта против РЕАЛЬНОГО
+  стороннего СУТ — опубликованный SDK `@blockrun/nano-client` 0.8.0 (Circle
+  Gateway batched x402). Источник — закрытый issue
+  BlockRunAI/blockrun-nano-client#15 (наш чёрный ящик loss-response/retry,
+  закрыт as not planned с приглашением на production-раунд) + сорцевый аудит
+  SDK. Реализована в коде (`BLOCK_B_WAVE4_SCENARIOS`).
 
-Волна — это ПОРЯДОК внедрения, а не урезание состава: полный охват — 33;
-все 33 зарегистрированы и исполняемы в коде.
+Волна — это ПОРЯДОК внедрения, а не урезание состава: полный охват — 34;
+все 34 зарегистрированы и исполняемы в коде.
 
 ## Семейство S-BC — Аргус платит, СУТ принимает платежи (15)
 
@@ -64,7 +70,7 @@
 | S-BC-14 | frontrun-drain | 2 | 2 | Дрейн authorization из mempool до settle СУТ | USENIX Sec'26; отцепляемый: нужен mempool |
 | S-BC-15 | upto-overdraft | 2 | 2 | Списание сверх потолка в схеме upto | arXiv 2605.30998: overdraft; отцепляемый: нужна upto-поддержка |
 
-## Семейство S-BS — СУТ платит, Аргус принимает (18)
+## Семейство S-BS — СУТ платит, Аргус принимает (19)
 
 | ID | Слаг | Фаза | Волна | Одно намеренное отказ-поведение | Якорь / источник |
 |---|---|---|---|---|---|
@@ -86,6 +92,7 @@
 | S-BS-16 | delivery-uncertain-x402 | 1 | 3 | Потеря финального ответа после зафиксированного платежа (перенос Block D S10) | идемпотентность lost-response: ретрай с новым nonce = двойная authorization |
 | S-BS-17 | over-budget-x402 | 1 | 3 | Caller-side бюджет: отказ сверх лимита до подписанта, boundary inclusive (перенос Block D S11) | бюджет вызывающего (не сервера/фасилитатора) |
 | S-BS-18 | first-accept-wins | 1 | 3 | Malicious accepts[0] в 402: выбирает ли клиент первое требование (перенос S-ZS-02) | выбор требования клиентом; allowedSellers-политика |
+| S-BS-19 | blockrun-nano-recovery-battery | 1 | 4 | Батарея против РЕАЛЬНОГО SDK @blockrun/nano-client: payTo-подстановка мимо чека «valid non-zero», безкаповый overcharge (кап opt-in), unrecoverable lost-response (ошибка без реквизитов → getPaymentStatus-тупик → retry = 2-я экономика) | issue BlockRunAI/blockrun-nano-client#15 (закрыт as not planned); README-заявление «a dropped connection cannot double-charge you»; сорцевый аудит 0.8.0 (index.ts:847/:439/:802-806/:562-564); родичи S-BS-16 (та же ось, другой СУТ/scheme), S-BS-05/06/14/15 |
 
 ## Внешние находки (живой прогон 2026-10-21, Base Sepolia)
 
@@ -275,9 +282,11 @@ S-BS-06, родительская находка #3866. Почему не нов
 S-BS-15b/c (unprobed).
 
 Фикстуры (санитизированы, версии pinned, баннер атрибуции):
-`docs/block-b/fixtures/S-BS-14/`, `docs/block-b/fixtures/S-BS-15/`.
+`docs/block-b/fixtures/S-BS-14/`, `docs/block-b/fixtures/S-BS-15/`,
+`docs/block-b/fixtures/S-BS-19/`.
 Референс-логика оракула/контролов (перенос ЛОГИКИ, не тела лабораторного
-теста): `src/tests/blockb/SBS14_SBS15_Extension.test.ts`.
+теста): `src/tests/blockb/SBS14_SBS15_Extension.test.ts`; волна 4 (реальный
+СУТ-SDK против стенда): `src/tests/blockb/SBS19_BlockRunNano.test.ts`.
 
 ## Связанные документы и код
 
@@ -287,9 +296,10 @@ S-BS-15b/c (unprobed).
   FundingProvider, CanonicalResource), раннеры `src/blockb/runners/`
   (BcRunner с drain-пробой S-BC-14, BsRunner со скриптами волны 2),
   CLI `src/cli/blockBCommand.ts` (--facilitator-settle-url, --funding).
-- Тесты: `src/tests/blockb/` (реестр 33, мок-СУТ BC, фейковый клиент BS,
+- Тесты: `src/tests/blockb/` (реестр 34, мок-СУТ BC, фейковый клиент BS,
   оценщики, CLI-парсер; волна 2.5 — инструментированный мок-СУТ с оракулом
-  подписанта и контролами).
+  подписанта и контролами; волна 4 — батарея против реального
+  @blockrun/nano-client, оракул — обёртка paymentScheme.createPaymentPayload).
 - Пререквизит запуска: фикс MAJ-4 (детерминированный nonce `0x0…0` →
   рандомный) — ВЫПОЛНЕН (defaultSigningIntentSource, crypto.randomBytes);
   иначе S-BC-04/S-BS-11 теряли бы смысл на живом стенде.

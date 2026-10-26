@@ -1,0 +1,78 @@
+{
+  "fixture": "S-BS-19 blockrun-nano-recovery-battery — battery against the REAL published SDK @blockrun/nano-client 0.8.0 (Circle Gateway batched x402): payTo substitution past the 'valid non-zero' check, uncapped overcharge (cap is opt-in), unrecoverable lost-response (retry = second economic execution)",
+  "attribution": "Attribution: executed per the Argus Agent Test Lab scenario series (A10–A11 → S-BS-19). Any reuse or derivative MUST retain this banner.",
+  "origin": {
+    "disclosure": "BlockRunAI/blockrun-nano-client#15 — our black-box loss-response/retry evaluation (2026-10-07), closed as not planned (2026-10-13) with an explicit invitation: 'If you reproduce response loss or a double charge against the production endpoint, please open an issue with the request details'",
+    "readme_claim_under_test": "blockrun-nano-client 0.8.0 README: 'The signed request is never retried, so a dropped connection cannot double-charge you.' + 'on NanoRequestError.paymentSigned === true, check getPaymentStatus() before retrying by hand'",
+    "source_audit": "src audit of the published SDK 0.8.0 (2026-10-26): index.ts:847 (payTo checked for shape only: isAddress && != ZERO_ADDRESS — no allowlist, no binding), :439+857 (maxPaymentPerCall is opt-in — NO default cap), :802-806 (phase-2 network error throws NanoRequestError carrying status/body/paymentSigned ONLY — no intentId, no paymentHeader, no nonce), :562-564 (getPaymentStatus('') short-circuits to 'unknown: No transfer id'; the transfer UUID is returned only by a SUCCESSFUL paid response), :270 (async-job polls replay the SAME paymentHeader — the one place idempotency exists)",
+    "registry_home": "S-BS-19 (variants: payto-substitution / overcharge-default / lost-response-recovery; controls: decimal-rejection / contract-pin / async-replay)",
+    "related": [
+      "S-BS-16 delivery-uncertain-x402 — same lost-response axis, different SUT (x402 reference client) and scheme (EIP-3009 direct vs Circle Gateway batched)",
+      "S-BS-05/06/14/15 — parent axes: payTo binding, spend-cap vs agreed price, binding race, non-atomic amount",
+      "x402-foundation/x402#3866 and registry finding #0000 — the reference-client overcharge family"
+    ],
+    "placement": "Block B, family S-BS (SUT = client protecting its own money; Argus = adversarial resource server speaking the Circle Gateway batched dialect). Phase 1: probes fire before/around signature; facilitator not needed; Circle settlement mocked by the stand itself."
+  },
+  "evidence_discipline": {
+    "established": "the REAL SDK (published npm artifact, pinned 0.8.0) SIGNED payloads whose payTo/amount were dictated by the adversarial server, and — after a dropped paid response carrying no recovery handles — SIGNED A SECOND authorization with a FRESH nonce (two economic executions for one operation); oracle = wrapper over the public paymentScheme.createPaymentPayload (signer-call counter + requirements captured BEFORE signing) + server-side to/nonce/value fixation of every received payload",
+    "not_established": "an ON-CHAIN transfer: settlement is mocked (fault-injection stand), the SUT wallet is an unfunded one-shot test key; with a funded wallet and Circle's batch settlement the captured authorizations would settle as-is",
+    "fail_framing": "a FAIL verdict is recorded as 'candidate-fix boundary' — the boundary of the current code, NOT evidence of exploitation: settle is mocked, no transfer is possible",
+    "redaction": "no private keys, no signatures, no usable authorizations in fixtures; the SUT key is a deterministic unfunded one-shot test key; server-side receipts contain only stand fake tx hashes"
+  },
+  "fault_injection": {
+    "serving": "402 in the Circle Gateway batched dialect: accepts[0] = { scheme 'exact', network 'eip155:137' (polygon), asset USDC polygon, amount, payTo, extra { name 'GatewayWalletBatched', version '1', verifyingContract } }; verifyingContract = the REAL Circle GatewayWallet polygon (SUT pins it — control-2 substitutes it)",
+    "variants": {
+      "payto-substitution": "valid non-zero attacker payTo (0x2222…2222, deterministic), amount honest — isolates the recipient-check surface",
+      "overcharge-default": "amount 500000 ($0.50) for a resource the stand prices at 10000 ($0.01) — ×50; the DEFAULT client config has maxPaymentPerCall UNSET",
+      "lost-response-recovery": "phase 2 accepted by the server (signature recorded), then res.destroy() BEFORE the response — NanoRequestError(paymentSigned=true) with no recovery handles; driver follows the documented path (getPaymentStatus → unknown) then performs the manual retry (the only path an agent has)"
+    },
+    "fresh_client": "a NEW NanoClient instance per variant and per control (unfunded one-shot key; no cross-variant state)",
+    "oracle": "wrap client.paymentScheme.createPaymentPayload — count calls, capture {version, amount, payTo} pre-sign; server decodes payload.authorization.{to,nonce,value} of every paid request"
+  },
+  "verdict_rule": {
+    "fail_payto": "a payload signed to the server-dictated recipient (payments[].to or captured pre-sign requirements = attacker payTo)",
+    "fail_overcharge": "a payload signed whose decimal equivalent exceeds the resource price while the default config (no maxPaymentPerCall) is in effect (battery run: 500000 = ×50)",
+    "fail_recovery": "signerCalls >= 2 with DISTINCT nonces after a lost paid response — the second economic execution; documented recovery (getPaymentStatus) demonstrated unreachable",
+    "pass": "0 signer calls with a typed pre-signer rejection (NanoPaymentRejectedError) for substitution/overcharge/decimal/contract variants; recovery PASS = resolved outcome without a second signature",
+    "controls": "control-1 (decimal-rejection): amount '0.5' → rejected pre-signer (BigInt integer check) — 0 calls; control-2 (contract-pin): verifyingContract ≠ Circle GatewayWallet → rejected pre-signer — 0 calls; control-3 (async-replay): 202 job + polls replay the SAME paymentHeader — exactly 1 signature per lifecycle. Controls are MANDATORY and enter the verdict (canon: fresh client each)",
+    "color": "SUT-perspective: a fired probe = the SUT FAILED; PASS = the SUT held. The verdict color is counted in the coordinate system of the code under test (vs the published SDK 0.8.0 the battery result is FAIL — a diagnosis of the code, not a stand defect)"
+  },
+  "source_run_observation": {
+    "sut": "@blockrun/nano-client 0.8.0 (npm, exact pin) against the Argus adversarial server",
+    "result": "P1 payto-substitution: SIGNED to attacker payTo (server captured authorization.to = attacker; oracle captured pre-sign requirements) — FAIL. P2 overcharge-default: SIGNED 500000 = ×50 the resource price with NO default cap; with maxPaymentPerCall '0.01' the SDK rejected pre-signer (NanoPaymentRejectedError, 0 calls) — FAIL on default, control green. P3 lost-response-recovery: NanoRequestError paymentSigned=true carrying NO intentId/transaction/paymentHeader/nonce; getPaymentStatus('') = 'unknown: No transfer id'; manual retry SIGNED A SECOND authorization with a DIFFERENT nonce (2 signer calls, 2 distinct nonces) — FAIL. Controls: decimal '0.5' rejected pre-signer (0 calls); substituted verifyingContract rejected pre-signer (0 calls); async-replay lifecycle = exactly 1 signature. Red zone = diagnosis of the code, NOT a stand defect",
+    "stand_pitfalls": [
+      "the SDK is ESM-only — import via ESM (vitest handles it; require() does not)",
+      "signing is fully OFFLINE (no RPC needed) — 34 ms per lifecycle in the reference run",
+      "the destroy-case surfaces as undici UND_ERR_SOCKET in naive raw-fetch drivers — wrap the driver's phase-2 fetches",
+      "report the real SDK's typed rejection (NanoPaymentRejectedError) as a SutTypedRejection — otherwise the evaluator rules HARNESS_ERROR by evidence discipline",
+      "polls use the x-payment header (NOT payment-signature) — the stand intercepts it separately; settled detection needs body {status:'completed', payment:{status:'settled'}}"
+    ]
+  },
+  "versions": {
+    "note": "pinned per the tested-version canon",
+    "packages": {
+      "@blockrun/nano-client": "0.8.0 (npm, exact)",
+      "@circle-fin/x402-batching": "3.5.0",
+      "viem": "2.x (transitive of the SDK)"
+    },
+    "chain": "polygon mainnet (eip155:137), USDC 0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359, Circle GatewayWallet 0x77777777Dcc4d5A8B6E418Fd04D8997ef11000eE (cross-checked against CHAIN_CONFIGS in the test)",
+    "test_lab": {
+      "repo": "github.com/igor-vii/Argus-Agent-Test-Lab",
+      "registry_wave": "4 (registry 33 → 34)",
+      "evaluators": "src/blockb/BlockBRegistry.ts (evaluateBsSession: blockrun-nano-recovery-battery)",
+      "runner": "src/blockb/runners/BsRunner.ts (blockrun-nano-recovery-battery script + blockRunNano knob + x-payment poll interception)",
+      "battery": "src/tests/blockb/SBS19_BlockRunNano.test.ts"
+    },
+    "first_run": {
+      "kind": "REAL-SUT battery (published SDK against the adversarial stand, vitest)",
+      "result": "P1 FAIL, P2 FAIL (default) / control green (capped), P3 FAIL — vulnerable by construction: shape-only payTo check, opt-in cap, unrecoverable lost-response; controls 1–3 green",
+      "artifact": "src/tests/blockb/SBS19_BlockRunNano.test.ts"
+    }
+  },
+  "reproduce": {
+    "stand_cmd": "argus run --block B --family BS --scenario S-BS-19 --bind 0.0.0.0:4418 --skip-gate --json  # variant via runner knob blockRunNano:{variant}",
+    "sut_cmd": "NanoClient({ chain: 'polygon', privateKey: <unfunded one-shot>, baseUrl: <stand url> }) with client.paymentScheme.createPaymentPayload wrapped as the signer oracle; recovery variant: catch NanoRequestError → getPaymentStatus('') → manual retry; reference logic: src/tests/blockb/SBS19_BlockRunNano.test.ts",
+    "amounts_note": "atomic units, USDC 6 decimals: 10000 = $0.01, 500000 = $0.50 (×50 exploit)"
+  },
+  "sessions": []
+}
