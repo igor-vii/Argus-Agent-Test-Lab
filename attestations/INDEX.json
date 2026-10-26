@@ -1,6 +1,6 @@
 {
   "registry": "argus-agent-test-lab",
-  "chain_head": "f290aa17cb214db0...",
+  "chain_head": "e95a94ea4209254e...",
   "records": [
     {
       "seq": "0000",
@@ -220,6 +220,71 @@
       ],
       "notes": "Closes the #3866 reviewer round-2 asks (NSPG13 2026-10-22; TKCollective 2026-10-24): (1) unchanged-quote positive case WITH control mode enabled — signs x2, zero rejections, gate does not break the honest case; (2) per-field change battery — payTo rejected by control before signer, asset/network rejected by the client's own spendControls (observe-mode mirrors prove the built-in guard), resource/method change = new binding with caller-expectation coverage; (3) mid-session price DROP (bait-down) rejected before signer; (4) anchor integrity — a rejected quote never becomes the accepted anchor (signer x0, rejected x2); (5) case semantics renamed: quote-change sessions are two completed mocked cycles, not a lost-response retry. Context: independent corroboration of #3866 by three third-party implementations (Boundra replay 6/6 cross-checks; TKCollective Tanilo hook tests; 402Shield doc-only mapping), zero maintainer engagement on the thread as of 2026-10-24.",
       "signature": "N4/+5NMoERF88vXg7euc3vVU1bL2rAzd7aue+U1Te4GOHerYTD883jh22e7vOiBc0GnXU22tLf1YAP01RQ4QDA=="
+    },
+    {
+      "seq": "0004",
+      "record_id": "argus-seal-0004",
+      "issued_at": "2026-10-26T20:37:30.585Z",
+      "signer_key_id": "argus-lab-2026q4r2",
+      "prev_record_hash": "f290aa17cb214db085d8fea5fe928342da85b38edff9f46901c2146e6498affc",
+      "type": "seal",
+      "title": "S-BS-14/15 wave 2.5 — binding-race & non-atomic-amount first run (lab probes A10a/A10b/A11, x402 PR #3920 @ 2b4cc47)",
+      "subject": {
+        "repo": "x402-foundation/x402",
+        "sut_note": "PR #3920 @ 2b4cc47 (client-side spend-controls candidate fix): @x402/fetch + @x402/core + @x402/evm 2.28.0 pinned, spendControls enabled (default maxAmountPerPayment $1); instrumented at the signer boundary (signer-call counter + resolved-payload.amount inspection, no catch-pattern); adversarial resource server is Argus-owned (fault-injection stand, settlement mocked, unfunded one-shot wallet)",
+        "lab_run_commit": "72eef9e",
+        "lab_run_branch": "main"
+      },
+      "scenarios": [
+        {
+          "id": "S-BS-14",
+          "name": "BindingRace",
+          "verdict": "FAIL",
+          "checks": "race A10a (explicit expectation) + A10b (first-accepted): BOTH EIP-3009 payloads signed at divergent payTo before any binding was recorded (signer x2) — candidate-fix boundary; control-1 sequential pair, fresh client: exactly 1 signer call, attempt 2 rejected pre-signer (QuoteMismatchError) — green; control-2 parallel identical pair: 2 signed payloads, no false positive — green; fixed-client positive control (binding before attempt 2) → PASS with controls green",
+          "findings": [
+            "F-A10"
+          ]
+        },
+        {
+          "id": "S-BS-15",
+          "name": "NonAtomicAmount",
+          "verdict": "FAIL",
+          "checks": "decimal \"0.5\" signed at enabled pin $0.01 (×50, under the default $1 cap; resolved payload.amount = 500000) — candidate-fix boundary; control-1 cap shield \"2\" ($2, over cap): rejected pre-signer, 0 calls — green; control-2 atomic duplicate \"500000\": QuoteMismatchError pre-signer, 0 calls — green; cap=false opt-in variant \"100000.5\" signed (exploit window is UNDER the cap)",
+          "findings": [
+            "F-A11"
+          ]
+        }
+      ],
+      "run_ts": "2026-10-25T20:30:00Z",
+      "self_run": true,
+      "findings_summary": [
+        {
+          "id": "F-A10",
+          "severity": "high",
+          "title": "State-init TOCTOU (binding race): two concurrent requirement sets on one quota key — client signs BOTH payloads at divergent payTo before the binding is recorded (candidate-fix boundary of PR #3920 @ 2b4cc47; parent axis x402#3866, registry finding #0000)",
+          "writeup": "docs/block-b/fixtures/S-BS-14/s-bs-14-binding-race.fixture.json"
+        },
+        {
+          "id": "F-A11",
+          "severity": "high",
+          "title": "Non-atomic decimal amount \"0.5\" bypasses the ENABLED pin check: payload signed at ×50 the pin, under the default cap (same class unprobed: S-BS-15b/c exponential/hex/v1 maxAmountRequired)",
+          "writeup": "docs/block-b/fixtures/S-BS-15/s-bs-15-non-atomic-amount.fixture.json"
+        }
+      ],
+      "evidence": [
+        {
+          "kind": "file",
+          "path": "docs/block-b/fixtures/S-BS-14/s-bs-14-binding-race.fixture.json",
+          "sha256": "f4394f89f52346a7d4b12c476338b72f47bc58a475bbacd2b91ee5e9f86911e8"
+        },
+        {
+          "kind": "file",
+          "path": "docs/block-b/fixtures/S-BS-15/s-bs-15-non-atomic-amount.fixture.json",
+          "sha256": "ccd6d081f57d89a6f74537ab92e64b1780d9b88b10e94bc6f4651c52502e06c7"
+        }
+      ],
+      "notes": "Wave 2.5 first run: registry 31 → 33 (S-BS-14 binding-race, S-BS-15 non-atomic-amount; permanent homes of lab probes A10a/A10b/A11). Lab rig run 2026-10-25 vs PR #3920 @ 2b4cc47: both FAIL (expected red zone = diagnosis of the code, not a stand defect). Argus mock-stand reproduction at 72eef9e (src/tests/blockb/SBS14_SBS15_Extension.test.ts, instrumented SUT): vulnerable client → FAIL (both modes, signer x2 / decimal signed ×50 pin), fixed client → PASS with controls 1–2 green. Settlement mocked, unfunded one-shot wallet — no on-chain transfer possible: FAILs are recorded as candidate-fix boundary, not exploitation evidence. Findings attached per policy; attribution banner retained in fixtures.",
+      "signature": "Y6nIlIeKqQG1V5RwWVx8kEqsOk39JU4vodmSB76epSfB7UJEqwAwFmnXFWEo4IUw9JL3NRgzY0ATWJhXBncwCQ=="
     }
   ]
 }
