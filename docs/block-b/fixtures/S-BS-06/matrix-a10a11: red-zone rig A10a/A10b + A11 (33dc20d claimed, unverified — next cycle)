@@ -1,0 +1,72 @@
+{
+  "rig": "matrix-a10a11 — red-zone boundary matrix (A10a/A10b + A11): rig definition + verdicts",
+  "attribution": {
+    "lab": "Argus Agent Test Lab",
+    "operator": "igor-vii",
+    "repo": "github.com/igor-vii/Argus-Agent-Test-Lab",
+    "branch": "block-b/pr3920-crosscheck",
+    "receipt": "x402-foundation/x402#3866 — lab receipt comment, 2026-10-26 (cycle 2026-10-24 -> 2026-10-26)",
+    "registry": "attestations/INDEX.json — Ed25519-signed, chained records; seals argus-seal-0001..argus-seal-0004"
+  },
+  "provenance": {
+    "upstream_issue": "https://github.com/x402-foundation/x402/issues/3866",
+    "pull_request": {
+      "repo": "gobeyondfj-cmd/x402",
+      "branch": "feat/expected-amount",
+      "probed_head": "2b4cc47c6e30b42469351e2a21f72bdaa74d31ad",
+      "head_note": "remediation head that closed A1–A9; red zone documents the boundaries that remain at this head"
+    },
+    "harness": "sut-x402-pr3920/ (same stand as the green-zone runs; orchestrator battery-pr3920.mjs)",
+    "run_cycle": "2026-10-25/26 lab cycle; observed results announced in the 2026-10-26 lab receipt",
+    "evidence_status": "verdicts announced in the receipt; red-zone per-session fixture consolidates with the next verification cycle (33dc20d re-run), same receipt format",
+    "corroboration": "NSPG13 independent reproductions on x402-foundation/x402#3920 (comment 2026-10-24T21:07:38Z): concurrent first calls reaching the scheme before the binding is saved; unsupported amount representations skipping the enabled check — map 1:1 onto A10 and A11"
+  },
+  "verdict_semantics": {
+    "FAIL (SUT)": "every red-zone case is a probe the system under test must reject; a probe that ends in a signature is a fail of the system under test, not of the probe",
+    "framing": "candidate-fix boundaries, not evidence of exploitation (adopting NSPG13's phrasing from #3866)"
+  },
+  "evidence_discipline": {
+    "established": "pre-signer rejection (signer-call count unchanged) or signing (signer invoked) at the signer boundary",
+    "not_established": "an on-chain transfer: settlement is mocked; per-session throwaway unfunded wallets; no exploitation claimed or attempted beyond the probe itself",
+    "redaction": "no private keys, no signatures, no usable authorizations; nonce values truncated"
+  },
+  "amounts_note": "A11 operates in decimal-string representations, not atomic units: expectation pinned at \"0.01\", probe \"0.5\" = 50x the pin (USDC $0.01 -> $0.50); green-zone amounts elsewhere in the rig are atomic USDC 6 decimals (10000 = $0.01)",
+  "matrix": [
+    {
+      "id": "A10a",
+      "case": "first-call race, explicit mode: two concurrent first calls on the same resource",
+      "required_behavior": "exactly one signature admitted in the window; the second call must not reach the signer before the binding is recorded",
+      "observed_at_2b4cc47": "both concurrent first calls pass the empty-ledger check and both reach the signer before the binding is recorded — two signatures in a window that must admit exactly one",
+      "mechanism": "per-key independent anchoring leaves the first-commitment window open",
+      "verdict": "FAIL (SUT)",
+      "fix_status": "claimed fixed in 33dc20d (serialized payload creation: promise queue, atomic anchor check-and-record); lab verification pending — next cycle"
+    },
+    {
+      "id": "A10b",
+      "case": "first-call race, first-accepted variant: concurrent first calls, anchor set at client's commitment point",
+      "required_behavior": "same as A10a — one admitted first commitment; concurrent duplicates must not both sign",
+      "observed_at_2b4cc47": "two signatures before the binding is recorded, as in A10a; the first-accepted caveat documented at 2b4cc47 covers drift on an anchored quote, not the un-anchored first-contact window",
+      "mechanism": "same window as A10a; independent of expectation mode",
+      "verdict": "FAIL (SUT)",
+      "fix_status": "claimed fixed in 33dc20d (same serialization); lab verification pending — next cycle"
+    },
+    {
+      "id": "A11",
+      "case": "unsupported amount representation under an enabled expectation: expectation pinned at $0.01, probe presents 0.5 (non-atomic decimal string)",
+      "required_behavior": "fail closed: an enabled expectation must reject a representation it cannot interpret, with a typed error — never sign",
+      "observed_at_2b4cc47": "the probe signs — 50x the pinned price, no typed rejection, no fail-closed path",
+      "mechanism": "applyExpectedAmount returns true for representations it cannot interpret (decimal-ledger amounts; allowed assets without known decimals)",
+      "verdict": "FAIL (SUT)",
+      "fix_status": "claimed fixed in 33dc20d (fail-closed QuoteExpectationUnsupportedError, reasons: non-atomic-amount / unknown-asset-decimals); lab verification pending — next cycle"
+    }
+  ],
+  "not_claims": [
+    "no verdict on 33dc20d: no pass, no fail — the lab has not re-run that head",
+    "no claim of customer loss; red-zone counts and settlement statistics stay separate from signing fixtures",
+    "no claim of exploitation: these are conformance probes on a mocked-settlement stand"
+  ],
+  "companion_files": [
+    "matrix-a1a9.json (green zone A1–A9, 9/9 PASS @ 2b4cc47, seal argus-seal-0004)",
+    "docs/block-b/fixtures/S-BS-06/s-bs-06-pr3920-crosscheck.fixture.json (green-zone per-session timelines)"
+  ]
+}
