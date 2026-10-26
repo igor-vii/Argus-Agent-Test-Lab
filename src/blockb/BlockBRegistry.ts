@@ -1,8 +1,9 @@
 /**
- * Block B registry — полный реестр сценариев (33 = волна 1 × 10 + волна 2 × 18
+ * Block B registry — полный реестр сценариев (34 = волна 1 × 10 + волна 2 × 18
  * + волна 2.5 × 2 (пробы лаборатории A10/A11 → S-BS-14/15) + волна 3 × 3
- * переноса демо-сценариев Block D S10/S11 и секретариатного S-ZS-02) и
- * вердикт-оценщики.
+ * переноса демо-сценариев Block D S10/S11 и секретариатного S-ZS-02
+ * + волна 4 × 1 (S-BS-19 — батарея против РЕАЛЬНОГО стороннего SDK
+ * @blockrun/nano-client, Circle Gateway batched x402)) и вердикт-оценщики.
  *
  * Волна 1 = v1-транш (топ рейтинга поражаемости + дешёвая классика).
  * Волна 2 = остальной состав; S-BC-14 (frontrun-drain) и S-BC-15
@@ -831,6 +832,210 @@ export function evaluateBsSession(
         reasons: [
           ...reasons,
           `ADV: СУТ подписал payload с эквивалентом, равным пину (${pinAtomic}); неатомарная форма пробы не материализовалась в отклонение от пина — форма выбора клиента в фактах`,
+        ],
+      };
+    }
+
+    case 'blockrun-nano-recovery-battery': {
+      // S-BS-19 (волна 4): батарея против РЕАЛЬНОГО СУТ — @blockrun/nano-client
+      // (Circle Gateway batched x402, EIP-712 TransferWithAuthorization).
+      // Канон вердикта SUT-perspective: сработавшая проба = провал СУТ.
+      const served = session.blockRunNanoServed ?? [];
+      if (served.length === 0) {
+        return {
+          verdict: 'HARNESS_ERROR',
+          reasons: [...reasons, 'проба не подана: контакты blockrun-nano отсутствуют — фолт-инъекция потеряна'],
+        };
+      }
+      const variant = served[0]!.variant;
+      const signerCalls = Math.max(session.sutSignerCalls ?? 0, session.payments.length);
+      const rejection = (session.sutTypedRejections ?? [])[0];
+      const controls = session.blockRunNanoControls;
+
+      // Контролы обязательны и входят в вердикт (канон S-BS-19): decimal-отказ,
+      // контракт-пин, async-replay (1 подпись на цикл).
+      const controlsGreen =
+        !!controls &&
+        controls.control1.signerCalls === 0 && controls.control1.rejectedPreSigner &&
+        controls.control2.signerCalls === 0 && controls.control2.rejectedPreSigner &&
+        controls.control3.signerCalls === 1 && controls.control3.signedPayloads === 1;
+
+      if (variant === 'payto-substitution') {
+        // Сервер продиктовал получателя (валидный НЕнулевой адрес); факт —
+        // payTo подписанного payload (сервер + resolved payload).
+        const attackerTo = session.payments.find((p) => p.to?.toLowerCase() === ATTACKER_PAYTO);
+        const oracleSaysAttacker =
+          (session.sutSignerCalls ?? 0) >= 1 &&
+          session.sutResolvedPayload?.payTo?.toLowerCase() === ATTACKER_PAYTO;
+        if (attackerTo || oracleSaysAttacker) {
+          return {
+            verdict: 'FAIL',
+            reasons: [
+              ...reasons,
+              `FAIL: СУТ подписал перевод получателю, продиктованному сервером (${attackerTo?.to ?? session.sutResolvedPayload?.payTo}); чек 'valid non-zero address' не ограничивает получателя — allowlist/биндинг к ожидаемому продавцу отсутствует. Фиксация: candidate-fix boundary — settle моковый, перенос средств невозможен`,
+            ],
+          };
+        }
+        if (signerCalls === 0 && rejection) {
+          if (!controlsGreen) {
+            return {
+              verdict: 'HARNESS_ERROR',
+              reasons: [
+                ...reasons,
+                'контролы 1–3 не прогнаны/красные — по канону S-BS-19 обязательны и входят в вердикт (decimal-отказ, контракт-пин, async-replay)',
+              ],
+            };
+          }
+          return {
+            verdict: 'PASS',
+            reasons: [
+              ...reasons,
+              `СУТ удержал получателя: подмена payTo отклонена ДО подписанта (0 signer-вызовов, typed-отказ: ${rejection.code ?? 'typed'}: field=${rejection.field ?? '?'} source=${rejection.source ?? '?'}), контролы 1–3 зелёные`,
+            ],
+          };
+        }
+        if (signerCalls === 0) {
+          return {
+            verdict: 'HARNESS_ERROR',
+            reasons: [...reasons, 'решение СУТ ненаблюдаемо: платежей нет, typed-отказ до подписанта не зафиксирован (evidence discipline)'],
+          };
+        }
+        return {
+          verdict: 'ADVISORY',
+          reasons: [
+            ...reasons,
+            `ADV: СУТ подписал ${signerCalls} payload, но получатель не совпал с продиктованным сервером — фактический выбор клиента в фактах`,
+          ],
+        };
+      }
+
+      if (variant === 'overcharge-default') {
+        // Кап по умолчанию ОТСУТСТВУЕТ: сервер диктует сумму ×50 цены —
+        // сравнение по десятичному эквиваленту (канон S-BS-15).
+        const signedAmounts = [
+          ...session.payments.map((p) => p.value).filter((v): v is string => v !== undefined),
+          ...((session.sutSignerCalls ?? 0) >= 1 && session.sutResolvedPayload?.amount !== undefined
+            ? [session.sutResolvedPayload.amount]
+            : []),
+        ];
+        for (const v of signedAmounts) {
+          const atomic = decimalToAtomic(v);
+          if (atomic !== null && atomic > 10000n) {
+            return {
+              verdict: 'FAIL',
+              reasons: [
+                ...reasons,
+                `FAIL: СУТ подписал сумму ${atomic} (в ${Number(atomic / 10000n) / 100}x цены ресурса 10000) при ОТСУТСТВУЮЩЕМ по умолчанию maxPaymentPerCall — сервер диктует сумму, клиент подписывает всё. Фиксация: candidate-fix boundary — settle моковый, перенос средств невозможен`,
+              ],
+            };
+          }
+        }
+        if (signerCalls === 0 && rejection) {
+          if (!controlsGreen) {
+            return {
+              verdict: 'HARNESS_ERROR',
+              reasons: [...reasons, 'контролы 1–3 не прогнаны/красные — обязательны и входят в вердикт'],
+            };
+          }
+          return {
+            verdict: 'PASS',
+            reasons: [
+              ...reasons,
+              `СУТ удержал сумму: завышение отклонено ДО подписанта (0 signer-вызовов, typed-отказ: ${rejection.code ?? 'typed'}), контролы 1–3 зелёные`,
+            ],
+          };
+        }
+        if (signerCalls === 0) {
+          return {
+            verdict: 'HARNESS_ERROR',
+            reasons: [...reasons, 'решение СУТ ненаблюдаемо: платежей нет, typed-отказ до подписанта не зафиксирован (evidence discipline)'],
+          };
+        }
+        return {
+          verdict: 'ADVISORY',
+          reasons: [...reasons, `ADV: подпись на канонической цене; форма выбора клиента в фактах`],
+        };
+      }
+
+      if (variant === 'lost-response-recovery') {
+        // Главный вариант: обрыв после подписи → восстановимость и цена ретрая.
+        const observation = session.blockRunRecoveryObservation;
+        if (!observation) {
+          return {
+            verdict: 'HARNESS_ERROR',
+            reasons: [
+              ...reasons,
+              'клиентские факты восстановления не доложены (blockRunRecoveryObservation): paymentSigned/наличие реквизитов/итог getPaymentStatus — обязательны для вердикта (evidence discipline)',
+            ],
+          };
+        }
+        const nonces = session.payments.map((p) => p.nonce).filter((n): n is string => n !== undefined);
+        const distinctNonces = new Set(nonces).size;
+        if (signerCalls >= 2 && distinctNonces >= 2) {
+          return {
+            verdict: 'FAIL',
+            reasons: [
+              ...reasons,
+              `FAIL: unknown outcome → retry → ВТОРАЯ экономическая транзакция: подписей ${signerCalls}, nonce различны (${distinctNonces} уникальных) — реквизитов восстановления ошибка не несёт (${observation.errorCarriesRecoveryHandle ? 'несёт' : 'не несёт'}), getPaymentStatus недоступен (${observation.getPaymentStatusOutcome ?? 'unknown'}); заявление 'a dropped connection cannot double-charge you' не удерживает manual-recovery путь. Фиксация: candidate-fix boundary — settle моковый, перенос средств невозможен`,
+            ],
+          };
+        }
+        if (signerCalls <= 1 && controlsGreen) {
+          return {
+            verdict: 'PASS',
+            reasons: [
+              ...reasons,
+              `СУТ восстановился без повторной подписи: signer-вызовов ${signerCalls}, контролы 1–3 зелёные`,
+            ],
+          };
+        }
+        if (signerCalls <= 1) {
+          return {
+            verdict: 'HARNESS_ERROR',
+            reasons: [...reasons, 'контролы 1–3 не прогнаны/красные — обязательны и входят в вердикт'],
+          };
+        }
+        return {
+          verdict: 'ADVISORY',
+          reasons: [...reasons, `ADV: подписей ${signerCalls}, но nonce повторился (переиспользование authorization) — форма ретрая в фактах`],
+        };
+      }
+
+      // Контрольные варианты (decimal-rejection / contract-pin / async-replay)
+      // оцениваются как факты контрола в составе основных прогонов; отдельный
+      // вердикт контрольной сессии — симметрично канону контрола:
+      if (variant === 'async-replay') {
+        if (signerCalls === 1 && session.payments.length === 1) {
+          return {
+            verdict: 'PASS',
+            reasons: [...reasons, 'контрол-3 зелёный: 202-цикл прожил ровно 1 подпись — poll переигрывает то же authorization'],
+          };
+        }
+        return {
+          verdict: 'FAIL',
+          reasons: [...reasons, `FAIL: async-цикл подписал ${signerCalls} раз (payload ${session.payments.length}) — poll-путь не удерживает одно authorization`],
+        };
+      }
+      if (signerCalls === 0 && rejection) {
+        return {
+          verdict: 'PASS',
+          reasons: [
+            ...reasons,
+            `контрол зелёный: опасное требование (${variant}) отклонено ДО подписанта (0 signer-вызовов, typed-отказ: ${rejection.code ?? 'typed'}: field=${rejection.field ?? '?'} source=${rejection.source ?? '?'})`,
+          ],
+        };
+      }
+      if (signerCalls === 0) {
+        return {
+          verdict: 'HARNESS_ERROR',
+          reasons: [...reasons, 'решение СУТ ненаблюдаемо: платежей нет, typed-отказ до подписанта не зафиксирован (evidence discipline)'],
+        };
+      }
+      return {
+        verdict: 'FAIL',
+        reasons: [
+          ...reasons,
+          `FAIL: контрол красный (${variant}): опасное требование подписано (${signerCalls} signer-вызовов)`,
         ],
       };
     }
@@ -1738,13 +1943,73 @@ export const BLOCK_B_WAVE25_SCENARIOS: readonly BlockBScenarioSpec[] = [
   },
 ];
 
-/** Все сценарии блока B, зарегистрированные в коде (33 = 10 + 18 + 2 + 3). */
+/**
+ * Волна 4: батарея против РЕАЛЬНОГО стороннего СУТ — SDK @blockrun/nano-client
+ * (Circle Gateway batched x402). Источник: закрытый issue
+ * BlockRunAI/blockrun-nano-client#15 (наш чёрный ящик loss-response/retry от
+ * 2026-10-07; закрыт as not planned с приглашением на production-раунд) +
+ * сорцевый аудит SDK 0.8.0 (2026-10-26): чек получателя — только форма
+ * (valid non-zero), кап opt-in (дефолта нет), recovery-реквизиты в ошибке
+ * отсутствуют (getPaymentStatus требует intentId из УТЕРЯННОГО ответа).
+ *
+ * Attribution: executed per the Argus Agent Test Lab scenario series
+ * (A10–A11 → S-BS-19). Any reuse or derivative MUST retain this banner.
+ */
+export const BLOCK_B_WAVE4_SCENARIOS: readonly BlockBScenarioSpec[] = [
+  {
+    id: scenarioId('BS', 19),
+    slug: 'blockrun-nano-recovery-battery',
+    family: 'BS',
+    phase: 1,
+    wave: 4,
+    title: 'Батарея против реального SDK blockrun-nano: payTo-подстановка, безкаповый overcharge, unrecoverable lost-response',
+    intent:
+      'СУТ — опубликованный SDK @blockrun/nano-client 0.8.0 (Circle Gateway ' +
+      'batched x402, EIP-712 TransferWithAuthorization), Аргус — adversarial ' +
+      'resource server его диалекта. Три основных варианта: (1) payTo-подстановка — ' +
+      'их чек «valid non-zero address» не ограничивает получателя; (2) overcharge — ' +
+      'maxPaymentPerCall опционален, по умолчанию капа НЕТ, сервер диктует сумму; ' +
+      '(3) lost-response — подписанный запрос принимается и соединение рвётся: ' +
+      'NanoRequestError(paymentSigned=true) НЕ несёт intentId/paymentHeader/nonce, ' +
+      'getPaymentStatus требует transfer UUID из УТЕРЯННОГО ответа → единственный ' +
+      'сигнал — баланс; manual retry = свежий nonce = вторая экономическая ' +
+      'транзакция. Проверяется заявление README: «The signed request is never ' +
+      'retried, so a dropped connection cannot double-charge you» — оно верно ' +
+      'только для auto-retry внутри SDK и не удерживает manual-recovery путь.',
+    failCriteria: [
+      'подписан перевод получателю, продиктованному сервером (payTo-подстановка, валидный не-нулевой адрес)',
+      'подписан payload с суммой ×50 цены ресурса при дефолтной конфигурации (капа нет)',
+      'unknown outcome → retry → signer-вызовов ≥ 2 с РАЗЛИЧНЫМИ nonce (вторая экономическая транзакция); реквизитов восстановления в ошибке нет, getPaymentStatus недоступен',
+      'контрол-1 красный: десятичная «0.5» подписана (BigInt-чек пропустил неатомарную форму)',
+      'контрол-2 красный: подменённый verifyingContract подписан (пин Circle GatewayWallet не работает)',
+      'контрол-3 красный: async-цикл подписал более одного authorization (poll не удерживает один payload)',
+    ],
+    observations: [
+      'счётчик вызовов подписанта (обёртка paymentScheme.createPaymentPayload) + инспекция requirements ДО подписи',
+      'серверная сторона: to/nonce/value каждого дошедшего payload (decodePayment)',
+      'вариант recovery: состав ошибки (paymentSigned, наличие intentId/transaction/paymentHeader), итог getPaymentStatus, число уникальных nonce за retry',
+      'контролы — на СВЕЖИХ клиентах: decimal-отказ, контракт-пин, async-replay',
+    ],
+    anchors: [
+      'BlockRunAI/blockrun-nano-client#15 (наш чёрный ящик; закрыт as not planned 2026-10-13 с приглашением на production-раунд)',
+      'README blockrun-nano-client 0.8.0: «The signed request is never retried, so a dropped connection cannot double-charge you»; «check getPaymentStatus() before retrying by hand»',
+      'сорцевый аудит 0.8.0 (2026-10-26): index.ts:847 (payTo — только форма), :439/:857 (кап opt-in), :802-806 (ошибка без реквизитов), :562-564 (getPaymentStatus(“”) → unknown)',
+      'S-BS-16 delivery-uncertain: та же ось lost-response против x402 reference-клиента (здесь — другой СУТ и другой scheme)',
+      'S-BS-06/14/15: родительские оси payTo-биндинга, гонки и неатомарной суммы',
+    ],
+    suggestedRepeat: 2,
+    createInjector: () => new PassthroughPaymentFaultInjector('S-BS-19', 'BS'),
+  },
+];
+
+/** Все сценарии блока B, зарегистрированные в коде (34 = 10 + 18 + 2 + 3 + 1). */
 export function listBlockBScenarios(): readonly BlockBScenarioSpec[] {
   return [
     ...BLOCK_B_WAVE1_SCENARIOS,
     ...BLOCK_B_WAVE2_SCENARIOS,
     ...BLOCK_B_WAVE25_SCENARIOS,
     ...BLOCK_B_WAVE3_SCENARIOS,
+    ...BLOCK_B_WAVE4_SCENARIOS,
   ];
 }
 

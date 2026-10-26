@@ -166,6 +166,95 @@ export interface NonAtomicAmountServed {
 }
 
 /**
+ * Проба S-BS-19 blockrun-nano-recovery-battery (волна 4): СУТ — РЕАЛЬНЫЙ
+ * сторонний SDK @blockrun/nano-client (Circle Gateway batched x402,
+ * EIP-712 TransferWithAuthorization), Аргус — adversarial resource server
+ * его диалекта. Вариант пробы (variant) задаёт и состав 402, и поведение
+ * на подписанный запрос:
+ *   payto-substitution      — валидный НЕнулевой payTo, продиктованный
+ *                             сервером (их чек «valid non-zero address»);
+ *   overcharge-default      — amount ×50 цены ресурса при ОТСУТСТВУЮЩЕМ
+ *                             по умолчанию maxPaymentPerCall;
+ *   lost-response-recovery  — подписанный запрос принимается и соединение
+ *                             рвётся ДО ответа; наблюдаем восстановимость
+ *                             (getPaymentStatus/intentId) и цену ретрая;
+ *   decimal-rejection       — контроль: amount "0.5" (BigInt-чек);
+ *   contract-pin            — контроль: подменённый verifyingContract;
+ *   async-replay            — контроль: 202-задача, poll переигрывает ТЕ ЖЕ
+ *                             подписанное authorization (1 подпись на цикл).
+ */
+export interface BlockRunNanoProbe {
+  readonly variant:
+    | 'payto-substitution'
+    | 'overcharge-default'
+    | 'lost-response-recovery'
+    | 'decimal-rejection'
+    | 'contract-pin'
+    | 'async-replay';
+  /** Сумма в requirements (atomic units строкой; десятичная — для decimal-контроля). */
+  readonly amount?: string;
+  /** Получатель в requirements. */
+  readonly payTo?: string;
+  /** Сеть в требованиях (дефолт 'eip155:137' — polygon mainnet). */
+  readonly network?: string;
+  /** Asset в требованиях (дефолт — USDC polygon). */
+  readonly asset?: string;
+  /** extra.verifyingContract (дефолт — РЕАЛЬНЫЙ Circle GatewayWallet polygon). */
+  readonly verifyingContract?: string;
+}
+
+/** Факт подачи пробы S-BS-19: контакт и всё, что отдано в 402. */
+export interface BlockRunNanoServed {
+  readonly contact: number;
+  readonly variant: BlockRunNanoProbe['variant'];
+  readonly amount: string;
+  readonly payTo: string;
+  readonly network: string;
+  readonly verifyingContract: string;
+}
+
+/**
+ * Клиентские факты варианта lost-response-recovery (S-BS-19): что СУТ видит
+ * после обрыва подписанного запроса. Обязательны для вердикта (канон:
+ * решение/восстановимость должны быть наблюдаемы, не домыслены).
+ */
+export interface BlockRunRecoveryObservation {
+  /** thrown NanoRequestError.paymentSigned (true — authorization ушёл). */
+  readonly errorPaymentSigned?: boolean;
+  /** Несёт ли ошибка хоть один реквизит восстановления (intentId/transaction/paymentHeader/nonce). */
+  readonly errorCarriesRecoveryHandle?: boolean;
+  /** Итог getPaymentStatus(...) по доступному СУТ идентификатору. */
+  readonly getPaymentStatusOutcome?: string;
+}
+
+/**
+ * Контролы S-BS-19 (обязательны и входят в вердикт; исполняются на СВЕЖИХ
+ * клиентах):
+ * control-1 (decimal-rejection): amount "0.5" — отклонение ДО подписанта,
+ *   0 signer-вызовов (их иммунитет к неатомарной десятичной форме);
+ * control-2 (contract-pin): verifyingContract ≠ Circle GatewayWallet —
+ *   отклонение ДО подписанта, 0 signer-вызовов;
+ * control-3 (async-replay): 202 + poll переигрывает то же authorization —
+ *   ровно 1 подпись на весь жизненный цикл задачи.
+ */
+export interface BlockRunNanoControlOutcomes {
+  readonly control1: {
+    readonly signerCalls: number;
+    readonly rejectedPreSigner: boolean;
+    readonly rejection?: SutTypedRejection;
+  };
+  readonly control2: {
+    readonly signerCalls: number;
+    readonly rejectedPreSigner: boolean;
+    readonly rejection?: SutTypedRejection;
+  };
+  readonly control3: {
+    readonly signerCalls: number;
+    readonly signedPayloads: number;
+  };
+}
+
+/**
  * Контролы S-BS-15 (обязательны и входят в вердикт):
  * control-1 (кап-щит): amount "2" ($2, десятичная, СВЕРХ капа $1) —
  *   отклонение ДО подписанта капом, 0 signer-вызовов;
@@ -246,6 +335,12 @@ export interface BsSessionRecord {
   readonly sutTypedRejections?: readonly SutTypedRejection[];
   /** S-BS-15: resolved payload инспекцией (не только catch: резолвится УСПЕХОМ). */
   readonly sutResolvedPayload?: { readonly amount?: string; readonly payTo?: string };
+  /** S-BS-19: наборы requirements, отданные контактам пробы BlockRun nano. */
+  readonly blockRunNanoServed?: readonly BlockRunNanoServed[];
+  /** S-BS-19: клиентские факты варианта lost-response-recovery. */
+  readonly blockRunRecoveryObservation?: BlockRunRecoveryObservation;
+  /** S-BS-19: исходы контрола 1–3 (обязательны для PASS). */
+  readonly blockRunNanoControls?: BlockRunNanoControlOutcomes;
   readonly error?: string;
 }
 

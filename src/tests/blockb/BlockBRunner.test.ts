@@ -27,12 +27,12 @@ const PAY_TO = '0x9999999999999999999999999999999999999999';
 
 /* ------------------------------ Реестр ------------------------------ */
 
-describe('Block B registry (waves 1+2+2.5+3)', () => {
-  it('валиден, содержит 33 сценария (10 + 18 + 2 расширения A10/A11 + 3 переноса демо)', () => {
+describe('Block B registry (waves 1+2+2.5+3+4)', () => {
+  it('валиден, содержит 34 сценария (10 + 18 + 2 расширения A10/A11 + 3 переноса демо + 1 батарея BlockRun)', () => {
     expect(() => validateBlockBRegistry()).not.toThrow();
     const ids = listBlockBScenarios().map((s) => s.id);
-    expect(ids).toHaveLength(33);
-    expect(new Set(ids).size).toBe(33);
+    expect(ids).toHaveLength(34);
+    expect(new Set(ids).size).toBe(34);
     expect(ids).toEqual(
       expect.arrayContaining([
         'S-BC-01', 'S-BC-02', 'S-BC-04', 'S-BC-05', 'S-BC-09',
@@ -57,6 +57,12 @@ describe('Block B registry (waves 1+2+2.5+3)', () => {
     expect(getBlockBScenario('S-BS-18')?.slug).toBe('first-accept-wins');
     const wave3 = listBlockBScenarios().filter((s) => s.wave === 3).map((s) => s.id);
     expect(wave3).toEqual(['S-BS-16', 'S-BS-17', 'S-BS-18']);
+  });
+
+  it('волна 4: батарея BlockRun S-BS-19 зарегистрирована', () => {
+    expect(getBlockBScenario('S-BS-19')?.slug).toBe('blockrun-nano-recovery-battery');
+    const wave4 = listBlockBScenarios().filter((s) => s.wave === 4).map((s) => s.id);
+    expect(wave4).toEqual(['S-BS-19']);
   });
 
   it('поиск по ID и семействам', () => {

@@ -195,8 +195,8 @@ describe('Волна 2.5: реестр 31 → 33 и валидатор ID', () =
   it('S-BS-14/15 зарегистрированы: семейство BS, фаза 1, волна 2.5, валидатор пропускает', () => {
     expect(() => validateBlockBRegistry()).not.toThrow();
     const ids = listBlockBScenarios().map((s) => s.id);
-    expect(ids).toHaveLength(33);
-    expect(new Set(ids).size).toBe(33);
+    expect(ids).toHaveLength(34);
+    expect(new Set(ids).size).toBe(34);
 
     const s14 = getBlockBScenario('S-BS-14')!;
     const s15 = getBlockBScenario('S-BS-15')!;
@@ -208,7 +208,7 @@ describe('Волна 2.5: реестр 31 → 33 и валидатор ID', () =
       expect(spec.wave).toBe(2.5);
       expect(() => validateScenarioId(spec.id)).not.toThrow();
     }
-    // Порядок в списке: S-BS-13 < S-BS-14 < S-BS-15 < S-BS-16.
+    // Порядок в списке: ... < S-BS-15 < S-BS-16 (волна 3) ... < S-BS-19 (волна 4).
     const bsIds = ids.filter((id) => id.startsWith('S-BS-'));
     expect(bsIds.indexOf('S-BS-13')).toBeLessThan(bsIds.indexOf('S-BS-14'));
     expect(bsIds.indexOf('S-BS-14')).toBeLessThan(bsIds.indexOf('S-BS-15'));

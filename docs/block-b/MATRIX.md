@@ -213,6 +213,7 @@ argus run --block B --family BC --sut-url https://sut.example/resource \
 | S-BS-13 | 200 без всякого 402 (`onSend`) | — (ADVISORY: состояние учёта СУТ) | что СУТ делает с «бесплатным» ресурсом | 2 |
 | S-BS-14 | два КОНКУРЕНТНЫХ набора requirements на один ключ квоты при пустом биндинге, расхождение payTo (`onRequirements`, параллельные контакты; first-accepted — ещё и amount) | **СУТ подписал оба payload** (signer-вызовов ≥ 2 при расходящемся payTo — state-init TOCTOU; фиксация «candidate-fix boundary»); контрол-1 красный (двойная подпись без гонки) | счётчик вызовов подписанта (pre-signature оракул, читается после обеих попыток, параллель = Promise.allSettled); поля payload (amount, payTo); typed-отказы (field/source); контролы 1–2 (свежий клиент) | 2.5 |
 | S-BS-15 | неатомарное десятичное представление суммы "0.5" при включённом expectation-чеке (пин) (`onRequirements`; payTo НЕ варьируется) | **СУТ подписал payload с десятичным эквивалентом ≠ пину** (в прогоне-источнике $0.50 при пине $0.01 — 50×, под дефолтным капом); контрол-1 красный (кап-щит пропустил сверх-каповую десятичную) | signer-вызовы; инспекция resolved payload.amount (не catch — резолвится УСПЕХОМ); десятичный эквивалент vs пин (scale 10^decimals); тройка вариантов: подкаповая десятичная / "2.0" кап-щит / "500000" атомарный дубль | 2.5 |
+| S-BS-19 | батарея против РЕАЛЬНОГО SDK blockrun-nano (Circle Gateway batched x402): (1) payTo-подстановка при чеке «valid non-zero»; (2) amount ×50 цены при дефолтной конфигурации (кап opt-in); (3) lost-response: подпись принята, соединение разорвано (`res.destroy()`); контролы — decimal "0.5" / подмена verifyingContract / async-replay | **(1) СУТ подписал перевод продиктованному сервером получателю; (2) подписал ×50 цены при отсутствии дефолтного капа; (3) unknown outcome → retry → signer-вызовов ≥ 2 с РАЗЛИЧНЫМИ nonce** (вторая экономическая транзакция; фиксация «candidate-fix boundary»); контрол красный ⇒ FAIL | обёртка paymentScheme.createPaymentPayload (счётчик + requirements ДО подписи); серверная фиксация to/nonce/value; состав ошибки (paymentSigned, наличие intentId/transaction/paymentHeader); итог getPaymentStatus; число уникальных nonce; контролы 1–3 на свежих клиентах | 4 |
 
 Волна 2.5 (A10/A11 → S-BS-14/15, источник x402#3920 @ 2b4cc47): контролы —
 отдельные обязательные пробы на СВЕЖЕМ клиенте и входят в вердикт основной
@@ -225,6 +226,20 @@ discipline: PASS только при наблюдаемом решении по 
 фиксация FAIL — «candidate-fix boundary» (settle моковый, переноса средств нет).
 Канон разбора сумм — `decimalToAtomic` (целое = атомарная форма; дробь =
 десятичное представление → scale 10^decimals; сравнение по эквиваленту).
+
+Волна 4 (S-BS-19, источник — закрытый issue BlockRunAI/blockrun-nano-client#15
++ сорцевый аудит SDK 0.8.0): первая карта против РЕАЛЬНОГО стороннего СУТ —
+опубликованного SDK (не мока): оракул — обёртка публичного
+`paymentScheme.createPaymentPayload`, СУТ направляется на стенд через
+конфигурируемый `baseUrl`, кошелёк — unfunded one-shot ключ (evidence
+discipline — та же, что у волн 2/2.5/3). Проверяемое заявление README:
+«The signed request is never retried, so a dropped connection cannot
+double-charge you» — верно только для auto-retry внутри SDK; documented
+manual-recovery путь («check getPaymentStatus() before retrying by hand»)
+невыполним: NanoRequestError не несёт intentId/paymentHeader/nonce,
+getPaymentStatus требует transfer UUID из УТЕРЯННОГО ответа. Контролы
+1–3 — обязательны и входят в вердикт (как в волне 2.5); правило
+вердикта — SUT-perspective, красная зона = диагноз коду СУТ.
 
 ## 8. Требования к платёжному слою (сводно)
 

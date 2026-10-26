@@ -59,7 +59,7 @@ export interface BlockBScenarioSpec {
    * 2.5 = расширение реестра пробами лаборатории A10/A11 → S-BS-14/15 (2),
    * 3 = переносы демо-сценариев (3).
    */
-  readonly wave: 1 | 2 | 2.5 | 3;
+  readonly wave: 1 | 2 | 2.5 | 3 | 4;
   readonly title: string;
   /** Формулировка единственного намеренного отказа. */
   readonly intent: string;
