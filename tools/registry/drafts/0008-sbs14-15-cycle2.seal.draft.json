@@ -1,0 +1,70 @@
+{
+  "type": "seal",
+  "title": "S-BS-14/15 cycle 2 — x402 PR #3920 @ b1a4d8ce cross-check: green zone A1-A9 holds, A11 verified closed (round-4 scoping), A10a/A10b red zone reproduces (13/15 PASS)",
+  "subject": {
+    "repo": "x402-foundation/x402",
+    "sut_note": "PR #3920 @ b1a4d8ce0ae91ed5462db427a7388c516da3e70f (round-4 review head; b1a4d8c scopes the 33dc20d fail-closed unsupported-amount rejection to enabled amount expectations). @x402/core 2.28.0 built from the PR branch via npm pack, installed file: + overrides — PR code is the ONLY rejection logic in these sessions; @x402/evm/@x402/express/@x402/fetch 2.28.0, viem 2.48.11, node v24.22.1, Base Sepolia (eip155:84532) USDC 0x036CbD53842c5426634e7929541eC2318f3dCF7e. spendControls enabled (default maxAmountPerPayment $1). Instrumented at the signer boundary (signer-call counter + resolved-payload.amount inspection, no catch-pattern) — same perimeter as sealed cycle 1 (argus-seal-0004 @ 2b4cc47). Adversarial resource server is Argus-owned (fault-injection stand, settlement mocked, per-session throwaway unfunded wallets), fully offline, no vendor-operated service touched. Provenance note: machine metadata (fixture pr_head / pull_request.head / versions) pins b1a4d8ce uniformly; static banner strings in client_v3.ts (lines 3, 175) and the battery header still carry the original rig-build label '@4232cf6' — stale prose labels, not pins. Canonical run = run 2 (2026-10-27T18:47:16Z -> 18:48:41Z, 15 sessions, ~85 s); run 1 died mid-A11 (the A11 stand CLI validates --requirement-amounts as positive atomic integers; the A11 offer was re-served via --requirement-overrides, and the 402 body was manually verified to carry amount '0.5' verbatim)",
+    "lab_run_commit": "22d37e37",
+    "lab_run_branch": "block-b/pr3920-crosscheck-r4"
+  },
+  "scenarios": [
+    {
+      "id": "A1-A9",
+      "name": "GreenZoneRegression",
+      "verdict": "PASS",
+      "checks": "12/12 sessions PASS, rollup 9/9 @ b1a4d8ce — cycle-1 green zone unchanged; green sessions reuse client_v3.ts unchanged (methodology identical to the sealed cycle-1 run)",
+      "findings": []
+    },
+    {
+      "id": "A11",
+      "name": "NonAtomicAmount-Scoping",
+      "verdict": "PASS",
+      "checks": "decimal '0.5' offer: typed fail-closed PRE-SIGNER rejection, signer=0, verbatim: 'Failed to create payment payload: quote-check-unsupported: non-atomic-amount. The offered requirement cannot be evaluated against spendControls.expectedAmount ... Rejected fail-closed: an asset allowlist entry or a higher spend cap is not a substitute for an unchecked expectation. Set expectedAmount: false to disable.' — b1a4d8c round-4 scoping verified as claimed (silent-pass -> 33dc20d fail-closed -> b1a4d8c scoping lineage)",
+      "findings": []
+    },
+    {
+      "id": "A10a",
+      "name": "BindingRace-ExplicitExpectation",
+      "verdict": "FAIL",
+      "checks": "signer=2; both slots start 22-29 ms apart, BOTH signer calls 9 ms apart, both BEFORE any slot completes; both slots HTTP 200, zero rejections — indistinguishable from the cycle-1 red-zone captures @ 2b4cc47",
+      "findings": [
+        "F-A10"
+      ]
+    },
+    {
+      "id": "A10b",
+      "name": "BindingRace-FirstAccepted",
+      "verdict": "FAIL",
+      "checks": "signer=2; both signer calls 8 ms apart, both before any slot completes; both slots HTTP 200, zero rejections — red zone reproduces; the 33dc20d serialization claim does not observably hold in this probe",
+      "findings": [
+        "F-A10"
+      ]
+    }
+  ],
+  "run_ts": "2026-10-27T18:47:16Z",
+  "self_run": true,
+  "findings_summary": [
+    {
+      "id": "F-A10",
+      "severity": "high",
+      "title": "Binding race still open at PR head b1a4d8ce: two concurrent requirement sets on one quota key — client signs BOTH payloads (signer x2) in the first-contact window (9/8 ms apart) before any slot completes; zero rejections; the 33dc20d serialization claim is not observable in this probe; NSPG13 corroboration stands. Cycle-1 baseline: argus-seal-0004 @ 2b4cc47",
+      "writeup": "docs/block-b/fixtures/S-BS-06/s-bs-06-pr3920-crosscheck-r4.fixture.json"
+    },
+    {
+      "id": "A11-closed",
+      "severity": "info",
+      "title": "A11 (non-atomic amount) verified CLOSED at b1a4d8ce with round-4 scoping to enabled amount expectations: typed fail-closed pre-signer rejection (signer=0), full verbatim message captured in the r4 fixture"
+    }
+  ],
+  "notes": "Cycle 2 delivers the re-run promised in the cycle-1 receipt (argus-seal-0004): full A1-A9 green zone + red zone A10a/A10b + A11 against the round-4 PR head. Harness: battery-pr3920-r4.mjs orchestrator; green sessions reuse client_v3.ts unchanged; race sessions use client_v5.ts (CONCURRENCY=2 via Promise.allSettled, ONE process, shared client+ledger, same instrumentation perimeter); the -r4 fixture suffix keeps the sealed cycle-1 fixture untouched; red-zone required behaviors pre-registered in matrix-a10a11.json @ 2b4cc47. Scope: single-node client lab stand; settlement mocked (no on-chain transfer established by design); multi-instance and on-chain settlement semantics out of scope for this cycle. Verdict taxonomy: PASS = observed behavior satisfies the matrix row's required behavior; FAIL = conformance gap, the PR's own control does not produce the matrix-required behavior (finding, not harness error).",
+  "evidence": [
+    { "kind": "file", "path": "docs/block-b/fixtures/S-BS-06/s-bs-06-pr3920-crosscheck-r4.fixture.json", "sha256": null },
+    { "kind": "file", "path": "docs/block-b/fixtures/S-BS-06/matrix-a10a11.json", "sha256": null },
+    { "kind": "file", "path": "docs/block-b/fixtures/S-BS-06/matrix-a1a9.json", "sha256": null },
+    { "kind": "file", "path": "sut-x402-pr3920/battery-pr3920-r4.mjs", "sha256": null },
+    { "kind": "file", "path": "sut-x402-pr3920/client_v5.ts", "sha256": null },
+    { "kind": "file", "path": "sut-x402-pr3920/client_v3.ts", "sha256": null },
+    { "kind": "file", "path": "sut-x402-pr3920/x402-core-2.28.0.tgz", "sha256": null },
+    { "kind": "file", "path": "sut-x402-pr3920/package-lock.json", "sha256": null }
+  ]
+}
