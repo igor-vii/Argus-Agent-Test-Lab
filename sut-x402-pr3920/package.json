@@ -1,0 +1,26 @@
+{
+  "name": "sut-x402-pr3920-crosscheck",
+  "private": true,
+  "version": "1.0.0",
+  "description": "SUT cross-check: PR #3920 (gobeyondfj-cmd/x402 feat/expected-amount @4232cf6) vs Argus acceptance matrix A1-A9 on the S-BS-06 stand",
+  "type": "module",
+  "scripts": {
+    "client": "tsx client_v3.ts"
+  },
+  "dependencies": {
+    "@x402/core": "file:./x402-core-2.28.0.tgz",
+    "@x402/evm": "2.28.0",
+    "@x402/express": "2.28.0",
+    "@x402/fetch": "2.28.0",
+    "dotenv": "^16.4.7",
+    "express": "^4.18.2",
+    "tsx": "^4.21.0",
+    "viem": "^2.48.11"
+  },
+  "overrides": {
+    "@x402/core": "file:./x402-core-2.28.0.tgz"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.4"
+  }
+}

@@ -1,0 +1,104 @@
+{
+  "rig": "matrix-a1a9 — green-zone acceptance matrix (A1–A9): rig definition + verdicts",
+  "attribution": {
+    "lab": "Argus Agent Test Lab",
+    "operator": "igor-vii",
+    "repo": "github.com/igor-vii/Argus-Agent-Test-Lab",
+    "branch": "block-b/pr3920-crosscheck",
+    "receipt": "x402-foundation/x402#3866 — lab receipt comment, 2026-10-26 (cycle 2026-10-24 -> 2026-10-26)",
+    "registry": "attestations/INDEX.json — Ed25519-signed, chained records; seals argus-seal-0001..argus-seal-0004"
+  },
+  "provenance": {
+    "upstream_issue": "https://github.com/x402-foundation/x402/issues/3866",
+    "pull_request": {
+      "repo": "gobeyondfj-cmd/x402",
+      "branch": "feat/expected-amount",
+      "verified_head": "2b4cc47c6e30b42469351e2a21f72bdaa74d31ad",
+      "head_note": "remediation head: all five review items closed (recipient binding via cross-key guard, dedicated drift tests, method-outside-key documented, first-accepted caveat documented, typed error on .cause)"
+    },
+    "run_fixture": "docs/block-b/fixtures/S-BS-06/s-bs-06-pr3920-crosscheck.fixture.json",
+    "run_commit": "f6a26fd0",
+    "seal": "argus-seal-0004",
+    "result_headline": "12/12 sessions pass, matrix rollup 9/9"
+  },
+  "verdict_semantics": {
+    "PASS": "observed behavior satisfies the matrix row's required behavior",
+    "green_zone": "every green case is a probe the SUT must handle correctly; a pass = required behavior observed at the signer boundary"
+  },
+  "evidence_discipline": {
+    "established": "pre-signer rejection (signer-call count unchanged) or signing (signer invoked) at the signer boundary",
+    "not_established": "an on-chain transfer: settlement is mocked; per-session throwaway unfunded wallets",
+    "redaction": "no private keys, no signatures, no usable authorizations; nonce values truncated"
+  },
+  "amounts_note": "atomic units, USDC 6 decimals: 10000 = $0.01, 5000 = $0.005, 50000 = $0.05, 100000 = $0.10, 5000000 = $5.00 (cap is $1 = 1,000,000)",
+  "matrix": [
+    {
+      "id": "A1",
+      "case": "unchanged quote, control on",
+      "required_behavior": "signs; no false rejection",
+      "result": "PASS",
+      "sessions": ["xc_a1_unchanged_explicit"]
+    },
+    {
+      "id": "A2",
+      "case": "raise within cap on accepted quote",
+      "required_behavior": "typed rejection before the signer; signer-call count unchanged",
+      "result": "PASS",
+      "sessions": ["xc_a2_raise_explicit"]
+    },
+    {
+      "id": "A3",
+      "case": "drop within cap on accepted quote",
+      "required_behavior": "symmetric rejection before the signer (same tolerance band both directions)",
+      "result": "PASS",
+      "sessions": ["xc_a3_drop_explicit"]
+    },
+    {
+      "id": "A4",
+      "case": "first offer != caller expectation",
+      "required_behavior": "rejection at first acceptance, before the signer",
+      "result": "PASS",
+      "sessions": ["xc_a4_firstoffer_explicit"]
+    },
+    {
+      "id": "A5",
+      "case": "payTo change, same amount (explicit) / raised amount at substituted recipient (first-accepted)",
+      "required_behavior": "rejection before the signer in both modes; binding = full tuple, not just the number; base anchor intact",
+      "result": "PASS",
+      "sessions": ["xc_a5_payto_same_explicit", "xc_a5b_payto_raise_firstaccepted"],
+      "note": "closed at 2b4cc47 by the cross-key recipient guard (first committed payTo per (url, scheme, network, asset) binds in both modes)"
+    },
+    {
+      "id": "A6",
+      "case": "rejected requirement must not update the accepted anchor",
+      "required_behavior": "rejected quote cannot anchor; next legitimate offer signs",
+      "result": "PASS",
+      "sessions": ["xc_a6_rejected_never_anchors"]
+    },
+    {
+      "id": "A7",
+      "case": "asset swap / network swap",
+      "required_behavior": "no regression of the built-in spendControls rejection",
+      "result": "PASS",
+      "sessions": ["xc_a7_asset_explicit", "xc_a7_network_explicit"]
+    },
+    {
+      "id": "A8",
+      "case": "resource change (new binding) / method change (documented semantics)",
+      "required_behavior": "raised amount on a new resource caught by caller expectation; method change = new binding, documented",
+      "result": "PASS",
+      "sessions": ["xc_a8_resource_raise_explicit", "xc_a8b_method_new_binding_explicit"]
+    },
+    {
+      "id": "A9",
+      "case": "anchor provenance",
+      "required_behavior": "decision/error exposes whether the expectation came from explicit config or the quote ledger",
+      "result": "PASS",
+      "sessions": ["xc_a9_firstaccepted_drift"]
+    }
+  ],
+  "out_of_scope_here": [
+    "red-zone boundaries A10a/A10b and A11 — see matrix-a10a11.json (same directory)",
+    "verification of commit 33dc20d — claimed fixes, not yet re-run by the lab; next cycle"
+  ]
+}
