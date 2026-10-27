@@ -1,0 +1,60 @@
+{
+  "target": "inngest (TS SDK)",
+  "surface": "npm inngest@4.26.0 (Apache-2.0) via @inngest/test@1.0.0 (Apache-2.0), in-process",
+  "head": "npm 4.26.0; source pin refs/inngest/inngest-js @ ad7c20d (2026-10-27)",
+  "run_at": "2026-10-26T18:56:06.543Z",
+  "claims_archive": "refs/inngest-claims/ (blog + glossary, sha256-pinned)",
+  "licenses_gate_D": "SDK Apache-2.0 + test-harness Apache-2.0 verified pre-run; server/CLI SSPL 1.0 + Apache-2.0-Future (local lab permitted; server not touched this session)",
+  "results": [
+    {
+      "id": "h1_I1_replay_completed_step",
+      "title": "Replay of a completed step returns memoized result, body not re-run",
+      "claim_anchor": "blog: 'the moment it succeeds, step.run records the result so it's never executed again'; 'It does not re-run'",
+      "expected_by_claim": "effects=1 on replay",
+      "observed": "exec1: charges=1, result={\"charged\":true,\"order\":\"A\",\"seq\":1}; exec2 (memo injected): charges=1, result={\"charged\":true,\"order\":\"A\",\"seq\":1}",
+      "side_effects": 1,
+      "verdict": "PASS",
+      "notes": "exec2 models server replay with memo state injected per MockedStep contract."
+    },
+    {
+      "id": "h1_I2_commit_then_throw",
+      "title": "Commit-then-throw inside step.run: retry re-executes the step body",
+      "claim_anchor": "blog FAQ (verbatim): 'On retry, the step body runs again, and a non-idempotent payment API will charge again'",
+      "expected_by_claim": "their own disclosure predicts re-execution -> OBSERVED if 2 effects",
+      "observed": "exec1 err=\"null\", exec2 (retry) err=\"null\", charges=2",
+      "side_effects": 2,
+      "verdict": "OBSERVED",
+      "notes": "Disclosure-conformance probe: behavior matches their published FAQ window 1:1. Not a headline violation. Doc anchor added: docs 'Primitives and steps': 'A step does not make an external action exactly once. If a provider accepts a request but its response is lost, the step can retry the action.' + docs idempotency page: 'A request can succeed before Inngest records the step result.' => disclosure-conformance confirmed at docs level."
+    },
+    {
+      "id": "h1_I3_memo_collision",
+      "title": "Same step ID, different payload: memo replays foreign result without conflict signal",
+      "claim_anchor": "blog: memo is keyed by step ID only ('charge-card'); no payload binding mentioned anywhere in blog/FAQ",
+      "expected_by_claim": "expected (claim-silent): if no binding, stale success for a different order",
+      "observed": "exec1 (order-A) -> {\"charged\":true,\"order\":\"order-A\",\"cents\":1000}; exec2 (order-B, $99.00, same id) -> result={\"charged\":true,\"order\":\"order-A\",\"cents\":1000}, new executions=0",
+      "side_effects": 1,
+      "verdict": "OBSERVED",
+      "notes": "A6-class twin (T1 p1_A6). Doc-boundary check RESOLVED 2026-10-27: docs 'Primitives and steps' (sha256 8557972...) section 'Keep step IDs stable': 'a step ID identifies work within its run; keep each logical step's ID stable' \u2014 one-ID-one-work model documented => OBSERVED (no headline violated). Sharp edge retained: no payload binding, no conflict signal on ID reuse; silent wrong-result replay in agent loops remains an unprotected hazard (hardening note, not FAIL)."
+    },
+    {
+      "id": "h1_I3b_parallel_same_id",
+      "title": "Parallel branches reusing the same step ID in one run",
+      "claim_anchor": "blog is silent; docs say IDs must be unique per run (docs-check TODO)",
+      "expected_by_claim": "n/a (behavior record)",
+      "observed": "resolved: {\"a\":{\"which\":\"A\"},\"b\":{\"which\":\"B\"}}",
+      "side_effects": null,
+      "verdict": "OBSERVED",
+      "notes": "Behavior record: parallel branches reusing one step ID. If both slots resolved without conflict, the SDK serializes/races silently - integrity window at SDK level."
+    },
+    {
+      "id": "h1_I4_lost_memo_crash_model",
+      "title": "Crash window model: checkpoint lost after provider-accept -> re-execution",
+      "claim_anchor": "blog FAQ (verbatim): 'the charge succeeds on the payment provider's side but the step never records completion... will charge again'",
+      "expected_by_claim": "their own disclosure predicts re-execution -> OBSERVED if 2 effects",
+      "observed": "exec2 with empty memo: result={\"charged\":true,\"n\":2}, charges=2",
+      "side_effects": 2,
+      "verdict": "OBSERVED",
+      "notes": "Modeled window (memo loss simulated by injection), matches their published FAQ. Full dynamic version = I5/dev-server phase."
+    }
+  ]
+}

@@ -1,0 +1,399 @@
+{
+  "startedAt": "2026-10-27T11:37:08.607Z",
+  "finishedAt": "2026-10-27T11:37:09.845Z",
+  "sut": "@nevermined-io/payments 1.13.0 (npm dist, unmodified) — express paymentMiddleware",
+  "repo_commit_audited": "586ced2a7e05907cc46e92967052bea5801fe9ac",
+  "node": "v24.22.1",
+  "probes": [
+    {
+      "id": "C1",
+      "name": "fresh v3 token, buffered 2xx",
+      "verdict": "HOLD",
+      "observed": {
+        "servicesDelta": 1,
+        "settledDelta": 1,
+        "receiptAttached": true
+      }
+    },
+    {
+      "id": "P1",
+      "name": "v2 default (reusable) token: buyer retry after lost response = second economic execution",
+      "verdict": "FAIL",
+      "observed": {
+        "servicesDelta": 1,
+        "settledDelta": 1,
+        "retryCarriesIdempotencyKey": false,
+        "reconciliationArtifact": "none — the only receipt was on the lost response"
+      }
+    },
+    {
+      "id": "P2",
+      "name": "v3 single-use race window: service delivered, never paid (guard is per-process)",
+      "verdict": "FAIL",
+      "observed": {
+        "statuses": [
+          200,
+          402
+        ],
+        "servicesDelta": 2,
+        "settledDelta": 1,
+        "spentGuardScope": "per-process in-memory Map (middleware.ts:484) — no shared store provided"
+      }
+    },
+    {
+      "id": "P3",
+      "name": "any settle failure except BCK.X402.0059 = unpaid delivery (no retry, no compensation, no buyer signal)",
+      "verdict": "FAIL",
+      "observed": {
+        "httpStatus": 200,
+        "bodyDelivered": true,
+        "servicesDelta": 1,
+        "settledDelta": 0,
+        "settleOutcome": "http500",
+        "failureChannel": "console.error only; buyer receives success with NO payment-response header"
+      }
+    },
+    {
+      "id": "P3b",
+      "name": "settle \"succeeds\" (200, success:false): middleware never reads success/errorReason — silent unpaid delivery WITH a receipt",
+      "verdict": "FAIL",
+      "observed": {
+        "bodyDelivered": true,
+        "receiptSuccess": false,
+        "receiptErrorReason": "Cannot order plan",
+        "servicesDelta": 1,
+        "settledDelta": 0
+      }
+    },
+    {
+      "id": "P4",
+      "name": "depletion between verify and settle: second service delivered, unpaid (insufficient at settle is not special-cased)",
+      "verdict": "FAIL",
+      "observed": {
+        "statuses": [
+          200,
+          200
+        ],
+        "servicesDelta": 2,
+        "settledDelta": 1,
+        "verifyDoesNotReserve": true
+      }
+    },
+    {
+      "id": "P5",
+      "name": "streaming (the primary agent shape): paid in full, receipt structurally impossible, settle failure after close is unsurfaced -> P1-style retries cannot be reconciled",
+      "verdict": "FAIL",
+      "observed": {
+        "fullStreamDelivered": true,
+        "settledDelta": 1,
+        "receiptHeader": null,
+        "settleIsFireAndForget": true,
+        "reconciliationPossible": false
+      }
+    },
+    {
+      "id": "P6",
+      "name": "v3->v2 silent downgrade: SDK detects and returns the true version but emits no warning; default mint is v2 anyway",
+      "verdict": "DX",
+      "observed": {
+        "requestedVersion": 3,
+        "returnedVersion": 2,
+        "downgradeWarningEmitted": false,
+        "consequence": "a buyer that asked for single-use silently holds a reusable token"
+      }
+    },
+    {
+      "id": "P2b",
+      "name": "replay of a spent v3 token: local guard is reactive (arms only after witnessing BCK.X402.0059) — one free handler execution per spent token, then refusal",
+      "verdict": "FAIL",
+      "observed": {
+        "replayStatus": 402,
+        "newServicesAfterReplay": 1,
+        "newSettlesAfterReplay": 0,
+        "thirdCallStatus": 402,
+        "guardArmsOnlyAfterWitnessing0059": true,
+        "guardScope": "per-process in-memory Map"
+      }
+    },
+    {
+      "id": "C3",
+      "name": "buyer disconnect before delivery: honest not-charged (seller eats the handler work)",
+      "verdict": "HOLD",
+      "observed": {
+        "handlerRan": 1,
+        "settledDelta": 0
+      }
+    },
+    {
+      "id": "C4",
+      "name": "insufficient credits refused by verify pre-handler",
+      "verdict": "HOLD",
+      "observed": {
+        "status": 402,
+        "servicesDelta": 0,
+        "settledDelta": 0
+      }
+    }
+  ],
+  "ledgers": {
+    "mint": [
+      {
+        "requested": 3,
+        "minted": 3,
+        "hasNonce": true
+      },
+      {
+        "requested": 2,
+        "minted": 2,
+        "hasNonce": false
+      },
+      {
+        "requested": 3,
+        "minted": 3,
+        "hasNonce": true
+      },
+      {
+        "requested": 3,
+        "minted": 3,
+        "hasNonce": true
+      },
+      {
+        "requested": 3,
+        "minted": 3,
+        "hasNonce": true
+      },
+      {
+        "requested": 3,
+        "minted": 3,
+        "hasNonce": true
+      },
+      {
+        "requested": 3,
+        "minted": 3,
+        "hasNonce": true
+      },
+      {
+        "requested": 3,
+        "minted": 3,
+        "hasNonce": true
+      },
+      {
+        "requested": 3,
+        "minted": 2,
+        "hasNonce": false
+      },
+      {
+        "requested": 3,
+        "minted": 3,
+        "hasNonce": true
+      },
+      {
+        "requested": 3,
+        "minted": 3,
+        "hasNonce": true
+      },
+      {
+        "requested": 3,
+        "minted": 3,
+        "hasNonce": true
+      }
+    ],
+    "verify": [
+      {
+        "maxAmount": "1",
+        "remaining": "1000",
+        "isValid": true
+      },
+      {
+        "maxAmount": "1",
+        "remaining": "999",
+        "isValid": true
+      },
+      {
+        "maxAmount": "1",
+        "remaining": "998",
+        "isValid": true
+      },
+      {
+        "maxAmount": "1",
+        "remaining": "997",
+        "isValid": true
+      },
+      {
+        "maxAmount": "1",
+        "remaining": "997",
+        "isValid": true
+      },
+      {
+        "maxAmount": "1",
+        "remaining": "996",
+        "isValid": true
+      },
+      {
+        "maxAmount": "1",
+        "remaining": "996",
+        "isValid": true
+      },
+      {
+        "maxAmount": "5",
+        "remaining": "5",
+        "isValid": true
+      },
+      {
+        "maxAmount": "5",
+        "remaining": "5",
+        "isValid": true
+      },
+      {
+        "maxAmount": "1",
+        "remaining": "1000",
+        "isValid": true
+      },
+      {
+        "maxAmount": "1",
+        "remaining": "999",
+        "isValid": true
+      },
+      {
+        "maxAmount": "1",
+        "remaining": "998",
+        "isValid": true
+      },
+      {
+        "maxAmount": "1",
+        "remaining": "998",
+        "isValid": true
+      },
+      {
+        "maxAmount": "1",
+        "remaining": "0",
+        "isValid": false
+      }
+    ],
+    "settle": [
+      {
+        "outcome": "settled",
+        "singleUse": true,
+        "maxAmount": "1",
+        "remaining": "999"
+      },
+      {
+        "outcome": "settled",
+        "singleUse": false,
+        "maxAmount": "1",
+        "remaining": "998"
+      },
+      {
+        "outcome": "settled",
+        "singleUse": false,
+        "maxAmount": "1",
+        "remaining": "997"
+      },
+      {
+        "outcome": "settled",
+        "singleUse": true,
+        "maxAmount": "1",
+        "remaining": "996"
+      },
+      {
+        "outcome": "already_used",
+        "singleUse": true,
+        "maxAmount": "1",
+        "remaining": "996"
+      },
+      {
+        "outcome": "http500"
+      },
+      {
+        "outcome": "success_false",
+        "singleUse": true,
+        "maxAmount": "1",
+        "remaining": "995"
+      },
+      {
+        "outcome": "settled",
+        "singleUse": true,
+        "maxAmount": "5",
+        "remaining": "0"
+      },
+      {
+        "outcome": "insufficient",
+        "singleUse": true,
+        "maxAmount": "5",
+        "remaining": "0"
+      },
+      {
+        "outcome": "settled",
+        "singleUse": true,
+        "maxAmount": "1",
+        "remaining": "999"
+      },
+      {
+        "outcome": "settled",
+        "singleUse": true,
+        "maxAmount": "1",
+        "remaining": "998"
+      },
+      {
+        "outcome": "already_used",
+        "singleUse": true,
+        "maxAmount": "1",
+        "remaining": "998"
+      }
+    ],
+    "services": [
+      {
+        "route": "/ask",
+        "at": 1793101029445
+      },
+      {
+        "route": "/ask",
+        "at": 1793101029456
+      },
+      {
+        "route": "/ask",
+        "at": 1793101029471
+      },
+      {
+        "route": "/ask",
+        "at": 1793101029486
+      },
+      {
+        "route": "/ask",
+        "at": 1793101029487
+      },
+      {
+        "route": "/ask",
+        "at": 1793101029502
+      },
+      {
+        "route": "/ask",
+        "at": 1793101029508
+      },
+      {
+        "route": "/expensive",
+        "at": 1793101029543
+      },
+      {
+        "route": "/expensive",
+        "at": 1793101029545
+      },
+      {
+        "route": "/stream",
+        "at": 1793101029553
+      },
+      {
+        "route": "/ask",
+        "at": 1793101029618
+      },
+      {
+        "route": "/ask",
+        "at": 1793101029723
+      },
+      {
+        "route": "/slow",
+        "at": 1793101029730
+      }
+    ]
+  }
+}

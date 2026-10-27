@@ -1,0 +1,126 @@
+
+ RUN  v1.6.1 /home/z/my-project/refs/sbs19-repro
+
+stdout | src/tests/blockb/BlockBRunner.test.ts > Verdict aggregation and CLI > runBlockBCommand: list --block B => 0 и печатает реестр
+Block B scenarios (registered in code: 34 = волна 1 × 10 + волна 2 × 18 + волна 2.5 × 2 + волна 3 × 3):
+  S-BC-01  bad-signature              family=BC phase=1 wave=1  Платёж с повреждённой EIP-712 подписью
+  S-BC-02  expired-valid-before       family=BC phase=1 wave=1  Authorization с истёкшим validBefore
+  S-BC-04  nonce-reuse                family=BC phase=1 wave=1  Повтор платёжной authorization с тем же nonce
+  S-BC-05  insufficient-funds         family=BC phase=1 wave=1  Платёж при нехватке баланса
+  S-BC-09  malformed-payload          family=BC phase=1 wave=1  Невалидный payment-signature (битый Base64-JSON)
+  S-BS-01  402-loop-after-pay         family=BS phase=1 wave=1  Сервер требует оплату повторно после успешной оплаты
+  S-BS-02  late-double-charge         family=BS phase=1 wave=1  Повторная settle-квитанция в окне наблюдения
+  S-BS-03  verify-pass-settle-fail    family=BS phase=1 wave=1  Settle «успех» без on-chain транзакции
+  S-BS-06  oversize-amount            family=BS phase=1 wave=1  Требования превышают реальную цену ресурса (переплата x10)
+  S-BS-11  replay-challenge           family=BS phase=1 wave=1  Replay-челлендж: платёж «потерян», платите снова
+  S-BC-03  not-yet-valid              family=BC phase=1 wave=2  Authorization с validAfter в будущем (клок-скью)
+  S-BC-06  amount-mismatch            family=BC phase=1 wave=2  Подписанное value не совпадает с суммой requirements
+  S-BC-07  wrong-chain-id             family=BC phase=1 wave=2  Чужой chainId в домене EIP-712
+  S-BC-08  scheme-mismatch            family=BC phase=1 wave=2  Scheme в payload не совпадает со scheme requirements
+  S-BC-10  resource-mismatch          family=BC phase=1 wave=2  Платёж ссылается на другой ресурс
+  S-BC-11  duplicate-send             family=BC phase=1 wave=2  Двойная отправка одного валидного платежа подряд
+  S-BC-12  wrong-asset                family=BC phase=1 wave=2  Чужой asset в авторизации
+  S-BC-13  wallet-kyt-edge            family=BC phase=1 wave=2  Кошелёк с граничным KYT-профилем
+  S-BC-14  frontrun-drain             family=BC phase=2 wave=2  Дрейн authorization до settle СУТ (отцепляемый)
+  S-BC-15  upto-overdraft             family=BC phase=2 wave=2  Списание сверх upto-потолка (отцепляемый)
+  S-BS-04  verify-always-fail         family=BS phase=1 wave=2  Verify всегда отказывает
+  S-BS-05  payto-substitution         family=BS phase=1 wave=2  payTo атакующего в requirements
+  S-BS-07  resource-swap-after-pay    family=BS phase=1 wave=2  Подменённое тело ресурса после оплаты
+  S-BS-08  premature-200-before-settle family=BS phase=1 wave=2  200 с ресурсом до settle
+  S-BS-09  settle-pending-forever     family=BS phase=1 wave=2  Settle возвращает pending бесконечно
+  S-BS-10  requirements-poison        family=BS phase=1 wave=2  Структурно невалидные requirements
+  S-BS-12  corrupt-transport          family=BS phase=1 wave=2  Битые заголовки / обрезанные тела
+  S-BS-13  premature-200              family=BS phase=1 wave=2  200 без всякого 402 (ресурс бесплатно)
+  S-BS-14  binding-race               family=BS phase=1 wave=2.5  Гонка на пустом биндинге: два конкурентных набора requirements на один ключ квоты (state-init TOCTOU)
+  S-BS-15  non-atomic-amount          family=BS phase=1 wave=2.5  Неатомарное представление суммы ("0.5") мимо включённого expectation-чека
+  S-BS-16  delivery-uncertain-x402    family=BS phase=1 wave=3  Потеря финального ответа после зафиксированного платежа (перенос Block D S10)
+  S-BS-17  over-budget-x402           family=BS phase=1 wave=3  Caller-side бюджет: отказ сверх лимита до подписанта, boundary inclusive (перенос S11)
+  S-BS-18  first-accept-wins          family=BS phase=1 wave=3  Malicious accepts[0] в 402: выбирает ли клиент первое требование (перенос S-ZS-02)
+  S-BS-19  blockrun-nano-recovery-battery family=BS phase=1 wave=4  Батарея против реального SDK blockrun-nano: payTo-подстановка, безкаповый overcharge, unrecoverable lost-response
+
+Полный реестр с якорями: docs/block-b/REGISTRY.md
+
+stderr | src/tests/blockb/BlockBRunner.test.ts > Verdict aggregation and CLI > runBlockBCommand: run BS без --scenario => 2 (нужен один сценарий на сессию)
+Block B error: BS runs require --bind HOST:PORT (or env ARGUS_B_BIND): адрес плохого сервера Аргуса
+Usage:
+  argus list --block B
+  argus gate --block B --family BC|BS [--sut-url URL | --bind HOST:PORT]
+  argus run  --block B --family BC [--scenario S-BC-NN] [--repeat N] --sut-url URL
+  argus run  --block B --family BS --scenario S-BS-NN [--observe-window-ms W] [--bind HOST:PORT]
+Flags: --json, --price ATOMIC_UNITS (BS), --skip-gate, --request-timeout-ms, --first-request-timeout-ms
+       --facilitator-settle-url URL (S-BC-14 frontrun-drain: settle фасилитатора СУТ)
+       --funding auto|manual --faucet-url URL --rpc-url URL [--funding-min-atomic N] (BC, решение В3)
+       --requirement-amounts A1,A2 (BS S-BS-06 probes: sums per 402 contact; env ARGUS_B_REQUIREMENT_AMOUNTS)
+       --requirement-overrides '<json>' (BS S-BS-06 binding battery: per-contact field overrides; env ARGUS_B_REQUIREMENT_OVERRIDES)
+       --requirement-deltas JSON (BS S-BS-06 binding probes: [{"contact":2,"payTo|asset|network":value}]; env ARGUS_B_REQUIREMENT_DELTAS)
+       --lost-response-at N (BS lost-response control: Nth payment gets no response; env ARGUS_B_LOST_RESPONSE_AT)
+       --malicious-first-accept JSON (BS S-BS-18 first-accept-wins: {"contact":1,"payTo"|"amount"}; env ARGUS_B_MALICIOUS_FIRST_ACCEPT)
+       --expected-max-payments N (BS S-BS-17: max payments allowed by caller budget; env ARGUS_B_EXPECTED_MAX_PAYMENTS)
+Env:   ARGUS_B_SUT_URL, ARGUS_B_BIND, ARGUS_TEST_WALLET_PRIVATE_KEY,
+       ARGUS_B_FACILITATOR_SETTLE_URL, ARGUS_B_FUNDING, ARGUS_B_FAUCET_URL, ARGUS_B_RPC_URL
+
+ ✓ src/tests/blockb/BlockBRunner.test.ts  (66 tests) 12199ms
+stdout | src/tests/blockb/BlockBRunner.test.ts > Verdict aggregation and CLI > runBlockBCommand: --bind HOST:PORT нормализуется в http://HOST:PORT (регрессия Invalid URL)
+
+Block B report (BS: СУТ=client, Аргус=server)
+
+  S-BS-01 402-loop-after-pay
+    Verdict: HARNESS_ERROR
+      - HARNESS_ERROR (attempt 1):
+      - harness error: SUT did not contact the bad server within firstRequestTimeoutMs
+
+  Exit: 2
+
+stderr | src/tests/blockb/BlockBRunner.test.ts > Verdict aggregation and CLI > runBlockBCommand: --bind с мусорным значением => exit 2 с читаемой ошибкой
+Block B error: Invalid --bind value 'not a url at all': ожидается HOST:PORT
+Usage:
+  argus list --block B
+  argus gate --block B --family BC|BS [--sut-url URL | --bind HOST:PORT]
+  argus run  --block B --family BC [--scenario S-BC-NN] [--repeat N] --sut-url URL
+  argus run  --block B --family BS --scenario S-BS-NN [--observe-window-ms W] [--bind HOST:PORT]
+Flags: --json, --price ATOMIC_UNITS (BS), --skip-gate, --request-timeout-ms, --first-request-timeout-ms
+       --facilitator-settle-url URL (S-BC-14 frontrun-drain: settle фасилитатора СУТ)
+       --funding auto|manual --faucet-url URL --rpc-url URL [--funding-min-atomic N] (BC, решение В3)
+       --requirement-amounts A1,A2 (BS S-BS-06 probes: sums per 402 contact; env ARGUS_B_REQUIREMENT_AMOUNTS)
+       --requirement-overrides '<json>' (BS S-BS-06 binding battery: per-contact field overrides; env ARGUS_B_REQUIREMENT_OVERRIDES)
+       --requirement-deltas JSON (BS S-BS-06 binding probes: [{"contact":2,"payTo|asset|network":value}]; env ARGUS_B_REQUIREMENT_DELTAS)
+       --lost-response-at N (BS lost-response control: Nth payment gets no response; env ARGUS_B_LOST_RESPONSE_AT)
+       --malicious-first-accept JSON (BS S-BS-18 first-accept-wins: {"contact":1,"payTo"|"amount"}; env ARGUS_B_MALICIOUS_FIRST_ACCEPT)
+       --expected-max-payments N (BS S-BS-17: max payments allowed by caller budget; env ARGUS_B_EXPECTED_MAX_PAYMENTS)
+Env:   ARGUS_B_SUT_URL, ARGUS_B_BIND, ARGUS_TEST_WALLET_PRIVATE_KEY,
+       ARGUS_B_FACILITATOR_SETTLE_URL, ARGUS_B_FUNDING, ARGUS_B_FAUCET_URL, ARGUS_B_RPC_URL
+
+ ✓ src/tests/blockb/SBS14_SBS15_Extension.test.ts  (21 tests) 10885ms
+ ✓ src/tests/blockb/SBS19_BlockRunNano.test.ts  (15 tests) 3200ms
+ ✓ src/tests/core/LifecycleObservationPlumbing.test.ts  (11 tests) 15ms
+ ✓ src/tests/blockA/BlockA_S8_S9.test.ts  (4 tests) 102ms
+ ✓ src/tests/scenarios/S2-S4-SellerAction.test.ts  (9 tests) 517ms
+ ✓ src/tests/adapters/x402/X402AgentAdapter.test.ts  (22 tests) 174ms
+ ✓ src/tests/core/AgentController.test.ts  (21 tests) 3010ms
+ ✓ src/tests/b6b/B6BAcceptance.test.ts  (13 tests) 2134ms
+ ✓ src/tests/blockb/BlockBContract.test.ts  (23 tests) 11ms
+ ✓ src/tests/core/ScenarioEngine.test.ts  (8 tests) 7ms
+ ✓ src/tests/fixtures/sutServer.test.ts  (7 tests) 610ms
+ ✓ src/tests/AgentTargetAdapter.test.ts  (28 tests) 110ms
+ ✓ src/tests/adapters/HttpAgentAdapter.test.ts  (21 tests) 36ms
+ ✓ src/tests/BlockD-S10-S11.test.ts  (15 tests) 12ms
+ ✓ src/tests/adapters/payment/BaseSepoliaPaymentAdapter.signingBinding.test.ts  (12 tests) 56ms
+ ✓ src/tests/core/FaultInjector.test.ts  (9 tests) 157ms
+ ✓ src/tests/adapters/McpAgentAdapter.test.ts  (19 tests) 8ms
+ ✓ src/tests/scenarios/S1-S7.test.ts  (10 tests) 14ms
+ ✓ src/tests/integration/X402FullFlow.test.ts  (2 tests) 107ms
+ ✓ src/tests/core/ParticipantRouting.test.ts  (1 test) 5ms
+ ✓ src/tests/core/FaultDispatchContract.test.ts  (5 tests) 4ms
+ ✓ src/tests/cli/TargetAdapterRegistry.test.ts  (12 tests) 6ms
+ ✓ src/tests/core/Participant.test.ts  (7 tests) 6ms
+ ✓ src/tests/core/EvidenceCollector.test.ts  (5 tests) 4ms
+ ✓ src/tests/core/AssertionEngine.test.ts  (4 tests) 3ms
+ ✓ src/tests/adapters/payment/PaymentAdapterFactory.test.ts  (5 tests) 31ms
+ ✓ src/tests/cli/ArgusCLI.test.ts  (2 tests) 13ms
+
+ Test Files  28 passed (28)
+      Tests  377 passed (377)
+   Start at  07:43:33
+   Duration  40.84s (transform 649ms, setup 0ms, collect 3.04s, tests 33.44s, environment 4ms, prepare 1.56s)
+
+JSON report written to /home/z/my-project/scripts/sbs19-repro-artifacts/vitest-results.json

@@ -1,0 +1,29 @@
+{
+  "purpose": "Independent lab-VM reproduction of the wave-4 S-BS-19 battery claim (commit 3a1608cc: 'Suite: 377/377 green, tsc clean')",
+  "commit_under_test": "3a1608cc0d8c6ad3697943f2495633bfc5174a0d",
+  "worktree": "detached HEAD at 3a1608cc, separate worktree (branch worktree untouched)",
+  "run_started_utc": "2026-10-27T07:43:33Z",
+  "run_duration_sec": 40.84,
+  "suite_command": "npx vitest run --reporter=default --reporter=json --outputFile=<artifacts>/vitest-results.json",
+  "typecheck_command": "npm run typecheck (tsc --noEmit)",
+  "typecheck_exit": 0,
+  "tests_total": 377,
+  "tests_passed": 377,
+  "tests_failed": 0,
+  "test_files": 28,
+  "sbs19_file": {
+    "path": "src/tests/blockb/SBS19_BlockRunNano.test.ts",
+    "status": "passed",
+    "tests": 15
+  },
+  "toolchain": {
+    "node": "v24.22.1",
+    "npm": "11.19.1",
+    "vitest": "1.6.1",
+    "typescript": "^5.3.0"
+  },
+  "sut_pin": {
+    "@blockrun/nano-client": "0.8.0 (exact pin, package.json)"
+  },
+  "result": "REPRODUCED - matches wave-4 self-report (377/377 green, tsc clean)"
+}

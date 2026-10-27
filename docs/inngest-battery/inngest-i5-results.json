@@ -1,0 +1,165 @@
+{
+  "battery": "inngest-i5-devserver (dynamic phase of h1 battery)",
+  "date": "2026-10-26T20:24:53.967Z",
+  "note": "re-run #2 after environment rollback; run #1 (2026-10-26T19:33Z) produced identical verdicts; raw evidence of run #1 lost to rollback",
+  "env": {
+    "node": "v24.21.0",
+    "sdk": "inngest@4.26.0 (npm dist, Apache-2.0)",
+    "test": "@inngest/test@1.0.0 (used in h1 static phase)",
+    "cli": "inngest-cli@1.49.0 dev server (local only)"
+  },
+  "gate_d": {
+    "cli_license": "SSPL 1.0 + Apache 2.0 Future License — verified from repo LICENSE.md (npm tarball ships NO license file, only 'SEE LICENSE IN LICENSE.md' reference)",
+    "license_sha256": "300ec5a863250241755061b8424ac949aeada4c5c2cb567a2642637aa0f2c7e4",
+    "local_lab_use": "permitted — no service offering to third parties; local dev-server for testing our own harness"
+  },
+  "pre_registered_rules": "see app.mjs header (fixed before run)",
+  "probes": [
+    {
+      "id": "p0-ctrl",
+      "mode": "plain step.run, no crash",
+      "expected": "charges==1",
+      "charges": 1,
+      "resolved": true,
+      "chargeIds": [
+        "ch_001_p0"
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "id": "p1-i2-dyn",
+      "mode": "throw inside step body after provider success",
+      "expected": "charges==2 (retry re-runs body)",
+      "charges": 2,
+      "resolved": true,
+      "chargeIds": [
+        "ch_002_p1",
+        "ch_003_p1"
+      ],
+      "verdict": "OBSERVED (conformance: blog FAQ + docs idempotency verbatim)"
+    },
+    {
+      "id": "p2-i4-dyn",
+      "mode": "process.exit(1) after provider success (true A3 window)",
+      "expected": "charges==2 (body re-run after lost memo)",
+      "charges": 2,
+      "resolved": true,
+      "crashes": 1,
+      "chargeIds": [
+        "ch_004_p2",
+        "ch_005_p2"
+      ],
+      "verdict": "OBSERVED (conformance: blog FAQ + docs idempotency verbatim)"
+    },
+    {
+      "id": "p3-i3-dyn",
+      "mode": "two step.run with same id 'op', payloads A/B",
+      "expected": "b reuses a's result silently (or guard/error)",
+      "charges": 0,
+      "resolved": true,
+      "summary": {
+        "at": "2026-10-26T20:24:39.244Z",
+        "pid": 1415,
+        "kind": "memo-key-summary",
+        "probe": "p3-memo-key",
+        "a": {
+          "for": "A"
+        },
+        "b": {
+          "for": "B"
+        },
+        "sameResult": false,
+        "handlerARan": true,
+        "handlerBRan": true,
+        "runId": "01M5WY5WZKYCPR3V2WPNN04TT3"
+      },
+      "verdict": "UNDOCUMENTED-GUARD (conflict detection present)"
+    },
+    {
+      "id": "p4a-race-no-dedup",
+      "mode": "12 concurrent identical sends, no event id",
+      "expected": "charges==12 (each event → own run)",
+      "charges": 12,
+      "sendOk": 12,
+      "raceMs": 14,
+      "verdict": "OBSERVED (documented model: each event starts its own run)"
+    },
+    {
+      "id": "p4b-race-dedup",
+      "mode": "12 concurrent sends sharing ONE event id (documented dedup)",
+      "expected": "charges==1",
+      "charges": 1,
+      "sendOk": 12,
+      "distinctEventIdsAccepted": 12,
+      "raceMs": 10,
+      "chargeIds": [
+        "ch_018_p4b"
+      ],
+      "verdict": "PASS (documented event-ID dedup mitigation holds under 12-way concurrent race)"
+    }
+  ],
+  "evidence": {
+    "charges": "/home/z/my-project/refs/inngest/battery/devserver/charges.json",
+    "journal": "/home/z/my-project/refs/inngest/battery/devserver/journal.jsonl",
+    "app_log": "/home/z/my-project/refs/inngest/battery/devserver/app.log",
+    "dev_log": "/home/z/my-project/refs/inngest/battery/devserver/dev.log"
+  },
+  "addendum": {
+    "date": "2026-10-26T20:25:40.824Z",
+    "p3_refinement": {
+      "verdict_refined": "OBSERVED (warn-and-rerun, not silent wrong-result, not a guard)",
+      "mechanics": [
+        "SDK engine.js resolveStepIdCollision(): userland step ID collision -> auto-indexed to a NEW internal step id (own memo slot) -> second handler EXECUTED and memoized separately (observed: b={for:B}, handlerBRan=true)",
+        "Conflict signal EXISTS at WARN level: 'Duplicate step ID \"op\" detected across parallel chains' { code: AUTOMATIC_PARALLEL_INDEXING, explanation: '...Your function is still running.', action: 'Use a unique ID for each step, especially those in parallel.' } (app.log)",
+        "@inngest/test (static h1 phase) DIVERGES from runtime: injected memo keyed by userland ID returns the FIRST/stale result with 0 new executions and no warning; additionally TestEngine natural execution agrees with runtime on results but does NOT surface the AUTOMATIC_PARALLEL_INDEXING warning -> emulation fidelity gap in the vendor's own test tool"
+      ],
+      "doc_boundary": {
+        "js_docs": "primitives page documents only 'Keep step IDs stable'; resolveStepIdCollision/AUTOMATIC_PARALLEL_INDEXING behavior is NOT documented for JS",
+        "py_docs": "Python SDK reference documents counter-keying explicitly for the experimental step decorator ('The SDK adds a counter to each repeat, so every call is its own memoized step')",
+        "reachability": "wrong-result via same-ID memo requires payload drift between attempts; events are immutable within a run, so the reachable hazard is deploy drift only (covered by their 'Keep step IDs stable' versioning guidance)"
+      },
+      "source_refs": [
+        "node_modules/inngest/components/execution/engine.js:1319 maybeWarnOfParallelIndexing()",
+        "node_modules/inngest/components/execution/engine.js:1666 applyMiddlewareToStep() -> resolveStepIdCollision({baseId, expectedIndexes, stepsMap})"
+      ]
+    },
+    "extra_probes": [
+      {
+        "id": "p4c-dedup-seq",
+        "mode": "sequential send reusing p4b's event id, NEW payload",
+        "expected": "0 runs, 0 charges (24h id dedup)",
+        "charges": 0,
+        "bodyEnters": 0,
+        "sendResp": {
+          "ok": true,
+          "ids": [
+            "01M5WY77KQAE1KZYW9W94235P7"
+          ]
+        },
+        "verdict": "PASS (id-dedup suppresses run; payload ignored)"
+      },
+      {
+        "id": "p4d-fresh-id",
+        "mode": "fresh event id after the race (control)",
+        "expected": "1 run, 1 charge",
+        "charges": 1,
+        "bodyEnters": 1,
+        "sendResp": {
+          "ok": true,
+          "ids": [
+            "01M5WY7GDBDT805QRSQXNQ2RCT"
+          ]
+        },
+        "verdict": "PASS (suppression keyed by event id, not a global throttle)"
+      }
+    ],
+    "doc_anchors": {
+      "prescribed_methodology": "their idempotency page 'Verify the behavior' section literally prescribes: 'Send the same event ID twice in a test environment and inspect the event history and function runs' (= our p4b/p4c) and 'Test an external call that succeeds just before the step reports a failure' (= our p1-i2-dyn)",
+      "a3_window": "docs idempotency: 'A request can succeed before Inngest records the step result. A retry can then call the API again. Event and function deduplication do not remove that risk.' (= p1/p2 observed verbatim)",
+      "event_dedup_window": "event id = idempotency key over a 24h period; duplicates are stored in event history but trigger nothing (= p4b/p4c observed)",
+      "primitives_boundary": "primitives page: 'Keep step IDs stable' + 'If a provider accepts a request but its response is lost, the step can retry the action. Use an idempotency key for writes, payments...' (= A3 guidance)"
+    },
+    "p4b_interpretation": "12 sends returned 12 DISTINCT storage ids while only 1 run started: dev server stores every event (duplicates visible in event history, per their docs) but suppresses triggering by the provided id. 'distinctEventIdsAccepted' in the main results counts storage ids, not dedup keys.",
+    "retry_backoff_note": "dev server default retry backoff observed ~24.5s for attempt 1->2 (p1 timeline)"
+  }
+}

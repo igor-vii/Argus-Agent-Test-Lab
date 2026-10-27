@@ -1,0 +1,72 @@
+{
+  "type": "seal",
+  "title": "S-BS-19 blockrun-nano-recovery battery — real-SUT wave 4 vs @blockrun/nano-client 0.8.0: 3 FAIL / 3 HOLD, suite 377/377 independently reproduced",
+  "subject": {
+    "repo": "@blockrun/nano-client 0.8.0 (npm exact pin) — Circle Gateway batched x402 dialect",
+    "sut_note": "SUT = published SDK (npm exact pin 0.8.0, unmodified); Argus = adversarial resource server of the Circle Gateway batched dialect (signer-oracle + server-side fixation). Canonical battery run: wave-4 commit 3a1608cc (2026-10-26T21:49:10Z, executed by a parallel session of this lab; suite self-reported 377/377 green, tsc clean). Independent lab-VM reproduction of the signing VM (worktree at 3a1608cc, 2026-10-27T07:43:33Z): tsc --noEmit exit 0 + vitest 377/377 PASS across 28 files (40.84s), SBS19 file 15/15 — verdicts identical, claim REPRODUCED. Source basis: closed issue BlockRunAI/blockrun-nano-client#15 (lab black-box loss-response/retry report, closed as not planned with an invitation to a production round) + source audit (index.ts:847/:439/:802-806/:562-564).",
+    "lab_run_commit": "3a1608cc",
+    "lab_run_branch": "main (wave 4); reproduction evidence committed on inngest/conformance-battery"
+  },
+  "scenarios": [
+    {
+      "id": "S-BS-19/P1",
+      "name": "payto-substitution",
+      "verdict": "FAIL (vendor-side)",
+      "checks": "402 challenge carries the REAL verifyingContract (contract-pin material is genuine) but the attacker's payTo; the SDK's recipient check is shape-only ('valid non-zero address') and accepts the substituted recipient; signer-oracle capture shows the authorization signed over attacker payTo and dispatched — funds would route to the attacker while all on-shape validation passes",
+      "findings": ["BS19-F1"]
+    },
+    {
+      "id": "S-BS-19/P2",
+      "name": "overcharge-default",
+      "verdict": "FAIL (vendor-side)",
+      "checks": "Default SDK configuration has no spend cap: the authorization is signed for x50 the requirements price. The cap (maxPaymentPerCall) is opt-in: P2-control confirms that when set, NanoPaymentRejectedError fires BEFORE the signer with 0 signer calls — the only amount guard, off by default",
+      "findings": ["BS19-F2"]
+    },
+    {
+      "id": "S-BS-19/P3",
+      "name": "lost-response-recovery",
+      "verdict": "FAIL (vendor-side)",
+      "checks": "A lost-response error carries no recovery handles; getPaymentStatus is a dead-end (no client facts available to resume the lifecycle); the only remaining path — manual retry — mints a fresh nonce and produces a second economic execution. Contradicts the README claim 'a dropped connection cannot double-charge you'",
+      "findings": ["BS19-F3"]
+    },
+    {
+      "id": "S-BS-19/C1..C3",
+      "name": "controls",
+      "verdict": "HOLD (3/3)",
+      "checks": "C1 decimal-rejection: amount '0.5' rejected pre-signer (BigInt check), 0 signer calls. C2 contract-pin: substituted verifyingContract rejected pre-signer. C3 async-replay: 202-poll cycle consumes exactly 1 signature per lifecycle (same authorization replayed, no re-sign). Evaluator hygiene: PASS-canon requires controls 1-3 inside the verdict; missing controls, unobservable recovery, or an unserved probe escalate to HARNESS_ERROR",
+      "findings": []
+    }
+  ],
+  "run_ts": "2026-10-27T07:43:33Z",
+  "self_run": true,
+  "findings_summary": [
+    {
+      "id": "BS19-F1",
+      "severity": "high",
+      "title": "payTo substitution passes the SDK's shape-only recipient check: signature produced over attacker-controlled payTo while verifyingContract stays genuine",
+      "venue": "https://github.com/BlockRunAI/blockrun-nano-client/issues/15 (lab black-box report; closed as not planned)"
+    },
+    {
+      "id": "BS19-F2",
+      "severity": "high",
+      "title": "No default spend cap: SDK signs x50 of requirements price; maxPaymentPerCall is opt-in and rejects pre-signer only when explicitly set",
+      "venue": "https://github.com/BlockRunAI/blockrun-nano-client/issues/15 (lab black-box report; closed as not planned)"
+    },
+    {
+      "id": "BS19-F3",
+      "severity": "medium",
+      "title": "Lost-response recovery dead-end: error exposes no recovery handles, getPaymentStatus cannot resume without client facts, manual retry mints a fresh nonce = second economic execution; contradicts README 'a dropped connection cannot double-charge you'",
+      "venue": "https://github.com/BlockRunAI/blockrun-nano-client/issues/15 (lab black-box report; closed as not planned)"
+    }
+  ],
+  "notes": "Scope: real-SUT battery against a published npm SDK with an offline adversarial server; no vendor-operated service touched. Canonical run executed by a parallel session of this lab (wave 4, commit 3a1608cc); this seal is signed by the lab VM after an independent reproduction from committed sources (tsc clean, 377/377 PASS, verdicts identical) — the seal attests that the S-BS-19 verdicts are reproducible. Verdict taxonomy: FAIL = vendor-side failure under the probe; HOLD = SDK rejected/limited the fault; HARNESS_ERROR = evaluator hygiene. Registry: docs/block-b/REGISTRY.md 33 -> 34 (S-BS-19, family BS, phase 1, wave 4). Relatives: S-BS-16 (same axis, other SUT/scheme), S-BS-05/06/14/15.",
+  "evidence": [
+    { "kind": "file", "path": "docs/block-b/evidence/sbs19-reproduction/vitest-results.json", "sha256": null },
+    { "kind": "file", "path": "docs/block-b/evidence/sbs19-reproduction/suite.log", "sha256": null },
+    { "kind": "file", "path": "docs/block-b/evidence/sbs19-reproduction/tsc-typecheck.log", "sha256": null },
+    { "kind": "file", "path": "docs/block-b/evidence/sbs19-reproduction/run-meta.json", "sha256": null },
+    { "kind": "file", "path": "docs/block-b/fixtures/S-BS-19/s-bs-19-blockrun-nano-recovery-battery.fixture.json", "sha256": null },
+    { "kind": "file", "path": "src/tests/blockb/SBS19_BlockRunNano.test.ts", "sha256": null }
+  ],
+  "repo_root": "."
+}
