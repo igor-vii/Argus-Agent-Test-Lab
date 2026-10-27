@@ -1,0 +1,17 @@
+{
+  "name": "nevermined-sbs20-battery",
+  "private": true,
+  "type": "module",
+  "version": "0.1.0",
+  "description": "Argus Agent Test Lab — wave 5: S-BS-20 battery vs @nevermined-io/payments express paymentMiddleware (real-SUT, offline, mock facilitator backend)",
+  "scripts": {
+    "test": "vitest run --reporter=default 2>&1 | tee evidence/battery.log"
+  },
+  "dependencies": {
+    "@nevermined-io/payments": "1.13.0",
+    "express": "4.21.2"
+  },
+  "devDependencies": {
+    "vitest": "1.6.1"
+  }
+}

@@ -1,0 +1,104 @@
+{
+  "type": "seal",
+  "title": "S-BS-20 nevermined-credit-recovery battery — real-SUT wave 5 vs @nevermined-io/payments 1.13.0: 7 FAIL / 1 DX / 3 HOLD",
+  "subject": {
+    "repo": "@nevermined-io/payments 1.13.0 (npm exact pin, unmodified) — express paymentMiddleware, x402 path",
+    "sut_note": "SUT = published npm dist of the vendor's Express payment middleware, mounted unmodified on a plain Express app (buffered / high-credit / streaming / gateable routes). The facilitator backend behind it is a local HONEST mock whose semantics were modeled one-to-one from the vendor's own published contracts, each decision citing a vendor source line: default mint is v2 (reusable, no nonce; minter resolves (tokenVersion ?? 2) === 3); v3 single-use enforced by a backend nonce store with BCK.X402.0059 on second settle (HTTP 402); verify never consults the nonce and never burns (middleware.ts:1305 comment verbatim); settle may report 200 + success:false (facilitator-api.ts:650). Source audit at repo commit 586ced2a fixed the anchors cited in the findings; the SUT remained the npm dist. Fully offline (Gate D): all traffic on 127.0.0.1, no Nevermined-operated service contacted. Run: 2026-10-27T11:37:08Z, Node v24.22.1, Express 4.21.2, vitest 1.6.1, 11/11 probes executed, suite ~2 s.",
+    "lab_run_commit": "3a1608cc",
+    "lab_run_branch": "main (wave 5 evidence carried on inngest/conformance-battery); battery + raw evidence committed at docs/block-b/evidence/sbs20-nevermined-reproduction/"
+  },
+  "scenarios": [
+    {
+      "id": "S-BS-20/P1",
+      "name": "lost-response-retry-double-charge",
+      "verdict": "FAIL",
+      "checks": "Default v2 token (reusable, no nonce): response #1 produced and settled, buyer never receives it; documented retry re-verifies, handler executes again, settlement burns again. 2 services / 2 settlements for one logical request; no idempotency key, no settlement-query API, and the only reconciliation artifact (payment-response receipt header) is attached to exactly the response that was lost",
+      "findings": ["NV-F1"]
+    },
+    {
+      "id": "S-BS-20/P2+P2b",
+      "name": "single-use-guard-race-and-reactivity",
+      "verdict": "FAIL",
+      "checks": "P2: two concurrent requests with one fresh v3 token both pass the local spent-map and both verify (verify never consults the nonce), both handlers execute, one settlement burns; the loser is answered 402 after its work. P2b: the success path never marks the token spent locally - the map is armed only by the 0059 error - so the first replay of a successfully settled token re-runs the handler for free before refusal. Guard scope is per-process in-memory; vendor source comment states it does not span horizontally scaled instances and the package provides no shared store",
+      "findings": ["NV-F2"]
+    },
+    {
+      "id": "S-BS-20/P3+P3b",
+      "name": "settle-failure-unpaid-delivery",
+      "verdict": "FAIL",
+      "checks": "Buffered path withholds the body only for BCK.X402.0059; every other settle failure delivers anyway with a console-only record. P3: hard HTTP 500 -> 2xx delivered, 0 burned; the MPP path routes the equivalent failure through onPaymentError but the x402 path does not. P3b: settle returns the vendor-documented 200 + success:false shape -> middleware never reads success/errorReason, attaches a settlement receipt to a settlement that never happened, delivers the body",
+      "findings": ["NV-F3"]
+    },
+    {
+      "id": "S-BS-20/P4",
+      "name": "verify-settle-depletion-race",
+      "verdict": "FAIL",
+      "checks": "Verify checks balance but reserves nothing: two concurrent requests priced at exactly the remaining balance both verify, both handlers run, first settle drains the account, second rejects with BCK.X402.0006 (not the special-cased 0059) and its body is delivered anyway - one paid service and its twin delivered free, deterministically",
+      "findings": ["NV-F4"]
+    },
+    {
+      "id": "S-BS-20/P5",
+      "name": "streaming-no-receipt",
+      "verdict": "FAIL",
+      "checks": "Streaming route: headers flush with the first chunk, settlement runs fire-and-forget inside the end wrapper, receipt header is structurally impossible ('headers already flushed; payment-response receipt not attached' - vendor's own stderr). Buyer receives the full value, pays in full, holds nothing naming the transaction; combined with P1 the primary agent endpoint shape cannot reconcile lost-response retries",
+      "findings": ["NV-F5"]
+    },
+    {
+      "id": "S-BS-20/P6",
+      "name": "silent-v3-downgrade",
+      "verdict": "DX",
+      "checks": "tokenVersion:3 against a pre-v3 backend: the field is dropped without error (whitelist semantics), a reusable v2 token returns. detectAccessTokenVersion reports the true version (good contract, documented), but the downgrade path emits no warning and the default mint is v2 regardless - a buyer who wanted single-use semantics silently holds a reusable credential if they forget to branch",
+      "findings": ["NV-DX1"]
+    },
+    {
+      "id": "S-BS-20/C1+C3+C4",
+      "name": "controls",
+      "verdict": "HOLD (3/3)",
+      "checks": "C1 clean buffered v3 purchase: 1 service, 1 settlement, verifiable receipt attached. C3 buyer disconnect before delivery: honestly not charged - the middleware probes actual socket delivery via a byte-delta baseline rather than trusting status codes (handler work wasted remains the seller's cost). C4 empty balance: rejected by verify pre-handler, no delivery, no burn",
+      "findings": []
+    }
+  ],
+  "run_ts": "2026-10-27T11:37:08Z",
+  "self_run": true,
+  "findings_summary": [
+    {
+      "id": "NV-F1",
+      "severity": "high",
+      "title": "Lost-response retry double-charges on the default v2 token: no idempotency key, no settlement query, receipt attached only to the lost response"
+    },
+    {
+      "id": "NV-F2",
+      "severity": "high",
+      "title": "Single-use enforcement is per-process and reactive: concurrent race delivers a free service; the guard arms only after witnessing BCK.X402.0059; multi-replica sellers have no guard at all (disclosed in source comment, not in seller-facing docs)"
+    },
+    {
+      "id": "NV-F3",
+      "severity": "high",
+      "title": "Any settle failure except 0059 delivers the resource unpaid with a console-only record - including the documented 200 + success:false shape, which even receives a settlement receipt; x402 path lacks the onPaymentError notification the MPP path has"
+    },
+    {
+      "id": "NV-F4",
+      "severity": "medium",
+      "title": "Verify does not reserve credits: depletion between verify and settle delivers the second service free (insufficient-credits is not special-cased)"
+    },
+    {
+      "id": "NV-F5",
+      "severity": "medium",
+      "title": "Streamed responses carry no settlement receipt ever (headers flushed) and settle is fire-and-forget after close - reconciliation impossible on the dominant agent endpoint shape"
+    },
+    {
+      "id": "NV-DX1",
+      "severity": "low",
+      "title": "Silent v3->v2 downgrade on mint: SDK detects and returns the true version but emits no warning; default mint is v2 anyway"
+    }
+  ],
+  "notes": "Scope: real-SUT battery against a published npm SDK with an offline adversarial-facilitator mock implementing ONLY vendor-documented semantics; no vendor-operated service touched. Verdict taxonomy: FAIL = economic-loss window reproduced at runtime (service delivery and credit settlement decouple without a reconciliation path); HOLD = guard held as designed; DX = developer-experience gap without direct economic loss in the tested path. Venue status: draft issue prepared (pack: issue-sbs20-settlement-reconciliation.md), NOT yet filed - this seal attests the battery results, not an upstream disposition. Registry extension S-BS-20 (34 -> 35) ships to docs/block-b/REGISTRY.md as a post-merge patch. Relatives: S-BS-19 (same battery class, other SUT), S-BS-14/15 (verify/settle race axis, x402#3920), S-BS-06 (overcharge, x402#3866).",
+  "evidence": [
+    { "kind": "file", "path": "docs/block-b/evidence/sbs20-nevermined-reproduction/battery-results.json", "sha256": null },
+    { "kind": "file", "path": "docs/block-b/evidence/sbs20-nevermined-reproduction/battery.log", "sha256": null },
+    { "kind": "file", "path": "docs/block-b/evidence/sbs20-nevermined-reproduction/battery/battery.test.mjs", "sha256": null },
+    { "kind": "file", "path": "docs/block-b/evidence/sbs20-nevermined-reproduction/battery/mock-backend.mjs", "sha256": null },
+    { "kind": "file", "path": "docs/block-b/evidence/sbs20-nevermined-reproduction/battery/app-under-test.mjs", "sha256": null }
+  ],
+  "repo_root": "."
+}
