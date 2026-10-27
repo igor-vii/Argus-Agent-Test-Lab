@@ -1,0 +1,43 @@
+
+ RUN  v1.6.1 /home/z/my-project/refs/nevermined/battery
+
+stderr | battery.test.mjs > S-BS-20: nevermined credit-recovery battery (x402 path of paymentMiddleware) > P2 v3 concurrent race: two same-token requests, one charge — one service delivered free
+Payment settlement failed: PaymentsError: Access token already used. this x402 access token was already used. Single-use (v3) tokens are consumed by their first settlement — mint a new token for this request instead of retrying with the same one.
+    at PaymentsError.fromBackend (file:///home/z/my-project/refs/nevermined/battery/node_modules/@nevermined-io/payments/src/common/payments.error.ts:20:12)
+    at FacilitatorAPI.settlePermissions (file:///home/z/my-project/refs/nevermined/battery/node_modules/@nevermined-io/payments/src/x402/facilitator-api.ts:654:31)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5) {
+  code: 'BCK.X402.0059'
+}
+
+stderr | battery.test.mjs > S-BS-20: nevermined credit-recovery battery (x402 path of paymentMiddleware) > P3b settle reports 200 + success:false: receipt attached, credits not burned, delivery stands
+[x402] settlePermissions did not settle (Cannot order plan). Do not treat the request as paid. creditsRedeemed=0, orderTx=none, billingModel=unset — read those before assuming nothing was charged.
+
+stderr | battery.test.mjs > S-BS-20: nevermined credit-recovery battery (x402 path of paymentMiddleware) > P4 verify->settle depletion race: verify passes both, settle exhausts — second service delivered free
+Payment settlement failed: PaymentsError: insufficient credits. insufficient credits
+    at PaymentsError.fromBackend (file:///home/z/my-project/refs/nevermined/battery/node_modules/@nevermined-io/payments/src/common/payments.error.ts:20:12)
+    at FacilitatorAPI.settlePermissions (file:///home/z/my-project/refs/nevermined/battery/node_modules/@nevermined-io/payments/src/x402/facilitator-api.ts:662:29)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5) {
+  code: 'BCK.X402.0006'
+}
+
+stderr | battery.test.mjs > S-BS-20: nevermined credit-recovery battery (x402 path of paymentMiddleware) > P5 streaming route: full value delivered, settle burns (fire-and-forget), receipt is never attached
+[paymentMiddleware] headers already flushed; payment-response receipt not attached
+
+stderr | battery.test.mjs > S-BS-20: nevermined credit-recovery battery (x402 path of paymentMiddleware) > P2b sequential replay of a successfully settled v3 token: handler re-runs for free before the guard arms
+Payment settlement failed: PaymentsError: Access token already used. this x402 access token was already used. Single-use (v3) tokens are consumed by their first settlement — mint a new token for this request instead of retrying with the same one.
+    at PaymentsError.fromBackend (file:///home/z/my-project/refs/nevermined/battery/node_modules/@nevermined-io/payments/src/common/payments.error.ts:20:12)
+    at FacilitatorAPI.settlePermissions (file:///home/z/my-project/refs/nevermined/battery/node_modules/@nevermined-io/payments/src/x402/facilitator-api.ts:654:31)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5) {
+  code: 'BCK.X402.0059'
+}
+
+stderr | battery.test.mjs > S-BS-20: nevermined credit-recovery battery (x402 path of paymentMiddleware) > C3 buyer disconnect before delivery: handler work wasted but nothing settles
+[paymentMiddleware] x402: the buyer disconnected before any of the response reached them; not settling
+
+ ✓ battery.test.mjs  (11 tests) 1238ms
+
+ Test Files  1 passed (1)
+      Tests  11 passed (11)
+   Start at  11:37:08
+   Duration  1.51s (transform 47ms, setup 0ms, collect 92ms, tests 1.24s, environment 0ms, prepare 65ms)
+

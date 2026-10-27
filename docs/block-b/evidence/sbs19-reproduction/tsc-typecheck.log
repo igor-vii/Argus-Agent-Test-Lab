@@ -1,0 +1,4 @@
+
+> argus-agent-test-lab@0.1.0 typecheck
+> tsc --noEmit
+

@@ -1,0 +1,21 @@
+[app] listening on 127.0.0.1:3010
+Inngest step error
+Error: injected: gateway timeout after provider success (orderNo=1)
+    at file:///home/z/my-project/refs/inngest/battery/devserver/app.mjs:120:15
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async goIntervalTiming (file:///home/z/my-project/refs/inngest/battery/node_modules/inngest/helpers/promises.js:178:3)
+    at async InngestExecutionEngine.tryExecuteStep (file:///home/z/my-project/refs/inngest/battery/node_modules/inngest/components/execution/engine.js:900:20)
+    at async steps-found (file:///home/z/my-project/refs/inngest/battery/node_modules/inngest/components/execution/engine.js:854:25)
+    at async InngestExecutionEngine.runCoreLoop (file:///home/z/my-project/refs/inngest/battery/node_modules/inngest/components/execution/engine.js:276:20)
+    at async InngestCommHandler.handleAction (file:///home/z/my-project/refs/inngest/battery/node_modules/inngest/components/InngestCommHandler.js:937:24)
+    at async ServerTiming.wrap (file:///home/z/my-project/refs/inngest/battery/node_modules/inngest/helpers/ServerTiming.js:64:11)
+    at async handleAndPrepare (file:///home/z/my-project/refs/inngest/battery/node_modules/inngest/components/InngestCommHandler.js:624:19)
+    at async innerHandler (file:///home/z/my-project/refs/inngest/battery/node_modules/inngest/components/InngestCommHandler.js:672:22)
+[sup] 2026-10-26T20:24:19+00:00 app exited code=0 — restarting in 0.4s
+[app] listening on 127.0.0.1:3010
+Duplicate step ID "op" detected across parallel chains
+{
+  code: 'AUTOMATIC_PARALLEL_INDEXING',
+  explanation: 'Using the same ID for steps in different parallel chains can cause unexpected behaviour. Your function is still running.',
+  action: 'Use a unique ID for each step, especially those in parallel.'
+}
