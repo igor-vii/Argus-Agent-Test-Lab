@@ -1,6 +1,6 @@
 {
   "registry": "argus-agent-test-lab",
-  "chain_head": "e95a94ea4209254e...",
+  "chain_head": "4959f9aa7c49957c...",
   "records": [
     {
       "seq": "0000",
@@ -285,6 +285,103 @@
       ],
       "notes": "Wave 2.5 first run: registry 31 → 33 (S-BS-14 binding-race, S-BS-15 non-atomic-amount; permanent homes of lab probes A10a/A10b/A11). Lab rig run 2026-10-25 vs PR #3920 @ 2b4cc47: both FAIL (expected red zone = diagnosis of the code, not a stand defect). Argus mock-stand reproduction at 72eef9e (src/tests/blockb/SBS14_SBS15_Extension.test.ts, instrumented SUT): vulnerable client → FAIL (both modes, signer x2 / decimal signed ×50 pin), fixed client → PASS with controls 1–2 green. Settlement mocked, unfunded one-shot wallet — no on-chain transfer possible: FAILs are recorded as candidate-fix boundary, not exploitation evidence. Findings attached per policy; attribution banner retained in fixtures.",
       "signature": "Y6nIlIeKqQG1V5RwWVx8kEqsOk39JU4vodmSB76epSfB7UJEqwAwFmnXFWEo4IUw9JL3NRgzY0ATWJhXBncwCQ=="
+    },
+    {
+      "seq": "0005",
+      "record_id": "argus-seal-0005",
+      "issued_at": "2026-10-27T06:22:58.679Z",
+      "signer_key_id": "argus-lab-2026q4r2",
+      "prev_record_hash": "e95a94ea4209254e1b035d35601dcdc066a3f633ffe261b310778453d3ba5e2e",
+      "type": "seal",
+      "title": "Inngest idempotency conformance battery — 13 probes, 0 FAIL (2 DX findings filed inngest/inngest#5091)",
+      "subject": {
+        "repo": "inngest/inngest (inngest@4.26.0 + @inngest/test@1.0.0, npm dist)",
+        "sut_note": "SUT = unmodified npm dist packages; runtime-side verification via inngest-cli@1.49.0 dev server, local only (Gate D: CLI is SSPL 1.0 + Apache 2.0 Future License, sha256 300ec5a8..., verified pre-run; no vendor-operated service touched). Probe rules pre-registered in harness app.mjs header before the run. Run #2 (2026-10-26T20:24:53Z) is canonical: run #1 (2026-10-26T19:33Z) produced identical verdicts; run #1 raw evidence lost to a lab environment reset",
+        "lab_run_commit": "91efd14f",
+        "lab_run_branch": "inngest/conformance-battery"
+      },
+      "scenarios": [
+        {
+          "id": "h1-I1..I4",
+          "name": "InngestH1Static",
+          "verdict": "0 FAIL (1 PASS / 4 OBSERVED)",
+          "checks": "5 probes, in-process via the vendor's own @inngest/test harness. I1 PASS: replay of a completed step returns the memoized result, body not re-run. I2/I4 OBSERVED: commit-then-throw and lost-memo crash model re-execute the step body — matches the vendor's blog FAQ and docs idempotency page nearly verbatim. I3/I3b OBSERVED: memo keyed by userland step ID without payload binding; parallel branches reusing one step ID execute independently — ID model documented under 'Keep step IDs stable'",
+          "findings": []
+        },
+        {
+          "id": "p0..p4d",
+          "name": "InngestI5Dynamic",
+          "verdict": "0 FAIL (4 PASS / 4 OBSERVED)",
+          "checks": "8 probes against the local dev server with a crash-safe external effect ledger. p0 PASS: baseline memo integrity, 1 charge. p4b/p4c/p4d PASS: documented event-ID dedup holds under a 12-way concurrent race (1 run / 1 charge), under sequential reuse (0 runs), fresh-ID control fires exactly once. p1/p2 OBSERVED: true A3 window reproduced live — provider commits, then step body throws (retry, ~24.5s backoff) or process.exit(1) (supervisor restart) — 2 charges, exactly as the vendor discloses. p3 OBSERVED (refined): duplicate step ID across parallel chains is warned (AUTOMATIC_PARALLEL_INDEXING) and auto-indexed into a separate memo slot, both handlers execute. p4a OBSERVED: 12 concurrent sends without a shared event ID produce 12 independent runs, the documented per-event model",
+          "findings": []
+        }
+      ],
+      "run_ts": "2026-10-26T20:24:53Z",
+      "self_run": true,
+      "findings_summary": [
+        {
+          "id": "DX1",
+          "severity": "low",
+          "title": "@inngest/test does not surface AUTOMATIC_PARALLEL_INDEXING or any execution warnings: tests pass silently on code the runtime explicitly flags as a footgun",
+          "venue": "https://github.com/inngest/inngest/issues/5091"
+        },
+        {
+          "id": "DX2",
+          "severity": "low",
+          "title": "@inngest/test MockedStep memo injection is keyed by userland step ID and bypasses runtime collision indexing (auto-indexed keys unreachable from the test engine), with no divergence flag",
+          "venue": "https://github.com/inngest/inngest/issues/5091"
+        },
+        {
+          "id": "A3-note",
+          "severity": "info",
+          "title": "Commit-then-crash window (external effect lands before memo write; retry re-runs the body) is documented by the vendor (docs idempotency page 'Verify the behavior', blog FAQ) and confirmed to behave exactly as documented; the vendor's prescribed mitigations (event-ID dedup; idempotency key at the external call) verified effective under a 12-way concurrent race"
+        }
+      ],
+      "notes": "Scope: single-node dev server; idempotency claim surface per vendor docs, methodology anchored to the vendor's own 'Verify the behavior' checklist. Multi-node/cloud dedup semantics, flow control, timers/cron, retry-exhaustion terminal states, and payment-rail scenarios are out of scope for this cycle (no vendor cloud engagement). Verdict taxonomy: PASS = platform held beyond the documented scenarios; OBSERVED = observed behavior matches the vendor's published disclosure. Neither attests bug-freeness.",
+      "evidence": [
+        {
+          "kind": "file",
+          "path": "docs/inngest-battery/evidence/charges.json",
+          "sha256": "f1195558740282c9c708b364b49322497041299a17a100a454ce70337b1161b3"
+        },
+        {
+          "kind": "file",
+          "path": "docs/inngest-battery/evidence/journal.jsonl",
+          "sha256": "1bbfbffb933989eb9b21d5085b1ce51d02cbc4cb12bd8b7424502fd5365215dc"
+        },
+        {
+          "kind": "file",
+          "path": "docs/inngest-battery/evidence/app.log",
+          "sha256": "ca293e168eb58a2a60a1aadae243ce7b6785dc12267986b81da46060ba7e376b"
+        },
+        {
+          "kind": "file",
+          "path": "docs/inngest-battery/evidence/dev.log",
+          "sha256": "1068e6f52f940bfe472b135e832e3c6a4295d1d6dab6b3fed611943e92b1c52d"
+        },
+        {
+          "kind": "file",
+          "path": "docs/inngest-battery/inngest-i5-results.json",
+          "sha256": "402bcbbdc10a4349e83323febdecc305be159a131edeac05b1e8d36e1f5e607b"
+        },
+        {
+          "kind": "file",
+          "path": "docs/inngest-battery/inngest-h1-results.json",
+          "sha256": "8912adf9344ceb5e269ffffe64bbc8752548c45bfad4359258ead170b262b524"
+        },
+        {
+          "kind": "file",
+          "path": "docs/inngest-battery/harness/app.mjs",
+          "sha256": "07a87a085432d9294e96ee4ea927f1be0b42a0da3ce36a9c622acbb1ad838453"
+        },
+        {
+          "kind": "file",
+          "path": "docs/inngest-battery/testengine-repro.mjs",
+          "sha256": "02ac0b6e5c05c32f14a9be5dedc8dced815466bcc08b93d41ffd5618785a2e22"
+        }
+      ],
+      "repo_root": ".",
+      "signature": "0beAViM5idfDhBdQcWW3wnYnzqqwe2bZk7gQn2y+m/uV01/HzTKyq8alpgQQcQAyqaMBgXfW0ynfl8jkgDaLAQ=="
     }
   ]
 }
