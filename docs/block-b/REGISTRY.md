@@ -1,4 +1,4 @@
-# Блок B — полный реестр сценариев (34)
+# Блок B — полный реестр сценариев (35)
 
 > Источник истины по маркировке и составу. Устаревшая маркировка
 > `S-B-BC-NN` / `S-B-BS-NN` заменена на `S-BC-NN` / `S-BS-NN` (буква блока
@@ -46,9 +46,13 @@
   BlockRunAI/blockrun-nano-client#15 (наш чёрный ящик loss-response/retry,
   закрыт as not planned с приглашением на production-раунд) + сорцевый аудит
   SDK. Реализована в коде (`BLOCK_B_WAVE4_SCENARIOS`).
+- **Волна 5 (1 карта, 2026-10-27)** — S-BS-20: вторая карта против РЕАЛЬНОГО
+  стороннего СУТ — опубликованный SDK `@nevermined-io/payments` 1.13.0
+  (express paymentMiddleware, x402-путь; офлайн, честный мок по вендорским
+  контрактам). 11 проб: 7 FAIL / 1 DX / 3 HOLD. Печать #0007.
 
-Волна — это ПОРЯДОК внедрения, а не урезание состава: полный охват — 34;
-все 34 зарегистрированы и исполняемы в коде.
+Волна — это ПОРЯДОК внедрения, а не урезание состава: полный охват — 35;
+все 35 зарегистрированы и исполняемы в коде.
 
 ## Семейство S-BC — Аргус платит, СУТ принимает платежи (15)
 
@@ -93,6 +97,7 @@
 | S-BS-17 | over-budget-x402 | 1 | 3 | Caller-side бюджет: отказ сверх лимита до подписанта, boundary inclusive (перенос Block D S11) | бюджет вызывающего (не сервера/фасилитатора) |
 | S-BS-18 | first-accept-wins | 1 | 3 | Malicious accepts[0] в 402: выбирает ли клиент первое требование (перенос S-ZS-02) | выбор требования клиентом; allowedSellers-политика |
 | S-BS-19 | blockrun-nano-recovery-battery | 1 | 4 | Батарея против РЕАЛЬНОГО SDK @blockrun/nano-client: payTo-подстановка мимо чека «valid non-zero», безкаповый overcharge (кап opt-in), unrecoverable lost-response (ошибка без реквизитов → getPaymentStatus-тупик → retry = 2-я экономика) | issue BlockRunAI/blockrun-nano-client#15 (закрыт as not planned); README-заявление «a dropped connection cannot double-charge you»; сорцевый аудит 0.8.0 (index.ts:847/:439/:802-806/:562-564); родичи S-BS-16 (та же ось, другой СУТ/scheme), S-BS-05/06/14/15 |
+| S-BS-20 | nevermined-credit-recovery-battery | 1 | 5 | Батарея против РЕАЛЬНОГО SDK @nevermined-io/payments 1.13.0: lost-response → retry = двойное списание на дефолтном v2-токене (нет idempotency-ключа / запроса статуса сеттльмента), per-process реактивный single-use guard (гонка = бесплатная доставка), неоплаченная доставка при любом сбое settle кроме 0059, verify не резервирует кредиты (depletion-гонка), стрим без квитанции, тихий v3→v2 даунгрейд | первая карта БЕЗ внешнего issue-источника — сорцевый аудит вендорских контрактов (11 проб: 7 FAIL / 1 DX / 3 HOLD); родич по lost-response S-BS-16/S-BS-19; печать #0007 |
 
 ## Внешние находки (живой прогон 2026-10-21, Base Sepolia)
 
@@ -286,7 +291,9 @@ S-BS-15b/c (unprobed).
 `docs/block-b/fixtures/S-BS-19/`.
 Референс-логика оракула/контролов (перенос ЛОГИКИ, не тела лабораторного
 теста): `src/tests/blockb/SBS14_SBS15_Extension.test.ts`; волна 4 (реальный
-СУТ-SDK против стенда): `src/tests/blockb/SBS19_BlockRunNano.test.ts`.
+СУТ-SDK против стенда): `src/tests/blockb/SBS19_BlockRunNano.test.ts`;
+волна 5 (реальный СУТ-SDK, evidence-батарея):
+`docs/block-b/evidence/sbs20-nevermined-reproduction/battery/battery.test.mjs`.
 
 ## Связанные документы и код
 
