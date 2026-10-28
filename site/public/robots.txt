@@ -33,4 +33,4 @@ Allow: /
 User-agent: Amazonbot
 Allow: /
 
-Sitemap: https://argus-agent-test-lab.vercel.app/sitemap.xml
+Sitemap: https://argus-lab.tech/sitemap.xml

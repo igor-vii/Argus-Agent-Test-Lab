@@ -9,12 +9,11 @@ export const REPO_URL = "https://github.com/igor-vii/Argus-Agent-Test-Lab";
 export const CHAIN_HEAD = "c26af6309d54c6e2";
 export const SEAL_COUNT = 10;
 
-/** Canonical site URL — currently the Vercel deployment URL.
- *  TEMPORARY: no custom domain yet (argus-lab.dev free but pricey at RU registrars;
- *  .tech renewal at Reg.ru is 5000₽/yr — declined 2026-10-29).
- *  When a domain lands: change this line, robots.txt Sitemap line, and re-run
- *  `npm run gen:og` (add the domain text back into scripts/gen-og-cover.mjs). */
-export const SITE_URL = "https://argus-agent-test-lab.vercel.app";
+/** Canonical site URL — custom domain `argus-lab.tech`, registered 2026-10-28
+ *  via nic.ru (RU-CENTER), expires 2027-10-27; attached to the Vercel project.
+ *  When touching URLs: change this line, robots.txt Sitemap line, and re-run
+ *  `npm run gen:og` (domain text lives in scripts/gen-og-cover.mjs). */
+export const SITE_URL = "https://argus-lab.tech";
 export const CONTACT_EMAIL = "argus.testlab@gmail.com";
 export const ONE_PAGER_PATH = "/argus-lab-onepager.pdf";
 

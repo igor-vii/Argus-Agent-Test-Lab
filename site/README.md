@@ -1,4 +1,4 @@
-# argus-lab.dev — site
+# argus-lab.tech — site
 
 Static-first Next.js landing for **Argus Agent Test Lab**. Deployed on Vercel
 with **Root Directory = `site`** — the Vercel build runs inside this folder while
@@ -35,7 +35,10 @@ or `cwd/..` — whichever contains `attestations/records`).
 - **Vercel**: import `igor-vii/Argus-Agent-Test-Lab`, set **Root Directory = `site`**,
   framework Next.js (auto-detected). Every push to `main` re-verifies the registry
   and redeploys.
-- Domain: `argus-lab.dev` (+ `www` → apex redirect), DNS per Vercel dashboard.
+- Domain: `argus-lab.tech` (nic.ru, registered 2026-10-28, expires 2027-10-27),
+  attached in Vercel → Settings → Domains; `www` → apex redirect. Before DNS
+  propagated, the site lived at `argus-agent-test-lab.vercel.app` (blocked in RF
+  by RKN — hence the custom domain).
 
 ## Content sources
 
