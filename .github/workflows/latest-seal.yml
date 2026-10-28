@@ -1,0 +1,63 @@
+name: latest-seal
+
+# CI-as-verification (ТЗ п.4):
+#   every push to main re-verifies the attestation registry — Ed25519
+#   signatures, hash chain, evidence hashes. A tampered / broken seal turns
+#   this job red, publicly, on the repo's Actions tab. The registry can
+#   never silently drift from what the site claims.
+#
+# Same job also regenerates site/public/og-cover.png from the VERIFIED
+# registry (ТЗ п.3) so the cover's "chain head / N records" footer can
+# never drift from attestations/records. If the cover changed, it is
+# committed back with [skip ci]; Vercel then redeploys with fresh art.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: latest-seal
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Verify registry (signatures + hash chain + evidence hashes)
+        run: |
+          node tools/registry/verify-registry.mjs | tee /tmp/verify-out.txt
+          grep -q "registry intact" /tmp/verify-out.txt || {
+            echo "::error::verifier exited 0 but did not claim 'registry intact'";
+            exit 1;
+          }
+          grep -oE "registry intact.*" /tmp/verify-out.txt >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Regenerate OG cover from verified registry
+        run: |
+          cd site
+          npm install sharp --no-save --no-audit --no-fund
+          node scripts/gen-og-cover.mjs
+
+      - name: Commit regenerated cover (if changed)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          git config user.name  "argus-ci"
+          git config user.email "argus.testlab@gmail.com"
+          if git diff --quiet -- site/public/og-cover.png; then
+            echo "og-cover.png already in sync with the registry"
+          else
+            git add site/public/og-cover.png
+            git commit -m "ci(latest-seal): regenerate og-cover from verified registry [skip ci]"
+            git push
+          fi

@@ -1,5 +1,7 @@
 # Argus Agent Test Lab
 
+[![latest-seal](https://github.com/igor-vii/Argus-Agent-Test-Lab/actions/workflows/latest-seal.yml/badge.svg)](https://github.com/igor-vii/Argus-Agent-Test-Lab/actions/workflows/latest-seal.yml)
+
 **AI Agent Testing & Reliability**
 
 > **Test whether AI agents and agent-based systems behave correctly when the world goes wrong.**
