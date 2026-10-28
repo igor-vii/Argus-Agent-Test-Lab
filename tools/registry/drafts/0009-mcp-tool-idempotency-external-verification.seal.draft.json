@@ -1,0 +1,92 @@
+{
+  "type": "seal",
+  "title": "mcp-tool-idempotency external verification — 4d665ae to v0.2.0: F1/F2/F3 durability windows fixed, ten-window battery 10/10 PASS, suite 91/91 @ tag / 93/93 @ main",
+  "subject": {
+    "repo": "tripl3tr3s/mcp-tool-idempotency (public repo, unmodified)",
+    "sut_note": "Before-state head 4d665aed9c68d78be6f16ee22b7e2feae21a4f7b (2026-07-13; still current main as of 2026-10-27). Fix f56f24c9b052b2ff04a887f785324a16ab160c56 (owner-gated claim leases) + docs 247b94743df3db69cc6b5e3ec3272102715d22fc, released v0.2.0 (annotated tag 626f9a4 -> commit e3235d2397758288582039dd0ccf18bd79b6cbea). Post-release: b1d96fdf79bc068311e3834d6313c19a427df711 (README event-loop/lease-sizing + clock-drift notes, SECURITY credit), cedf78a792f33d1259f90e3cb4a0ad5ca8489a7e (two window tests ported from our battery -> suite covers every window on both backends). Runtimes: Node v24.21.0 / tsx 4.19.2 (original before-state probes, 2026-10-26), Node v24.21.0 / tsx 4.23.15 (v0.2.0 ten-window battery + before re-checks, 2026-10-27), Node v24.22.1 / tsx 4.23.15 (pre-seal re-verification on the lab VM, 2026-10-28). Probes use public API only (createIdempotencyStore + MemoryBackend; the F3 probe models the documented PostgresBackend contract — runOnce is backend-agnostic); before-state discriminators run against a git worktree of 4d665ae. Fully local, no vendor-operated service touched. Disclosure coordinated with the maintainer (Tripl3) before publication.",
+    "lab_evidence_path": "docs/t1-mcp-tool-idempotency/",
+    "publication": "External verification note published as gist 9ea3f09a18e50b2bb590123b1134902b (igor-vii); the pinned evidence .md is the exact note text. Maintainer credit verified at main: SECURITY.md line 33 — 'October 2026 by Igor (Argus agent test lab), who also verified the fix independently'. Per maintainer agreement the note is referenced from the project's release notes/SECURITY.md as external verification; battery scripts intentionally not vendored upstream."
+  },
+  "scenarios": [
+    {
+      "id": "T1-Before",
+      "name": "BeforeStateProbes @ 4d665ae (A1-A7)",
+      "verdict": "FAIL (SUT)",
+      "checks": "7 probes (pack1-t1-harness.ts): A1 sequential replay PASS, A2 same-process race PASS, A3 lost-response-after-commit FAIL(SUT) (effects=2, both calls see ETIMEDOUT), A4 crash-after-commit FAIL(SUT) (unconditional reset() takeover — memory.ts:60-71 / postgres.ts:72-77 @ 4d665ae — re-executes committed effect, effects=2), A5 cross-instance race FAIL(SUT) (two stores on one shared backend: both execute, both return success with different results), A6 key collision OBSERVED, A7 TTL expiry OBSERVED. Original run 2026-10-26T14:17:51Z (node v24.21.0); pre-seal re-run 2026-10-28 on fresh clone (node v24.22.1 / tsx 4.23.15): identical verdict pattern, 3x FAIL(SUT).",
+      "findings": [
+        "F1",
+        "F2",
+        "F3"
+      ]
+    },
+    {
+      "id": "T1-W0..W6",
+      "name": "TenWindowBattery @ v0.2.0 (e3235d2)",
+      "verdict": "PASS",
+      "checks": "10/10 PASS on MemoryBackend, public API only, expectations pre-registered (probe headers + battery README) before the run. W0 baseline replay (1 charge, identical result); W1a F1 default — retry re-raises the post-commit throw, 2 charges (the documented at-least-once window); W1b F1 opt-in isRetryable:false — 1 charge + IdempotencyUncertainError, blocked until forget(); W2a live lease never taken (IdempotencyInFlightError, executor not started); W2b expired-lease conditional takeover exactly once, then replay; W2c opt-in onLeaseExpired:'uncertain' — blocked until reconcile; W3 cross-instance race — 1 charge, loser gets InFlight, its retry replays the winner's result; W4 same key / different payload — IdempotencyConflictError on replay and in-flight paths (canonical SHA-256 fingerprint, key-order-insensitive; verifyRequest:false restores 0.1.x behavior); W5 pre-effect failure — retry commits exactly once; W6 TTL boundary — replay inside TTL, re-execute past TTL. Before-state contrast: all four before-discriminators (lost response, dead-holder takeover, cross-instance race, request-meta) reproduce the old behavior at 4d665ae — 4/4 OBSERVED-BEFORE.",
+      "findings": []
+    },
+    {
+      "id": "T1-Suite",
+      "name": "InRepoSuiteCrossCheck",
+      "verdict": "PASS",
+      "checks": "91/91 @ v0.2.0 tag (store 31 / report-scenarios 29 / backend-contract 28 / postgres 3); 93/93 @ main cedf78a (maintainer added the TTL-boundary-through-execute() and live-holder-ownership tests right after release, covering every battery window on both backends). Pre-seal re-run 2026-10-28 on fresh clone: 91/91 @ tag, 93/93 @ main — exact match. SECURITY.md:33 maintainer credit verified at main.",
+      "findings": []
+    }
+  ],
+  "run_ts": "2026-10-26T14:17:51Z",
+  "self_run": true,
+  "findings_summary": [
+    {
+      "id": "F1",
+      "severity": "high",
+      "title": "Lost response after commit: executor commits the effect at the provider, then throws — a retry re-fires the committed side effect and both calls see a clean error. Root cause @ 4d665ae: failures are not cached and the state machine has no committed/uncertain state ('throw => nothing happened'), store.ts:95-112. FIXED in v0.2.0: documented at-least-once default, isRetryable gives callers an explicit contract (W1a/W1b PASS). Verified-fixed.",
+      "writeup": "docs/t1-mcp-tool-idempotency/external-verification-mcp-tool-idempotency-v0.2.0.md"
+    },
+    {
+      "id": "F2",
+      "severity": "high",
+      "title": "Crash after commit: a dead holder's pending row is unconditionally reset by the next caller (memory.ts:60-71, postgres.ts:72-77 @ 4d665ae), re-executing a committed effect under the guise of 'crash recovery'. FIXED in v0.2.0: lease-based liveness — takeover requires lease expiry (W2a/W2b/W2c PASS). Verified-fixed.",
+      "writeup": "docs/t1-mcp-tool-idempotency/external-verification-mcp-tool-idempotency-v0.2.0.md"
+    },
+    {
+      "id": "F3",
+      "severity": "high",
+      "title": "Cross-instance race: two store instances on one shared backend (advertised multi-instance topology) — the claim loser resets the winner's LIVE pending row and re-runs; both execute the effect and both return success with different results. FIXED in v0.2.0: lease/ownership guards (W3 PASS). Before-state probe modeled the documented PostgresBackend contract; v0.2.0 Postgres SQL itself was not executed (maintainer-scope caveat).",
+      "writeup": "docs/t1-mcp-tool-idempotency/external-verification-mcp-tool-idempotency-v0.2.0.md"
+    },
+    {
+      "id": "disclosure",
+      "severity": "info",
+      "title": "Coordinated disclosure to maintainer Tripl3 before publication; credited in the project's SECURITY.md ('Igor (Argus agent test lab)'). External verification note published (gist 9ea3f09a18e50b2bb590123b1134902b) and to be linked from the project's release notes/SECURITY.md per maintainer agreement."
+    }
+  ],
+  "notes": "Scope (kept explicit at the maintainer's request): (1) the ten-window battery ran on MemoryBackend — it verifies the store/runOnce logic, not the Postgres SQL (Postgres-specific coverage is planned by the maintainer); (2) F1 semantics — the default still allows the documented at-least-once window, isRetryable is what closes it; the battery verifies the classification and its documentation, not an unconditional exactly-once. The ten-window battery harness and its pre-registered expectations live in the lab's verification environment (scripts intentionally not vendored upstream; available on request — same promise as the original report); the before-state probe harness and both run records ARE pinned as evidence, and the suite cross-checks are reproducible from the public repo. Remaining documented edge: DB-clock lease expiry planned for 0.3.0 (backend-interface change); README documents the event-loop-blocking (>leaseMs lease loss) and clock-drift sizing traps (b1d96fd). This seal covers the T1 engagement end-to-end: before-state reproduction (2026-10-26), coordinated disclosure, v0.2.0 ten-window verification (2026-10-27), publication, and the pre-seal re-verification on the lab VM (2026-10-28).",
+  "evidence": [
+    {
+      "kind": "file",
+      "path": "docs/t1-mcp-tool-idempotency/external-verification-mcp-tool-idempotency-v0.2.0.md",
+      "sha256": null
+    },
+    {
+      "kind": "file",
+      "path": "docs/t1-mcp-tool-idempotency/pack1-t1-results.json",
+      "sha256": null
+    },
+    {
+      "kind": "file",
+      "path": "docs/t1-mcp-tool-idempotency/pack1-t1-results-rerun-2026-10-28.json",
+      "sha256": null
+    },
+    {
+      "kind": "file",
+      "path": "docs/t1-mcp-tool-idempotency/pack1-t1-harness.ts",
+      "sha256": null
+    },
+    {
+      "kind": "file",
+      "path": "docs/t1-mcp-tool-idempotency/pvr-t1-mcp-tool-idempotency.md",
+      "sha256": null
+    }
+  ]
+}

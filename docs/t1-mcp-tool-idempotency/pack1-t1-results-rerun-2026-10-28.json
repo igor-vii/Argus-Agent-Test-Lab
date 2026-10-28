@@ -1,0 +1,72 @@
+{
+  "target": "tripl3tr3s/mcp-tool-idempotency",
+  "head": "4d665aed9c68d78be6f16ee22b7e2feae21a4f7b",
+  "run_at": "2026-10-28T06:05:27.740Z",
+  "runtime": "node v24.22.1",
+  "harness": "/home/z/my-project/scripts/pack1-t1-harness.ts",
+  "results": [
+    {
+      "id": "p1_A1_sequential_replay",
+      "title": "Sequential retry with same key replays completed result",
+      "expected_by_claim": "effects=1 (README: 'A retry with the same key replays result')",
+      "observed": "effects=1, first={\"charged\":true,\"n\":1}, retry={\"charged\":true,\"n\":1}",
+      "side_effects": 1,
+      "verdict": "PASS",
+      "notes": "Baseline; matches README quickstart example."
+    },
+    {
+      "id": "p1_A2_race_same_process",
+      "title": "Concurrent same-process same-key calls (Layer-1 in-flight map)",
+      "expected_by_claim": "effects=1 (README: 'The second caller awaits the first caller's promise')",
+      "observed": "effects=1",
+      "side_effects": 1,
+      "verdict": "PASS",
+      "notes": "Their headline differentiator vs 'naive single-layer store'."
+    },
+    {
+      "id": "p1_A3_lost_response",
+      "title": "Lost response after commit: executor commits effect, then throws; retry with same key",
+      "expected_by_claim": "effects=1 (headline: 'retries never fire side effects twice'; 'Exactly-once execution')",
+      "observed": "effects=2, first=rejected(ETIMEDOUT), retry=rejected(ETIMEDOUT)",
+      "side_effects": 2,
+      "verdict": "FAIL (SUT)",
+      "notes": "failures NOT cached by design; store has no delivery_uncertain state, so an executor that committed at the provider and then threw is indistinguishable from a pure failure. Retry re-dispatches -> second side effect. F2/A10 class."
+    },
+    {
+      "id": "p1_A4_crash_after_commit",
+      "title": "Crash after commit: pending row left by dead process, new process takes over",
+      "expected_by_claim": "headline 'retries never fire side effects twice'; README sells re-run as 'crash recovery' without an uncertain-outcome state",
+      "observed": "effects=2, retry={\"charged\":true,\"recovered\":true,\"n\":2}",
+      "side_effects": 2,
+      "verdict": "FAIL (SUT)",
+      "notes": "reset() overwrites pending unconditionally (memory.ts:60-71; postgres.ts:72-77) — no liveness proof, no delivery_uncertain. Caller cannot distinguish 'recovered a crash before effect' from 're-executed after effect'. At-least-once in the ambiguous window."
+    },
+    {
+      "id": "p1_A5_race_cross_instance",
+      "title": "Cross-instance concurrent race: two stores, one shared backend, winner mid-flight",
+      "expected_by_claim": "effects=1 (README: 'only one caller ever wins the claim'; 'exactly-once across restarts'; PostgresBackend is the shipped multi-instance answer)",
+      "observed": "effects A=1 B=1; A=ok:{\"charged\":\"A\",\"n\":1}; B=ok:{\"charged\":\"B\",\"n\":1}",
+      "side_effects": 2,
+      "verdict": "FAIL (SUT)",
+      "notes": "runOnce (store.ts:96-102): claim loser checks 'completed' only, then reset()s the ALIVE winner's pending row unconditionally and re-runs its own executor. Layer-1 map is per-process and cannot see the other instance. A10b twin (race of first calls)."
+    },
+    {
+      "id": "p1_A6_key_collision",
+      "title": "Same key, different request payload (key collision semantics)",
+      "expected_by_claim": "OBSERVED probe — README stores request meta but never compares it; Stripe-class APIs reject mismatches",
+      "observed": "effects=1, r1={\"chargedFor\":\"order-123\",\"cents\":4999}, r2={\"chargedFor\":\"order-123\",\"cents\":4999} (replayed order-123 response for an order-999 request)",
+      "side_effects": 1,
+      "verdict": "OBSERVED",
+      "notes": "claim() persists meta.request (store.ts:89-93) but no code path ever compares it. A buggy agent reusing a key across different orders silently gets the first order's result. Not a double-charge; a wrong-result hazard. Hardening suggestion, not headline."
+    },
+    {
+      "id": "p1_A7_ttl_expiry",
+      "title": "Re-execute after TTL expiry (ttlMs=50)",
+      "expected_by_claim": "OBSERVED probe — documented scope: replay window = TTL (default 24h)",
+      "observed": "effects=2",
+      "side_effects": 2,
+      "verdict": "OBSERVED",
+      "notes": "'Exactly-once' is TTL-scoped by design (options.ttlMs, DEFAULT_TTL_MS 24h). Documented and coherent; recorded to bound the claim's coverage."
+    }
+  ]
+}

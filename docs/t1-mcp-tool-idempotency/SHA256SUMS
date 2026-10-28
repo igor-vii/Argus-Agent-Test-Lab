@@ -1,0 +1,5 @@
+1220da3d81ef61ceaf8349138e6552ad2c9230ea0672751f2d86ecd738239eac  external-verification-mcp-tool-idempotency-v0.2.0.md
+43e684d8a32aeb1672619567396d767e2da0c3fe63925ceb5ad1880a4f5857c6  pack1-t1-results.json
+572c9713f2cfdca966ad4095786d087c93efe21bdb55f8ecca5b97d492bd5852  pack1-t1-results-rerun-2026-10-28.json
+faac82a84492dc23a02c289e93a78388f20294745958646ef4d94e8ce98692a2  pack1-t1-harness.ts
+74d205bc300cad8935b8459e366fc3c555bfe76be6ac03d5aee2496c1adfcc02  pvr-t1-mcp-tool-idempotency.md
