@@ -1,0 +1,62 @@
+{
+  "generated_at": "2026-10-28T17:25:18.356Z",
+  "verify": {
+    "command": "node tools/registry/verify-registry.mjs",
+    "records": 10,
+    "chain_head": "c26af6309d54c6e2"
+  },
+  "record": {
+    "seq": "0009",
+    "record_id": "argus-seal-0009",
+    "type": "seal",
+    "issued_at": "2026-10-28T11:44:21.254Z",
+    "date": "2026-10-28",
+    "title": "mcp-tool-idempotency external verification — 4d665ae to v0.2.0: F1/F2/F3 durability windows fixed, ten-window battery 10/10 PASS, suite 91/91 @ tag / 93/93 @ main",
+    "subject": "tripl3tr3s/mcp-tool-idempotency (public repo, unmodified)",
+    "prev_record_hash": "a551238447e7292ac5511e44b19e2784ea0a8847d55c64a2202c54b3e07804e6",
+    "chain_head": "c26af6309d54c6e2",
+    "scenarios": [
+      {
+        "id": "T1-Before",
+        "verdict": "FAIL (SUT)",
+        "tone": "fail"
+      },
+      {
+        "id": "T1-W0..W6",
+        "verdict": "PASS",
+        "tone": "pass"
+      },
+      {
+        "id": "T1-Suite",
+        "verdict": "PASS",
+        "tone": "pass"
+      }
+    ],
+    "counts": {
+      "fail": 1,
+      "pass": 2
+    },
+    "evidence": [
+      {
+        "path": "docs/t1-mcp-tool-idempotency/external-verification-mcp-tool-idempotency-v0.2.0.md",
+        "sha256": "1220da3d81ef61ceaf8349138e6552ad2c9230ea0672751f2d86ecd738239eac"
+      },
+      {
+        "path": "docs/t1-mcp-tool-idempotency/pack1-t1-results.json",
+        "sha256": "43e684d8a32aeb1672619567396d767e2da0c3fe63925ceb5ad1880a4f5857c6"
+      },
+      {
+        "path": "docs/t1-mcp-tool-idempotency/pack1-t1-results-rerun-2026-10-28.json",
+        "sha256": "572c9713f2cfdca966ad4095786d087c93efe21bdb55f8ecca5b97d492bd5852"
+      },
+      {
+        "path": "docs/t1-mcp-tool-idempotency/pack1-t1-harness.ts",
+        "sha256": "faac82a84492dc23a02c289e93a78388f20294745958646ef4d94e8ce98692a2"
+      },
+      {
+        "path": "docs/t1-mcp-tool-idempotency/pvr-t1-mcp-tool-idempotency.md",
+        "sha256": "74d205bc300cad8935b8459e366fc3c555bfe76be6ac03d5aee2496c1adfcc02"
+      }
+    ]
+  }
+}

@@ -1,0 +1,58 @@
+# Argus Agent Test Lab
+
+> Independent black-box adversarial testing lab for agentic payment rails — x402 payment flows, credit and settlement handling, idempotency guarantees. Every verdict is an Ed25519-signed record chained to the hash of its predecessor in a public registry that anyone can verify in one command. Seals attest run validity and findings completeness — not bug-freeness.
+
+Working language of published artifacts: English. Motto: "We sign our findings, not our opinions."
+
+## Verify the registry
+
+```bash
+git clone https://github.com/igor-vii/Argus-Agent-Test-Lab
+cd Argus-Agent-Test-Lab
+node tools/registry/verify-registry.mjs
+# → registry intact: 10 records, chain head c26af6309d54c6e2...
+```
+
+## Attestation registry (10 sealed records)
+
+Chain head: `c26af6309d54c6e2` · Ed25519 · hash-chained · records in `attestations/records/`
+
+- #0000 (2026-10-23) x402 reference client signs any server-declared 402 amount — the overcharge vector that started the lab; filed upstream as x402#3866.
+- #0001 (2026-10-23) Block D live run — S10/S11 vs amw-paypal-agent-demo — the lab's first live round, raw evidence sealed.
+- #0002 (2026-10-24) Block D clean-machine reproduction — independent reproduction, verdicts identical; the two-seal discipline starts here.
+- #0003 (2026-10-24) S-BS-06 binding battery, reviewer round-2 controls on the official @x402 client 2.28.0.
+- #0004 (2026-10-26) S-BS-14/15 wave 2.5 — binding race and non-atomic amount first run against PR #3920 @ 2b4cc47: two concurrent requirement sets make the client sign both payloads.
+- #0005 (2026-10-27) Inngest idempotency conformance — 13 probes, 0 FAIL, 2 DX; behavior matches the vendor's published disclosure on every probe; close-out published to inngest#5091.
+- #0006 (2026-10-27) S-BS-19 blockrun-nano-recovery — 3 FAIL / 3 HOLD against @blockrun/nano-client 0.8.0: shape-only payTo check, no default spend cap (×50 signed), lost-response recovery dead-end; public issue BlockRunAI/blockrun-nano-client#18.
+- #0007 (2026-10-27) S-BS-20 nevermined-credit-recovery — 7 FAIL / 1 DX / 3 HOLD against @nevermined-io/payments 1.13.0: retry double-charge, per-process reactive single-use guard, unpaid delivery on settle failure, streaming without settlement receipt. Sealed; disclosure package publication-ready.
+- #0008 (2026-10-27) S-BS-14/15 cycle 2 — PR #3920 @ b1a4d8ce: non-atomic amount verified CLOSED; binding race still reproduces at PR head (signer ×2, 9/8 ms).
+- #0009 (2026-10-28) mcp-tool-idempotency external verification — tripl3tr3s shipped owner-gated claim leases in v0.2.0 after coordinated disclosure; ten-window battery 10/10 PASS, suite 91/91; credited in the project's SECURITY.md.
+
+## Verdict taxonomy
+
+- FAIL — vendor-side failure under the probe: the SDK or platform loses money or integrity under the tested fault.
+- HOLD — the SDK rejected or limited the fault; a genuine guard fired.
+- PASS — the platform held beyond the documented scenarios.
+- OBSERVED — observed behavior matches the vendor's published disclosure; an honest-posture result, not a defect.
+- DX — developer-experience finding: no direct money-loss path, but tooling hides a hazard the runtime itself flags.
+
+## Method (four rules)
+
+1. Black-box by construction — the SUT is always the published artifact: npm dist, exact pin, unmodified.
+2. Pre-registered before the run — required behaviors and verdict rules are fixed in committed matrix files before any probe fires.
+3. Offline by default — all traffic on 127.0.0.1 against adversarial stands and honest mock backends modeled from the vendor's own contracts; no vendor-operated service touched without written authorization.
+4. Sealed and hash-chained — every record is Ed25519-signed and chained to the previous record's hash; verifiable in one command.
+
+## Engagement (B2B)
+
+- Track A — coordinated production round: written scope, funded test wallet, 48-hour notice window, no-debit/refund arrangement, full request capture shared. Deliverable: a sealed production-round report. From $990 per round.
+- Track B — fix verification: the lab's batteries become the vendor's acceptance rig; sealed PASS/FAIL per finding against the published release.
+- Terms: fee agreed before any run; reports and seals remain the lab's to publish with vendor responses given equal space; private resolution welcome — the seal is a receipt, not a weapon.
+
+## Contact
+
+- GitHub: https://github.com/igor-vii/Argus-Agent-Test-Lab (issues open)
+- X: https://x.com/INGVAR29007836
+- Telegram: https://t.me/IVANOVVII
+- Email: argus.testlab@gmail.com
+- One-pager PDF: /argus-lab-onepager.pdf
