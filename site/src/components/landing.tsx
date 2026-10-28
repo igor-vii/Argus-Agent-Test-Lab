@@ -9,6 +9,7 @@ import {
   ONE_PAGER_PATH,
   CHAIN_HEAD,
   SEAL_COUNT,
+  SITE_URL,
   CASES,
   TAXONOMY,
 } from "@/lib/lab-data";
@@ -487,7 +488,7 @@ function Footer() {
 /* ---------------------------------- JSON-LD ---------------------------------- */
 
 function StructuredData() {
-  const SITE_URL = "https://argus-lab.dev";
+  /* SITE_URL imported from @/lib/lab-data — single source of truth */
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-28T17:25:18.356Z",
+  "generated_at": "2026-10-28T18:55:59.867Z",
   "verify": {
     "command": "node tools/registry/verify-registry.mjs",
     "records": 10,

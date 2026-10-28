@@ -76,7 +76,9 @@ const svg = `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http
   <!-- wordmark -->
   <g transform="translate(72,54) scale(${44 / 64})">${sign}</g>
   <text x="132" y="86" font-family=${MONO} font-size="22" letter-spacing="6" fill="${P.bright}">ARGUS·LAB</text>
-  <text x="1128" y="86" text-anchor="end" font-family=${MONO} font-size="14" letter-spacing="2" fill="${P.muted}">argus-lab.dev</text>
+  <text x="1128" y="86" text-anchor="end" font-family=${MONO} font-size="14" letter-spacing="2" fill="${P.muted}">adversarial verification · x402</text>
+  <!-- domain line returns when a custom domain lands:
+       <text x="1128" y="86" text-anchor="end" font-family=${MONO} font-size="14" letter-spacing="2" fill="${P.muted}">DOMAIN.tld</text> -->
   <line x1="72" y1="118" x2="1128" y2="118" stroke="${P.panel}" stroke-width="1"/>
   <!-- headline -->
   <text x="72" y="252" font-family=${SANS} font-size="70" font-weight="bold" fill="${P.bright}">We sign our findings,</text>
