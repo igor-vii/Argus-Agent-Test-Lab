@@ -10,6 +10,12 @@ name: latest-seal
 # registry (ТЗ п.3) so the cover's "chain head / N records" footer can
 # never drift from attestations/records. If the cover changed, it is
 # committed back with [skip ci]; Vercel then redeploys with fresh art.
+#
+# CI-as-distribution: after verification succeeds, the job pings IndexNow
+# (Bing/Yandex/Seznam push-indexing) so search engines learn about fresh
+# evidence immediately instead of waiting for a crawl. The IndexNow key is
+# PUBLIC by design — it is served at https://argus-lab.tech/<key>.txt;
+# that file is what proves URL-list ownership, so no secret is needed here.
 
 on:
   push:
@@ -62,3 +68,14 @@ jobs:
             git commit -m "ci(latest-seal): regenerate og-cover from verified registry [skip ci]"
             git push
           fi
+
+      - name: Notify IndexNow (push-indexing for Bing/Yandex/Seznam)
+        if: github.event_name != 'pull_request'
+        run: |
+          code=$(curl -s -o /tmp/innow.txt -w '%{http_code}' --max-time 30 \
+            "https://api.indexnow.org/indexnow?url=https%3A%2F%2Fargus-lab.tech%2F&key=9caa96c02417879834347edd5f4a571a&keyLocation=https%3A%2F%2Fargus-lab.tech%2F9caa96c02417879834347edd5f4a571a.txt" \
+          ) || code="curl-failed"
+          echo "IndexNow responded: $code" | tee -a "$GITHUB_STEP_SUMMARY"
+          # Distribution is best-effort: a hiccup here must never redden the
+          # verification contract above.
+          exit 0
