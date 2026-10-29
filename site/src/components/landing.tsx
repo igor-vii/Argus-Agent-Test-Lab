@@ -315,6 +315,15 @@ function CasesSection() {
               ))}
             </ul>
 
+            {c.quote && (
+              <blockquote className="mb-4 border-l-2 border-al-accent/60 pl-4">
+                <p className="text-sm leading-relaxed text-al-text">&ldquo;{c.quote.text}&rdquo;</p>
+                <footer className="mt-1.5 font-mono text-[11px] uppercase tracking-wide text-al-muted/70">
+                  &mdash; {c.quote.attribution}
+                </footer>
+              </blockquote>
+            )}
+
             <div className="mt-auto flex flex-wrap items-center justify-between gap-3 border-t border-al-line pt-4">
               <div className="flex flex-wrap items-center gap-2">
                 <span className="font-mono text-[11px] text-al-muted/70">seals</span>
