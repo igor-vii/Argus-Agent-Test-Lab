@@ -69,6 +69,14 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
+  /* Search-engine ownership proofs. Google = TXT record in Vercel DNS (2026-10-28);
+   * Bing = meta tag, because Bing's CNAME method needs a subdomain and Vercel DNS
+   * does not offer apex CNAME. Bing feeds ChatGPT-search, so this is also a GEO move. */
+  verification: {
+    other: {
+      "msvalidate.01": "502EB7AC6042C5C6DC48D18BBAE6565C",
+    },
+  },
 };
 
 export default function RootLayout({
