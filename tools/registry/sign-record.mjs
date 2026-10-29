@@ -16,8 +16,8 @@ if (!draftPath) {
 }
 
 const draft = JSON.parse(fs.readFileSync(draftPath, 'utf8'));
-if (!['seal', 'finding'].includes(draft.type)) {
-  throw new Error(`draft.type must be "seal" or "finding", got: ${draft.type}`);
+if (!['seal', 'finding', 'correction'].includes(draft.type)) {
+  throw new Error(`draft.type must be "seal", "finding" or "correction", got: ${draft.type}`);
 }
 if (draft.seq !== undefined || draft.signature !== undefined || draft.prev_record_hash !== undefined) {
   throw new Error('draft must not contain seq, prev_record_hash or signature — the signer assigns them');

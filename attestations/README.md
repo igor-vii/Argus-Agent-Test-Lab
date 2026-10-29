@@ -1,12 +1,13 @@
 # Argus registry — seals and finding records
 
-A public, append-only, signed registry of what this lab has attested. Two
+A public, append-only, signed registry of what this lab has attested. Three
 record types share one hash-chained log:
 
 | Type | Attested fact | Lifecycle |
 |---|---|---|
 | `finding` | A defect exists in a third-party component, was disclosed by us at a named venue, and has a live status | open → acknowledged → fixed → verified-fixed / disputed / wont-fix; updates are **amendments**, never edits |
 | `seal` | A run happened: SUT at commit X, scenarios S at pinned versions, experiments valid (verdicts), evidence hashes pinned, **full findings list attached** | Final at issuance |
+| `correction` | A post-seal correction of interpretation or wording (e.g. severity recalibration adopted from a maintainer review) against a sealed record, via `amends` | Append-only; the sealed record is never rewritten; one immutable dossier file per correction |
 
 **Neither record type attests bug-freeness.** A seal attests run validity and
 findings completeness; findings are always attached, never hidden behind a

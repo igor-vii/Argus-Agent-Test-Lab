@@ -15,6 +15,7 @@ fs.writeFileSync(
 
 const findings = records.filter((r) => r.type === 'finding');
 const seals = records.filter((r) => r.type === 'seal');
+const corrections = records.filter((r) => r.type === 'correction');
 
 const row = (r) => {
   const subject = r.type === 'seal'
@@ -25,6 +26,9 @@ const row = (r) => {
     : `${r.status?.state ?? '?'}${r.status?.note ? ' — ' + r.status.note : ''}`;
   return `| #${r.seq} | \`${r.record_id}\` | ${subject} | ${r.title} | ${status} | ${(r.issued_at ?? '').slice(0, 10)} |`;
 };
+
+const rowCorr = (r) =>
+  `| #${r.seq} | \`${r.record_id}\` | ${r.amends?.label ?? '—'} → #${r.amends?.seq ?? '?'} | ${r.title} | ${r.status?.state ?? '?'} | ${(r.issued_at ?? '').slice(0, 10)} |`;
 
 const md = `# Argus registry — INDEX (generated; do not edit)
 
@@ -43,8 +47,14 @@ ${findings.map(row).join('\n') || '| — | — | — | none yet | — | — |'}
 |---|---|---|---|---|---|
 ${seals.map(row).join('\n') || '| — | — | — | none yet | — | — |'}
 
+## Corrections (${corrections.length}) — post-seal corrections; sealed records are never rewritten.
+
+| Seq | ID | Amends | Title | Status | Issued |
+|---|---|---|---|---|---|
+${corrections.map(rowCorr).join('\n') || '| — | — | — | none yet | — | — |'}
+
 A seal attests run validity and findings completeness — **not** bug-freeness.
 `;
 
 fs.writeFileSync(path.join(REGISTRY_DIR, 'INDEX.md'), md);
-console.log(`INDEX.md / INDEX.json rebuilt: ${findings.length} findings, ${seals.length} seals`);
+console.log(`INDEX.md / INDEX.json rebuilt: ${findings.length} findings, ${seals.length} seals, ${corrections.length} corrections`);

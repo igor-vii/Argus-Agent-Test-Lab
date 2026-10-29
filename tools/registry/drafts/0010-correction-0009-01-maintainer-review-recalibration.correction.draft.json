@@ -1,0 +1,55 @@
+{
+  "type": "correction",
+  "title": "CORRECTION-0009-01 — seal #0009 severity recalibration and wording correction (mcp-tool-idempotency), adopted from maintainer review",
+  "subject": {
+    "record": "argus-seal-0009",
+    "repo": "tripl3tr3s/mcp-tool-idempotency",
+    "trigger": "maintainer review of public materials (one-pager, landing page)"
+  },
+  "amends": {
+    "record_id": "argus-seal-0009",
+    "seq": "0009",
+    "label": "CORRECTION-0009-01"
+  },
+  "run_ts": "2026-10-29",
+  "changes": [
+    {
+      "item": "F1 severity",
+      "from": "high",
+      "to": "low",
+      "rationale": "Documented at-least-once limit: 'failed executions are never cached' in the project README; the v0.2.0 default still allows it and isRetryable is opt-in."
+    },
+    {
+      "item": "F2 severity",
+      "from": "high",
+      "to": "medium",
+      "rationale": "Shares F3's root cause (missing liveness check) and additionally requires a crash in a narrow window."
+    },
+    {
+      "item": "F3 severity",
+      "from": "high",
+      "to": "high",
+      "rationale": "Cross-instance race can reset a LIVE pending row; severity unchanged, listed for completeness of the recalibration."
+    },
+    {
+      "item": "Public wording",
+      "from": "silent double-charge / MCP payment-tool lib",
+      "to": "silent duplicate execution of committed side effects (generic library)",
+      "rationale": "The library is generic, not payment-specific; the behavior becomes a double charge only when the wrapped tool takes payments. Supersedes the earlier phrasing on the landing page, one-pager and public posts."
+    }
+  ],
+  "status": {
+    "state": "applied",
+    "applied_to": "landing page + one-pager v3",
+    "applied_on": "2026-10-29",
+    "sealed_dossier_text_changed": false
+  },
+  "notes": "Maintainer adopted the recalibration and removed the old 'exactly-once' tagline everywhere, including the repository description. The sealed dossier of #0009 is unchanged; this record is the record of record. Human-readable mirror: site/public/dossiers/registry.md (Stamp 0009 / CORRECTION-0009-01).",
+  "evidence": [
+    {
+      "kind": "file",
+      "path": "docs/t1-mcp-tool-idempotency/correction-0009-01.md",
+      "sha256": null
+    }
+  ]
+}

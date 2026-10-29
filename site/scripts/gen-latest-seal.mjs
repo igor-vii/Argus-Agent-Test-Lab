@@ -64,7 +64,21 @@ if (files.length === 0) {
   console.error("[LATEST SEAL] no records found");
   process.exit(1);
 }
-const latestFile = files[files.length - 1];
+/* The block renders a SEAL. Corrections (type "correction", e.g. #0010 amending
+ * #0009) are also chain records, but they have no scenarios/verdicts — rendering
+ * the highest-seq record blindly would show a correction as if it were a seal. */
+let latestFile = null;
+for (let i = files.length - 1; i >= 0; i--) {
+  const parsed = JSON.parse(fs.readFileSync(path.join(RECORDS_DIR, files[i]), "utf8"));
+  if (parsed.type === "seal") {
+    latestFile = files[i];
+    break;
+  }
+}
+if (!latestFile) {
+  console.error("[LATEST SEAL] no seal-type record found");
+  process.exit(1);
+}
 const rec = JSON.parse(fs.readFileSync(path.join(RECORDS_DIR, latestFile), "utf8"));
 
 /* 3 — normalize into render-ready fields */
