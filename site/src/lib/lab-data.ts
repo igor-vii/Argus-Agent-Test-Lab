@@ -346,10 +346,12 @@ export const CASES: CaseStudy[] = [
     outcome: { label: "Fixed · verified · credited", tone: "pass" },
     seals: ["0009"],
     links: [{ label: "mcp-tool-idempotency", href: "https://github.com/tripl3tr3s/mcp-tool-idempotency" }],
-    quote: {
-      text: "Precise, reproducible, and respectful of my timeline: the report pinpointed the root cause, and they independently verified the fix against the release. It was a rapid, well-documented disclosure from start to finish.",
-      attribution: "maintainer, mcp-tool-idempotency",
-    },
+    // quote intentionally withheld from the landing per maintainer request
+    // (one-pager v3 only, until the maintainer green-lights landing placement):
+    // "Precise, reproducible, and respectful of my timeline: the report pinpointed
+    // the root cause, and they independently verified the fix against the release.
+    // It was a rapid, well-documented disclosure from start to finish."
+    // — maintainer, mcp-tool-idempotency
   },
   {
     vendor: "AgentMiddleware",
