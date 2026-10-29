@@ -8,7 +8,10 @@ export const REPO_ROOT = path.resolve(new URL('../../', import.meta.url).pathnam
 export const REGISTRY_DIR = path.join(REPO_ROOT, 'attestations');
 export const RECORDS_DIR = path.join(REGISTRY_DIR, 'records');
 export const PUBKEY_PATH = path.join(REGISTRY_DIR, 'keys', 'argus-lab-2026q4r2.pub.json');
-export const PRIVKEY_PATH = '/home/z/my-project/keys/argus-lab-2026q4r2.priv.json';
+// The private key NEVER lives in this repository (see attestations/README.md).
+// Default location is the lab sandbox; override with ARGUS_PRIVKEY_PATH to sign
+// from any machine that holds the key.
+export const PRIVKEY_PATH = process.env.ARGUS_PRIVKEY_PATH || '/home/z/my-project/keys/argus-lab-2026q4r2.priv.json';
 
 // Deterministic JSON: recursively sorted object keys, no whitespace. Two
 // implementations of `canonical()` on any machine must produce byte-identical
