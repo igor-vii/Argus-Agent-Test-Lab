@@ -224,8 +224,8 @@ export const SEALS: Seal[] = [
       { id: "T1-Suite", verdict: "PASS (91/91)", tone: "pass" },
     ],
     findings: [
-      { id: "F1", severity: "high", text: "Lost response after commit: retry re-fires the committed side effect (fixed in v0.2.0)." },
-      { id: "F2", severity: "high", text: "Crash after commit: dead holder's pending row unconditionally reset by the next caller (fixed in v0.2.0)." },
+      { id: "F1", severity: "low", text: "Lost response after commit: retry re-fires the committed side effect — documented at-least-once limit (‘failed executions are never cached’); fixed in v0.2.0." },
+      { id: "F2", severity: "medium", text: "Crash after commit: dead holder's pending row unconditionally reset by the next caller — shares F3's root cause (missing liveness check), narrow crash window; fixed in v0.2.0." },
       { id: "F3", severity: "high", text: "Cross-instance race: claim loser resets the winner's LIVE pending row (fixed in v0.2.0)." },
     ],
     evidence: 5,
@@ -243,6 +243,7 @@ export interface CaseStudy {
   outcome: { label: string; tone: Tone };
   seals: string[];
   links: { label: string; href: string }[];
+  quote?: { text: string; attribution: string };
 }
 
 export const CASES: CaseStudy[] = [
@@ -345,6 +346,10 @@ export const CASES: CaseStudy[] = [
     outcome: { label: "Fixed · verified · credited", tone: "pass" },
     seals: ["0009"],
     links: [{ label: "mcp-tool-idempotency", href: "https://github.com/tripl3tr3s/mcp-tool-idempotency" }],
+    quote: {
+      text: "Precise, reproducible, and respectful of my timeline: the report pinpointed the root cause, and they independently verified the fix against the release. It was a rapid, well-documented disclosure from start to finish.",
+      attribution: "maintainer, mcp-tool-idempotency",
+    },
   },
   {
     vendor: "AgentMiddleware",
