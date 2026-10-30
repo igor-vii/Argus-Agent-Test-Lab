@@ -16,6 +16,13 @@ name: latest-seal
 # evidence immediately instead of waiting for a crawl. The IndexNow key is
 # PUBLIC by design — it is served at https://argus-lab.tech/<key>.txt;
 # that file is what proves URL-list ownership, so no secret is needed here.
+#
+# CI-as-delivery: after verification succeeds, the job triggers a Vercel
+# production deploy of the current main head via a Deploy Hook secret
+# (VERCEL_DEPLOY_HOOK_URL). This is the delivery path of record — it does
+# not depend on the Vercel GitHub App staying healthy, and it also fires
+# on manual workflow_dispatch, so a missed rollout can be re-triggered
+# from the Actions tab without a new commit.
 
 on:
   push:
@@ -78,4 +85,15 @@ jobs:
           echo "IndexNow responded: $code" | tee -a "$GITHUB_STEP_SUMMARY"
           # Distribution is best-effort: a hiccup here must never redden the
           # verification contract above.
+          exit 0
+
+      - name: Trigger Vercel production deploy (deploy hook)
+        if: ${{ github.event_name != 'pull_request' && secrets.VERCEL_DEPLOY_HOOK_URL != '' }}
+        run: |
+          code=$(curl -s -o /tmp/vhook.txt -w '%{http_code}' --max-time 30 -X POST \
+            "${{ secrets.VERCEL_DEPLOY_HOOK_URL }}" \
+          ) || code="curl-failed"
+          echo "Vercel deploy hook responded: $code" | tee -a "$GITHUB_STEP_SUMMARY"
+          # Delivery is best-effort too: the deploy hook URL is a secret and
+          # a hiccup here must never redden the verification contract above.
           exit 0
