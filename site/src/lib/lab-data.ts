@@ -2,12 +2,21 @@
  * Argus Agent Test Lab — public facts.
  * Every entry mirrors a sealed record in the public registry:
  * github.com/igor-vii/Argus-Agent-Test-Lab (attestations/records/).
- * Chain head verified 10/10 via tools/registry/verify-registry.mjs.
+ *
+ * CHAIN_HEAD / RECORD_COUNT are no longer hand-maintained: they are read at
+ * build time from src/data/latest-seal.json, which gen-latest-seal.mjs
+ * regenerates from the registry after a full verify-registry.mjs pass.
+ * The JSON is committed alongside code that changes the registry, so the
+ * landing always renders the chain head it was built from.
  */
 
+import latestSeal from "@/data/latest-seal.json";
+
 export const REPO_URL = "https://github.com/igor-vii/Argus-Agent-Test-Lab";
-export const CHAIN_HEAD = "c26af6309d54c6e2";
-export const SEAL_COUNT = 10;
+export const CHAIN_HEAD = latestSeal.verify.chain_head as string;
+export const RECORD_COUNT = latestSeal.verify.records as number;
+/** Backwards-compatible alias — historical name, now record-count-based. */
+export const SEAL_COUNT = RECORD_COUNT;
 
 /** Canonical site URL — custom domain `argus-lab.tech`, registered 2026-10-28
  *  via nic.ru (RU-CENTER), expires 2027-10-27; attached to the Vercel project.

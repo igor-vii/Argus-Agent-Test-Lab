@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { SEALS, CHAIN_HEAD, REPO_URL, type Seal } from "@/lib/lab-data";
+import { SEALS, CHAIN_HEAD, RECORD_COUNT, REPO_URL, type Seal } from "@/lib/lab-data";
 import { VerdictBadge, SeverityDot } from "@/components/verdict-badge";
 
 function SealNode({
@@ -143,7 +143,7 @@ export function ChainExplorer() {
       <div className="border-t border-al-line px-5 py-3">
         <p className="font-mono text-[11px] leading-relaxed text-al-muted">
           <span className="text-al-muted/60">$</span> node tools/registry/verify-registry.mjs{"  "}
-          <span className="text-al-muted/60">→</span> <span className="text-al-accent">registry intact: 10 records, chain head {CHAIN_HEAD}…</span>{" "}
+          <span className="text-al-muted/60">→</span> <span className="text-al-accent">registry intact: {RECORD_COUNT} records, chain head {CHAIN_HEAD}…</span>{" "}
           <a href={`${REPO_URL}/tree/main/attestations/records`} target="_blank" rel="noopener noreferrer" className="ml-2 text-al-text underline decoration-al-muted/40 underline-offset-4 transition-colors hover:decoration-al-text">
             records ↗
           </a>
