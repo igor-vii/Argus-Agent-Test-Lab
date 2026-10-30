@@ -1,16 +1,16 @@
 {
-  "generated_at": "2026-10-30T06:27:36.602Z",
+  "generated_at": "2026-10-30T12:03:42.502Z",
   "verify": {
     "command": "node tools/registry/verify-registry.mjs",
-    "records": 11,
-    "chain_head": "a72168544fe7bece"
+    "records": 12,
+    "chain_head": "aa6df9b81d7c435f"
   },
   "correction": {
-    "seq": "0010",
-    "record_id": "argus-correction-0010",
-    "date": "2026-10-29",
-    "title": "CORRECTION-0009-01 — seal #0009 severity recalibration and wording correction (mcp-tool-idempotency), adopted from maintainer review",
-    "amends": "argus-seal-0009"
+    "seq": "0011",
+    "record_id": "argus-correction-0011",
+    "date": "2026-10-30",
+    "title": "CORRECTION-0000-01 — finding #0000 summary wording: signed authorization established, on-chain settlement not claimed (external audit review)",
+    "amends": "argus-finding-0000"
   },
   "record": {
     "seq": "0009",
@@ -21,7 +21,7 @@
     "title": "mcp-tool-idempotency external verification — 4d665ae to v0.2.0: F1/F2/F3 durability windows fixed, ten-window battery 10/10 PASS, suite 91/91 @ tag / 93/93 @ main",
     "subject": "tripl3tr3s/mcp-tool-idempotency (public repo, unmodified)",
     "prev_record_hash": "a551238447e7292ac5511e44b19e2784ea0a8847d55c64a2202c54b3e07804e6",
-    "chain_head": "a72168544fe7bece",
+    "chain_head": "aa6df9b81d7c435f",
     "scenarios": [
       {
         "id": "T1-Before",
