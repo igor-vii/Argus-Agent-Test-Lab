@@ -1,9 +1,16 @@
 {
-  "generated_at": "2026-10-30T00:26:28.730Z",
+  "generated_at": "2026-10-30T06:27:36.602Z",
   "verify": {
     "command": "node tools/registry/verify-registry.mjs",
     "records": 11,
     "chain_head": "a72168544fe7bece"
+  },
+  "correction": {
+    "seq": "0010",
+    "record_id": "argus-correction-0010",
+    "date": "2026-10-29",
+    "title": "CORRECTION-0009-01 — seal #0009 severity recalibration and wording correction (mcp-tool-idempotency), adopted from maintainer review",
+    "amends": "argus-seal-0009"
   },
   "record": {
     "seq": "0009",

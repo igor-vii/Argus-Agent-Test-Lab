@@ -81,6 +81,24 @@ if (!latestFile) {
 }
 const rec = JSON.parse(fs.readFileSync(path.join(RECORDS_DIR, latestFile), "utf8"));
 
+/* 2b — latest correction (if any). Corrections are chain records too, but they
+ * carry no scenarios/verdicts, so they never take the seal slot above; instead
+ * the seal card shows a one-line pointer, chain-derived, not hand-maintained. */
+let correction = null;
+for (let i = files.length - 1; i >= 0; i--) {
+  const parsed = JSON.parse(fs.readFileSync(path.join(RECORDS_DIR, files[i]), "utf8"));
+  if (parsed.type === "correction") {
+    correction = {
+      seq: parsed.seq,
+      record_id: parsed.record_id,
+      date: String(parsed.issued_at ?? "").slice(0, 10),
+      title: parsed.title,
+      amends: parsed.amends?.record_id ?? parsed.subject?.record ?? null,
+    };
+    break;
+  }
+}
+
 /* 3 — normalize into render-ready fields */
 const toneOf = (verdict) => {
   const v = String(verdict).toUpperCase();
@@ -111,6 +129,7 @@ const payload = {
     records: RECORD_COUNT,
     chain_head: CHAIN_HEAD,
   },
+  correction,
   record: {
     seq: rec.seq,
     record_id: rec.record_id,
@@ -133,5 +152,6 @@ fs.writeFileSync(outPath, JSON.stringify(payload, null, 2) + "\n");
 console.log(
   `[LATEST SEAL] #${payload.record.seq} (${payload.record.date}) → ${path.relative(ROOT, outPath)} · ` +
   `chain ${String(rec.prev_record_hash ?? "null").slice(0, 8)} → ${CHAIN_HEAD.slice(0, 8)} · ` +
-  `${RECORD_COUNT} records verified`
+  `${RECORD_COUNT} records verified` +
+  (correction ? ` · latest correction #${correction.seq} ${correction.record_id}` : "")
 );

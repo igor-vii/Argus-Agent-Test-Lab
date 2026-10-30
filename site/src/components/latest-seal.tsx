@@ -66,7 +66,7 @@ export function LatestSealBlock() {
         </div>
 
         {/* hash chain */}
-        <p className="mb-5 font-mono text-xs leading-relaxed text-al-muted">
+        <p className="mb-4 font-mono text-xs leading-relaxed text-al-muted">
           chain{" "}
           <span className="text-al-text">{short(rec.prev_record_hash)}</span>
           {" → "}
@@ -74,6 +74,22 @@ export function LatestSealBlock() {
           <span className="text-al-accent" aria-label="chain verified">✓</span>
           {" · "}Ed25519 · prev_record_hash → chain head
         </p>
+
+        {/* latest correction — corrections are chain records too; they never
+         * take the seal slot, so the pointer lives here, chain-derived. */}
+        {latest.correction && (
+          <p className="mb-5 font-mono text-xs leading-relaxed text-al-muted">
+            <span className="text-al-muted/60">latest correction</span>{" "}
+            <span className="text-al-text">{latest.correction.record_id}</span>
+            {" · "}
+            <a
+              href="/dossiers/registry.md"
+              className="underline decoration-al-line underline-offset-4 transition-colors hover:text-al-text"
+            >
+              {latest.correction.title} ↗
+            </a>
+          </p>
+        )}
 
         {/* evidence buttons */}
         <p className="mb-2 font-mono text-[11px] uppercase tracking-widest text-al-muted">
