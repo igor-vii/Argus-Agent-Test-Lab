@@ -260,7 +260,7 @@ export const CASES: CaseStudy[] = [
     vendor: "x402-foundation",
     target: "x402 reference client + PR #3920 core",
     version: "@x402/core 2.28.0",
-    headline: "Four review rounds; one fix verified closed, one still open at PR head.",
+    headline: "Review rounds 2–4 on issue #3866; one fix verified closed, one still open at PR head.",
     badges: [
       { label: "A11 closed", tone: "pass" },
       { label: "A10 open", tone: "fail" },
@@ -270,7 +270,7 @@ export const CASES: CaseStudy[] = [
       "Round 2–4 engagement on issue #3866 with control batteries and delta probes.",
       "Cycle-2 at PR head b1a4d8ce: non-atomic amount rejection verified closed; binding race (signer ×2) reproduces.",
     ],
-    outcome: { label: "Upstream engagement · 5 rounds", tone: "pass" },
+    outcome: { label: "Upstream engagement · rounds 2–4", tone: "pass" },
     seals: ["0000", "0003", "0004", "0008"],
     links: [
       { label: "Issue #3866", href: "https://github.com/x402-foundation/x402/issues/3866" },
@@ -388,8 +388,8 @@ export const METHOD_CARDS = [
     text: "The SUT is always the published artifact — npm dist, exact pin, unmodified. No source access, no vendor cooperation required. If it can't be shown against the artifact users actually install, it isn't shown.",
   },
   {
-    title: "Pre-registered before the run",
-    text: "Required behaviors and verdict rules are fixed in committed matrix files before a single probe fires. No post-hoc reshaping of what a failure means — the rig can't drift toward the conclusion.",
+    title: "Verdict rules committed before the run",
+    text: "Required behaviors and verdict semantics are fixed in committed battery fixtures before a probe fires; rollup matrices are finalized at receipt and carry full provenance — run commit, fixture, seal. No post-hoc reshaping of what a failure means — the rig can't drift toward the conclusion.",
   },
   {
     title: "Offline by default",
@@ -413,7 +413,7 @@ export const B2B_TRACKS = [
   {
     id: "A",
     title: "Coordinated production round",
-    text: "You invited reproduction against production; we run it under written scope authorization: funded test wallet, agreed time window on 48 hours' notice, a no-debit/refund arrangement for probe transactions, full request capture shared with you. Deliverable: a sealed production-round report — either clearing the production endpoint, or documenting the exact boundary where defects become live money movement.",
+    text: "You invited reproduction against production; we run it under written scope authorization: funded test wallet, agreed time window on 48 hours' notice, a no-debit/refund arrangement for probe transactions, full request capture shared with you. Deliverable: a sealed production-round report — either documenting that the production endpoint held against the full battery, or documenting the exact boundary where defects become live money movement.",
     meta: "from $990 / round",
   },
   {

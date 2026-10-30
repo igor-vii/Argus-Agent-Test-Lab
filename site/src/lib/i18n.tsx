@@ -75,7 +75,7 @@ const en = {
     tracks: [
       {
         title: "Coordinated production round",
-        text: "You invited reproduction against production; we run it under written scope authorization: funded test wallet, agreed time window on 48 hours' notice, a no-debit/refund arrangement for probe transactions, full request capture shared with you. Deliverable: a sealed production-round report — either clearing the production endpoint, or documenting the exact boundary where defects become live money movement.",
+        text: "You invited reproduction against production; we run it under written scope authorization: funded test wallet, agreed time window on 48 hours' notice, a no-debit/refund arrangement for probe transactions, full request capture shared with you. Deliverable: a sealed production-round report — either documenting that the production endpoint held against the full battery, or documenting the exact boundary where defects become live money movement.",
         meta: "from $990 / round",
       },
       {
@@ -174,7 +174,7 @@ const ru: Dict = {
     tracks: [
       {
         title: "Координированный production-раунд",
-        text: "Вы пригласили воспроизведение на production — мы гоняем его под письменной авторизацией скоупа: финансируемый тестовый кошелёк, согласованное окно с уведомлением за 48 часов, договорённость no-debit/refund для пробных транзакций, полный захват запросов передаётся вам. Результат: запечатанный отчёт production-раунда — либо очистка endpoint'а, либо точная граница, где дефекты становятся живым движением денег.",
+        text: "Вы пригласили воспроизведение на production — мы гоняем его под письменной авторизацией скоупа: финансируемый тестовый кошелёк, согласованное окно с уведомлением за 48 часов, договорённость no-debit/refund для пробных транзакций, полный захват запросов передаётся вам. Результат: запечатанный отчёт production-раунда — либо фиксация того, что endpoint выдержал всю батарею, либо точная граница, где дефекты становятся живым движением денег.",
         meta: "от $990 / раунд",
       },
       {

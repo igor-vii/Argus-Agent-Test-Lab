@@ -29,6 +29,8 @@ Chain head: `a72168544fe7bece` · Ed25519 · hash-chained · records in `attesta
 - #0009 (2026-10-28) mcp-tool-idempotency external verification — tripl3tr3s shipped owner-gated claim leases in v0.2.0 after coordinated disclosure; ten-window battery 10/10 PASS, suite 91/91; credited in the project's SECURITY.md.
 - #0010 (2026-10-29) CORRECTION-0009-01 — seal #0009 severity recalibration per maintainer review (F1 low / F2 medium / F3 high) and wording correction ("duplicate execution of committed side effects", generic library); sealed dossier #0009 unchanged, correction dossier hash-pinned in the signed record.
 
+Severity standing follows the chain: sealed dossiers are never edited; the latest signed correction wins.
+
 ## Verdict taxonomy
 
 - FAIL — vendor-side failure under the probe: the SDK or platform loses money or integrity under the tested fault.
@@ -40,7 +42,7 @@ Chain head: `a72168544fe7bece` · Ed25519 · hash-chained · records in `attesta
 ## Method (four rules)
 
 1. Black-box by construction — the SUT is always the published artifact: npm dist, exact pin, unmodified.
-2. Pre-registered before the run — required behaviors and verdict rules are fixed in committed matrix files before any probe fires.
+2. Verdict rules committed before the run — required behaviors and verdict semantics live in committed battery fixtures before any probe fires; rollup matrices are finalized at receipt and carry full provenance (run commit, fixture, seal).
 3. Offline by default — all traffic on 127.0.0.1 against adversarial stands and honest mock backends modeled from the vendor's own contracts; no vendor-operated service touched without written authorization.
 4. Sealed and hash-chained — every record is Ed25519-signed and chained to the previous record's hash; verifiable in one command.
 
