@@ -1,0 +1,43 @@
+{
+  "type": "correction",
+  "title": "CORRECTION-0000-01 — finding #0000 summary wording: signed authorization established, on-chain settlement not claimed (external audit review)",
+  "subject": {
+    "record": "argus-finding-0000",
+    "repo": "x402-foundation/x402",
+    "trigger": "external audit of public materials (2026-10-30): summary wording contradicts the lab's own pinned capture notes"
+  },
+  "amends": {
+    "record_id": "argus-finding-0000",
+    "seq": "0000",
+    "label": "CORRECTION-0000-01"
+  },
+  "run_ts": "2026-10-30",
+  "changes": [
+    {
+      "item": "Summary wording",
+      "from": "A server that inflated the requirement 10x was paid the inflated amount in 3/3 reproduced sessions on Base Sepolia (client authorized 100,000 units = 0.1 USDC for a resource priced at 10,000 units = 0.01 USDC).",
+      "to": "In 3/3 reproduced sessions on Base Sepolia the reference client signed and handed over an authorization for the inflated amount (100,000 units = 0.1 USDC for a resource priced at 10,000 units = 0.01 USDC); on-chain settlement of an overpayment was not established — settlement in the harness is mocked and the client wallet is an unfunded one-shot test key.",
+      "rationale": "Aligns the summary with the lab's own capture notes (docs/block-b/BLOCK_B_TEST_MATRIX.md): the captures establish that the client signed and handed over an authorization for the higher amount; the mocked settlement does NOT establish an on-chain overpayment (unfunded one-shot key; with a compliant facilitator the authorization would settle as-is). The defect claim — the client signs any server-declared 402 amount — is unaffected; only the settlement claim is withdrawn."
+    },
+    {
+      "item": "Status note",
+      "from": "no maintainer response as of 2026-10-24",
+      "to": "no maintainer response as of 2026-10-30",
+      "rationale": "Status refresh at correction time; the finding remains open and unaddressed upstream."
+    }
+  ],
+  "status": {
+    "state": "applied",
+    "applied_to": "registry semantics via this record; landing page and llms.txt already consistent; one-pager v4 refresh queued",
+    "applied_on": "2026-10-30",
+    "sealed_dossier_text_changed": false
+  },
+  "notes": "External audit (2026-10-30) flagged that the #0000 summary's 'was paid the inflated amount' contradicts the pinned capture notes v2. The sealed record JSON of #0000 stays untouched per the immutability rule; this record is the record of record. Severity (high), reproducibility (3/3 sessions) and the disclosure timeline are unchanged. Human-readable mirror: site/public/dossiers/registry.md (Finding 0000 / CORRECTION-0000-01).",
+  "evidence": [
+    {
+      "kind": "file",
+      "path": "docs/block-b/correction-0000-01.md",
+      "sha256": null
+    }
+  ]
+}

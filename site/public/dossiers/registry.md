@@ -28,3 +28,21 @@ sealed material are recorded here as correction entries.
 **Status:** applied to the landing page and one-pager v3 (2026-10-29). The sealed dossier text itself is unchanged; this entry is the record of record.
 
 *Note: severity and wording for this case are maintained in line with the maintainer's own characterization of the findings.*
+
+---
+
+## Finding 0000 · x402 reference client — SEALED
+
+- **Target:** x402-foundation/x402 — reference client, @x402/fetch 2.28.0
+- **Finding:** the reference client signs any server-declared 402 amount with no binding to any caller expectation (overcharge vector); filed upstream as x402#3866 (2026-10-21)
+- **Status:** open — no maintainer response
+- **Battery:** 3/3 reproduced sessions on Base Sepolia · dossier hash-pinned
+
+### CORRECTION-0000-01 · 2026-10-30
+
+**Trigger:** external audit of public materials — the sealed summary's wording contradicted the lab's own pinned capture notes.
+
+1. **Wording correction:** the sealed summary said the inflated amount "was **paid**". The evidence establishes that the client **signed and handed over an authorization** for the inflated amount (100,000 units = 0.1 USDC vs a resource priced at 10,000 units = 0.01 USDC) in 3/3 reproduced sessions. On-chain settlement of an overpayment was **not established** — settlement in the harness is mocked and the client wallet is an unfunded one-shot test key; with a compliant facilitator the authorization would settle as-is. The defect claim (the client signs any server-declared 402 amount) is unaffected; only the settlement claim is withdrawn.
+2. **Status refresh:** "no maintainer response" updated to **as of 2026-10-30**.
+
+**Status:** applied to registry semantics via the signed correction record (2026-10-30). The landing page and llms.txt already used the accurate verb; one-pager v4 refresh queued. The sealed record #0000 JSON is unchanged — this entry is the record of record.
