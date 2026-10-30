@@ -61,11 +61,20 @@ export function listRecords() {
   if (!fs.existsSync(RECORDS_DIR)) return [];
   return fs.readdirSync(RECORDS_DIR)
     .filter((f) => f.endsWith('.json'))
-    .sort() // zero-padded seq prefix keeps lexical == numeric order
     .map((f) => ({
       file: f,
       record: JSON.parse(fs.readFileSync(path.join(RECORDS_DIR, f), 'utf8')),
-    }));
+    }))
+    .sort((a, b) => {
+      // Order by numeric seq, NOT by filename: the zero-padded 4-digit prefix
+      // stops being lexically ordered the moment seq reaches 10000 (a file
+      // "10000-…" would sort before "2541-…"), which would walk signer,
+      // verifier and index through the chain in a false order.
+      const na = Number(a.record.seq);
+      const nb = Number(b.record.seq);
+      if (Number.isFinite(na) && Number.isFinite(nb) && na !== nb) return na - nb;
+      return a.file.localeCompare(b.file); // fallback: same seq (must not happen)
+    });
 }
 
 export function slugify(title) {
