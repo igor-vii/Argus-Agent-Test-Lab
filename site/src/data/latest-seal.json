@@ -1,9 +1,9 @@
 {
-  "generated_at": "2026-10-28T18:55:59.867Z",
+  "generated_at": "2026-10-30T00:26:28.730Z",
   "verify": {
     "command": "node tools/registry/verify-registry.mjs",
-    "records": 10,
-    "chain_head": "c26af6309d54c6e2"
+    "records": 11,
+    "chain_head": "a72168544fe7bece"
   },
   "record": {
     "seq": "0009",
@@ -14,7 +14,7 @@
     "title": "mcp-tool-idempotency external verification — 4d665ae to v0.2.0: F1/F2/F3 durability windows fixed, ten-window battery 10/10 PASS, suite 91/91 @ tag / 93/93 @ main",
     "subject": "tripl3tr3s/mcp-tool-idempotency (public repo, unmodified)",
     "prev_record_hash": "a551238447e7292ac5511e44b19e2784ea0a8847d55c64a2202c54b3e07804e6",
-    "chain_head": "c26af6309d54c6e2",
+    "chain_head": "a72168544fe7bece",
     "scenarios": [
       {
         "id": "T1-Before",
