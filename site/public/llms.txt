@@ -10,12 +10,12 @@ Working language of published artifacts: English. Motto: "We sign our findings, 
 git clone https://github.com/igor-vii/Argus-Agent-Test-Lab
 cd Argus-Agent-Test-Lab
 node tools/registry/verify-registry.mjs
-# → registry intact: 10 records, chain head c26af6309d54c6e2...
+# → registry intact: 11 records, chain head a72168544fe7bece...
 ```
 
-## Attestation registry (10 sealed records)
+## Attestation registry (11 records — 9 seals, 1 finding, 1 correction)
 
-Chain head: `c26af6309d54c6e2` · Ed25519 · hash-chained · records in `attestations/records/`
+Chain head: `a72168544fe7bece` · Ed25519 · hash-chained · records in `attestations/records/`
 
 - #0000 (2026-10-23) x402 reference client signs any server-declared 402 amount — the overcharge vector that started the lab; filed upstream as x402#3866.
 - #0001 (2026-10-23) Block D live run — S10/S11 vs amw-paypal-agent-demo — the lab's first live round, raw evidence sealed.
@@ -27,6 +27,7 @@ Chain head: `c26af6309d54c6e2` · Ed25519 · hash-chained · records in `attesta
 - #0007 (2026-10-27) S-BS-20 nevermined-credit-recovery — 7 FAIL / 1 DX / 3 HOLD against @nevermined-io/payments 1.13.0: retry double-charge, per-process reactive single-use guard, unpaid delivery on settle failure, streaming without settlement receipt. Sealed; disclosure package publication-ready.
 - #0008 (2026-10-27) S-BS-14/15 cycle 2 — PR #3920 @ b1a4d8ce: non-atomic amount verified CLOSED; binding race still reproduces at PR head (signer ×2, 9/8 ms).
 - #0009 (2026-10-28) mcp-tool-idempotency external verification — tripl3tr3s shipped owner-gated claim leases in v0.2.0 after coordinated disclosure; ten-window battery 10/10 PASS, suite 91/91; credited in the project's SECURITY.md.
+- #0010 (2026-10-29) CORRECTION-0009-01 — seal #0009 severity recalibration per maintainer review (F1 low / F2 medium / F3 high) and wording correction ("duplicate execution of committed side effects", generic library); sealed dossier #0009 unchanged, correction dossier hash-pinned in the signed record.
 
 ## Verdict taxonomy
 
