@@ -88,11 +88,15 @@ jobs:
           exit 0
 
       - name: Trigger Vercel production deploy (deploy hook)
-        if: ${{ github.event_name != 'pull_request' && secrets.VERCEL_DEPLOY_HOOK_URL != '' }}
+        if: github.event_name != 'pull_request'
+        env:
+          HOOK_URL: ${{ secrets.VERCEL_DEPLOY_HOOK_URL }}
         run: |
-          code=$(curl -s -o /tmp/vhook.txt -w '%{http_code}' --max-time 30 -X POST \
-            "${{ secrets.VERCEL_DEPLOY_HOOK_URL }}" \
-          ) || code="curl-failed"
+          if [ -z "$HOOK_URL" ]; then
+            echo "Vercel deploy hook: VERCEL_DEPLOY_HOOK_URL secret not set — skipping" | tee -a "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          code=$(curl -s -o /tmp/vhook.txt -w '%{http_code}' --max-time 30 -X POST "$HOOK_URL") || code="curl-failed"
           echo "Vercel deploy hook responded: $code" | tee -a "$GITHUB_STEP_SUMMARY"
           # Delivery is best-effort too: the deploy hook URL is a secret and
           # a hiccup here must never redden the verification contract above.
