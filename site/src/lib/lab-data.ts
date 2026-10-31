@@ -240,6 +240,28 @@ export const SEALS: Seal[] = [
     evidence: 5,
     links: [{ label: "mcp-tool-idempotency", href: "https://github.com/tripl3tr3s/mcp-tool-idempotency" }],
   },
+  {
+    seq: "0012",
+    date: "2026-10-31",
+    type: "seal",
+    title: "S-BS-06 cycle 3 — PR #3920 @ e993bef re-pin re-run: green zone holds, A10c/d + A12/A13 PASS (17/19)",
+    subject: "x402-foundation/x402",
+    summary:
+      "The re-pin re-run required by the acceptance protocol after the recipient-normalization commits: full 19-session re-run at e993bef, no head mixing. Green zone A1–A9 and the A11 fail-closed rejection are unchanged. Two NEW pre-registrations go green: conflicting-offer races A10c/A10d (one commitment + one pre-signer rejection — the in-thread requested discriminating control) and case-variant recipient A12/A13 (case spelling no longer mints a fresh quote key; raised case-variant rejected pre-signer). Identical-offer A10a/A10b continues the cycle-2 pre-registration for continuity — duplicate-payment semantics per the PR author's in-thread position, outside the quote-control layer's scope.",
+    verdicts: [
+      { id: "A1–A9 green zone", verdict: "PASS", tone: "pass" },
+      { id: "A11 non-atomic-amount", verdict: "PASS (fail-closed)", tone: "pass" },
+      { id: "A10a/A10b identical-offer race", verdict: "FAIL (continuity)", tone: "fail" },
+      { id: "A10c/A10d conflicting-offer race", verdict: "PASS (NEW)", tone: "pass" },
+      { id: "A12/A13 case-variant recipient", verdict: "PASS (NEW)", tone: "pass" },
+    ],
+    findings: [
+      { id: "F-A10", severity: "high", text: "Identical-offer first-contact race persists at e993bef: signer ×2 (8/7 ms apart) before any slot completes; verdict continues the cycle-2 pre-registration for continuity — author's position: duplicate-payment semantics, out of quote-control scope; the discriminating control A10c/A10d passes." },
+      { id: "C3-delta-verified", severity: "info", text: "A12/A13 verify the e993bef normalization delta: case-variant offers ride the canonicalized quote-ledger anchor — no false positive at unchanged amount; raised case-variant rejected pre-signer where case-sensitive cycle-2 keys would have signed as a fresh key." },
+    ],
+    evidence: 8,
+    links: [{ label: "PR #3920", href: "https://github.com/x402-foundation/x402/pull/3920" }],
+  },
 ];
 
 export interface CaseStudy {
@@ -260,18 +282,21 @@ export const CASES: CaseStudy[] = [
     vendor: "x402-foundation",
     target: "x402 reference client + PR #3920 core",
     version: "@x402/core 2.28.0",
-    headline: "Review rounds 2–4 on issue #3866; one fix verified closed, one still open at PR head.",
+    headline: "Issue #3866 rounds 2–4 + PR #3920 cycles 1–3: A11 verified closed, conflicting-offer invariant holds, normalization delta verified.",
     badges: [
       { label: "A11 closed", tone: "pass" },
-      { label: "A10 open", tone: "fail" },
+      { label: "A10c/d PASS", tone: "pass" },
+      { label: "A10a/b open", tone: "fail" },
     ],
     points: [
       "Origin finding (#0000): the reference client signs any server-declared 402 amount.",
       "Round 2–4 engagement on issue #3866 with control batteries and delta probes.",
       "Cycle-2 at PR head b1a4d8ce: non-atomic amount rejection verified closed; binding race (signer ×2) reproduces.",
+      "Cycle-3 at e993bef (17/19 PASS): conflicting-offer races A10c/A10d PASS — one commitment + one pre-signer rejection; case-variant recipient normalization A12/A13 PASS.",
+      "Author accepted the cycle-3 results; remaining gate: upstream maintainer integration review.",
     ],
-    outcome: { label: "Upstream engagement · rounds 2–4", tone: "pass" },
-    seals: ["0000", "0003", "0004", "0008"],
+    outcome: { label: "Upstream engagement · cycles 1–3", tone: "pass" },
+    seals: ["0000", "0003", "0004", "0008", "0012"],
     links: [
       { label: "Issue #3866", href: "https://github.com/x402-foundation/x402/issues/3866" },
       { label: "PR #3920", href: "https://github.com/x402-foundation/x402/pull/3920" },
