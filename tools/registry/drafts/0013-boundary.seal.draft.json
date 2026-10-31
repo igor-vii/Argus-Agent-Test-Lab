@@ -1,0 +1,46 @@
+{
+  "type": "seal",
+  "title": "Boundary: product layer moved private — public repository remains proof-only (sealed registry + verification + site); last public snapshot hash-pinned by manifest",
+  "subject": {
+    "repo": "igor-vii/Argus-Agent-Test-Lab",
+    "event": "repository boundary — forward-only split, no history rewrite, no force-push",
+    "snapshot_commit": "efbf51ef8604040c74aa1d40593af9a08fa553de",
+    "manifest": "attestations/evidence/0013-boundary/product-layer-manifest.json",
+    "product_repo": "igor-vii/Argus-Agent-Test-Lab-product (private)",
+    "note": "The public repository retains the proof layer only: attestations/ (sealed records, public key, index), tools/registry/ (sign/verify, stdlib-only), site/ (argus-lab.tech) and all sealed evidence paths. Engine, scenario specs, SUT harnesses, adapters and engagement archives moved to the private product repository; the manifest pins the sha256 of every moved file at the last public snapshot, so any future disclosure of product code remains verifiable against what was public."
+  },
+  "run_ts": "2026-10-31T18:55:40Z",
+  "self_run": true,
+  "scenarios": [
+    {
+      "id": "proof-layer",
+      "name": "RegistryVerificationSite",
+      "verdict": "PUBLIC",
+      "checks": "attestations/ (13 sealed records + public key + index), tools/registry/, site/ (argus-lab.tech), CI workflow latest-seal.yml — unchanged by the split. The verify contract is unchanged and dependency-free: git clone && node tools/registry/verify-registry.mjs (node stdlib only, no npm install).",
+      "findings": []
+    },
+    {
+      "id": "product-layer",
+      "name": "EngineScenariosAdapters",
+      "verdict": "PRIVATE",
+      "checks": "157 files (1,536,339 bytes) moved: engine src/ (94 files), scenario method docs (block-b MATRIX/REGISTRY/BLOCK_B_TEST_MATRIX, guide, scenarios, plans, audits), SUT harnesses (sut-x402/, sut-server, paypal-adapter code), engagement archives, product build configs. Sealed evidence was checked against all 49 file-kind evidence paths and retained; exactly one sealed file lives under src/ and stays public: src/tests/blockb/SBS19_BlockRunNano.test.ts (argus-seal-0006).",
+      "findings": []
+    },
+    {
+      "id": "published-refs",
+      "name": "ExternalLinksContinuity",
+      "verdict": "PUBLIC",
+      "checks": "Everything already referenced from public threads stays public and byte-identical: branch block-b/v1-scenarios and docs/block-b/fixtures/S-BS-06/ (x402 #3866 follow-up), repo root and branch names referenced by the S-BS-06 finding report, all evidence paths rendered on argus-lab.tech. Sealed fixtures remain self-describing (pre-registrations and matrix rows recorded in the fixtures), so verification of past runs does not depend on the moved method docs.",
+      "findings": []
+    }
+  ],
+  "findings_summary": [],
+  "notes": "Rationale: open-core boundary between the proof layer (verifiable public claims — the seals, the verification ritual, the site) and the product layer (engine, scenario library, SUT harnesses — the lab's working know-how). The boundary is itself a chain event: this record is signed, the manifest is hash-pinned evidence, and the split commit follows the snapshot commit directly, so the exact moment the product layer went private is publicly verifiable. Sealed evidence integrity is unaffected: verify-registry re-checks all evidence hashes against the retained files. Reproducibility of future runs is a commercial property of the lab service and is intentionally not public; reproducibility of past sealed runs is preserved through the sealed fixtures, harness files and captured outputs that remain in the public tree. Branches are untouched; no force-push; no history rewrite — versions up to the snapshot commit remain public history, which is stated rather than hidden.",
+  "evidence": [
+    {
+      "kind": "file",
+      "path": "attestations/evidence/0013-boundary/product-layer-manifest.json",
+      "sha256": null
+    }
+  ]
+}

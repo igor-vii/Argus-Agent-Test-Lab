@@ -1,0 +1,802 @@
+{
+  "manifest_id": "argus-boundary-0013-manifest",
+  "generated_at": "2026-10-31T18:55:09Z",
+  "snapshot_commit": "efbf51ef8604040c74aa1d40593af9a08fa553de",
+  "snapshot_branch": "main",
+  "rule": "Every file listed here moved out of the public repository in the boundary commit that follows snapshot_commit. The private product repository MUST contain these files with exactly these sha256 digests. Files sealed as evidence by attestations/records/* were verified against the registry and retained in the public repository; they are NOT listed here.",
+  "retained_sealed_evidence": [
+    "src/tests/blockb/SBS19_BlockRunNano.test.ts"
+  ],
+  "counts": {
+    "moved_files": 157,
+    "moved_bytes": 1536339,
+    "retained_sealed_evidence_files": 1
+  },
+  "files": [
+    {
+      "path": ".env.example",
+      "sha256": "9cfb8f9fc49063eb69bf2ea3743d074231bf6fa1a97726de15137d6d9841c3bc",
+      "bytes": 336
+    },
+    {
+      "path": "app/app.js",
+      "sha256": "4175c3aa7c59be4c7ab848d7707088a34e223d0bf2c145961b3d82f11c1ed727",
+      "bytes": 2067
+    },
+    {
+      "path": "app/index.html",
+      "sha256": "0fe347fb93258920004ca897a75adeafbe03d88fc092616db612a59f03378cbf",
+      "bytes": 12535
+    },
+    {
+      "path": "app/styles.css",
+      "sha256": "dbeaebcdc6f6ad50e3239d66805f686c5873d875fc7e929e4475121ab2f2be14",
+      "bytes": 11152
+    },
+    {
+      "path": "docs/audits/b4-readiness-audit-2026-10-01.md",
+      "sha256": "ed0f56026f5a02e1f974e728749cf489b2b73da96aef5a376c07d93e60cf5e82",
+      "bytes": 7138
+    },
+    {
+      "path": "docs/audits/block-a-audit.md",
+      "sha256": "cff8c11aa7ef5f7386d707b200fb3b76868b9cb4c209f7a8d413a176340a6a02",
+      "bytes": 6177
+    },
+    {
+      "path": "docs/audits/r3-final-consolidation-audit.md",
+      "sha256": "dad153fcdcc4f8a3bd704e1d398d8081da5bafacfe6befedeb6eb171f067f7d3",
+      "bytes": 2473
+    },
+    {
+      "path": "docs/block-b/BLOCK_B_TEST_MATRIX.md",
+      "sha256": "93985b3c421fbbb1d0f3f4b3cfd40ce5d6ff36a758381b5d8169534548cd83fc",
+      "bytes": 27389
+    },
+    {
+      "path": "docs/block-b/MATRIX.md",
+      "sha256": "deecac967326ef9df866ebd857650726b38ddd14bef06788329bb3f308b16697",
+      "bytes": 30824
+    },
+    {
+      "path": "docs/block-b/REGISTRY.md",
+      "sha256": "9fec9b8314a8de4cbcb97cff16f45bd1a581e8fc296a9d92c95ac77c07c6c2d0",
+      "bytes": 31366
+    },
+    {
+      "path": "docs/guide/ARGUS-CONTROL-ROOM-UI.md",
+      "sha256": "6100567a575e5b2cbb83fec2921249bd24718e5d5ee99196d8f01a8bcf4d4c9a",
+      "bytes": 5712
+    },
+    {
+      "path": "docs/guide/GETTING_STARTED.md",
+      "sha256": "fb83ef38ca30e374f9655ddbb08c1896d528c2e58fd31c1433c351215f358b7a",
+      "bytes": 5254
+    },
+    {
+      "path": "docs/guide/agent-testing.md",
+      "sha256": "497c5a1464c76bba23c6794f803f1a9c4918eedd788a9df06ed4449492ef672f",
+      "bytes": 2335
+    },
+    {
+      "path": "docs/guide/argus-layers.md",
+      "sha256": "193ee56235087d97ae395fc7429ad6f895255fa5e9e59d83d460811cbab822d7",
+      "bytes": 6978
+    },
+    {
+      "path": "docs/guide/argus-product-boundary.md",
+      "sha256": "aba33e9c8e58597696a46c4d82dc32f20288297b6c0b1066e0a1c6905d611ec2",
+      "bytes": 2976
+    },
+    {
+      "path": "docs/guide/evidence-and-verdicts.md",
+      "sha256": "f29fc9b5613ac5fdc7b416ac5bf3bcc127f1f5d164d755812fce81a976713b43",
+      "bytes": 1504
+    },
+    {
+      "path": "docs/guide/evidence-source-map.md",
+      "sha256": "549bbf53e5177449ad87a51dccb97bf2d11d4f131ca35cdca6ae43b7d6341e01",
+      "bytes": 27279
+    },
+    {
+      "path": "docs/guide/l0-f2-fault-dispatch-contract.md",
+      "sha256": "de2f234e70dfecaaad1d75ca6905fdda86e4354f1ff23583a356091f59543f72",
+      "bytes": 1317
+    },
+    {
+      "path": "docs/guide/role-rename-inventory.md",
+      "sha256": "2da0d887ad640708c65ec83fd4faf2a2edecd97cee601efd8787013f4f3b2e64",
+      "bytes": 24916
+    },
+    {
+      "path": "docs/guide/what-is-argus.md",
+      "sha256": "0cfa9d7b4a2c355828b3fba68943c23e51c36ad81203d5a7fa874cc50e08a454",
+      "bytes": 3437
+    },
+    {
+      "path": "docs/guide/x402-reference.md",
+      "sha256": "8c07204549cfd0f7dbf6d73665963cbbb5d501e5629fe0b198b1fce263263e5c",
+      "bytes": 11556
+    },
+    {
+      "path": "docs/plans/ROADMAP-2026-09-13.md",
+      "sha256": "0268d1dddee625ba1d79a66c53016228e470fbd0d7ae1d7fa30acd969268bfb5",
+      "bytes": 4669
+    },
+    {
+      "path": "docs/plans/ROADMAP-2026-09-18.md",
+      "sha256": "eedf2c0b682d16ab1330eb656847d73bd98bac265130e4978c248c8a9205da7e",
+      "bytes": 8938
+    },
+    {
+      "path": "docs/plans/backlog-ideas-a2a.md",
+      "sha256": "18e2e393775935d3b95b1664bb6a5c4a17d8afa5bb77aa26ad214926b65a1b58",
+      "bytes": 8391
+    },
+    {
+      "path": "docs/plans/backlog-open-decisions.md",
+      "sha256": "c2b205b96847a2237f9300d1330f0d282cd614687ffba172fc7b4c7775a7ed96",
+      "bytes": 36329
+    },
+    {
+      "path": "docs/plans/valuation-narrative.md",
+      "sha256": "f6fb94c6c84c216d60ffe1d8e6bce4694aad5e901561b696e6808fe519ec9a6a",
+      "bytes": 3412
+    },
+    {
+      "path": "docs/scenarios/README.md",
+      "sha256": "e11fd2705cc6b3bb0cca5636b484aa4ec12628af3207cd774f6f1150ed3e3d97",
+      "bytes": 3966
+    },
+    {
+      "path": "docs/scenarios/b4-block-a.md",
+      "sha256": "60a05901901917f22812f74cce6f673e56d07874264e209baa4633ebb254a237",
+      "bytes": 2808
+    },
+    {
+      "path": "docs/scenarios/b4-block-b.md",
+      "sha256": "d430ca211dbdc62373fa2a4ffeb27361e9f8f1bff5abb495ded9e24d194ea72e",
+      "bytes": 3233
+    },
+    {
+      "path": "docs/scenarios/b4-block-c.md",
+      "sha256": "01866d3500599607e09e6801f9c9a3c182cee27c05fd29579088e81e74495dee",
+      "bytes": 2256
+    },
+    {
+      "path": "docs/scenarios/b4-block-d-findings.md",
+      "sha256": "19981e6d0ed76789127d501395b0e62947bfef54348c287604814f38da926c6c",
+      "bytes": 11781
+    },
+    {
+      "path": "docs/scenarios/b4-block-d.md",
+      "sha256": "8e8c49f3846734e967cdd2b9fc9c6dbb457e640fe1d4f3ef105fe93f00a805b7",
+      "bytes": 9294
+    },
+    {
+      "path": "docs/scenarios/b4-defect-act.md",
+      "sha256": "436ec42a4b301072e6fcbb913aac8301a020b94bcc9895c4d4f2f76b99f7a38b",
+      "bytes": 7282
+    },
+    {
+      "path": "docs/scenarios/b4-scenario-inventory.md",
+      "sha256": "31357702bd1aec57cf3b67c59a23223666e7bd53a97d2b9f76c5c14ddef579ec",
+      "bytes": 13509
+    },
+    {
+      "path": "engagements/README.md",
+      "sha256": "90fba7055046fe8290c38a3d817e319d8f8ea78c7488a782ba3e8b36556561ff",
+      "bytes": 1213
+    },
+    {
+      "path": "engagements/zeus-secretariat/README.md",
+      "sha256": "dedc2fcee5ce724ce72cd7b15c3f71f9655e5f0c6b9cd5ec42c698dc6a75ee84",
+      "bytes": 950
+    },
+    {
+      "path": "engagements/zeus-secretariat/report/argus-secretariat-final.md",
+      "sha256": "676aeddbb9fe7d59226fc95c714180e4dbf44afd52f6e50ece3673da6f8e0537",
+      "bytes": 15905
+    },
+    {
+      "path": "engagements/zeus-secretariat/report/argus-secretariat-final.rus.md",
+      "sha256": "e0ac5819d66b11588fb0b3ed8997f00febabaa9a1ba775bf46468c1b4e7eb58f",
+      "bytes": 20816
+    },
+    {
+      "path": "engagements/zeus-secretariat/runs/2026-09-24/argus-secretariat-run.json",
+      "sha256": "e57d213cb75fb40511738e84cfb2e6e50b24a0f9e011fbb27c012b97d2839193",
+      "bytes": 8489
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "2964287f21127f6280b8e6a16bde79ea509390e6e94f5fa5abaa215db08b7727",
+      "bytes": 90969
+    },
+    {
+      "path": "package.json",
+      "sha256": "0cb35c9293313cc4eb09c52ac0b96a3d40a38b10d8bc7f8d14efc57229811f50",
+      "bytes": 794
+    },
+    {
+      "path": "scripts/bc_detailed.ts",
+      "sha256": "00410fc56033bfc271c4e4429aeb80ae7eab647cebaecb465c07995a778fae0b",
+      "bytes": 3545
+    },
+    {
+      "path": "scripts/local-smoke.mjs",
+      "sha256": "8730ce7c6c203bec84d731bbd1af63932e5a75546b968c6e03cf061746a339bf",
+      "bytes": 1468
+    },
+    {
+      "path": "scripts/run_wave3_live.sh",
+      "sha256": "5d91fd2e453dea7e3cbc02db47c94b758875f621f0c3bf6b09bbfba354a55b7a",
+      "bytes": 4361
+    },
+    {
+      "path": "src/adapters/MockTargetAdapter.ts",
+      "sha256": "c555af1027d940eb7672e9c52ec1d4a73725a12ce9259b74b31ccadc70a5f33d",
+      "bytes": 8770
+    },
+    {
+      "path": "src/adapters/http/HttpAgentAdapter.ts",
+      "sha256": "e3ecbcd48196cebfd14348572118daaccef48747b73557cb2e1894fd6a19c097",
+      "bytes": 8114
+    },
+    {
+      "path": "src/adapters/mcp/McpAgentAdapter.ts",
+      "sha256": "9e52ed7b7a4d3dc7319248ee163dda76b39db67e18916f69fc26fc3ec71e075e",
+      "bytes": 7967
+    },
+    {
+      "path": "src/adapters/payment/PaymentAdapter.ts",
+      "sha256": "1c9cebfebeedcec96040ff547da5f4f4f88b9105ef51e60eedf2f3d41915cc02",
+      "bytes": 3663
+    },
+    {
+      "path": "src/adapters/payment/PaymentAdapterFactory.ts",
+      "sha256": "625949dc55935bfac207ad79856caac936564b9a5137fb2379cfca6cc792d1a7",
+      "bytes": 1385
+    },
+    {
+      "path": "src/adapters/payment/SigningBinding.ts",
+      "sha256": "087357543738f76ec442f81570f93a41580058e8a2cf90a672c15aadfbe58871",
+      "bytes": 7417
+    },
+    {
+      "path": "src/adapters/payment/evm/BasePaymentAdapter.ts",
+      "sha256": "b95c323bf98d03c08d28e3bbc321420c40b3f5ddb27c8a194ddfb6bf52e99f52",
+      "bytes": 1209
+    },
+    {
+      "path": "src/adapters/payment/evm/BaseSepoliaPaymentAdapter.ts",
+      "sha256": "b7cb45aa66e3e4e519d58b4fa6c16388cdb7efc9079e352129ce4b6e7646e24f",
+      "bytes": 7964
+    },
+    {
+      "path": "src/adapters/payment/evm/XLayerPaymentAdapter.ts",
+      "sha256": "5f3543328d1115ba121185f91c6a3e42f0f2320e239d8bdedcf4e52c7194d1de",
+      "bytes": 1124
+    },
+    {
+      "path": "src/adapters/payment/index.ts",
+      "sha256": "ab5ca1ed681c5dabfba060958000cb8ae24b90bc4c7c23454165cd7cabf2b0dc",
+      "bytes": 152
+    },
+    {
+      "path": "src/adapters/payment/solana/SolanaPaymentAdapter.ts",
+      "sha256": "1db783df9be17a29e05290b8daccaafa27d1af3a6257cc280e7da7651e96cd81",
+      "bytes": 1586
+    },
+    {
+      "path": "src/adapters/seller/X402SellerAdapter.ts",
+      "sha256": "a1ae1534ac02558c4fb611090445d8b1f4948430e94ac6f396a1480f0248d901",
+      "bytes": 16512
+    },
+    {
+      "path": "src/adapters/x402/X402AgentAdapter.ts",
+      "sha256": "5a286dede140f04315fbd5cafde73f35759480b6a9bc4f42dd828da0cec8c357",
+      "bytes": 15584
+    },
+    {
+      "path": "src/blockb/BlockBRegistry.ts",
+      "sha256": "739f6910a1f1c233866d7b89126952a4174473ea830722f4ea2b8110dc259ccf",
+      "bytes": 105500
+    },
+    {
+      "path": "src/blockb/BlockBRoles.ts",
+      "sha256": "c89b509beed26f5e3d612c37dd068d64a67b78fbf63df6418e4c23b52591207b",
+      "bytes": 4360
+    },
+    {
+      "path": "src/blockb/BlockBScenario.ts",
+      "sha256": "7c36635e760c81bf6adfe627ae461d9e4154ca275c5baeb38b01538dbff2e5e2",
+      "bytes": 10288
+    },
+    {
+      "path": "src/blockb/CanonicalResource.ts",
+      "sha256": "e474b745c01c9668ad40b92c72d6760cbad100eb4aa0b5cc76f2478e4d4fa331",
+      "bytes": 2684
+    },
+    {
+      "path": "src/blockb/FundingProvider.ts",
+      "sha256": "ec906cf327079643bc9168550fcdd0cbee4063aebccb56147a06a33f312d06ef",
+      "bytes": 5709
+    },
+    {
+      "path": "src/blockb/PaymentFaultInjector.ts",
+      "sha256": "670ddf9e873a3a6e8b662b1cc3a35a1dd1a0b1401e61c00297e2ab974d25b98e",
+      "bytes": 11401
+    },
+    {
+      "path": "src/blockb/examples/S_BC_01_BadSignature.ts",
+      "sha256": "043e2c6b77fc0e899c83a40de052635b06abbb5eb4b0577d3c7eb0ed37479976",
+      "bytes": 4324
+    },
+    {
+      "path": "src/blockb/index.ts",
+      "sha256": "1acc8e0592d8edc4c4f1ec5c1d200fa12936b6bf0a61f7097211e59735398ed2",
+      "bytes": 2640
+    },
+    {
+      "path": "src/blockb/runners/BcRunner.ts",
+      "sha256": "93ebd80085fb2033c3801c0c4b83c23b5c77e481378eaa125749e0a33782bf54",
+      "bytes": 14950
+    },
+    {
+      "path": "src/blockb/runners/BlockBGate.ts",
+      "sha256": "d1fb43e5f6bfcc6586b7ae66ee6510450cb2daddd89274943f5131bde54a574b",
+      "bytes": 4936
+    },
+    {
+      "path": "src/blockb/runners/BlockBRunnerTypes.ts",
+      "sha256": "82d45b1bb5232c4f13a89519a5906df51c13c79714033d19e7bd458e4e50f0ef",
+      "bytes": 20490
+    },
+    {
+      "path": "src/blockb/runners/BsRunner.ts",
+      "sha256": "90de71921a3631b8aba01b299db781f30203c946afed6682897ce721603aef09",
+      "bytes": 46290
+    },
+    {
+      "path": "src/blockb/runners/FacilitatorDrainProbe.ts",
+      "sha256": "4702ab76ab6dbb24cba9e33c71de6424414cd0864c969e98a2145d71209a0d09",
+      "bytes": 3227
+    },
+    {
+      "path": "src/cli/ScenarioRegistry.ts",
+      "sha256": "fd08fac64a4e4c7a60fc039684d764b0ccb9123f287f9d549d09e5c8f2beb690",
+      "bytes": 1693
+    },
+    {
+      "path": "src/cli/TargetAdapterRegistry.ts",
+      "sha256": "5f5155b85020005c11f22994046fcd3f133afbf2900d60eb256406589f3ab85a",
+      "bytes": 4555
+    },
+    {
+      "path": "src/cli/argus.ts",
+      "sha256": "84d853f02e3e921bf039634946a0c0b66bc9add0ebc2c538c389fff055154c5c",
+      "bytes": 14258
+    },
+    {
+      "path": "src/cli/blockBCommand.ts",
+      "sha256": "c40e2d37bf29970eefec94b4c632a7bd7a55d66ef9cda34e2d13be81778b289b",
+      "bytes": 33195
+    },
+    {
+      "path": "src/cli/session.ts",
+      "sha256": "bd7a034260bee0e79b56f0354920872102de685c08f98c785b5c9a62ecc97649",
+      "bytes": 5313
+    },
+    {
+      "path": "src/core/AgentController.ts",
+      "sha256": "95fafc56cf910ffa48a8807eaecb27c455cd003e3158e1a69f078f268cdfbde4",
+      "bytes": 10648
+    },
+    {
+      "path": "src/core/AgentTargetPort.ts",
+      "sha256": "af8665a0f2acb6f3ee59866e021481037dfa355cfd7ffb219445b20c22bed0be",
+      "bytes": 7811
+    },
+    {
+      "path": "src/core/AssertionEngine.ts",
+      "sha256": "324d41220b8150045c2d5b0a3dcb59041b5fe893d31d7e11a3475c7e536a44ae",
+      "bytes": 1934
+    },
+    {
+      "path": "src/core/Assertions.ts",
+      "sha256": "a2ef8ac320ecb3760738189dc9d5db73185476daac206a22dd21a4f1f951b239",
+      "bytes": 1545
+    },
+    {
+      "path": "src/core/B6BEvidence.ts",
+      "sha256": "7c277a86e339881cc51d706ea25b3ea0a3744c841b76ba816e0a5ce641f6a259",
+      "bytes": 6301
+    },
+    {
+      "path": "src/core/Evidence.ts",
+      "sha256": "753cabee1994bc95b296f5b527246254251ebc29de8eadc38d8c67b9739ebef8",
+      "bytes": 954
+    },
+    {
+      "path": "src/core/EvidenceCollector.ts",
+      "sha256": "1906b66bab706798fff8ed62411d58c194dbe67e3cc5ec54bba028503762dbda",
+      "bytes": 3296
+    },
+    {
+      "path": "src/core/ExecutionRegistry.ts",
+      "sha256": "6e97b45e5afff58111fbbcd68000824093be2e490c5b21b966ccf359c3d67927",
+      "bytes": 625
+    },
+    {
+      "path": "src/core/Fault.ts",
+      "sha256": "386b8dbfedff090882720a7a0b15a2145d6eeb5e7f29aa3fcebe63bd2a8d9cab",
+      "bytes": 1550
+    },
+    {
+      "path": "src/core/FaultInjector.ts",
+      "sha256": "cb961bbfe1122ff796b75486bd9ad14099f67385ce149d270a6b087e9f6c29e9",
+      "bytes": 6536
+    },
+    {
+      "path": "src/core/Participant.ts",
+      "sha256": "a2cf191f2305886978d90b4a70317f6be0ae6bc79ac3511561ba6eca52e07bd6",
+      "bytes": 1659
+    },
+    {
+      "path": "src/core/RunLifecycle.ts",
+      "sha256": "5fabc396e8a12d02958190b733a3d7f5ceb0da242a86b3c6f8b3dc5c3d4aa64e",
+      "bytes": 1078
+    },
+    {
+      "path": "src/core/RunOrchestrator.ts",
+      "sha256": "3ee6273a6658aeaf0034a2aa24b88aa5f44dcb31b7bc9017da438b24f8941939",
+      "bytes": 11751
+    },
+    {
+      "path": "src/core/ScenarioDefinition.ts",
+      "sha256": "e788c2962ddc441baedd2f98882057004dfa26f532dbd371d1db51b691f49843",
+      "bytes": 860
+    },
+    {
+      "path": "src/core/ScenarioEngine.ts",
+      "sha256": "9e817b0638dcb5753adae599927a1c7d49d4cad95bdf895f6e957719de950df7",
+      "bytes": 14324
+    },
+    {
+      "path": "src/core/Topology.ts",
+      "sha256": "d12daf1e3fcd83187d971ec7b13114f9530181ee8109fb333b0938e40b816dbd",
+      "bytes": 696
+    },
+    {
+      "path": "src/core/validateScenario.ts",
+      "sha256": "344ec33bdc615050c4ab2b2dedcf264ca2e4ffcf6b753ff2fa0d192573b7f444",
+      "bytes": 5671
+    },
+    {
+      "path": "src/index.ts",
+      "sha256": "69a365c01b6cc0a787e45f26191c812d0262139f36a1c0f6bb3456957af0eef5",
+      "bytes": 1439
+    },
+    {
+      "path": "src/scenarios/S10_DeliveryUncertain.ts",
+      "sha256": "16ba05896647e2fe863a8f7c123944c157b1ff41a973fe2cd83db0e75cbf7a66",
+      "bytes": 8353
+    },
+    {
+      "path": "src/scenarios/S11_OverBudget.ts",
+      "sha256": "d16709a24471f769310dab492c28ef942a3677acd86aca7f7b493b21b33ff662",
+      "bytes": 8269
+    },
+    {
+      "path": "src/scenarios/S1_DuplicateRequest.ts",
+      "sha256": "4dbf1246a4122b6532c0ac93f1cfea75ca76e2b2859ba1b9240d12bc257a1abe",
+      "bytes": 3031
+    },
+    {
+      "path": "src/scenarios/S2_PaymentBeforeExecution.ts",
+      "sha256": "95efad7748cc326465d62f5e0ffb89cbee9b89d30ab7f3dd9b03fb04c320d397",
+      "bytes": 3784
+    },
+    {
+      "path": "src/scenarios/S3_CrashAfterSettlement.ts",
+      "sha256": "63f94bd3af45e69f58e68e9f55b6071fa190051ae959f6f88f60fcc31fd701fd",
+      "bytes": 3478
+    },
+    {
+      "path": "src/scenarios/S4_SellerTimeout.ts",
+      "sha256": "3999ee2d77d91d9cd214b08a8679431888be45c736b8735e80b6db9fd1a33002",
+      "bytes": 3955
+    },
+    {
+      "path": "src/scenarios/S5_ConcurrentDuplicate.ts",
+      "sha256": "eabf6af8323b2735c598a83bb5bc514d95821af63bdaea4c00ae9132af241371",
+      "bytes": 3454
+    },
+    {
+      "path": "src/scenarios/S6_PaymentRetry.ts",
+      "sha256": "377d48b31750a8d10439c6a9245a04fb184e03fea04a9f778e56eacc8221bc71",
+      "bytes": 3084
+    },
+    {
+      "path": "src/scenarios/S7_LostDelivery.ts",
+      "sha256": "04da18572c38948528694e2dc292cc935661a9d42c20950c3869542c4a3d4006",
+      "bytes": 4568
+    },
+    {
+      "path": "src/scenarios/S8_X402Payment.ts",
+      "sha256": "2d1751c81f7529d364a59862729e723396fee2e2a13d5a3ddd3504b6ba5ef034",
+      "bytes": 3851
+    },
+    {
+      "path": "src/scenarios/S9_X402Seller.ts",
+      "sha256": "a2ca27eaa17eeb18c54fce5ef95487fe5b3810b293344c4fdd97ac94f01eeb0f",
+      "bytes": 6504
+    },
+    {
+      "path": "src/sessions/SessionManager.ts",
+      "sha256": "8910c8493f468b1db927d4b1a601ffb6e43afe314513952c42a3e6ec29516b6a",
+      "bytes": 2737
+    },
+    {
+      "path": "src/sessions/TestSession.ts",
+      "sha256": "e29499f965e295017f32fc544817b770f38a5000efa9856036902c1dcd2f89b8",
+      "bytes": 2940
+    },
+    {
+      "path": "src/sessions/index.ts",
+      "sha256": "3a9a0636bd3e3461f0bbc0202b17db9e58757359b76012754d001518d4d2fcb8",
+      "bytes": 194
+    },
+    {
+      "path": "src/tests/AgentTargetAdapter.test.ts",
+      "sha256": "c8287a4d94cae23dc790168ea546d4d92a2572ba4a21a13e24e50bf736ff4201",
+      "bytes": 10435
+    },
+    {
+      "path": "src/tests/BlockD-S10-S11.test.ts",
+      "sha256": "0caf2bf3955f457dc108608253ee7337ef5685b19979e9ee7c411189ef052937",
+      "bytes": 8138
+    },
+    {
+      "path": "src/tests/adapters/HttpAgentAdapter.test.ts",
+      "sha256": "503c7a48dde46967cad1da81ff50b411f3be01830bd2e9b8da0a6f19582c4287",
+      "bytes": 8195
+    },
+    {
+      "path": "src/tests/adapters/McpAgentAdapter.test.ts",
+      "sha256": "da7c788dd0abd9b987aad0cd9894514d4ceb1606542848b04bc108b3a8032008",
+      "bytes": 7753
+    },
+    {
+      "path": "src/tests/adapters/payment/BaseSepoliaPaymentAdapter.signingBinding.test.ts",
+      "sha256": "7ccc7f22c27692a4ec9c0923755b277bb829e49bd931adadcf5430aeb913e722",
+      "bytes": 7875
+    },
+    {
+      "path": "src/tests/adapters/payment/PaymentAdapterFactory.test.ts",
+      "sha256": "174c5f166eeda708c02fc688cc97fed540951f72ee3dab8b5f06fe37604e42e1",
+      "bytes": 1496
+    },
+    {
+      "path": "src/tests/adapters/x402/X402AgentAdapter.test.ts",
+      "sha256": "7b1bc18ea196e0b0b9b2e7d81e75f82937910be41e4cfcfd9ff4bb99f256ba71",
+      "bytes": 15050
+    },
+    {
+      "path": "src/tests/b6b/B6BAcceptance.test.ts",
+      "sha256": "625462799152963c5a0455c09f4f72cbeed0b61aa65f93a77cfa2d7cec232af0",
+      "bytes": 13895
+    },
+    {
+      "path": "src/tests/b6b/B6BAcceptanceHarness.ts",
+      "sha256": "6dc1fe63e4d2ff0db2206e23e53a6973c8fb5ff84afffe1541f306e664453a53",
+      "bytes": 15592
+    },
+    {
+      "path": "src/tests/b6b/index.ts",
+      "sha256": "95333bbce00786c321d47a29014fa33e358854dc74cf1bf823fe38eff2bcc5ef",
+      "bytes": 267
+    },
+    {
+      "path": "src/tests/blockA/BlockA_S8_S9.test.ts",
+      "sha256": "965116d90a5e42ed251b85992ce801474bf20a05bddbffff8c4198c2004ae5b8",
+      "bytes": 21523
+    },
+    {
+      "path": "src/tests/blockb/BlockBContract.test.ts",
+      "sha256": "c57f91dd7c545e35b8fb26777382ef426012a0521db076081a0aaac8174a2abb",
+      "bytes": 13119
+    },
+    {
+      "path": "src/tests/blockb/BlockBRunner.test.ts",
+      "sha256": "cd3bbc0548368c1973134238c0dc7f98f269426fb5f427c484e9405d179503c8",
+      "bytes": 61322
+    },
+    {
+      "path": "src/tests/blockb/SBS14_SBS15_Extension.test.ts",
+      "sha256": "d6046e48b411f65ccbd9645fbe52c40b433382a617fbbf17de97417c36e5baa8",
+      "bytes": 31276
+    },
+    {
+      "path": "src/tests/cli/ArgusCLI.test.ts",
+      "sha256": "750e24be8f38651be615739ec19c800d327d832c7b7e1b7d7c431bbca012c72f",
+      "bytes": 991
+    },
+    {
+      "path": "src/tests/cli/TargetAdapterRegistry.test.ts",
+      "sha256": "238eabdc1ba18393d3231c76fde06a769eb540c88fdbbe9328e25a48269abd43",
+      "bytes": 4356
+    },
+    {
+      "path": "src/tests/core/AgentController.test.ts",
+      "sha256": "23a8e8b1d107a9c0bac66227f484277e6e6cebe3c8f4b215faff0a8c966fad78",
+      "bytes": 14457
+    },
+    {
+      "path": "src/tests/core/AssertionEngine.test.ts",
+      "sha256": "84d36d0331cee5bd5b51df5d43205d0df45a26d7cd9b028e2672d5c0ee9a97f5",
+      "bytes": 3512
+    },
+    {
+      "path": "src/tests/core/EvidenceCollector.test.ts",
+      "sha256": "9234ae5d7df762f64bf0be692d18be37902d42475a877ea9a111c536d86388aa",
+      "bytes": 3551
+    },
+    {
+      "path": "src/tests/core/FaultDispatchContract.test.ts",
+      "sha256": "b98d5277aa1b065c7f683bbdfd83b1c03983582eacc33d789621ccf248b9a462",
+      "bytes": 5302
+    },
+    {
+      "path": "src/tests/core/FaultInjector.test.ts",
+      "sha256": "ec1eaeab465a193e26f32b50aec1a9fc7e40a29ea56bae6eb1348dbda1ded99d",
+      "bytes": 7763
+    },
+    {
+      "path": "src/tests/core/LifecycleObservationPlumbing.test.ts",
+      "sha256": "2eafb5473703015e0cdd002b4d383b3555806f23c9a91b896a596d1a199e9aeb",
+      "bytes": 21582
+    },
+    {
+      "path": "src/tests/core/Participant.test.ts",
+      "sha256": "f7f95d0525316b6477377663c597b78afcfcede9cd0fae5ce7e9884ad866349d",
+      "bytes": 4274
+    },
+    {
+      "path": "src/tests/core/ParticipantRouting.test.ts",
+      "sha256": "9d890a0d44b91b82a04b1a50e485d321e5a160f7de1cd6f54ab700f33bd74f1c",
+      "bytes": 5341
+    },
+    {
+      "path": "src/tests/core/ScenarioEngine.test.ts",
+      "sha256": "f01f8f3f9f59e0bfd3b2b8ba8e4f9f308198b054c8f07f7807bdc5ccad639978",
+      "bytes": 12363
+    },
+    {
+      "path": "src/tests/external/.gitignore",
+      "sha256": "fece5e911fee0763510b0e59e9e2f22c724ce923e49f05b3f45713d9eba7f408",
+      "bytes": 10
+    },
+    {
+      "path": "src/tests/fixtures/sutServer.test.ts",
+      "sha256": "2d6ad802caa227c218ec3fa01fa1e96393ec8bd8d8de4884465af1c8f11d20ae",
+      "bytes": 11594
+    },
+    {
+      "path": "src/tests/helpers/MockX402Server.ts",
+      "sha256": "409700629f4f935095bd4afdef8deab035983c586823effeffae2fe6e5db61d9",
+      "bytes": 5183
+    },
+    {
+      "path": "src/tests/integration/X402FullFlow.test.ts",
+      "sha256": "2a2560962428b3e8890df010c10df932bf43ede39058a22631e05b4cb7288ae3",
+      "bytes": 5693
+    },
+    {
+      "path": "src/tests/scenarios/S1-S7.test.ts",
+      "sha256": "1eb7c9017c88760c397b4af2e216eb7dcc471ad864d5ca55bdabba70e2e2df28",
+      "bytes": 6141
+    },
+    {
+      "path": "src/tests/scenarios/S2-S4-SellerAction.test.ts",
+      "sha256": "de3ac6707660b5914a1551bd3a45f5f47932b56aab2e6178511ef43099b35a23",
+      "bytes": 16560
+    },
+    {
+      "path": "sut-x402/battery.mjs",
+      "sha256": "59d25964de77f953145a82776bdb2de661f9b2599ce864ad76a7ad6601237dd1",
+      "bytes": 15599
+    },
+    {
+      "path": "sut-x402/client.ts",
+      "sha256": "fad1a671ab1bee08287667ca8c6975f5f98ab8ab1a1db2cfab6d6b57925d77cc",
+      "bytes": 2312
+    },
+    {
+      "path": "sut-x402/client_v2.ts",
+      "sha256": "7eed40ff6bfeb97f6a1550a488c78b3db5d84a326f9760cf6c29a1b5ecfb1378",
+      "bytes": 14713
+    },
+    {
+      "path": "sut-x402/client_v3.ts",
+      "sha256": "7db171dcdcec4c1c963e8c15a86250f2160a0b858e5e181fff1c83046737bd49",
+      "bytes": 13543
+    },
+    {
+      "path": "sut-x402/client_v4.ts",
+      "sha256": "7b78dc56511568c686f672c146d78b4e3fba24d560f547f578ef5cdf0e32706c",
+      "bytes": 16904
+    },
+    {
+      "path": "sut-x402/package-lock.json",
+      "sha256": "d617af6c56b10f194399a02430fed691e32cba1db4f56c4a46629b5f6c303ebc",
+      "bytes": 64149
+    },
+    {
+      "path": "sut-x402/package.json",
+      "sha256": "ec3c86607a5bab7681ddc0e292dfc7742f020b55a602e877c4d8b54351ae5296",
+      "bytes": 644
+    },
+    {
+      "path": "sut-x402/server.ts",
+      "sha256": "359f76545ed9ed0dc1bcb3f9eacbb041a22475b502c6e97138b1473171ebba41",
+      "bytes": 1921
+    },
+    {
+      "path": "tools/paypal-adapter/.env.example",
+      "sha256": "998e8e206e3b8e86f6f28fade3a7052b86d15c18d3c0643147fbfa7a49f38c25",
+      "bytes": 962
+    },
+    {
+      "path": "tools/paypal-adapter/README.md",
+      "sha256": "089bd973359791e123ab644ae1c487f04fba39c6689a390e3d012b289ebc585e",
+      "bytes": 4131
+    },
+    {
+      "path": "tools/paypal-adapter/mock-rail/paypal-mock.mjs",
+      "sha256": "44e49b522a8b21072c51724e71b08c51feb0a9b484ff20795ffe12a4f9aec7eb",
+      "bytes": 7012
+    },
+    {
+      "path": "tools/paypal-adapter/proxy/fault-proxy.mjs",
+      "sha256": "0683a63c5e85114ef9c72953a0e6cda4fa2ba5aa076a2293c37004333fc97110",
+      "bytes": 6410
+    },
+    {
+      "path": "tools/paypal-adapter/src/driver.mjs",
+      "sha256": "70d51b031d8536d4e929e1404e1c33a9b8bed4ad813cd19a64df11f6cda764f5",
+      "bytes": 8769
+    },
+    {
+      "path": "tools/paypal-adapter/src/run-s10.mjs",
+      "sha256": "1c4dde1b29b4487e9646348a161852a3730f60ea0f32a6aa886e1e508d56e99b",
+      "bytes": 10649
+    },
+    {
+      "path": "tools/paypal-adapter/src/run-s11.mjs",
+      "sha256": "9add848bd177f14e79c88714226165eecff9b66ca7bb6d45f1d18cede84775ad",
+      "bytes": 4912
+    },
+    {
+      "path": "tools/paypal-adapter/sut/serve_gateway.py",
+      "sha256": "496d84ad910a24345eaca9c60f05f2b00a8ffb0068bba6c0bc2c9329a270ae91",
+      "bytes": 3588
+    },
+    {
+      "path": "tools/sut-server/server.ts",
+      "sha256": "a9463eca38ed0b116267dfc206929ea2e7a932eaf4f6f6fa8b465c1d30f9c65b",
+      "bytes": 11451
+    },
+    {
+      "path": "tsconfig.json",
+      "sha256": "2fadaa258c51740a95af7e87abc2ccc5f12212c1ac0339a76673f4775cc8b9b1",
+      "bytes": 647
+    },
+    {
+      "path": "vitest.config.ts",
+      "sha256": "02bcabc3523cf3f87bf4380e33f2764f17c572cc334b6262eb80a90ba9359d5d",
+      "bytes": 175
+    }
+  ]
+}
