@@ -1,196 +1,92 @@
-# Argus Agent Test Lab
+# Argus Agent Test Lab — public proof layer
 
 [![latest-seal](https://github.com/igor-vii/Argus-Agent-Test-Lab/actions/workflows/latest-seal.yml/badge.svg)](https://github.com/igor-vii/Argus-Agent-Test-Lab/actions/workflows/latest-seal.yml)
 
-**AI Agent Testing & Reliability**
+**AI Agent Testing & Reliability** · [argus-lab.tech](https://argus-lab.tech)
 
-> **Test whether AI agents and agent-based systems behave correctly when the world goes wrong.**
+This repository is the **public proof layer** of Argus: the sealed, hash-chained
+evidence registry, the verification tooling, and the source of
+[argus-lab.tech](https://argus-lab.tech). It exists so that every public claim
+the lab makes can be checked by anyone, without trusting anyone:
 
-Argus is an independent black-box testing laboratory for AI agents and agent-based systems. It runs controlled scenarios against observable systems under test (SUTs), captures evidence, evaluates explicit assertions, and produces evidence-backed verdicts.
-
-**Agent → Scenario → SUT → Evidence → Verdict**
-
-## Public record
-
-- **Scenario registry** (runnable definitions): `src/cli/ScenarioRegistry.ts`
-- **Run & finding records** (signed, hash-chained): [`attestations/INDEX.md`](attestations/INDEX.md) — verify: `node tools/registry/verify-registry.mjs`. A seal attests run validity and findings completeness — never bug-freeness.
-
-## What Argus tests
-
-Argus focuses on failure boundaries that ordinary happy-path tests often miss:
-
-- payment and transaction flows
-- retries, duplicates, and idempotency
-- timeouts, crashes, and delayed responses
-- execution and delivery failures
-- ambiguous outcomes and missing observations
-- adversarial participant behavior
-- protocol and economic invariants
-- evidence, reconciliation, and recovery behavior
-
-The central question is:
-
-> **What happens when payment, execution, delivery, and participant observations diverge?**
-
-## Black-box SUT boundary
-
-Argus tests systems from the **outside**.
-
-A SUT is not assumed to be a particular product, implementation, or internal architecture. Argus determines the applicable interaction model from observable protocol and economic behavior and then applies scenarios from the **opposite participant role**.
-
-Conceptually:
-
-```
-                 Black-box SUT
-                       │
-              observable behavior
-                       ↓
-              role / capability probe
-                  ↙           ↘
-             CLIENT       RESOURCE_SERVER
-                │               │
-       seller-side tests   buyer-side tests
-                ↘               ↙
-                  Evidence
-                     ↓
-                   Verdict
+```bash
+git clone https://github.com/igor-vii/Argus-Agent-Test-Lab
+cd Argus-Agent-Test-Lab
+node tools/registry/verify-registry.mjs
+# → registry intact: N records, chain head …
 ```
 
-If the observable evidence does not establish a unique role, Argus must preserve **UNKNOWN / AMBIGUOUS** rather than guessing.
+Verification uses only the Node.js standard library — no `npm install`, no
+network access, no trust in this README.
 
-This is fundamental:
+## What is sealed here
 
-**UNKNOWN ≠ FAILURE**
+Records in `attestations/records/` are Ed25519-signed and hash-chained
+(`prev_record_hash` → chain head). Each record pins the sha256 of its evidence
+files. A seal attests run validity and findings completeness — never
+bug-freeness.
 
-An unresolved outcome is a test result that may require reconciliation or additional evidence.
+- [`attestations/INDEX.md`](attestations/INDEX.md) — human-readable index
+- [`attestations/records/`](attestations/records) — the signed records
+- [`attestations/keys/`](attestations/keys) — public key `argus-lab-2026q4r2`
+- CI (`.github/workflows/latest-seal.yml`) re-verifies the whole registry on
+  every push; a tampered or broken seal turns the build red, publicly.
 
-## Secretariat is one SUT, not the target definition
+## Repository boundary (record 0013)
 
-**Zeus Secretariat is one example of a SUT that Argus can test. It is not Argus's architectural target or product dependency.**
+As of sealed record **#0013**, the **product layer** — the testing engine,
+scenario library, SUT harnesses, rail adapters and engagement archives — is
+developed in a private repository. The public repository retains the proof
+layer only. The exact moment of the split and the last public snapshot are
+themselves sealed and hash-pinned:
 
-Argus must be useful against unrelated external systems: agent clients, resource servers, payment services, execution systems, and other agent protocols. Historical Secretariat integration work remains useful as a concrete interoperability case study, but it must not define the product boundary.
+- Record: `argus-seal-0013` (see [`attestations/records/`](attestations/records))
+- Manifest: [`attestations/evidence/0013-boundary/product-layer-manifest.json`](attestations/evidence/0013-boundary/product-layer-manifest.json)
+  — sha256 of every file that moved, pinned at the last public snapshot
+  `efbf51ef8604040c74aa1d40593af9a08fa553de`
 
-For any given SUT, Argus should be able to operate as the required counterparty:
-
-- when the SUT is a **CLIENT / BUYER**, Argus can exercise the resource-server / seller side;
-- when the SUT is a **RESOURCE_SERVER / SELLER**, Argus can exercise the client / buyer side;
-- when the role cannot be established from observable behavior, Argus does not guess.
-
-## MVP model
-
-```
-SUT → Role/Capability Discovery → Scenario Selection
-                              ↓
-                    Counterparty Adapter
-                              ↓
-                         Evidence
-                              ↓
-                         Assertions
-                              ↓
-                           Verdict
-```
-
-An Agent is a reusable participant type. Its role, behavior profile, and controlled faults are scenario parameters.
-
-Example participant behaviors include:
-
-- honest buyer
-- impatient buyer
-- duplicate/retrying buyer
-- adversarial buyer
-- slow seller
-- broken seller
-- delivery-loss conditions
-- seller crash after execution
-
-Scenarios are controlled and reproducible rather than random chaos.
-
-## Public documentation
-
-- [Argus Product Boundary](docs/guide/argus-product-boundary.md)
-- [What is Argus?](docs/guide/what-is-argus.md)
-- [AI Agent Testing](docs/guide/agent-testing.md)
-- [Evidence and Verdicts](docs/guide/evidence-and-verdicts.md)
+The split is forward-only: no history rewrite, no force-push. Versions up to
+the snapshot commit remain public history, and everything referenced from
+public threads (e.g. `docs/block-b/fixtures/S-BS-06/` on branch
+`block-b/v1-scenarios`, referenced from x402 issue #3866) stays public and
+byte-identical. Sealed evidence paths pinned by records #0000–#0012 are
+permanent and were retained.
 
 ## Repository layout
 
 ```
-app/                 product landing page (static, vercel outputDirectory)
-src/                 engine: core, adapters, scenarios, blockb runners, CLI, tests
-sut-x402/            live x402 stand: official-client drivers (client_v2/v3/v4) + server
-tools/               SUT servers and rail adapters (paypal-adapter with live evidence)
-docs/
-  guide/             product/protocol guides and evidence discipline
-  scenarios/         block specs (A/B/C/D) and scenario inventory
-  block-b/           payment program: MATRIX (RU source of truth), EN matrix, REGISTRY, fixtures
-  audits/            dated audits and boundary reviews
-  plans/             roadmaps, backlogs, business notes
-attestations/        signed, hash-chained records: seals, findings, INDEX, keys
-engagements/         per-client test campaigns: plan, connectors, runs, reports
-scripts/             reproducibility scripts for committed evidence
+attestations/        signed, hash-chained records + public key + index
+tools/registry/      sign / verify tooling (node stdlib only)
+tools/paypal-adapter/evidence/   sealed live-run evidence (records 0001–0002)
+site/                argus-lab.tech source (Next.js; prebuild re-verifies the registry)
+docs/block-b/        sealed fixtures and evidence (S-BS series, records 0003+)
+docs/inngest-battery/  sealed evidence + repro harness (record 0005)
+docs/t1-mcp-tool-idempotency/  sealed external verification (record 0009)
+sut-x402-pr3920/     sealed SUT evidence, x402 PR #3920 cycles (records 0008, 0012)
+src/tests/blockb/SBS19_BlockRunNano.test.ts   sealed evidence (record 0006)
+.github/             CI: verify registry → OG cover → IndexNow → Vercel deploy
 ```
 
-Evidence paths pinned by seals (e.g. `docs/block-b/fixtures/…`,
-`docs/scenarios/b4-block-d-findings.md`, `tools/paypal-adapter/evidence/…`)
-are permanent: files are reorganized around them, never under new names.
+## About Argus
 
-## Commercial direction
+Argus is an independent black-box testing laboratory for AI agents and
+agent-based payment systems. It runs controlled failure scenarios against
+observable systems under test (SUTs), captures evidence at protocol
+boundaries, evaluates explicit assertions, and produces evidence-backed
+verdicts — the public ones are the sealed records above.
 
-The first commercial form is intended to be a **managed external audit**:
+**Agent → Scenario → SUT → Evidence → Verdict**
 
-```
-Client system
-    ↓
-Controlled failure scenarios
-    ↓
-Observable evidence
-    ↓
-Evidence-backed report
-```
+- Sealed case work: x402 (#3866, PR #3920), Inngest (#5091), BlockRun
+  (blockrun-nano-client #18), Nevermined, mcp-tool-idempotency
+- Commercial engagements (scenario conformance runs, release verification):
+  [argus-lab.tech](https://argus-lab.tech)
 
-Self-service and continuous testing are longer-term possibilities.
-
-## Repository boundary
-
-Argus lives in a separate repository from the systems it tests.
-
-It interacts with SUTs through defined external interfaces and observable behavior rather than depending on undocumented internal implementation details.
-
-This makes Argus useful for testing:
-
-- payment systems
-- AI-agent applications
-- agent protocols
-- execution and delivery systems
-- economic workflows
-- other external targets
+Argus lives in a repository separate from the systems it tests and interacts
+with SUTs through defined external interfaces and observable behavior only.
 
 ## Status
 
-Argus is in active engineering development. Public case studies and production-capability claims will be added only when supported by verified run evidence.
-
----
-
-**Argus Agent Test Lab — AI Agent Testing & Reliability.**
-
-## Local smoke test
-
-Run the local S1 smoke test before external pilot testing:
-
-```bash
-npm run smoke:local
-```
-
-The command uses the existing S1 scenario with the mock target. It requires no wallet, private key, RPC endpoint, or target endpoint configuration.
-
-A successful run must report:
-- Scenario: `S1`
-- Status: `COMPLETED`
-- Evidence count greater than zero
-- Verdict: `PASS`
-- Exit code: `0`
-
-If execution fails or any expected result is missing, the smoke test exits with a non-zero code.
-
-This checks the local mock execution path; it does not prove that every part of Argus is network-isolated. Do not use it as a substitute for external pilot testing.
-
+Public case studies and production-capability claims are added only when
+supported by verified run evidence — the registry is the source of truth, not
+this README.
