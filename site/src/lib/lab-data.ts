@@ -262,6 +262,25 @@ export const SEALS: Seal[] = [
     evidence: 8,
     links: [{ label: "PR #3920", href: "https://github.com/x402-foundation/x402/pull/3920" }],
   },
+  {
+    seq: "0013",
+    date: "2026-10-31",
+    type: "seal",
+    title: "Boundary: product layer moved private — public repository remains proof-only (registry + verification + site)",
+    subject: "igor-vii/Argus-Agent-Test-Lab",
+    summary:
+      "The open-core boundary, sealed as a chain event. Engine, scenario library, SUT harnesses and engagement archives moved to a private repository (157 files, ~1.5 MB) — a forward-only split: no history rewrite, no force-push. The last public snapshot (efbf51e) is hash-pinned by a manifest, which is this record's evidence; every file that moved carries its sha256, so any future disclosure of product code stays verifiable against what was public. All 49 sealed evidence paths, the site, the verify tooling and everything referenced from public threads remain public and byte-identical.",
+    verdicts: [
+      { id: "proof-layer (registry + verify + site)", verdict: "PUBLIC", tone: "info" },
+      { id: "product-layer (engine + scenarios + SUT)", verdict: "PRIVATE", tone: "info" },
+      { id: "published-refs (#3866 fixtures, branches)", verdict: "PUBLIC (byte-identical)", tone: "info" },
+    ],
+    findings: [],
+    evidence: 1,
+    links: [
+      { label: "manifest", href: "https://github.com/igor-vii/Argus-Agent-Test-Lab/blob/main/attestations/evidence/0013-boundary/product-layer-manifest.json" },
+    ],
+  },
 ];
 
 export interface CaseStudy {

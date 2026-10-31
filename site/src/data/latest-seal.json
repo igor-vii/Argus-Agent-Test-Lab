@@ -1,9 +1,9 @@
 {
-  "generated_at": "2026-10-31T17:24:21.206Z",
+  "generated_at": "2026-10-31T19:33:42.799Z",
   "verify": {
     "command": "node tools/registry/verify-registry.mjs",
-    "records": 13,
-    "chain_head": "ec35adf7f5146dd9"
+    "records": 14,
+    "chain_head": "79309ea93491bbae"
   },
   "correction": {
     "seq": "0011",
@@ -13,83 +13,39 @@
     "amends": "argus-finding-0000"
   },
   "record": {
-    "seq": "0012",
-    "record_id": "argus-seal-0012",
+    "seq": "0013",
+    "record_id": "argus-seal-0013",
     "type": "seal",
-    "issued_at": "2026-10-31T16:18:03.579Z",
+    "issued_at": "2026-10-31T19:31:02.415Z",
     "date": "2026-10-31",
-    "title": "S-BS-06 cycle 3 — x402 PR #3920 @ e993bef re-pin re-run: green zone A1-A9+A11 holds, conflicting-offer races A10c/A10d PASS (one commitment + one pre-signer rejection), case-variant recipient normalization A12/A13 PASS, identical-offer A10a/A10b continuity FAIL (17/19 PASS)",
-    "subject": "x402-foundation/x402",
-    "prev_record_hash": "aa6df9b81d7c435f0cc6894c0ef2e2fa33d467647f76d9f84ac2272cad0809a3",
-    "chain_head": "ec35adf7f5146dd9",
+    "title": "Boundary: product layer moved private — public repository remains proof-only (sealed registry + verification + site); last public snapshot hash-pinned by manifest",
+    "subject": "igor-vii/Argus-Agent-Test-Lab",
+    "prev_record_hash": "ec35adf7f5146dd9c650ac8ca7fdfffb75c6b7884c68ef19ecb5690cbb74213d",
+    "chain_head": "79309ea93491bbae",
     "scenarios": [
       {
-        "id": "A1-A9",
-        "verdict": "PASS",
-        "tone": "pass"
+        "id": "proof-layer",
+        "verdict": "PUBLIC",
+        "tone": "info"
       },
       {
-        "id": "A11",
-        "verdict": "PASS",
-        "tone": "pass"
+        "id": "product-layer",
+        "verdict": "PRIVATE",
+        "tone": "info"
       },
       {
-        "id": "A10a",
-        "verdict": "FAIL",
-        "tone": "fail"
-      },
-      {
-        "id": "A10b",
-        "verdict": "FAIL",
-        "tone": "fail"
-      },
-      {
-        "id": "A10c/A10d",
-        "verdict": "PASS",
-        "tone": "pass"
-      },
-      {
-        "id": "A12/A13",
-        "verdict": "PASS",
-        "tone": "pass"
+        "id": "published-refs",
+        "verdict": "PUBLIC",
+        "tone": "info"
       }
     ],
     "counts": {
-      "pass": 4,
-      "fail": 2
+      "info": 3
     },
     "evidence": [
       {
-        "path": "docs/block-b/fixtures/S-BS-06/s-bs-06-pr3920-crosscheck-c3.fixture.json",
-        "sha256": "1b2ffdcd2eae28496d58ca521f7a5d091469398d3d8091d9c9122b4a27d9e2e7"
-      },
-      {
-        "path": "docs/block-b/fixtures/S-BS-06/matrix-a10a11.json",
-        "sha256": "a9e90d2f5f72920c0ff2789b0a6d4da35dcc52aa33451ccee2bf4b8f26533562"
-      },
-      {
-        "path": "docs/block-b/fixtures/S-BS-06/matrix-a1a9.json",
-        "sha256": "ac3a942e65912fd0cfc6665c18fcf91a4a3e20d7c8d7936fa55b306872a4c091"
-      },
-      {
-        "path": "sut-x402-pr3920/battery-pr3920-c3.mjs",
-        "sha256": "0855942cca0ac17c8033bc58f2ab2d6436f4803ff133482db0af6bf50d4e4e61"
-      },
-      {
-        "path": "sut-x402-pr3920/client_v5.ts",
-        "sha256": "1e227b777b741320b01e6e8d167e4ccc306917eb7e1cc6faf12049f922756bb6"
-      },
-      {
-        "path": "sut-x402-pr3920/client_v3.ts",
-        "sha256": "a2eb7c798b229a1d2d0c98bc16ad5c5dd806a2e4eaf472f737a2c95337a5c7ee"
-      },
-      {
-        "path": "sut-x402-pr3920/x402-core-2.28.0.e993bef-c3.tgz",
-        "sha256": "6c126dbea85be3bfb290f9f5b6fc977427ddb045797d4f565cf5d30ec8d2718d"
-      },
-      {
-        "path": "sut-x402-pr3920/package-lock.c3.json",
-        "sha256": "81ff2ceb66ae74d3127112154be186464ce752adcafdcb5f89519d33d3488052"
+        "path": "attestations/evidence/0013-boundary/product-layer-manifest.json",
+        "sha256": "5ed1dedc91263117f1b0b6ce215727d7779191a2eb1840f9843f9eec5cd4603b"
       }
     ]
   }
