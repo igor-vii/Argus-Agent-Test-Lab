@@ -1,0 +1,3435 @@
+{
+  "fixture": "S-BS-06 x PR #3920 cross-check cycle 3 (re-pinned re-run at e993bef: green-zone regression + identical-offer races + NEW conflicting-offer races A10c/A10d + case-variant recipient controls A12/A13)",
+  "upstream_issue": "https://github.com/x402-foundation/x402/issues/3866",
+  "pr_head": "e993bef62c9f7eea610f27cf3240c8bcdc599ad7",
+  "rerun_note": "verification cycle 3: per the posted acceptance protocol the head re-pin triggers a full re-run rather than mixing heads; delta vs cycle 2 (b1a4d8ce) = 12fa8a95 (EVM recipient case-insensitivity) + e993bef6 (shared canonical form in sameRecipient/quoteKeyFor). Cycle-2 pre-registrations A1-A11 unchanged; A10c/A10d and A12/A13 are new cycle-3 pre-registrations targeting the author's stated invariant (concurrent conflicting offers must not produce conflicting commitments) and the recipient-canonicalization delta",
+  "prior_cycles": {
+    "cycle1": "2b4cc47 — 12/12 sessions, matrix A1-A9 green (fixture s-bs-06-pr3920-crosscheck.fixture.json)",
+    "cycle2": "b1a4d8ce — 13/15 pass; A11 closed; A10a/A10b open: two signatures in the identical-offer first-contact window, zero rejections (fixture s-bs-06-pr3920-crosscheck-r4.fixture.json)"
+  },
+  "pull_request": {
+    "repo": "x402-foundation/x402",
+    "number": 3920,
+    "branch": "feat/expected-amount",
+    "head": "e993bef62c9f7eea610f27cf3240c8bcdc599ad7 (recipient-canonicalization fix)",
+    "head_source": "refs/pull/3920/head fetched and verified == e993bef62c9f7eea610f27cf3240c8bcdc599ad7 before build",
+    "opened": "2026-10-24T07:22:27Z",
+    "note": "@x402/core built from the PR head (npm pack), installed via file: + overrides; PR code is the ONLY rejection logic in these sessions"
+  },
+  "verdict_semantics": {
+    "PASS": "observed behavior satisfies the matrix row's required behavior",
+    "FAIL": "conformance gap: the PR's own control does not produce the matrix-required behavior (finding, not harness error)",
+    "note": "A10a/A10b verdicts continue the cycle-2 pre-registration (exactly one signature in the identical-offer first-contact window) for continuity; the PR author's in-thread position is that identical concurrent offers are duplicate-payment semantics out of the quote-control layer's scope — A10c/A10d now test that narrower invariant directly"
+  },
+  "evidence_discipline": {
+    "established": "pre-signer rejection (signer-call count unchanged) or signing (signer invoked) at the signer boundary",
+    "not_established": "an ON-CHAIN transfer: settlement is mocked; per-session throwaway unfunded wallets",
+    "redaction": "no private keys, no signatures, no usable authorizations; nonce values truncated"
+  },
+  "amounts_note": "atomic units, USDC 6 decimals: 10000 = $0.01, 5000 = $0.005, 50000 = $0.05, 100000 = $0.10, 5000000 = $5.00 (cap is $1 = 1,000,000). A11 operates in decimal-string representations: expectation pinned at $0.01, probe presents 0.5 (non-atomic) = 50x the pin if misinterpreted as dollars",
+  "versions": {
+    "note": "tested version pin",
+    "packages": {
+      "@x402/core": "2.28.0+pr3920@e993bef (file: tarball)",
+      "@x402/evm": "2.28.0",
+      "@x402/express": "2.28.0",
+      "@x402/fetch": "2.28.0",
+      "viem": "2.48.11"
+    },
+    "tarball_sha256": "6c126dbea85be3bfb290f9f5b6fc977427ddb045797d4f565cf5d30ec8d2718d",
+    "runtime": "node v24.22.1",
+    "network": "Base Sepolia (eip155:84532), USDC 0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+    "test_lab": {
+      "repo": "github.com/igor-vii/Argus-Agent-Test-Lab",
+      "harness": "sut-x402-pr3920/",
+      "orchestrator": "battery-pr3920-c3.mjs",
+      "clients": "green/sequential sessions reuse client_v3.ts unchanged; race sessions use client_v5.ts CONCURRENCY=2 (same instrumentation perimeter)"
+    }
+  },
+  "sessions": [
+    {
+      "session": "xc_a1_unchanged_explicit",
+      "matrix": "A1",
+      "expectation_mode": "explicit",
+      "requirement_amounts_served": [
+        "10000",
+        "10000"
+      ],
+      "requirement_overrides": null,
+      "endpoint_sequence": null,
+      "request_cycles": 2,
+      "client_script": "client_v3.ts",
+      "concurrency": 1,
+      "matrix_row": "unchanged quote with explicit expectation: both cycles sign, zero QuoteMismatch (no false positives)",
+      "observed": {
+        "signer_values": [
+          "10000",
+          "10000"
+        ],
+        "signer_call_count": 2,
+        "quote_rejections": [],
+        "other_rejections": [],
+        "per_cycle": [
+          {
+            "cycle": 1,
+            "http": 200,
+            "receipt": {
+              "success": true,
+              "transaction": "0xabababababababababababababababababababababababababababababababab",
+              "network": "eip155:84532"
+            }
+          },
+          {
+            "cycle": 2,
+            "http": 200,
+            "receipt": {
+              "success": true,
+              "transaction": "0xabababababababababababababababababababababababababababababababab",
+              "network": "eip155:84532"
+            }
+          }
+        ],
+        "served_contacts": null,
+        "client_rc": 0,
+        "stand_verdict": "FAIL"
+      },
+      "verdict": "PASS",
+      "timeline": [
+        {
+          "at": "2026-10-31T12:17:04.173Z",
+          "type": "probe_start",
+          "control_under_test": "PR #3920 SpendControls.expectedAmount (@x402/core built from feat/expected-amount @4232cf6)",
+          "url": "http://127.0.0.1:4470/weather",
+          "cycles": 2,
+          "endpoint_sequence": null,
+          "spend_controls": {
+            "maxAmountPerPayment": "$1",
+            "expectedAmount": "$0.01"
+          },
+          "note": "rejection logic is the PR's own; this harness adds observation only (signer counts, verbatim errors)"
+        },
+        {
+          "at": "2026-10-31T12:17:04.174Z",
+          "type": "cycle_start",
+          "cycle": 1
+        },
+        {
+          "at": "2026-10-31T12:17:04.217Z",
+          "type": "quote_offered",
+          "cycle_context_url": "http://127.0.0.1:4470/weather",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4470/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "10000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0x9999999999999999999999999999999999999999",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-10-31T12:17:04.221Z",
+          "type": "signer_call",
+          "call_index": 1,
+          "signer_entry": "signTypedData",
+          "primary_type": "TransferWithAuthorization",
+          "domain": {
+            "name": "USDC",
+            "version": "2",
+            "chainId": 84532,
+            "verifyingContract": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+          },
+          "to": "0x9999999999999999999999999999999999999999",
+          "value": "10000",
+          "from": "0x6f81dc3Ceb63CF3a08Bd1E9DB94c36F85a7423d7",
+          "valid_after": "0",
+          "valid_before": "1793449084",
+          "nonce": "0x53fea63a…01f5(len66)"
+        },
+        {
+          "at": "2026-10-31T12:17:04.232Z",
+          "type": "cycle_result",
+          "cycle": 1,
+          "http": 200,
+          "receipt_served": {
+            "success": true,
+            "transaction": "0xabababababababababababababababababababababababababababababababab",
+            "network": "eip155:84532"
+          }
+        },
+        {
+          "at": "2026-10-31T12:17:04.232Z",
+          "type": "cycle_start",
+          "cycle": 2
+        },
+        {
+          "at": "2026-10-31T12:17:04.234Z",
+          "type": "quote_offered",
+          "cycle_context_url": "http://127.0.0.1:4470/weather",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4470/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "10000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0x9999999999999999999999999999999999999999",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-10-31T12:17:04.235Z",
+          "type": "signer_call",
+          "call_index": 2,
+          "signer_entry": "signTypedData",
+          "primary_type": "TransferWithAuthorization",
+          "domain": {
+            "name": "USDC",
+            "version": "2",
+            "chainId": 84532,
+            "verifyingContract": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+          },
+          "to": "0x9999999999999999999999999999999999999999",
+          "value": "10000",
+          "from": "0x6f81dc3Ceb63CF3a08Bd1E9DB94c36F85a7423d7",
+          "valid_after": "0",
+          "valid_before": "1793449084",
+          "nonce": "0x2d0d13cc…32bd(len66)"
+        },
+        {
+          "at": "2026-10-31T12:17:04.238Z",
+          "type": "cycle_result",
+          "cycle": 2,
+          "http": 200,
+          "receipt_served": {
+            "success": true,
+            "transaction": "0xabababababababababababababababababababababababababababababababab",
+            "network": "eip155:84532"
+          }
+        }
+      ],
+      "stand": {
+        "stand_verdict": "FAIL",
+        "stand_reasons": [
+          "FAIL (attempt 1):",
+          "платежей зафиксировано: 2; запросов: 4; окно наблюдения: 2500ms",
+          "FAIL: СУТ заплатил по завышенным требованиям (value=10000; решение В2)"
+        ]
+      }
+    },
+    {
+      "session": "xc_a2_raise_explicit",
+      "matrix": "A2",
+      "expectation_mode": "explicit",
+      "requirement_amounts_served": [
+        "10000",
+        "100000"
+      ],
+      "requirement_overrides": null,
+      "endpoint_sequence": null,
+      "request_cycles": 2,
+      "client_script": "client_v3.ts",
+      "concurrency": 1,
+      "matrix_row": "raise within cap on accepted quote: QuoteMismatch (caller-config, offered 100000) BEFORE the signer; signer x1",
+      "observed": {
+        "signer_values": [
+          "10000"
+        ],
+        "signer_call_count": 1,
+        "quote_rejections": [
+          {
+            "cycle": 2,
+            "source": "caller-config",
+            "expected": "10000",
+            "offered": "100000",
+            "via": "wrapped-message"
+          }
+        ],
+        "other_rejections": [],
+        "per_cycle": [
+          {
+            "cycle": 1,
+            "http": 200,
+            "receipt": {
+              "success": true,
+              "transaction": "0xabababababababababababababababababababababababababababababababab",
+              "network": "eip155:84532"
+            }
+          },
+          {
+            "cycle": 2,
+            "error": "Failed to create payment payload: quote-check-rejected: quote_mismatch_vs_expected: amount 10000 -> 100000. The server-declared amount does not match the caller-anchored price expectation. Adjust spendControls.expectedAmount, raise expectedAmountTolerance for legitimate repricing, or set expectedAmount: false to disable.",
+            "error_name": "Error",
+            "quote_mismatch": null
+          }
+        ],
+        "served_contacts": null,
+        "client_rc": 0,
+        "stand_verdict": "FAIL"
+      },
+      "verdict": "PASS",
+      "timeline": [
+        {
+          "at": "2026-10-31T12:17:10.221Z",
+          "type": "probe_start",
+          "control_under_test": "PR #3920 SpendControls.expectedAmount (@x402/core built from feat/expected-amount @4232cf6)",
+          "url": "http://127.0.0.1:4471/weather",
+          "cycles": 2,
+          "endpoint_sequence": null,
+          "spend_controls": {
+            "maxAmountPerPayment": "$1",
+            "expectedAmount": "$0.01"
+          },
+          "note": "rejection logic is the PR's own; this harness adds observation only (signer counts, verbatim errors)"
+        },
+        {
+          "at": "2026-10-31T12:17:10.221Z",
+          "type": "cycle_start",
+          "cycle": 1
+        },
+        {
+          "at": "2026-10-31T12:17:10.262Z",
+          "type": "quote_offered",
+          "cycle_context_url": "http://127.0.0.1:4471/weather",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4471/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "10000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0x9999999999999999999999999999999999999999",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-10-31T12:17:10.265Z",
+          "type": "signer_call",
+          "call_index": 1,
+          "signer_entry": "signTypedData",
+          "primary_type": "TransferWithAuthorization",
+          "domain": {
+            "name": "USDC",
+            "version": "2",
+            "chainId": 84532,
+            "verifyingContract": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+          },
+          "to": "0x9999999999999999999999999999999999999999",
+          "value": "10000",
+          "from": "0x21E61F61F1BF04C17f3C1A9255D6aBF39Da1A47F",
+          "valid_after": "0",
+          "valid_before": "1793449090",
+          "nonce": "0x147f4e96…36ce(len66)"
+        },
+        {
+          "at": "2026-10-31T12:17:10.274Z",
+          "type": "cycle_result",
+          "cycle": 1,
+          "http": 200,
+          "receipt_served": {
+            "success": true,
+            "transaction": "0xabababababababababababababababababababababababababababababababab",
+            "network": "eip155:84532"
+          }
+        },
+        {
+          "at": "2026-10-31T12:17:10.274Z",
+          "type": "cycle_start",
+          "cycle": 2
+        },
+        {
+          "at": "2026-10-31T12:17:10.277Z",
+          "type": "quote_offered",
+          "cycle_context_url": "http://127.0.0.1:4471/weather",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4471/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "100000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0x9999999999999999999999999999999999999999",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-10-31T12:17:10.278Z",
+          "type": "cycle_error",
+          "cycle": 2,
+          "error": "Failed to create payment payload: quote-check-rejected: quote_mismatch_vs_expected: amount 10000 -> 100000. The server-declared amount does not match the caller-anchored price expectation. Adjust spendControls.expectedAmount, raise expectedAmountTolerance for legitimate repricing, or set expectedAmount: false to disable.",
+          "error_name": "Error",
+          "quote_mismatch": null
+        }
+      ],
+      "stand": {
+        "stand_verdict": "FAIL",
+        "stand_reasons": [
+          "FAIL (attempt 1):",
+          "платежей зафиксировано: 1; запросов: 3; окно наблюдения: 2500ms",
+          "FAIL: СУТ заплатил по завышенным требованиям (value=10000; решение В2)"
+        ]
+      }
+    },
+    {
+      "session": "xc_a3_drop_explicit",
+      "matrix": "A3",
+      "expectation_mode": "explicit",
+      "requirement_amounts_served": [
+        "10000",
+        "5000"
+      ],
+      "requirement_overrides": null,
+      "endpoint_sequence": null,
+      "request_cycles": 2,
+      "client_script": "client_v3.ts",
+      "concurrency": 1,
+      "matrix_row": "mid-session price DROP rejected pre-signer (symmetric band, tolerance 1.0); signer x1",
+      "observed": {
+        "signer_values": [
+          "10000"
+        ],
+        "signer_call_count": 1,
+        "quote_rejections": [
+          {
+            "cycle": 2,
+            "source": "caller-config",
+            "expected": "10000",
+            "offered": "5000",
+            "via": "wrapped-message"
+          }
+        ],
+        "other_rejections": [],
+        "per_cycle": [
+          {
+            "cycle": 1,
+            "http": 200,
+            "receipt": {
+              "success": true,
+              "transaction": "0xabababababababababababababababababababababababababababababababab",
+              "network": "eip155:84532"
+            }
+          },
+          {
+            "cycle": 2,
+            "error": "Failed to create payment payload: quote-check-rejected: quote_mismatch_vs_expected: amount 10000 -> 5000. The server-declared amount does not match the caller-anchored price expectation. Adjust spendControls.expectedAmount, raise expectedAmountTolerance for legitimate repricing, or set expectedAmount: false to disable.",
+            "error_name": "Error",
+            "quote_mismatch": null
+          }
+        ],
+        "served_contacts": null,
+        "client_rc": 0,
+        "stand_verdict": "FAIL"
+      },
+      "verdict": "PASS",
+      "timeline": [
+        {
+          "at": "2026-10-31T12:17:16.280Z",
+          "type": "probe_start",
+          "control_under_test": "PR #3920 SpendControls.expectedAmount (@x402/core built from feat/expected-amount @4232cf6)",
+          "url": "http://127.0.0.1:4472/weather",
+          "cycles": 2,
+          "endpoint_sequence": null,
+          "spend_controls": {
+            "maxAmountPerPayment": "$1",
+            "expectedAmount": "$0.01"
+          },
+          "note": "rejection logic is the PR's own; this harness adds observation only (signer counts, verbatim errors)"
+        },
+        {
+          "at": "2026-10-31T12:17:16.281Z",
+          "type": "cycle_start",
+          "cycle": 1
+        },
+        {
+          "at": "2026-10-31T12:17:16.327Z",
+          "type": "quote_offered",
+          "cycle_context_url": "http://127.0.0.1:4472/weather",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4472/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "10000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0x9999999999999999999999999999999999999999",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-10-31T12:17:16.330Z",
+          "type": "signer_call",
+          "call_index": 1,
+          "signer_entry": "signTypedData",
+          "primary_type": "TransferWithAuthorization",
+          "domain": {
+            "name": "USDC",
+            "version": "2",
+            "chainId": 84532,
+            "verifyingContract": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+          },
+          "to": "0x9999999999999999999999999999999999999999",
+          "value": "10000",
+          "from": "0x2890D994f9BE25c1040Bc8E3d4E55C6f6842FF6f",
+          "valid_after": "0",
+          "valid_before": "1793449096",
+          "nonce": "0x2720785c…3567(len66)"
+        },
+        {
+          "at": "2026-10-31T12:17:16.340Z",
+          "type": "cycle_result",
+          "cycle": 1,
+          "http": 200,
+          "receipt_served": {
+            "success": true,
+            "transaction": "0xabababababababababababababababababababababababababababababababab",
+            "network": "eip155:84532"
+          }
+        },
+        {
+          "at": "2026-10-31T12:17:16.340Z",
+          "type": "cycle_start",
+          "cycle": 2
+        },
+        {
+          "at": "2026-10-31T12:17:16.348Z",
+          "type": "quote_offered",
+          "cycle_context_url": "http://127.0.0.1:4472/weather",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4472/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "5000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0x9999999999999999999999999999999999999999",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-10-31T12:17:16.349Z",
+          "type": "cycle_error",
+          "cycle": 2,
+          "error": "Failed to create payment payload: quote-check-rejected: quote_mismatch_vs_expected: amount 10000 -> 5000. The server-declared amount does not match the caller-anchored price expectation. Adjust spendControls.expectedAmount, raise expectedAmountTolerance for legitimate repricing, or set expectedAmount: false to disable.",
+          "error_name": "Error",
+          "quote_mismatch": null
+        }
+      ],
+      "stand": {
+        "stand_verdict": "FAIL",
+        "stand_reasons": [
+          "FAIL (attempt 1):",
+          "платежей зафиксировано: 1; запросов: 3; окно наблюдения: 2500ms",
+          "FAIL: СУТ заплатил по завышенным требованиям (value=10000; решение В2)"
+        ]
+      }
+    },
+    {
+      "session": "xc_a4_firstoffer_explicit",
+      "matrix": "A4",
+      "expectation_mode": "explicit",
+      "requirement_amounts_served": [
+        "100000",
+        "100000"
+      ],
+      "requirement_overrides": null,
+      "endpoint_sequence": null,
+      "request_cycles": 2,
+      "client_script": "client_v3.ts",
+      "concurrency": 1,
+      "matrix_row": "first offer != caller expectation: rejected at first acceptance; signer x0",
+      "observed": {
+        "signer_values": [],
+        "signer_call_count": 0,
+        "quote_rejections": [
+          {
+            "cycle": 1,
+            "source": "caller-config",
+            "expected": "10000",
+            "offered": "100000",
+            "via": "wrapped-message"
+          },
+          {
+            "cycle": 2,
+            "source": "caller-config",
+            "expected": "10000",
+            "offered": "100000",
+            "via": "wrapped-message"
+          }
+        ],
+        "other_rejections": [],
+        "per_cycle": [
+          {
+            "cycle": 1,
+            "error": "Failed to create payment payload: quote-check-rejected: quote_mismatch_vs_expected: amount 10000 -> 100000. The server-declared amount does not match the caller-anchored price expectation. Adjust spendControls.expectedAmount, raise expectedAmountTolerance for legitimate repricing, or set expectedAmount: false to disable.",
+            "error_name": "Error",
+            "quote_mismatch": null
+          },
+          {
+            "cycle": 2,
+            "error": "Failed to create payment payload: quote-check-rejected: quote_mismatch_vs_expected: amount 10000 -> 100000. The server-declared amount does not match the caller-anchored price expectation. Adjust spendControls.expectedAmount, raise expectedAmountTolerance for legitimate repricing, or set expectedAmount: false to disable.",
+            "error_name": "Error",
+            "quote_mismatch": null
+          }
+        ],
+        "served_contacts": null,
+        "client_rc": 0,
+        "stand_verdict": "PASS"
+      },
+      "verdict": "PASS",
+      "timeline": [
+        {
+          "at": "2026-10-31T12:17:22.344Z",
+          "type": "probe_start",
+          "control_under_test": "PR #3920 SpendControls.expectedAmount (@x402/core built from feat/expected-amount @4232cf6)",
+          "url": "http://127.0.0.1:4473/weather",
+          "cycles": 2,
+          "endpoint_sequence": null,
+          "spend_controls": {
+            "maxAmountPerPayment": "$1",
+            "expectedAmount": "$0.01"
+          },
+          "note": "rejection logic is the PR's own; this harness adds observation only (signer counts, verbatim errors)"
+        },
+        {
+          "at": "2026-10-31T12:17:22.344Z",
+          "type": "cycle_start",
+          "cycle": 1
+        },
+        {
+          "at": "2026-10-31T12:17:22.385Z",
+          "type": "quote_offered",
+          "cycle_context_url": "http://127.0.0.1:4473/weather",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4473/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "100000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0x9999999999999999999999999999999999999999",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-10-31T12:17:22.387Z",
+          "type": "cycle_error",
+          "cycle": 1,
+          "error": "Failed to create payment payload: quote-check-rejected: quote_mismatch_vs_expected: amount 10000 -> 100000. The server-declared amount does not match the caller-anchored price expectation. Adjust spendControls.expectedAmount, raise expectedAmountTolerance for legitimate repricing, or set expectedAmount: false to disable.",
+          "error_name": "Error",
+          "quote_mismatch": null
+        },
+        {
+          "at": "2026-10-31T12:17:22.387Z",
+          "type": "cycle_start",
+          "cycle": 2
+        },
+        {
+          "at": "2026-10-31T12:17:22.390Z",
+          "type": "quote_offered",
+          "cycle_context_url": "http://127.0.0.1:4473/weather",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4473/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "100000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0x9999999999999999999999999999999999999999",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-10-31T12:17:22.391Z",
+          "type": "cycle_error",
+          "cycle": 2,
+          "error": "Failed to create payment payload: quote-check-rejected: quote_mismatch_vs_expected: amount 10000 -> 100000. The server-declared amount does not match the caller-anchored price expectation. Adjust spendControls.expectedAmount, raise expectedAmountTolerance for legitimate repricing, or set expectedAmount: false to disable.",
+          "error_name": "Error",
+          "quote_mismatch": null
+        }
+      ],
+      "stand": {
+        "stand_verdict": "PASS",
+        "stand_reasons": [
+          "PASS (attempt 1):",
+          "платежей зафиксировано: 0; запросов: 2; окно наблюдения: 2500ms",
+          "СУТ отказался платить по завышенным требованиям"
+        ]
+      }
+    },
+    {
+      "session": "xc_a5_payto_same_explicit",
+      "matrix": "A5",
+      "expectation_mode": "explicit",
+      "requirement_amounts_served": [
+        "10000",
+        "10000"
+      ],
+      "requirement_overrides": [
+        {},
+        {
+          "payTo": "0x2222222222222222222222222222222222222222"
+        }
+      ],
+      "endpoint_sequence": null,
+      "request_cycles": 2,
+      "client_script": "client_v3.ts",
+      "concurrency": 1,
+      "matrix_row": "payTo substitution, SAME amount: matrix requires rejection before the signer (binding = full tuple, not just the number)",
+      "observed": {
+        "signer_values": [
+          "10000"
+        ],
+        "signer_call_count": 1,
+        "quote_rejections": [],
+        "other_rejections": [
+          {
+            "cycle": 2,
+            "error_name": "Error",
+            "error": "Failed to create payment payload: quote-check-rejected: quote_recipient_mismatch: payTo 0x9999999999999999999999999999999999999999 -> 0x2222222222222222222222222222222222222222 on a known quote. The server-declared recipient does not match the recipient bound at the client's first commitment for this resource. Paying a new recipient requires a fresh client (or spendControls: false) — recipient substitution otherwise stays rejected."
+          }
+        ],
+        "per_cycle": [
+          {
+            "cycle": 1,
+            "http": 200,
+            "receipt": {
+              "success": true,
+              "transaction": "0xabababababababababababababababababababababababababababababababab",
+              "network": "eip155:84532"
+            }
+          },
+          {
+            "cycle": 2,
+            "error": "Failed to create payment payload: quote-check-rejected: quote_recipient_mismatch: payTo 0x9999999999999999999999999999999999999999 -> 0x2222222222222222222222222222222222222222 on a known quote. The server-declared recipient does not match the recipient bound at the client's first commitment for this resource. Paying a new recipient requires a fresh client (or spendControls: false) — recipient substitution otherwise stays rejected.",
+            "error_name": "Error",
+            "quote_mismatch": null
+          }
+        ],
+        "served_contacts": null,
+        "client_rc": 0,
+        "stand_verdict": "FAIL"
+      },
+      "verdict": "PASS",
+      "timeline": [
+        {
+          "at": "2026-10-31T12:17:28.365Z",
+          "type": "probe_start",
+          "control_under_test": "PR #3920 SpendControls.expectedAmount (@x402/core built from feat/expected-amount @4232cf6)",
+          "url": "http://127.0.0.1:4474/weather",
+          "cycles": 2,
+          "endpoint_sequence": null,
+          "spend_controls": {
+            "maxAmountPerPayment": "$1",
+            "expectedAmount": "$0.01"
+          },
+          "note": "rejection logic is the PR's own; this harness adds observation only (signer counts, verbatim errors)"
+        },
+        {
+          "at": "2026-10-31T12:17:28.366Z",
+          "type": "cycle_start",
+          "cycle": 1
+        },
+        {
+          "at": "2026-10-31T12:17:28.408Z",
+          "type": "quote_offered",
+          "cycle_context_url": "http://127.0.0.1:4474/weather",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4474/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "10000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0x9999999999999999999999999999999999999999",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-10-31T12:17:28.412Z",
+          "type": "signer_call",
+          "call_index": 1,
+          "signer_entry": "signTypedData",
+          "primary_type": "TransferWithAuthorization",
+          "domain": {
+            "name": "USDC",
+            "version": "2",
+            "chainId": 84532,
+            "verifyingContract": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+          },
+          "to": "0x9999999999999999999999999999999999999999",
+          "value": "10000",
+          "from": "0xC8c9ed71A258b2468df276E8a78E4f10215a5D3d",
+          "valid_after": "0",
+          "valid_before": "1793449108",
+          "nonce": "0xa3b0bd29…48cc(len66)"
+        },
+        {
+          "at": "2026-10-31T12:17:28.421Z",
+          "type": "cycle_result",
+          "cycle": 1,
+          "http": 200,
+          "receipt_served": {
+            "success": true,
+            "transaction": "0xabababababababababababababababababababababababababababababababab",
+            "network": "eip155:84532"
+          }
+        },
+        {
+          "at": "2026-10-31T12:17:28.421Z",
+          "type": "cycle_start",
+          "cycle": 2
+        },
+        {
+          "at": "2026-10-31T12:17:28.424Z",
+          "type": "quote_offered",
+          "cycle_context_url": "http://127.0.0.1:4474/weather",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4474/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "10000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0x2222222222222222222222222222222222222222",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-10-31T12:17:28.425Z",
+          "type": "cycle_error",
+          "cycle": 2,
+          "error": "Failed to create payment payload: quote-check-rejected: quote_recipient_mismatch: payTo 0x9999999999999999999999999999999999999999 -> 0x2222222222222222222222222222222222222222 on a known quote. The server-declared recipient does not match the recipient bound at the client's first commitment for this resource. Paying a new recipient requires a fresh client (or spendControls: false) — recipient substitution otherwise stays rejected.",
+          "error_name": "Error",
+          "quote_mismatch": null
+        }
+      ],
+      "stand": {
+        "stand_verdict": "FAIL",
+        "stand_reasons": [
+          "FAIL (attempt 1):",
+          "платежей зафиксировано: 1; запросов: 3; окно наблюдения: 2500ms",
+          "FAIL: СУТ заплатил по завышенным требованиям (value=10000; решение В2)"
+        ]
+      }
+    },
+    {
+      "session": "xc_a5b_payto_raise_firstaccepted",
+      "matrix": "A5",
+      "expectation_mode": "first-accepted",
+      "requirement_amounts_served": [
+        "10000",
+        "50000"
+      ],
+      "requirement_overrides": [
+        {},
+        {
+          "payTo": "0x2222222222222222222222222222222222222222"
+        }
+      ],
+      "endpoint_sequence": null,
+      "request_cycles": 2,
+      "client_script": "client_v3.ts",
+      "concurrency": 1,
+      "matrix_row": "payTo substitution + raised amount under first-accepted: payTo is part of the quote key, so the variant key has no anchor — matrix still requires rejection before the signer",
+      "observed": {
+        "signer_values": [
+          "10000"
+        ],
+        "signer_call_count": 1,
+        "quote_rejections": [],
+        "other_rejections": [
+          {
+            "cycle": 2,
+            "error_name": "Error",
+            "error": "Failed to create payment payload: quote-check-rejected: quote_recipient_mismatch: payTo 0x9999999999999999999999999999999999999999 -> 0x2222222222222222222222222222222222222222 on a known quote. The server-declared recipient does not match the recipient bound at the client's first commitment for this resource. Paying a new recipient requires a fresh client (or spendControls: false) — recipient substitution otherwise stays rejected."
+          }
+        ],
+        "per_cycle": [
+          {
+            "cycle": 1,
+            "http": 200,
+            "receipt": {
+              "success": true,
+              "transaction": "0xabababababababababababababababababababababababababababababababab",
+              "network": "eip155:84532"
+            }
+          },
+          {
+            "cycle": 2,
+            "error": "Failed to create payment payload: quote-check-rejected: quote_recipient_mismatch: payTo 0x9999999999999999999999999999999999999999 -> 0x2222222222222222222222222222222222222222 on a known quote. The server-declared recipient does not match the recipient bound at the client's first commitment for this resource. Paying a new recipient requires a fresh client (or spendControls: false) — recipient substitution otherwise stays rejected.",
+            "error_name": "Error",
+            "quote_mismatch": null
+          }
+        ],
+        "served_contacts": null,
+        "client_rc": 0,
+        "stand_verdict": "FAIL"
+      },
+      "verdict": "PASS",
+      "timeline": [
+        {
+          "at": "2026-10-31T12:17:34.405Z",
+          "type": "probe_start",
+          "control_under_test": "PR #3920 SpendControls.expectedAmount (@x402/core built from feat/expected-amount @4232cf6)",
+          "url": "http://127.0.0.1:4475/weather",
+          "cycles": 2,
+          "endpoint_sequence": null,
+          "spend_controls": {
+            "maxAmountPerPayment": "$1",
+            "expectedAmount": "first-accepted"
+          },
+          "note": "rejection logic is the PR's own; this harness adds observation only (signer counts, verbatim errors)"
+        },
+        {
+          "at": "2026-10-31T12:17:34.406Z",
+          "type": "cycle_start",
+          "cycle": 1
+        },
+        {
+          "at": "2026-10-31T12:17:34.456Z",
+          "type": "quote_offered",
+          "cycle_context_url": "http://127.0.0.1:4475/weather",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4475/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "10000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0x9999999999999999999999999999999999999999",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-10-31T12:17:34.462Z",
+          "type": "signer_call",
+          "call_index": 1,
+          "signer_entry": "signTypedData",
+          "primary_type": "TransferWithAuthorization",
+          "domain": {
+            "name": "USDC",
+            "version": "2",
+            "chainId": 84532,
+            "verifyingContract": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+          },
+          "to": "0x9999999999999999999999999999999999999999",
+          "value": "10000",
+          "from": "0x07dADD7e1c57574AA220E519b09d16D9845Db30D",
+          "valid_after": "0",
+          "valid_before": "1793449114",
+          "nonce": "0xe45406cf…7987(len66)"
+        },
+        {
+          "at": "2026-10-31T12:17:34.473Z",
+          "type": "cycle_result",
+          "cycle": 1,
+          "http": 200,
+          "receipt_served": {
+            "success": true,
+            "transaction": "0xabababababababababababababababababababababababababababababababab",
+            "network": "eip155:84532"
+          }
+        },
+        {
+          "at": "2026-10-31T12:17:34.474Z",
+          "type": "cycle_start",
+          "cycle": 2
+        },
+        {
+          "at": "2026-10-31T12:17:34.475Z",
+          "type": "quote_offered",
+          "cycle_context_url": "http://127.0.0.1:4475/weather",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4475/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "50000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0x2222222222222222222222222222222222222222",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-10-31T12:17:34.476Z",
+          "type": "cycle_error",
+          "cycle": 2,
+          "error": "Failed to create payment payload: quote-check-rejected: quote_recipient_mismatch: payTo 0x9999999999999999999999999999999999999999 -> 0x2222222222222222222222222222222222222222 on a known quote. The server-declared recipient does not match the recipient bound at the client's first commitment for this resource. Paying a new recipient requires a fresh client (or spendControls: false) — recipient substitution otherwise stays rejected.",
+          "error_name": "Error",
+          "quote_mismatch": null
+        }
+      ],
+      "stand": {
+        "stand_verdict": "FAIL",
+        "stand_reasons": [
+          "FAIL (attempt 1):",
+          "платежей зафиксировано: 1; запросов: 3; окно наблюдения: 2500ms",
+          "FAIL: СУТ заплатил по завышенным требованиям (value=10000; решение В2)"
+        ]
+      }
+    },
+    {
+      "session": "xc_a6_rejected_never_anchors",
+      "matrix": "A6",
+      "expectation_mode": "first-accepted",
+      "requirement_amounts_served": [
+        "5000000",
+        "10000"
+      ],
+      "requirement_overrides": null,
+      "endpoint_sequence": null,
+      "request_cycles": 2,
+      "client_script": "client_v3.ts",
+      "concurrency": 1,
+      "matrix_row": "cap-rejected offer must NOT anchor: cycle 1 (5,000,000) rejected by cap; cycle 2 (10000, no anchor exists) signs — if the rejected offer had anchored, cycle 2 would mismatch; signer x1",
+      "observed": {
+        "signer_values": [
+          "10000"
+        ],
+        "signer_call_count": 1,
+        "quote_rejections": [],
+        "other_rejections": [
+          {
+            "cycle": 1,
+            "error_name": "Error",
+            "error": "Failed to create payment payload: All payment requirements were rejected by spendControls.maxAmountPerPayment ($1, including USDC). Raise maxAmountPerPayment, set it to false to disable, set allowedAssets[].maxAmountPerPayment for a per-asset atomic cap, or set spendControls: false to disable all spend controls."
+          }
+        ],
+        "per_cycle": [
+          {
+            "cycle": 1,
+            "error": "Failed to create payment payload: All payment requirements were rejected by spendControls.maxAmountPerPayment ($1, including USDC). Raise maxAmountPerPayment, set it to false to disable, set allowedAssets[].maxAmountPerPayment for a per-asset atomic cap, or set spendControls: false to disable all spend controls.",
+            "error_name": "Error",
+            "quote_mismatch": null
+          },
+          {
+            "cycle": 2,
+            "http": 200,
+            "receipt": {
+              "success": true,
+              "transaction": "0xabababababababababababababababababababababababababababababababab",
+              "network": "eip155:84532"
+            }
+          }
+        ],
+        "served_contacts": null,
+        "client_rc": 0,
+        "stand_verdict": "FAIL"
+      },
+      "verdict": "PASS",
+      "timeline": [
+        {
+          "at": "2026-10-31T12:17:40.434Z",
+          "type": "probe_start",
+          "control_under_test": "PR #3920 SpendControls.expectedAmount (@x402/core built from feat/expected-amount @4232cf6)",
+          "url": "http://127.0.0.1:4476/weather",
+          "cycles": 2,
+          "endpoint_sequence": null,
+          "spend_controls": {
+            "maxAmountPerPayment": "$1",
+            "expectedAmount": "first-accepted"
+          },
+          "note": "rejection logic is the PR's own; this harness adds observation only (signer counts, verbatim errors)"
+        },
+        {
+          "at": "2026-10-31T12:17:40.434Z",
+          "type": "cycle_start",
+          "cycle": 1
+        },
+        {
+          "at": "2026-10-31T12:17:40.474Z",
+          "type": "quote_offered",
+          "cycle_context_url": "http://127.0.0.1:4476/weather",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4476/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "5000000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0x9999999999999999999999999999999999999999",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-10-31T12:17:40.476Z",
+          "type": "cycle_error",
+          "cycle": 1,
+          "error": "Failed to create payment payload: All payment requirements were rejected by spendControls.maxAmountPerPayment ($1, including USDC). Raise maxAmountPerPayment, set it to false to disable, set allowedAssets[].maxAmountPerPayment for a per-asset atomic cap, or set spendControls: false to disable all spend controls.",
+          "error_name": "Error",
+          "quote_mismatch": null
+        },
+        {
+          "at": "2026-10-31T12:17:40.476Z",
+          "type": "cycle_start",
+          "cycle": 2
+        },
+        {
+          "at": "2026-10-31T12:17:40.478Z",
+          "type": "quote_offered",
+          "cycle_context_url": "http://127.0.0.1:4476/weather",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4476/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "10000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0x9999999999999999999999999999999999999999",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-10-31T12:17:40.481Z",
+          "type": "signer_call",
+          "call_index": 1,
+          "signer_entry": "signTypedData",
+          "primary_type": "TransferWithAuthorization",
+          "domain": {
+            "name": "USDC",
+            "version": "2",
+            "chainId": 84532,
+            "verifyingContract": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+          },
+          "to": "0x9999999999999999999999999999999999999999",
+          "value": "10000",
+          "from": "0x94F8a8BDEe6383b92ab4abe5cD33296fa99BD4Df",
+          "valid_after": "0",
+          "valid_before": "1793449120",
+          "nonce": "0xc0ca6466…a737(len66)"
+        },
+        {
+          "at": "2026-10-31T12:17:40.490Z",
+          "type": "cycle_result",
+          "cycle": 2,
+          "http": 200,
+          "receipt_served": {
+            "success": true,
+            "transaction": "0xabababababababababababababababababababababababababababababababab",
+            "network": "eip155:84532"
+          }
+        }
+      ],
+      "stand": {
+        "stand_verdict": "FAIL",
+        "stand_reasons": [
+          "FAIL (attempt 1):",
+          "платежей зафиксировано: 1; запросов: 3; окно наблюдения: 2500ms",
+          "FAIL: СУТ заплатил по завышенным требованиям (value=10000; решение В2)"
+        ]
+      }
+    },
+    {
+      "session": "xc_a7_asset_explicit",
+      "matrix": "A7",
+      "expectation_mode": "explicit",
+      "requirement_amounts_served": [
+        "10000",
+        "10000"
+      ],
+      "requirement_overrides": [
+        {},
+        {
+          "asset": "0xDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD"
+        }
+      ],
+      "endpoint_sequence": null,
+      "request_cycles": 2,
+      "client_script": "client_v3.ts",
+      "concurrency": 1,
+      "matrix_row": "asset swap: built-in spendControls rejection preserved under the PR (no regression); signer x1",
+      "observed": {
+        "signer_values": [
+          "10000"
+        ],
+        "signer_call_count": 1,
+        "quote_rejections": [],
+        "other_rejections": [
+          {
+            "cycle": 2,
+            "error_name": "Error",
+            "error": "Failed to create payment payload: All payment requirements were rejected by spendControls: only default assets or entries in spendControls.allowedAssets are allowed. Add an allowedAssets entry for non-default tokens, set allowedAssets: true, or set spendControls: false."
+          }
+        ],
+        "per_cycle": [
+          {
+            "cycle": 1,
+            "http": 200,
+            "receipt": {
+              "success": true,
+              "transaction": "0xabababababababababababababababababababababababababababababababab",
+              "network": "eip155:84532"
+            }
+          },
+          {
+            "cycle": 2,
+            "error": "Failed to create payment payload: All payment requirements were rejected by spendControls: only default assets or entries in spendControls.allowedAssets are allowed. Add an allowedAssets entry for non-default tokens, set allowedAssets: true, or set spendControls: false.",
+            "error_name": "Error",
+            "quote_mismatch": null
+          }
+        ],
+        "served_contacts": null,
+        "client_rc": 0,
+        "stand_verdict": "FAIL"
+      },
+      "verdict": "PASS",
+      "timeline": [
+        {
+          "at": "2026-10-31T12:17:46.478Z",
+          "type": "probe_start",
+          "control_under_test": "PR #3920 SpendControls.expectedAmount (@x402/core built from feat/expected-amount @4232cf6)",
+          "url": "http://127.0.0.1:4477/weather",
+          "cycles": 2,
+          "endpoint_sequence": null,
+          "spend_controls": {
+            "maxAmountPerPayment": "$1",
+            "expectedAmount": "$0.01"
+          },
+          "note": "rejection logic is the PR's own; this harness adds observation only (signer counts, verbatim errors)"
+        },
+        {
+          "at": "2026-10-31T12:17:46.478Z",
+          "type": "cycle_start",
+          "cycle": 1
+        },
+        {
+          "at": "2026-10-31T12:17:46.521Z",
+          "type": "quote_offered",
+          "cycle_context_url": "http://127.0.0.1:4477/weather",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4477/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "10000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0x9999999999999999999999999999999999999999",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-10-31T12:17:46.525Z",
+          "type": "signer_call",
+          "call_index": 1,
+          "signer_entry": "signTypedData",
+          "primary_type": "TransferWithAuthorization",
+          "domain": {
+            "name": "USDC",
+            "version": "2",
+            "chainId": 84532,
+            "verifyingContract": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+          },
+          "to": "0x9999999999999999999999999999999999999999",
+          "value": "10000",
+          "from": "0x8A5bD89Ba4C489BdadA969d95E81d1F007063c33",
+          "valid_after": "0",
+          "valid_before": "1793449126",
+          "nonce": "0xbc3d1c01…a54d(len66)"
+        },
+        {
+          "at": "2026-10-31T12:17:46.536Z",
+          "type": "cycle_result",
+          "cycle": 1,
+          "http": 200,
+          "receipt_served": {
+            "success": true,
+            "transaction": "0xabababababababababababababababababababababababababababababababab",
+            "network": "eip155:84532"
+          }
+        },
+        {
+          "at": "2026-10-31T12:17:46.537Z",
+          "type": "cycle_start",
+          "cycle": 2
+        },
+        {
+          "at": "2026-10-31T12:17:46.539Z",
+          "type": "quote_offered",
+          "cycle_context_url": "http://127.0.0.1:4477/weather",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4477/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "10000",
+                "asset": "0xDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+                "payTo": "0x9999999999999999999999999999999999999999",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-10-31T12:17:46.540Z",
+          "type": "cycle_error",
+          "cycle": 2,
+          "error": "Failed to create payment payload: All payment requirements were rejected by spendControls: only default assets or entries in spendControls.allowedAssets are allowed. Add an allowedAssets entry for non-default tokens, set allowedAssets: true, or set spendControls: false.",
+          "error_name": "Error",
+          "quote_mismatch": null
+        }
+      ],
+      "stand": {
+        "stand_verdict": "FAIL",
+        "stand_reasons": [
+          "FAIL (attempt 1):",
+          "платежей зафиксировано: 1; запросов: 3; окно наблюдения: 2500ms",
+          "FAIL: СУТ заплатил по завышенным требованиям (value=10000; решение В2)"
+        ]
+      }
+    },
+    {
+      "session": "xc_a7_network_explicit",
+      "matrix": "A7",
+      "expectation_mode": "explicit",
+      "requirement_amounts_served": [
+        "10000",
+        "10000"
+      ],
+      "requirement_overrides": [
+        {},
+        {
+          "network": "eip155:11155111"
+        }
+      ],
+      "endpoint_sequence": null,
+      "request_cycles": 2,
+      "client_script": "client_v3.ts",
+      "concurrency": 1,
+      "matrix_row": "network swap: built-in spendControls rejection preserved under the PR (no regression); signer x1",
+      "observed": {
+        "signer_values": [
+          "10000"
+        ],
+        "signer_call_count": 1,
+        "quote_rejections": [],
+        "other_rejections": [
+          {
+            "cycle": 2,
+            "error_name": "Error",
+            "error": "Failed to create payment payload: All payment requirements were rejected by spendControls: only default assets or entries in spendControls.allowedAssets are allowed. Add an allowedAssets entry for non-default tokens, set allowedAssets: true, or set spendControls: false."
+          }
+        ],
+        "per_cycle": [
+          {
+            "cycle": 1,
+            "http": 200,
+            "receipt": {
+              "success": true,
+              "transaction": "0xabababababababababababababababababababababababababababababababab",
+              "network": "eip155:84532"
+            }
+          },
+          {
+            "cycle": 2,
+            "error": "Failed to create payment payload: All payment requirements were rejected by spendControls: only default assets or entries in spendControls.allowedAssets are allowed. Add an allowedAssets entry for non-default tokens, set allowedAssets: true, or set spendControls: false.",
+            "error_name": "Error",
+            "quote_mismatch": null
+          }
+        ],
+        "served_contacts": null,
+        "client_rc": 0,
+        "stand_verdict": "FAIL"
+      },
+      "verdict": "PASS",
+      "timeline": [
+        {
+          "at": "2026-10-31T12:17:52.514Z",
+          "type": "probe_start",
+          "control_under_test": "PR #3920 SpendControls.expectedAmount (@x402/core built from feat/expected-amount @4232cf6)",
+          "url": "http://127.0.0.1:4478/weather",
+          "cycles": 2,
+          "endpoint_sequence": null,
+          "spend_controls": {
+            "maxAmountPerPayment": "$1",
+            "expectedAmount": "$0.01"
+          },
+          "note": "rejection logic is the PR's own; this harness adds observation only (signer counts, verbatim errors)"
+        },
+        {
+          "at": "2026-10-31T12:17:52.514Z",
+          "type": "cycle_start",
+          "cycle": 1
+        },
+        {
+          "at": "2026-10-31T12:17:52.557Z",
+          "type": "quote_offered",
+          "cycle_context_url": "http://127.0.0.1:4478/weather",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4478/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "10000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0x9999999999999999999999999999999999999999",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-10-31T12:17:52.560Z",
+          "type": "signer_call",
+          "call_index": 1,
+          "signer_entry": "signTypedData",
+          "primary_type": "TransferWithAuthorization",
+          "domain": {
+            "name": "USDC",
+            "version": "2",
+            "chainId": 84532,
+            "verifyingContract": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+          },
+          "to": "0x9999999999999999999999999999999999999999",
+          "value": "10000",
+          "from": "0x799C6E76196593a0f0694B368C63b4288C9363C9",
+          "valid_after": "0",
+          "valid_before": "1793449132",
+          "nonce": "0x82ebc396…df58(len66)"
+        },
+        {
+          "at": "2026-10-31T12:17:52.570Z",
+          "type": "cycle_result",
+          "cycle": 1,
+          "http": 200,
+          "receipt_served": {
+            "success": true,
+            "transaction": "0xabababababababababababababababababababababababababababababababab",
+            "network": "eip155:84532"
+          }
+        },
+        {
+          "at": "2026-10-31T12:17:52.570Z",
+          "type": "cycle_start",
+          "cycle": 2
+        },
+        {
+          "at": "2026-10-31T12:17:52.572Z",
+          "type": "quote_offered",
+          "cycle_context_url": "http://127.0.0.1:4478/weather",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4478/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:11155111",
+                "amount": "10000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0x9999999999999999999999999999999999999999",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-10-31T12:17:52.572Z",
+          "type": "cycle_error",
+          "cycle": 2,
+          "error": "Failed to create payment payload: All payment requirements were rejected by spendControls: only default assets or entries in spendControls.allowedAssets are allowed. Add an allowedAssets entry for non-default tokens, set allowedAssets: true, or set spendControls: false.",
+          "error_name": "Error",
+          "quote_mismatch": null
+        }
+      ],
+      "stand": {
+        "stand_verdict": "FAIL",
+        "stand_reasons": [
+          "FAIL (attempt 1):",
+          "платежей зафиксировано: 1; запросов: 3; окно наблюдения: 2500ms",
+          "FAIL: СУТ заплатил по завышенным требованиям (value=10000; решение В2)"
+        ]
+      }
+    },
+    {
+      "session": "xc_a8_resource_raise_explicit",
+      "matrix": "A8",
+      "expectation_mode": "explicit",
+      "requirement_amounts_served": [
+        "10000",
+        "50000"
+      ],
+      "requirement_overrides": null,
+      "endpoint_sequence": "GET /weather,GET /weather2",
+      "request_cycles": 2,
+      "client_script": "client_v3.ts",
+      "concurrency": 1,
+      "matrix_row": "raised amount on a NEW resource caught by the explicit expectation (global per-offer check); signer x1",
+      "observed": {
+        "signer_values": [
+          "10000"
+        ],
+        "signer_call_count": 1,
+        "quote_rejections": [
+          {
+            "cycle": 2,
+            "source": "caller-config",
+            "expected": "10000",
+            "offered": "50000",
+            "via": "wrapped-message"
+          }
+        ],
+        "other_rejections": [],
+        "per_cycle": [
+          {
+            "cycle": 1,
+            "http": 200,
+            "receipt": {
+              "success": true,
+              "transaction": "0xabababababababababababababababababababababababababababababababab",
+              "network": "eip155:84532"
+            }
+          },
+          {
+            "cycle": 2,
+            "error": "Failed to create payment payload: quote-check-rejected: quote_mismatch_vs_expected: amount 10000 -> 50000. The server-declared amount does not match the caller-anchored price expectation. Adjust spendControls.expectedAmount, raise expectedAmountTolerance for legitimate repricing, or set expectedAmount: false to disable.",
+            "error_name": "Error",
+            "quote_mismatch": null
+          }
+        ],
+        "served_contacts": null,
+        "client_rc": 0,
+        "stand_verdict": "FAIL"
+      },
+      "verdict": "PASS",
+      "timeline": [
+        {
+          "at": "2026-10-31T12:17:58.542Z",
+          "type": "probe_start",
+          "control_under_test": "PR #3920 SpendControls.expectedAmount (@x402/core built from feat/expected-amount @4232cf6)",
+          "url": "http://127.0.0.1:4479/weather",
+          "cycles": 2,
+          "endpoint_sequence": [
+            {
+              "method": "GET",
+              "path": "/weather"
+            },
+            {
+              "method": "GET",
+              "path": "/weather2"
+            }
+          ],
+          "spend_controls": {
+            "maxAmountPerPayment": "$1",
+            "expectedAmount": "$0.01"
+          },
+          "note": "rejection logic is the PR's own; this harness adds observation only (signer counts, verbatim errors)"
+        },
+        {
+          "at": "2026-10-31T12:17:58.543Z",
+          "type": "cycle_start",
+          "cycle": 1
+        },
+        {
+          "at": "2026-10-31T12:17:58.580Z",
+          "type": "quote_offered",
+          "cycle_context_url": "http://127.0.0.1:4479/weather",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4479/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "10000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0x9999999999999999999999999999999999999999",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-10-31T12:17:58.584Z",
+          "type": "signer_call",
+          "call_index": 1,
+          "signer_entry": "signTypedData",
+          "primary_type": "TransferWithAuthorization",
+          "domain": {
+            "name": "USDC",
+            "version": "2",
+            "chainId": 84532,
+            "verifyingContract": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+          },
+          "to": "0x9999999999999999999999999999999999999999",
+          "value": "10000",
+          "from": "0x69A3d4f24F6c8112E2eC85fBCE8b045142Bf3000",
+          "valid_after": "0",
+          "valid_before": "1793449138",
+          "nonce": "0xbb80c4c9…ca84(len66)"
+        },
+        {
+          "at": "2026-10-31T12:17:58.594Z",
+          "type": "cycle_result",
+          "cycle": 1,
+          "http": 200,
+          "receipt_served": {
+            "success": true,
+            "transaction": "0xabababababababababababababababababababababababababababababababab",
+            "network": "eip155:84532"
+          }
+        },
+        {
+          "at": "2026-10-31T12:17:58.594Z",
+          "type": "cycle_start",
+          "cycle": 2
+        },
+        {
+          "at": "2026-10-31T12:17:58.596Z",
+          "type": "quote_offered",
+          "cycle_context_url": "http://127.0.0.1:4479/weather2",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4479/weather2",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "50000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0x9999999999999999999999999999999999999999",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-10-31T12:17:58.597Z",
+          "type": "cycle_error",
+          "cycle": 2,
+          "error": "Failed to create payment payload: quote-check-rejected: quote_mismatch_vs_expected: amount 10000 -> 50000. The server-declared amount does not match the caller-anchored price expectation. Adjust spendControls.expectedAmount, raise expectedAmountTolerance for legitimate repricing, or set expectedAmount: false to disable.",
+          "error_name": "Error",
+          "quote_mismatch": null
+        }
+      ],
+      "stand": {
+        "stand_verdict": "FAIL",
+        "stand_reasons": [
+          "FAIL (attempt 1):",
+          "платежей зафиксировано: 1; запросов: 3; окно наблюдения: 2500ms",
+          "FAIL: СУТ заплатил по завышенным требованиям (value=10000; решение В2)"
+        ]
+      }
+    },
+    {
+      "session": "xc_a8b_method_new_binding_explicit",
+      "matrix": "A8",
+      "expectation_mode": "explicit",
+      "requirement_amounts_served": [
+        "10000",
+        "10000"
+      ],
+      "requirement_overrides": null,
+      "endpoint_sequence": "GET /weather,POST /weather",
+      "request_cycles": 2,
+      "client_script": "client_v3.ts",
+      "concurrency": 1,
+      "matrix_row": "method change (method is NOT in the PR quote key): documented semantics — both cycles sign under the explicit expectation",
+      "observed": {
+        "signer_values": [
+          "10000",
+          "10000"
+        ],
+        "signer_call_count": 2,
+        "quote_rejections": [],
+        "other_rejections": [],
+        "per_cycle": [
+          {
+            "cycle": 1,
+            "http": 200,
+            "receipt": {
+              "success": true,
+              "transaction": "0xabababababababababababababababababababababababababababababababab",
+              "network": "eip155:84532"
+            }
+          },
+          {
+            "cycle": 2,
+            "http": 200,
+            "receipt": {
+              "success": true,
+              "transaction": "0xabababababababababababababababababababababababababababababababab",
+              "network": "eip155:84532"
+            }
+          }
+        ],
+        "served_contacts": null,
+        "client_rc": 0,
+        "stand_verdict": "FAIL"
+      },
+      "verdict": "PASS",
+      "timeline": [
+        {
+          "at": "2026-10-31T12:18:04.579Z",
+          "type": "probe_start",
+          "control_under_test": "PR #3920 SpendControls.expectedAmount (@x402/core built from feat/expected-amount @4232cf6)",
+          "url": "http://127.0.0.1:4480/weather",
+          "cycles": 2,
+          "endpoint_sequence": [
+            {
+              "method": "GET",
+              "path": "/weather"
+            },
+            {
+              "method": "POST",
+              "path": "/weather"
+            }
+          ],
+          "spend_controls": {
+            "maxAmountPerPayment": "$1",
+            "expectedAmount": "$0.01"
+          },
+          "note": "rejection logic is the PR's own; this harness adds observation only (signer counts, verbatim errors)"
+        },
+        {
+          "at": "2026-10-31T12:18:04.579Z",
+          "type": "cycle_start",
+          "cycle": 1
+        },
+        {
+          "at": "2026-10-31T12:18:04.620Z",
+          "type": "quote_offered",
+          "cycle_context_url": "http://127.0.0.1:4480/weather",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4480/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "10000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0x9999999999999999999999999999999999999999",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-10-31T12:18:04.624Z",
+          "type": "signer_call",
+          "call_index": 1,
+          "signer_entry": "signTypedData",
+          "primary_type": "TransferWithAuthorization",
+          "domain": {
+            "name": "USDC",
+            "version": "2",
+            "chainId": 84532,
+            "verifyingContract": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+          },
+          "to": "0x9999999999999999999999999999999999999999",
+          "value": "10000",
+          "from": "0x936B3290f14b70e57263056B13f24501e06f5855",
+          "valid_after": "0",
+          "valid_before": "1793449144",
+          "nonce": "0x2bd14df5…838c(len66)"
+        },
+        {
+          "at": "2026-10-31T12:18:04.632Z",
+          "type": "cycle_result",
+          "cycle": 1,
+          "http": 200,
+          "receipt_served": {
+            "success": true,
+            "transaction": "0xabababababababababababababababababababababababababababababababab",
+            "network": "eip155:84532"
+          }
+        },
+        {
+          "at": "2026-10-31T12:18:04.633Z",
+          "type": "cycle_start",
+          "cycle": 2
+        },
+        {
+          "at": "2026-10-31T12:18:04.636Z",
+          "type": "quote_offered",
+          "cycle_context_url": "http://127.0.0.1:4480/weather",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4480/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "10000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0x9999999999999999999999999999999999999999",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-10-31T12:18:04.637Z",
+          "type": "signer_call",
+          "call_index": 2,
+          "signer_entry": "signTypedData",
+          "primary_type": "TransferWithAuthorization",
+          "domain": {
+            "name": "USDC",
+            "version": "2",
+            "chainId": 84532,
+            "verifyingContract": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+          },
+          "to": "0x9999999999999999999999999999999999999999",
+          "value": "10000",
+          "from": "0x936B3290f14b70e57263056B13f24501e06f5855",
+          "valid_after": "0",
+          "valid_before": "1793449144",
+          "nonce": "0x242eadca…016c(len66)"
+        },
+        {
+          "at": "2026-10-31T12:18:04.641Z",
+          "type": "cycle_result",
+          "cycle": 2,
+          "http": 200,
+          "receipt_served": {
+            "success": true,
+            "transaction": "0xabababababababababababababababababababababababababababababababab",
+            "network": "eip155:84532"
+          }
+        }
+      ],
+      "stand": {
+        "stand_verdict": "FAIL",
+        "stand_reasons": [
+          "FAIL (attempt 1):",
+          "платежей зафиксировано: 2; запросов: 4; окно наблюдения: 2500ms",
+          "FAIL: СУТ заплатил по завышенным требованиям (value=10000; решение В2)"
+        ]
+      }
+    },
+    {
+      "session": "xc_a9_firstaccepted_drift",
+      "matrix": "A9",
+      "expectation_mode": "first-accepted",
+      "requirement_amounts_served": [
+        "10000",
+        "100000"
+      ],
+      "requirement_overrides": null,
+      "endpoint_sequence": null,
+      "request_cycles": 2,
+      "client_script": "client_v3.ts",
+      "concurrency": 1,
+      "matrix_row": "first-accepted anchors at payload creation; later drift rejected with source=quote-ledger, expected=10000; signer x1",
+      "observed": {
+        "signer_values": [
+          "10000"
+        ],
+        "signer_call_count": 1,
+        "quote_rejections": [
+          {
+            "cycle": 2,
+            "source": "quote-ledger",
+            "expected": "10000",
+            "offered": "100000",
+            "via": "wrapped-message"
+          }
+        ],
+        "other_rejections": [],
+        "per_cycle": [
+          {
+            "cycle": 1,
+            "http": 200,
+            "receipt": {
+              "success": true,
+              "transaction": "0xabababababababababababababababababababababababababababababababab",
+              "network": "eip155:84532"
+            }
+          },
+          {
+            "cycle": 2,
+            "error": "Failed to create payment payload: quote-check-rejected: quote_mismatch_vs_accepted: amount 10000 -> 100000. The server-declared amount does not match the caller-anchored price expectation. Adjust spendControls.expectedAmount, raise expectedAmountTolerance for legitimate repricing, or set expectedAmount: false to disable.",
+            "error_name": "Error",
+            "quote_mismatch": null
+          }
+        ],
+        "served_contacts": null,
+        "client_rc": 0,
+        "stand_verdict": "FAIL"
+      },
+      "verdict": "PASS",
+      "timeline": [
+        {
+          "at": "2026-10-31T12:18:10.625Z",
+          "type": "probe_start",
+          "control_under_test": "PR #3920 SpendControls.expectedAmount (@x402/core built from feat/expected-amount @4232cf6)",
+          "url": "http://127.0.0.1:4481/weather",
+          "cycles": 2,
+          "endpoint_sequence": null,
+          "spend_controls": {
+            "maxAmountPerPayment": "$1",
+            "expectedAmount": "first-accepted"
+          },
+          "note": "rejection logic is the PR's own; this harness adds observation only (signer counts, verbatim errors)"
+        },
+        {
+          "at": "2026-10-31T12:18:10.625Z",
+          "type": "cycle_start",
+          "cycle": 1
+        },
+        {
+          "at": "2026-10-31T12:18:10.668Z",
+          "type": "quote_offered",
+          "cycle_context_url": "http://127.0.0.1:4481/weather",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4481/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "10000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0x9999999999999999999999999999999999999999",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-10-31T12:18:10.671Z",
+          "type": "signer_call",
+          "call_index": 1,
+          "signer_entry": "signTypedData",
+          "primary_type": "TransferWithAuthorization",
+          "domain": {
+            "name": "USDC",
+            "version": "2",
+            "chainId": 84532,
+            "verifyingContract": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+          },
+          "to": "0x9999999999999999999999999999999999999999",
+          "value": "10000",
+          "from": "0x6641403090c134fCE9ABe6189c22bF2f0150279c",
+          "valid_after": "0",
+          "valid_before": "1793449150",
+          "nonce": "0xd894c332…bba7(len66)"
+        },
+        {
+          "at": "2026-10-31T12:18:10.680Z",
+          "type": "cycle_result",
+          "cycle": 1,
+          "http": 200,
+          "receipt_served": {
+            "success": true,
+            "transaction": "0xabababababababababababababababababababababababababababababababab",
+            "network": "eip155:84532"
+          }
+        },
+        {
+          "at": "2026-10-31T12:18:10.681Z",
+          "type": "cycle_start",
+          "cycle": 2
+        },
+        {
+          "at": "2026-10-31T12:18:10.682Z",
+          "type": "quote_offered",
+          "cycle_context_url": "http://127.0.0.1:4481/weather",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4481/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "100000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0x9999999999999999999999999999999999999999",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-10-31T12:18:10.683Z",
+          "type": "cycle_error",
+          "cycle": 2,
+          "error": "Failed to create payment payload: quote-check-rejected: quote_mismatch_vs_accepted: amount 10000 -> 100000. The server-declared amount does not match the caller-anchored price expectation. Adjust spendControls.expectedAmount, raise expectedAmountTolerance for legitimate repricing, or set expectedAmount: false to disable.",
+          "error_name": "Error",
+          "quote_mismatch": null
+        }
+      ],
+      "stand": {
+        "stand_verdict": "FAIL",
+        "stand_reasons": [
+          "FAIL (attempt 1):",
+          "платежей зафиксировано: 1; запросов: 3; окно наблюдения: 2500ms",
+          "FAIL: СУТ заплатил по завышенным требованиям (value=10000; решение В2)"
+        ]
+      }
+    },
+    {
+      "session": "xc_a10a_first_race_explicit",
+      "matrix": "A10a",
+      "expectation_mode": "explicit",
+      "requirement_amounts_served": [
+        "10000",
+        "10000"
+      ],
+      "requirement_overrides": null,
+      "endpoint_sequence": null,
+      "request_cycles": 2,
+      "client_script": "client_v5.ts",
+      "concurrency": 2,
+      "matrix_row": "first-contact race, explicit expectation (pre-registered matrix-a10a11.json): exactly ONE signature admitted in the un-anchored window; the concurrent duplicate must not reach the signer",
+      "observed": {
+        "signer_values": [
+          "10000",
+          "10000"
+        ],
+        "signer_call_count": 2,
+        "quote_rejections": [],
+        "other_rejections": [],
+        "per_cycle": [
+          {
+            "cycle": 1,
+            "http": 200,
+            "receipt": {
+              "success": true,
+              "transaction": "0xabababababababababababababababababababababababababababababababab",
+              "network": "eip155:84532"
+            }
+          },
+          {
+            "cycle": 2,
+            "http": 200,
+            "receipt": {
+              "success": true,
+              "transaction": "0xabababababababababababababababababababababababababababababababab",
+              "network": "eip155:84532"
+            }
+          }
+        ],
+        "served_contacts": null,
+        "client_rc": 0,
+        "stand_verdict": "FAIL"
+      },
+      "verdict": "FAIL",
+      "timeline": [
+        {
+          "at": "2026-10-31T12:18:16.666Z",
+          "type": "probe_start",
+          "control_under_test": "PR #3920 SpendControls.expectedAmount (@x402/core built from feat/expected-amount, verification cycle 2)",
+          "url": "http://127.0.0.1:4482/weather",
+          "concurrency": 2,
+          "spend_controls": {
+            "maxAmountPerPayment": "$1",
+            "expectedAmount": "$0.01"
+          },
+          "note": "rejection logic is the PR's own; this harness adds observation only (signer counts, verbatim errors, slot timing)"
+        },
+        {
+          "at": "2026-10-31T12:18:16.668Z",
+          "type": "slot_start",
+          "slot": 1,
+          "url": "http://127.0.0.1:4482/weather"
+        },
+        {
+          "at": "2026-10-31T12:18:16.689Z",
+          "type": "slot_start",
+          "slot": 2,
+          "url": "http://127.0.0.1:4482/weather"
+        },
+        {
+          "at": "2026-10-31T12:18:16.709Z",
+          "type": "quote_offered",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4482/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "10000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0x9999999999999999999999999999999999999999",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-10-31T12:18:16.713Z",
+          "type": "signer_call",
+          "call_index": 1,
+          "signer_entry": "signTypedData",
+          "primary_type": "TransferWithAuthorization",
+          "domain": {
+            "name": "USDC",
+            "version": "2",
+            "chainId": 84532,
+            "verifyingContract": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+          },
+          "to": "0x9999999999999999999999999999999999999999",
+          "value": "10000",
+          "from": "0x38022b2C2B4eC796FB99D912af36354CC5610d37",
+          "valid_after": "0",
+          "valid_before": "1793449156",
+          "nonce": "0xb3600812…4828(len66)"
+        },
+        {
+          "at": "2026-10-31T12:18:16.720Z",
+          "type": "quote_offered",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4482/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "10000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0x9999999999999999999999999999999999999999",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-10-31T12:18:16.721Z",
+          "type": "signer_call",
+          "call_index": 2,
+          "signer_entry": "signTypedData",
+          "primary_type": "TransferWithAuthorization",
+          "domain": {
+            "name": "USDC",
+            "version": "2",
+            "chainId": 84532,
+            "verifyingContract": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+          },
+          "to": "0x9999999999999999999999999999999999999999",
+          "value": "10000",
+          "from": "0x38022b2C2B4eC796FB99D912af36354CC5610d37",
+          "valid_after": "0",
+          "valid_before": "1793449156",
+          "nonce": "0x366b317c…5dad(len66)"
+        },
+        {
+          "at": "2026-10-31T12:18:16.726Z",
+          "type": "slot_result",
+          "slot": 1,
+          "http": 200,
+          "receipt_served": {
+            "success": true,
+            "transaction": "0xabababababababababababababababababababababababababababababababab",
+            "network": "eip155:84532"
+          }
+        },
+        {
+          "at": "2026-10-31T12:18:16.727Z",
+          "type": "slot_result",
+          "slot": 2,
+          "http": 200,
+          "receipt_served": {
+            "success": true,
+            "transaction": "0xabababababababababababababababababababababababababababababababab",
+            "network": "eip155:84532"
+          }
+        }
+      ],
+      "stand": {
+        "stand_verdict": "FAIL",
+        "stand_reasons": [
+          "FAIL (attempt 1):",
+          "платежей зафиксировано: 2; запросов: 4; окно наблюдения: 2500ms",
+          "FAIL: СУТ заплатил по завышенным требованиям (value=10000; решение В2)"
+        ]
+      }
+    },
+    {
+      "session": "xc_a10b_first_race_firstaccepted",
+      "matrix": "A10b",
+      "expectation_mode": "first-accepted",
+      "requirement_amounts_served": [
+        "10000",
+        "10000"
+      ],
+      "requirement_overrides": null,
+      "endpoint_sequence": null,
+      "request_cycles": 2,
+      "client_script": "client_v5.ts",
+      "concurrency": 2,
+      "matrix_row": "first-contact race, first-accepted anchoring (pre-registered): exactly ONE first commitment admitted; concurrent duplicates must not both sign",
+      "observed": {
+        "signer_values": [
+          "10000",
+          "10000"
+        ],
+        "signer_call_count": 2,
+        "quote_rejections": [],
+        "other_rejections": [],
+        "per_cycle": [
+          {
+            "cycle": 1,
+            "http": 200,
+            "receipt": {
+              "success": true,
+              "transaction": "0xabababababababababababababababababababababababababababababababab",
+              "network": "eip155:84532"
+            }
+          },
+          {
+            "cycle": 2,
+            "http": 200,
+            "receipt": {
+              "success": true,
+              "transaction": "0xabababababababababababababababababababababababababababababababab",
+              "network": "eip155:84532"
+            }
+          }
+        ],
+        "served_contacts": null,
+        "client_rc": 0,
+        "stand_verdict": "FAIL"
+      },
+      "verdict": "FAIL",
+      "timeline": [
+        {
+          "at": "2026-10-31T12:18:22.713Z",
+          "type": "probe_start",
+          "control_under_test": "PR #3920 SpendControls.expectedAmount (@x402/core built from feat/expected-amount, verification cycle 2)",
+          "url": "http://127.0.0.1:4483/weather",
+          "concurrency": 2,
+          "spend_controls": {
+            "maxAmountPerPayment": "$1",
+            "expectedAmount": "first-accepted"
+          },
+          "note": "rejection logic is the PR's own; this harness adds observation only (signer counts, verbatim errors, slot timing)"
+        },
+        {
+          "at": "2026-10-31T12:18:22.714Z",
+          "type": "slot_start",
+          "slot": 1,
+          "url": "http://127.0.0.1:4483/weather"
+        },
+        {
+          "at": "2026-10-31T12:18:22.737Z",
+          "type": "slot_start",
+          "slot": 2,
+          "url": "http://127.0.0.1:4483/weather"
+        },
+        {
+          "at": "2026-10-31T12:18:22.755Z",
+          "type": "quote_offered",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4483/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "10000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0x9999999999999999999999999999999999999999",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-10-31T12:18:22.759Z",
+          "type": "signer_call",
+          "call_index": 1,
+          "signer_entry": "signTypedData",
+          "primary_type": "TransferWithAuthorization",
+          "domain": {
+            "name": "USDC",
+            "version": "2",
+            "chainId": 84532,
+            "verifyingContract": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+          },
+          "to": "0x9999999999999999999999999999999999999999",
+          "value": "10000",
+          "from": "0xb18e47BF2cadC838F73C6216fB9931878C7A19b4",
+          "valid_after": "0",
+          "valid_before": "1793449162",
+          "nonce": "0x18ff5cc3…3e54(len66)"
+        },
+        {
+          "at": "2026-10-31T12:18:22.766Z",
+          "type": "quote_offered",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4483/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "10000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0x9999999999999999999999999999999999999999",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-10-31T12:18:22.766Z",
+          "type": "signer_call",
+          "call_index": 2,
+          "signer_entry": "signTypedData",
+          "primary_type": "TransferWithAuthorization",
+          "domain": {
+            "name": "USDC",
+            "version": "2",
+            "chainId": 84532,
+            "verifyingContract": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+          },
+          "to": "0x9999999999999999999999999999999999999999",
+          "value": "10000",
+          "from": "0xb18e47BF2cadC838F73C6216fB9931878C7A19b4",
+          "valid_after": "0",
+          "valid_before": "1793449162",
+          "nonce": "0x0b4f66e0…f990(len66)"
+        },
+        {
+          "at": "2026-10-31T12:18:22.774Z",
+          "type": "slot_result",
+          "slot": 1,
+          "http": 200,
+          "receipt_served": {
+            "success": true,
+            "transaction": "0xabababababababababababababababababababababababababababababababab",
+            "network": "eip155:84532"
+          }
+        },
+        {
+          "at": "2026-10-31T12:18:22.775Z",
+          "type": "slot_result",
+          "slot": 2,
+          "http": 200,
+          "receipt_served": {
+            "success": true,
+            "transaction": "0xabababababababababababababababababababababababababababababababab",
+            "network": "eip155:84532"
+          }
+        }
+      ],
+      "stand": {
+        "stand_verdict": "FAIL",
+        "stand_reasons": [
+          "FAIL (attempt 1):",
+          "платежей зафиксировано: 2; запросов: 4; окно наблюдения: 2500ms",
+          "FAIL: СУТ заплатил по завышенным требованиям (value=10000; решение В2)"
+        ]
+      }
+    },
+    {
+      "session": "xc_a11_unsupported_amount_explicit",
+      "matrix": "A11",
+      "expectation_mode": "explicit",
+      "requirement_amounts_served": null,
+      "requirement_overrides": [
+        {
+          "amount": "0.5"
+        }
+      ],
+      "endpoint_sequence": null,
+      "request_cycles": 1,
+      "client_script": "client_v3.ts",
+      "concurrency": 1,
+      "matrix_row": "unsupported amount representation under an ENABLED expectation (pin $0.01, offered 0.5 non-atomic decimal, pre-registered): fail-closed typed rejection, never sign",
+      "observed": {
+        "signer_values": [],
+        "signer_call_count": 0,
+        "quote_rejections": [],
+        "other_rejections": [
+          {
+            "cycle": 1,
+            "error_name": "Error",
+            "error": "Failed to create payment payload: quote-check-unsupported: non-atomic-amount. The offered requirement cannot be evaluated against spendControls.expectedAmount (the amount is not an integer atomic string, e.g. a decimal-ledger asset). Rejected fail-closed: an asset allowlist entry or a higher spend cap is not a substitute for an unchecked expectation. Set expectedAmount: false to disable."
+          }
+        ],
+        "per_cycle": [
+          {
+            "cycle": 1,
+            "error": "Failed to create payment payload: quote-check-unsupported: non-atomic-amount. The offered requirement cannot be evaluated against spendControls.expectedAmount (the amount is not an integer atomic string, e.g. a decimal-ledger asset). Rejected fail-closed: an asset allowlist entry or a higher spend cap is not a substitute for an unchecked expectation. Set expectedAmount: false to disable.",
+            "error_name": "Error",
+            "quote_mismatch": null
+          }
+        ],
+        "served_contacts": null,
+        "client_rc": 0,
+        "stand_verdict": "PASS"
+      },
+      "verdict": "PASS",
+      "timeline": [
+        {
+          "at": "2026-10-31T12:18:28.751Z",
+          "type": "probe_start",
+          "control_under_test": "PR #3920 SpendControls.expectedAmount (@x402/core built from feat/expected-amount @4232cf6)",
+          "url": "http://127.0.0.1:4484/weather",
+          "cycles": 1,
+          "endpoint_sequence": null,
+          "spend_controls": {
+            "maxAmountPerPayment": "$1",
+            "expectedAmount": "$0.01"
+          },
+          "note": "rejection logic is the PR's own; this harness adds observation only (signer counts, verbatim errors)"
+        },
+        {
+          "at": "2026-10-31T12:18:28.751Z",
+          "type": "cycle_start",
+          "cycle": 1
+        },
+        {
+          "at": "2026-10-31T12:18:28.791Z",
+          "type": "quote_offered",
+          "cycle_context_url": "http://127.0.0.1:4484/weather",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4484/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "0.5",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0x9999999999999999999999999999999999999999",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-10-31T12:18:28.793Z",
+          "type": "cycle_error",
+          "cycle": 1,
+          "error": "Failed to create payment payload: quote-check-unsupported: non-atomic-amount. The offered requirement cannot be evaluated against spendControls.expectedAmount (the amount is not an integer atomic string, e.g. a decimal-ledger asset). Rejected fail-closed: an asset allowlist entry or a higher spend cap is not a substitute for an unchecked expectation. Set expectedAmount: false to disable.",
+          "error_name": "Error",
+          "quote_mismatch": null
+        }
+      ],
+      "stand": {
+        "stand_verdict": "PASS",
+        "stand_reasons": [
+          "PASS (attempt 1):",
+          "платежей зафиксировано: 0; запросов: 1; окно наблюдения: 2500ms",
+          "СУТ отказался платить по завышенным требованиям"
+        ]
+      }
+    },
+    {
+      "session": "xc_a10c_race_conflict_explicit",
+      "matrix": "A10c",
+      "expectation_mode": "explicit",
+      "requirement_amounts_served": [
+        "10000",
+        "100000"
+      ],
+      "requirement_overrides": null,
+      "endpoint_sequence": null,
+      "request_cycles": 2,
+      "client_script": "client_v5.ts",
+      "concurrency": 2,
+      "matrix_row": "conflicting-offer race, explicit expectation (cycle-3 pre-registration; the in-thread requested discriminating control): the in-cap offer (10000) signs against the caller pin; the concurrently offered raised quote (100000) must be rejected pre-signer — concurrent CONFLICTING offers must not produce conflicting commitments (one commitment, one rejection)",
+      "observed": {
+        "signer_values": [
+          "10000"
+        ],
+        "signer_call_count": 1,
+        "quote_rejections": [
+          {
+            "cycle": 2,
+            "source": "caller-config",
+            "expected": "10000",
+            "offered": "100000",
+            "via": "wrapped-message"
+          }
+        ],
+        "other_rejections": [],
+        "per_cycle": [
+          {
+            "cycle": 2,
+            "error": "Failed to create payment payload: quote-check-rejected: quote_mismatch_vs_expected: amount 10000 -> 100000. The server-declared amount does not match the caller-anchored price expectation. Adjust spendControls.expectedAmount, raise expectedAmountTolerance for legitimate repricing, or set expectedAmount: false to disable.",
+            "error_name": "Error",
+            "quote_mismatch": null
+          },
+          {
+            "cycle": 1,
+            "http": 200,
+            "receipt": {
+              "success": true,
+              "transaction": "0xabababababababababababababababababababababababababababababababab",
+              "network": "eip155:84532"
+            }
+          }
+        ],
+        "served_contacts": null,
+        "client_rc": 0,
+        "stand_verdict": "FAIL"
+      },
+      "verdict": "PASS",
+      "timeline": [
+        {
+          "at": "2026-10-31T12:18:34.754Z",
+          "type": "probe_start",
+          "control_under_test": "PR #3920 SpendControls.expectedAmount (@x402/core built from feat/expected-amount, verification cycle 2)",
+          "url": "http://127.0.0.1:4485/weather",
+          "concurrency": 2,
+          "spend_controls": {
+            "maxAmountPerPayment": "$1",
+            "expectedAmount": "$0.01"
+          },
+          "note": "rejection logic is the PR's own; this harness adds observation only (signer counts, verbatim errors, slot timing)"
+        },
+        {
+          "at": "2026-10-31T12:18:34.755Z",
+          "type": "slot_start",
+          "slot": 1,
+          "url": "http://127.0.0.1:4485/weather"
+        },
+        {
+          "at": "2026-10-31T12:18:34.778Z",
+          "type": "slot_start",
+          "slot": 2,
+          "url": "http://127.0.0.1:4485/weather"
+        },
+        {
+          "at": "2026-10-31T12:18:34.795Z",
+          "type": "quote_offered",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4485/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "10000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0x9999999999999999999999999999999999999999",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-10-31T12:18:34.799Z",
+          "type": "signer_call",
+          "call_index": 1,
+          "signer_entry": "signTypedData",
+          "primary_type": "TransferWithAuthorization",
+          "domain": {
+            "name": "USDC",
+            "version": "2",
+            "chainId": 84532,
+            "verifyingContract": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+          },
+          "to": "0x9999999999999999999999999999999999999999",
+          "value": "10000",
+          "from": "0xC198B2d07DC404812cD39071Da7fFB6C94D6b8D6",
+          "valid_after": "0",
+          "valid_before": "1793449174",
+          "nonce": "0x6e6b4d53…2a43(len66)"
+        },
+        {
+          "at": "2026-10-31T12:18:34.806Z",
+          "type": "quote_offered",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4485/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "100000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0x9999999999999999999999999999999999999999",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-10-31T12:18:34.807Z",
+          "type": "slot_error",
+          "slot": 2,
+          "error": "Failed to create payment payload: quote-check-rejected: quote_mismatch_vs_expected: amount 10000 -> 100000. The server-declared amount does not match the caller-anchored price expectation. Adjust spendControls.expectedAmount, raise expectedAmountTolerance for legitimate repricing, or set expectedAmount: false to disable.",
+          "error_name": "Error",
+          "quote_mismatch": null
+        },
+        {
+          "at": "2026-10-31T12:18:34.810Z",
+          "type": "slot_result",
+          "slot": 1,
+          "http": 200,
+          "receipt_served": {
+            "success": true,
+            "transaction": "0xabababababababababababababababababababababababababababababababab",
+            "network": "eip155:84532"
+          }
+        }
+      ],
+      "stand": {
+        "stand_verdict": "FAIL",
+        "stand_reasons": [
+          "FAIL (attempt 1):",
+          "платежей зафиксировано: 1; запросов: 3; окно наблюдения: 2500ms",
+          "FAIL: СУТ заплатил по завышенным требованиям (value=10000; решение В2)"
+        ]
+      }
+    },
+    {
+      "session": "xc_a10d_race_conflict_firstaccepted",
+      "matrix": "A10d",
+      "expectation_mode": "first-accepted",
+      "requirement_amounts_served": [
+        "10000",
+        "100000"
+      ],
+      "requirement_overrides": null,
+      "endpoint_sequence": null,
+      "request_cycles": 2,
+      "client_script": "client_v5.ts",
+      "concurrency": 2,
+      "matrix_row": "conflicting-offer race, first-accepted (cycle-3 pre-registration): whichever offer arrives first commits (one signature); the concurrent conflicting quote must be rejected pre-signer — regardless of which slot anchors (order is timing-dependent; the signed VALUE and rejection direction are recorded verbatim)",
+      "observed": {
+        "signer_values": [
+          "10000"
+        ],
+        "signer_call_count": 1,
+        "quote_rejections": [
+          {
+            "cycle": 2,
+            "source": "quote-ledger",
+            "expected": "10000",
+            "offered": "100000",
+            "via": "wrapped-message"
+          }
+        ],
+        "other_rejections": [],
+        "per_cycle": [
+          {
+            "cycle": 2,
+            "error": "Failed to create payment payload: quote-check-rejected: quote_mismatch_vs_accepted: amount 10000 -> 100000. The server-declared amount does not match the caller-anchored price expectation. Adjust spendControls.expectedAmount, raise expectedAmountTolerance for legitimate repricing, or set expectedAmount: false to disable.",
+            "error_name": "Error",
+            "quote_mismatch": null
+          },
+          {
+            "cycle": 1,
+            "http": 200,
+            "receipt": {
+              "success": true,
+              "transaction": "0xabababababababababababababababababababababababababababababababab",
+              "network": "eip155:84532"
+            }
+          }
+        ],
+        "served_contacts": null,
+        "client_rc": 0,
+        "stand_verdict": "FAIL"
+      },
+      "verdict": "PASS",
+      "timeline": [
+        {
+          "at": "2026-10-31T12:18:40.786Z",
+          "type": "probe_start",
+          "control_under_test": "PR #3920 SpendControls.expectedAmount (@x402/core built from feat/expected-amount, verification cycle 2)",
+          "url": "http://127.0.0.1:4486/weather",
+          "concurrency": 2,
+          "spend_controls": {
+            "maxAmountPerPayment": "$1",
+            "expectedAmount": "first-accepted"
+          },
+          "note": "rejection logic is the PR's own; this harness adds observation only (signer counts, verbatim errors, slot timing)"
+        },
+        {
+          "at": "2026-10-31T12:18:40.788Z",
+          "type": "slot_start",
+          "slot": 1,
+          "url": "http://127.0.0.1:4486/weather"
+        },
+        {
+          "at": "2026-10-31T12:18:40.809Z",
+          "type": "slot_start",
+          "slot": 2,
+          "url": "http://127.0.0.1:4486/weather"
+        },
+        {
+          "at": "2026-10-31T12:18:40.829Z",
+          "type": "quote_offered",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4486/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "10000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0x9999999999999999999999999999999999999999",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-10-31T12:18:40.833Z",
+          "type": "signer_call",
+          "call_index": 1,
+          "signer_entry": "signTypedData",
+          "primary_type": "TransferWithAuthorization",
+          "domain": {
+            "name": "USDC",
+            "version": "2",
+            "chainId": 84532,
+            "verifyingContract": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+          },
+          "to": "0x9999999999999999999999999999999999999999",
+          "value": "10000",
+          "from": "0x4aFe9E0557244063e82E416445a01174e9B25f3d",
+          "valid_after": "0",
+          "valid_before": "1793449180",
+          "nonce": "0x5c5cde62…700e(len66)"
+        },
+        {
+          "at": "2026-10-31T12:18:40.841Z",
+          "type": "quote_offered",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4486/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "100000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0x9999999999999999999999999999999999999999",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-10-31T12:18:40.841Z",
+          "type": "slot_error",
+          "slot": 2,
+          "error": "Failed to create payment payload: quote-check-rejected: quote_mismatch_vs_accepted: amount 10000 -> 100000. The server-declared amount does not match the caller-anchored price expectation. Adjust spendControls.expectedAmount, raise expectedAmountTolerance for legitimate repricing, or set expectedAmount: false to disable.",
+          "error_name": "Error",
+          "quote_mismatch": null
+        },
+        {
+          "at": "2026-10-31T12:18:40.848Z",
+          "type": "slot_result",
+          "slot": 1,
+          "http": 200,
+          "receipt_served": {
+            "success": true,
+            "transaction": "0xabababababababababababababababababababababababababababababababab",
+            "network": "eip155:84532"
+          }
+        }
+      ],
+      "stand": {
+        "stand_verdict": "FAIL",
+        "stand_reasons": [
+          "FAIL (attempt 1):",
+          "платежей зафиксировано: 1; запросов: 3; окно наблюдения: 2500ms",
+          "FAIL: СУТ заплатил по завышенным требованиям (value=10000; решение В2)"
+        ]
+      }
+    },
+    {
+      "session": "xc_a12_casevariant_same_firstaccepted",
+      "matrix": "A12",
+      "expectation_mode": "first-accepted",
+      "requirement_amounts_served": [
+        "10000",
+        "10000"
+      ],
+      "requirement_overrides": [
+        {
+          "payTo": "0xabCDeF0123456789AbcdEf0123456789aBCDEF01"
+        },
+        {
+          "payTo": "0xabcdef0123456789abcdef0123456789abcdef01"
+        }
+      ],
+      "endpoint_sequence": null,
+      "request_cycles": 2,
+      "client_script": "client_v3.ts",
+      "concurrency": 1,
+      "matrix_row": "case-only EVM recipient variation, unchanged amount, first-accepted (cycle-3 pre-registration, e993bef delta control): canonicalized quote-ledger keys make the case-variant offer ride the SAME anchor — both cycles sign, zero QuoteMismatch (no false positives from case spelling)",
+      "observed": {
+        "signer_values": [
+          "10000",
+          "10000"
+        ],
+        "signer_call_count": 2,
+        "quote_rejections": [],
+        "other_rejections": [],
+        "per_cycle": [
+          {
+            "cycle": 1,
+            "http": 200,
+            "receipt": {
+              "success": true,
+              "transaction": "0xabababababababababababababababababababababababababababababababab",
+              "network": "eip155:84532"
+            }
+          },
+          {
+            "cycle": 2,
+            "http": 200,
+            "receipt": {
+              "success": true,
+              "transaction": "0xabababababababababababababababababababababababababababababababab",
+              "network": "eip155:84532"
+            }
+          }
+        ],
+        "served_contacts": null,
+        "client_rc": 0,
+        "stand_verdict": "FAIL"
+      },
+      "verdict": "PASS",
+      "timeline": [
+        {
+          "at": "2026-10-31T12:18:46.820Z",
+          "type": "probe_start",
+          "control_under_test": "PR #3920 SpendControls.expectedAmount (@x402/core built from feat/expected-amount @4232cf6)",
+          "url": "http://127.0.0.1:4487/weather",
+          "cycles": 2,
+          "endpoint_sequence": null,
+          "spend_controls": {
+            "maxAmountPerPayment": "$1",
+            "expectedAmount": "first-accepted"
+          },
+          "note": "rejection logic is the PR's own; this harness adds observation only (signer counts, verbatim errors)"
+        },
+        {
+          "at": "2026-10-31T12:18:46.821Z",
+          "type": "cycle_start",
+          "cycle": 1
+        },
+        {
+          "at": "2026-10-31T12:18:46.860Z",
+          "type": "quote_offered",
+          "cycle_context_url": "http://127.0.0.1:4487/weather",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4487/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "10000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0xabCDeF0123456789AbcdEf0123456789aBCDEF01",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-10-31T12:18:46.864Z",
+          "type": "signer_call",
+          "call_index": 1,
+          "signer_entry": "signTypedData",
+          "primary_type": "TransferWithAuthorization",
+          "domain": {
+            "name": "USDC",
+            "version": "2",
+            "chainId": 84532,
+            "verifyingContract": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+          },
+          "to": "0xabCDeF0123456789AbcdEf0123456789aBCDEF01",
+          "value": "10000",
+          "from": "0x111D509346a504FF1b67eaBD8e6A5B59F134048E",
+          "valid_after": "0",
+          "valid_before": "1793449186",
+          "nonce": "0xfefb74e9…c029(len66)"
+        },
+        {
+          "at": "2026-10-31T12:18:46.873Z",
+          "type": "cycle_result",
+          "cycle": 1,
+          "http": 200,
+          "receipt_served": {
+            "success": true,
+            "transaction": "0xabababababababababababababababababababababababababababababababab",
+            "network": "eip155:84532"
+          }
+        },
+        {
+          "at": "2026-10-31T12:18:46.873Z",
+          "type": "cycle_start",
+          "cycle": 2
+        },
+        {
+          "at": "2026-10-31T12:18:46.880Z",
+          "type": "quote_offered",
+          "cycle_context_url": "http://127.0.0.1:4487/weather",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4487/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "10000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0xabcdef0123456789abcdef0123456789abcdef01",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-10-31T12:18:46.880Z",
+          "type": "signer_call",
+          "call_index": 2,
+          "signer_entry": "signTypedData",
+          "primary_type": "TransferWithAuthorization",
+          "domain": {
+            "name": "USDC",
+            "version": "2",
+            "chainId": 84532,
+            "verifyingContract": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+          },
+          "to": "0xabCDeF0123456789AbcdEf0123456789aBCDEF01",
+          "value": "10000",
+          "from": "0x111D509346a504FF1b67eaBD8e6A5B59F134048E",
+          "valid_after": "0",
+          "valid_before": "1793449186",
+          "nonce": "0xa33581c5…d2ae(len66)"
+        },
+        {
+          "at": "2026-10-31T12:18:46.884Z",
+          "type": "cycle_result",
+          "cycle": 2,
+          "http": 200,
+          "receipt_served": {
+            "success": true,
+            "transaction": "0xabababababababababababababababababababababababababababababababab",
+            "network": "eip155:84532"
+          }
+        }
+      ],
+      "stand": {
+        "stand_verdict": "FAIL",
+        "stand_reasons": [
+          "FAIL (attempt 1):",
+          "платежей зафиксировано: 2; запросов: 4; окно наблюдения: 2500ms",
+          "FAIL: СУТ заплатил по завышенным требованиям (value=10000; решение В2)"
+        ]
+      }
+    },
+    {
+      "session": "xc_a13_casevariant_raise_firstaccepted",
+      "matrix": "A13",
+      "expectation_mode": "first-accepted",
+      "requirement_amounts_served": [
+        "10000",
+        "100000"
+      ],
+      "requirement_overrides": [
+        {
+          "payTo": "0xabCDeF0123456789AbcdEf0123456789aBCDEF01"
+        },
+        {
+          "payTo": "0xabcdef0123456789abcdef0123456789abcdef01"
+        }
+      ],
+      "endpoint_sequence": null,
+      "request_cycles": 2,
+      "client_script": "client_v3.ts",
+      "concurrency": 1,
+      "matrix_row": "case-only EVM recipient variation + raised amount, first-accepted (cycle-3 pre-registration, e993bef delta control): canonical keys collapse the case-variant offer onto the accepted anchor — the raised 100000 must reject pre-signer vs expected=10000 (at case-sensitive b1a4d8ce keys this offer would have signed as a fresh key: the bypass the two normalization commits close)",
+      "observed": {
+        "signer_values": [
+          "10000"
+        ],
+        "signer_call_count": 1,
+        "quote_rejections": [
+          {
+            "cycle": 2,
+            "source": "quote-ledger",
+            "expected": "10000",
+            "offered": "100000",
+            "via": "wrapped-message"
+          }
+        ],
+        "other_rejections": [],
+        "per_cycle": [
+          {
+            "cycle": 1,
+            "http": 200,
+            "receipt": {
+              "success": true,
+              "transaction": "0xabababababababababababababababababababababababababababababababab",
+              "network": "eip155:84532"
+            }
+          },
+          {
+            "cycle": 2,
+            "error": "Failed to create payment payload: quote-check-rejected: quote_mismatch_vs_accepted: amount 10000 -> 100000. The server-declared amount does not match the caller-anchored price expectation. Adjust spendControls.expectedAmount, raise expectedAmountTolerance for legitimate repricing, or set expectedAmount: false to disable.",
+            "error_name": "Error",
+            "quote_mismatch": null
+          }
+        ],
+        "served_contacts": null,
+        "client_rc": 0,
+        "stand_verdict": "FAIL"
+      },
+      "verdict": "PASS",
+      "timeline": [
+        {
+          "at": "2026-10-31T12:18:52.882Z",
+          "type": "probe_start",
+          "control_under_test": "PR #3920 SpendControls.expectedAmount (@x402/core built from feat/expected-amount @4232cf6)",
+          "url": "http://127.0.0.1:4488/weather",
+          "cycles": 2,
+          "endpoint_sequence": null,
+          "spend_controls": {
+            "maxAmountPerPayment": "$1",
+            "expectedAmount": "first-accepted"
+          },
+          "note": "rejection logic is the PR's own; this harness adds observation only (signer counts, verbatim errors)"
+        },
+        {
+          "at": "2026-10-31T12:18:52.883Z",
+          "type": "cycle_start",
+          "cycle": 1
+        },
+        {
+          "at": "2026-10-31T12:18:52.923Z",
+          "type": "quote_offered",
+          "cycle_context_url": "http://127.0.0.1:4488/weather",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4488/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "10000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0xabCDeF0123456789AbcdEf0123456789aBCDEF01",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-10-31T12:18:52.927Z",
+          "type": "signer_call",
+          "call_index": 1,
+          "signer_entry": "signTypedData",
+          "primary_type": "TransferWithAuthorization",
+          "domain": {
+            "name": "USDC",
+            "version": "2",
+            "chainId": 84532,
+            "verifyingContract": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+          },
+          "to": "0xabCDeF0123456789AbcdEf0123456789aBCDEF01",
+          "value": "10000",
+          "from": "0xE67974952Ab4823cEDc1EadA9C4c257F5dd0d5c9",
+          "valid_after": "0",
+          "valid_before": "1793449192",
+          "nonce": "0xb40bedb0…60ad(len66)"
+        },
+        {
+          "at": "2026-10-31T12:18:52.936Z",
+          "type": "cycle_result",
+          "cycle": 1,
+          "http": 200,
+          "receipt_served": {
+            "success": true,
+            "transaction": "0xabababababababababababababababababababababababababababababababab",
+            "network": "eip155:84532"
+          }
+        },
+        {
+          "at": "2026-10-31T12:18:52.936Z",
+          "type": "cycle_start",
+          "cycle": 2
+        },
+        {
+          "at": "2026-10-31T12:18:52.942Z",
+          "type": "quote_offered",
+          "cycle_context_url": "http://127.0.0.1:4488/weather",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4488/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "100000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0xabcdef0123456789abcdef0123456789abcdef01",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-10-31T12:18:52.943Z",
+          "type": "cycle_error",
+          "cycle": 2,
+          "error": "Failed to create payment payload: quote-check-rejected: quote_mismatch_vs_accepted: amount 10000 -> 100000. The server-declared amount does not match the caller-anchored price expectation. Adjust spendControls.expectedAmount, raise expectedAmountTolerance for legitimate repricing, or set expectedAmount: false to disable.",
+          "error_name": "Error",
+          "quote_mismatch": null
+        }
+      ],
+      "stand": {
+        "stand_verdict": "FAIL",
+        "stand_reasons": [
+          "FAIL (attempt 1):",
+          "платежей зафиксировано: 1; запросов: 3; окно наблюдения: 2500ms",
+          "FAIL: СУТ заплатил по завышенным требованиям (value=10000; решение В2)"
+        ]
+      }
+    }
+  ],
+  "matrix_rollup": {
+    "A1": "pass",
+    "A2": "pass",
+    "A3": "pass",
+    "A4": "pass",
+    "A5": "pass",
+    "A6": "pass",
+    "A7": "pass",
+    "A8": "pass",
+    "A9": "pass",
+    "A10a": "fail",
+    "A10b": "fail",
+    "A11": "pass",
+    "A10c": "pass",
+    "A10d": "pass",
+    "A12": "pass",
+    "A13": "pass"
+  },
+  "summary": {
+    "total": 19,
+    "pass": 17,
+    "fail": 2,
+    "harness_error": 0
+  }
+}
