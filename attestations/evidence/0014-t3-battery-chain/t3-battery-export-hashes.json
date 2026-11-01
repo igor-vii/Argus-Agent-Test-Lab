@@ -1,0 +1,134 @@
+{
+  "kind": "hash-manifest — content lives in the private product repository (boundary #0013); this file pins hashes only",
+  "generated": "2026-11-01",
+  "subject": "T3 battery chain v2 — export acceptance (seal #0014 evidence)",
+  "product_repo": "igor-vii/Argus-Agent-Test-Lab-product (private)",
+  "product_commit": "97ef66622a781aba55dcc87ef51fac13c37aad40",
+  "product_paths": {
+    "export_dir": "attestations/evidence/0014-t3-battery-export/",
+    "stop_report_dir": "attestations/evidence/val-3920-stop/ (parked attempt, NOT part of this evidence)"
+  },
+  "export_files": {
+    "t3-battery-export-20261101.tar.gz": {
+      "sha256": "101c54a5f1b1a806120b473fb12f0f55462ac6b13e6adc28f31d2c45537d453c",
+      "bytes": 96603,
+      "role": "tar.gz export: 21 files (reports/ x4, sut1-cf/ x9, sut2-circle/ x4, sut3-cdp/ x4)"
+    },
+    "t3-battery-export-20261101.MANIFEST.sha256": {
+      "sha256": "f94a77ad280f899707832a176451a119b528d7a371d1c7fd64fc8f77da916396",
+      "bytes": 2072,
+      "role": "sha256 manifest over the 21 archive files"
+    },
+    "argus-t3-artifact-manifest-sha256.txt": {
+      "sha256": "fb695a53c6c02e843b70601a2a1ff15041e136bddda0d1090146416316dcbbb3",
+      "bytes": 2657,
+      "role": "historical artifact manifest (2026-10-30, trace 1a18df6a5b25c5bd); 15/15 pins cross-checked against the archive"
+    }
+  },
+  "archive_contents": {
+    "reports/argus-t3-artifact-manifest-sha256.txt": {
+      "sha256": "fb695a53c6c02e843b70601a2a1ff15041e136bddda0d1090146416316dcbbb3",
+      "bytes": 2657
+    },
+    "reports/cdp-x402-battery-report.md": {
+      "sha256": "c46d3bdd1ea816a6d0bf5a58c74f759283a7a994ce7e08316ca0271d7e9458b4",
+      "bytes": 22562
+    },
+    "reports/cf-x402-battery-report.md": {
+      "sha256": "722c895077352ef52f1453e8b42776533657f6e03e1e20f3b0365a424f99c95c",
+      "bytes": 34874
+    },
+    "reports/sut2-battery-report.md": {
+      "sha256": "b549980f65172f880a5087c9dc1022a955fb9599e6ecb309568ac80e7ee9d0ef",
+      "bytes": 23782
+    },
+    "sut1-cf/battery-cf-runner.mjs": {
+      "sha256": "f7d3f65ac75bc346f5bbc2ffb31949270ac23d6ad5cd8cb354c442b8fac28820",
+      "bytes": 49260
+    },
+    "sut1-cf/battery-results.json": {
+      "sha256": "058108f644d17639d394eac75066bf78944aef6cd326a807b23725970c1414b6",
+      "bytes": 4861
+    },
+    "sut1-cf/debug-create-payment.mjs": {
+      "sha256": "fa3320e8c8f3f0a5d81df8017e5938570ee89b9cf084310a8ac657f666272937",
+      "bytes": 2667
+    },
+    "sut1-cf/package-lock.json": {
+      "sha256": "53ae96ddd3f4457f28320422e9adb5d16fef737efe86923d5577664ac3cbf0e5",
+      "bytes": 98030
+    },
+    "sut1-cf/package.json": {
+      "sha256": "eedf1564f2a0393b1a47fa4b6b50597ef6a20f67c5d73fe66e8647bf872044aa",
+      "bytes": 401
+    },
+    "sut1-cf/patch-extra.py": {
+      "sha256": "76081bac4c7b30d9af65963b32499d6e875e36484cefd41fbf2f0e780ea32dc4",
+      "bytes": 3053
+    },
+    "sut1-cf/patch-extra2.py": {
+      "sha256": "8f7cfd4d417184f04223beb2e39490053cbf33153b2662da1ec808e7f6a95b68",
+      "bytes": 2366
+    },
+    "sut1-cf/sut-cf-det-signer.mjs": {
+      "sha256": "bf8d4cb31bc8d429dcaccd8b263b86d688103005d3739b100e835c72c6bc7c5e",
+      "bytes": 1537
+    },
+    "sut1-cf/sut-cf-mock-facilitator.mjs": {
+      "sha256": "8760b471a3210992c18e9155e0d4ab4717da5ff4f53c6177187202ad07f91b2d",
+      "bytes": 5245
+    },
+    "sut2-circle/package-lock.json": {
+      "sha256": "b54beb59ae6dc217f5f35ceb4db2ce27d360243d20318ffc8463ac3f3236f158",
+      "bytes": 8581
+    },
+    "sut2-circle/package.json": {
+      "sha256": "4f7d3324f620d893bd0b5d8518f7734a9bc59178bda6eab7e7ca559c53b9502b",
+      "bytes": 163
+    },
+    "sut2-circle/sut2-battery-results.json": {
+      "sha256": "002f6823bdcc7d3b8de021cadb9b342c33ec2509c8c0eec5d90e83b171901688",
+      "bytes": 6543
+    },
+    "sut2-circle/sut2-battery-runner.mjs": {
+      "sha256": "df70f14c46f3574cbe3a3515a7bf334f8a21408deced557937f9390e43e97a3b",
+      "bytes": 35026
+    },
+    "sut3-cdp/package-lock.json": {
+      "sha256": "40e3be676e44c01ac81b93761205b3e88ac39df38be00ea94df877e14348ece4",
+      "bytes": 57090
+    },
+    "sut3-cdp/package.json": {
+      "sha256": "e8cb7268cc6cff2b49ffcd80a247bc69fafb2cf14e5173e046d42273e538d1e1",
+      "bytes": 153
+    },
+    "sut3-cdp/sut3-battery-results.json": {
+      "sha256": "3c7e7445b8df62fd761ad7a09a44d428e288e774247abdaaf3bed6b6dc8de2eb",
+      "bytes": 6548
+    },
+    "sut3-cdp/sut3-battery-runner.mjs": {
+      "sha256": "ae2b624aa47254505cf98f2c52e2f484817d0d11a440a6f132ff0df98dab822c",
+      "bytes": 28967
+    }
+  },
+  "acceptance_verification": {
+    "date": "2026-11-01",
+    "checks": [
+      "export tar.gz + MANIFEST.sha256 match the T3 chat's declared sha256 values byte-for-byte",
+      "sha256sum -c MANIFEST.sha256 on the unpacked archive: 21/21 OK (re-verified at manifest generation)",
+      "canonical report pins inside the archive: cf-x402-battery-report.md 722c895077352ef5…, sut2-battery-report.md b549980f65172f88…, cdp-x402-battery-report.md c46d3bdd1ea816a6…"
+    ]
+  },
+  "battery_summary": {
+    "SUT-1": "cloudflare/agents@0.32.0 (head-SHA be1749221ab3…) — 4 PASS / 7 FAIL (11 scenarios, 2026-10-30T13:01:00Z)",
+    "SUT-2": "@circle-fin/x402-batching@4.0.0 — 2 PASS / 10 FAIL (12 scenarios, 2026-10-30T13:09:00Z)",
+    "SUT-3": "@coinbase/cdp-sdk@1.60.0 — 9 PASS / 2 FAIL (11 scenarios, 2026-10-30T13:16:00Z)",
+    "total": "15 PASS / 19 FAIL across 34 scenarios; Critical x2 (W5 payTo-binding, W-VERIFIER verifyingContract misbinding)",
+    "disclosure": "freeze until >= 2026-11-05"
+  },
+  "val3920_stop_report": {
+    "sha256": "eae6e85d6e3f305b82e28f38d2b4796e2d531ec29951974cddf1690e2ece0468",
+    "bytes": 8250,
+    "status": "Argus-VAL-3920 stopped at precondition 2026-10-31; PARKED by owner decision 2026-11-01; archived product-side, not part of #0014 evidence"
+  }
+}

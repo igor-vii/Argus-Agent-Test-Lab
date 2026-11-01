@@ -1,0 +1,51 @@
+{
+  "type": "seal",
+  "title": "T3 battery chain v2, SUT-3 — @coinbase/cdp-sdk@1.60.0 guardrails offline battery: 9 PASS / 2 FAIL; CDP-unique defenses verified (timeout cap, malformed-requirement rejection, allowedPayees); FAIL: W-CAP2 dust, W-NO-CONTROLS default-unsafe",
+  "subject": {
+    "repo": "npm: cloudflare/agents@0.32.0 + @circle-fin/x402-batching@4.0.0 + @coinbase/cdp-sdk@1.60.0 (T3 battery chain v2, offline-by-default)",
+    "pin": "@coinbase/cdp-sdk@1.60.0 — guardrails surface only (applySpendControls / parseAtomicFromRequirement / MAX_PAYMENT_TIMEOUT_SECONDS); CdpX402Client live payment skipped — zero prod keys per TZ",
+    "chain": "T3 battery chain v2 — three SUT offline x402 batteries (this record: SUT-3); total across the chain: 15 PASS / 19 FAIL across 34 scenarios",
+    "method": "Black-box against npm dist, exact pins, unmodified. Fully offline: all traffic on 127.0.0.1 — mock facilitators / mock fetch emulating the vendor's own contracts, adversarial requirement injection; deterministic viem signers on throwaway unfunded wallets, no mainnet, zero prod endpoints: SUT-1 0x6D7dA5EFb28F678d53Fc4B41E8E4960a9F811C85, SUT-2 0xc7f07ca7CF91e41ADe1Bf259404379893910b1Bb, SUT-3 0xa0CF4f00eac821F81550e66C6b962C846c008EBA. Advertised price $0.01 (10000 atomic) across all batteries.",
+    "battery_run": "2026-10-30T13:16:00Z (11 scenarios)",
+    "product_evidence": {
+      "repo": "igor-vii/Argus-Agent-Test-Lab-product (private, per boundary #0013)",
+      "commit": "97ef66622a781aba55dcc87ef51fac13c37aad40",
+      "path": "attestations/evidence/0014-t3-battery-export/",
+      "note": "Export content (21 files: 3 canonical reports + harnesses + results.json + lockfiles; tar.gz sha256 101c54a5f1b1a806…) is product-layer know-how; the public record pins the hash manifest only. Accepted 2026-11-01: sha256sum -c 21/21 OK; artifact-manifest cross-check 15/15 MATCH."
+    }
+  },
+  "scenarios": [
+    {
+      "id": "SUT-3",
+      "name": "CdpSdkGuardrails",
+      "verdict": "MIXED (9 PASS / 2 FAIL)",
+      "checks": "9 PASS / 2 FAIL (11 scenarios, guardrails surface, offline): CANON happy-path PASS (guardrails attached, valid requirements pass through); CDP-unique defenses PASS — W-TIMEOUT (server-supplied 86400s validity window rejected: MAX_PAYMENT_TIMEOUT_SECONDS=3600 hard cap bounds EIP-3009 validBefore; CF and Circle have no equivalent), W-MALFORMED (requirements carrying both amount (v2) and maxAmountRequired (v1) rejected — cross-version spoofing blocked), W-PAYEE (allowedPayees rejects attacker payTo — the W5 fix shape, opt-in), W-NETWORK and W-ASSET (allowlist aggregate filters reject foreign network/asset), W-DOUBLE-APPLY (second applySpendControls -> already_applied), W-NEG-AMOUNT (negative amount -> amount_unparseable), W-CAP1 (per-payment cap enforced when configured: SpendControlError(per_payment_cap)). FAIL: W-CAP2 (Medium, dust — amount=1 signed silently despite advertised $0.01, no min check, same as CF/Circle); W-NO-CONTROLS (High, CDP-unique default-unsafe — CdpX402Client extends x402Client and REMOVES the upstream default $1 per-payment cap: without applySpendControls, $2, attacker payTo and dust are all signed; constructor only console.warns). Windows inherited from the shared x402Client base (W2/W3/W4/W-MCP) are covered at SUT-1/SUT-2, not re-probed here; W-BATCH1/2/3 and live CdpX402Client out of offline scope per TZ. Fixation 2026-10-30T13:16:00Z.",
+      "findings": [
+        "F-WCAP2",
+        "F-WNOCONTROLS"
+      ]
+    }
+  ],
+  "run_ts": "2026-10-30T13:16:00Z",
+  "self_run": true,
+  "findings_summary": [
+    {
+      "id": "F-WNOCONTROLS",
+      "severity": "high",
+      "title": "CdpX402Client default-unsafe (SUT-3 CDP-unique): extends x402Client and removes its default $1 per-payment cap; without explicit applySpendControls, over-cap, attacker-payTo and dust amounts are all signed; the constructor only console.warns."
+    },
+    {
+      "id": "F-WCAP2",
+      "severity": "medium",
+      "title": "No minimum-amount check (all three SUTs): dust amounts (1 atomic = $0.000001 vs $0.01 advertised) are signed silently — combined with W1/W-CAP1 the whole amount range is unguarded by default."
+    }
+  ],
+  "notes": "This record seals the SUT-3 battery only; the SUT-1 and SUT-2 batteries of the T3 battery chain v2 are sealed as separate adjacent records sharing this evidence manifest and the same methodology. Disclosure freeze per TZ: zero public publications until >= 2026-11-05 (and none for SUT-3 before HackerOne scope clarity or an explicit coordination command) — the freeze is part of the sealed state. Reproducibility note (SUT-3): the @x402/* peer dependencies were installed manually during the run and are not covered by the committed package-lock.json — a reproducer must install them separately; recorded here so the gap is part of the sealed provenance. Evidence provenance: per boundary #0013 the export content (reports, harnesses, results, lockfiles) lives in the private product repository (commit 97ef66622a781aba55dcc87ef51fac13c37aad40, path attestations/evidence/0014-t3-battery-export/); the public record pins the hash manifest only. Acceptance verification (2026-11-01): export tar.gz + MANIFEST.sha256 match the T3 chat's declared sha256 values byte-for-byte; sha256sum -c on the unpacked archive 21/21 OK; the historical artifact manifest (2026-10-30, trace 1a18df6a5b25c5bd) cross-checks 15/15 pins against the archive. Numbering note: the artifact manifest header reads 'integrity attestation for seals 0010-0012 (SUT-1/2/3)' — that numbering was never used (#0010/#0011 are corrections, #0012 is S-BS-06 cycle 3); this record is the first and only seal for the T3 battery chain v2. Parallel-thread note: the separate S-BS-06 / PR-3920 validation attempt (Argus-VAL-3920, 2026-10-31) was stopped at precondition per its own TZ section 10 (the TZ named a lab-repo branch that exists in the product repo) and parked by owner decision 2026-11-01 — no artifacts produced; its stop report is archived product-side (attestations/evidence/val-3920-stop/) and is NOT part of this seal's evidence. A seal attests run validity and findings completeness — not bug-freeness.",
+  "evidence": [
+    {
+      "kind": "file",
+      "path": "attestations/evidence/0014-t3-battery-chain/t3-battery-export-hashes.json",
+      "sha256": null
+    }
+  ]
+}
