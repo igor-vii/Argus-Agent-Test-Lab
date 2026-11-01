@@ -1,9 +1,9 @@
 {
-  "generated_at": "2026-10-31T19:33:42.799Z",
+  "generated_at": "2026-11-01T11:42:52.716Z",
   "verify": {
     "command": "node tools/registry/verify-registry.mjs",
-    "records": 14,
-    "chain_head": "79309ea93491bbae"
+    "records": 17,
+    "chain_head": "8d487546a34e77c0"
   },
   "correction": {
     "seq": "0011",
@@ -13,39 +13,29 @@
     "amends": "argus-finding-0000"
   },
   "record": {
-    "seq": "0013",
-    "record_id": "argus-seal-0013",
+    "seq": "0016",
+    "record_id": "argus-seal-0016",
     "type": "seal",
-    "issued_at": "2026-10-31T19:31:02.415Z",
-    "date": "2026-10-31",
-    "title": "Boundary: product layer moved private — public repository remains proof-only (sealed registry + verification + site); last public snapshot hash-pinned by manifest",
-    "subject": "igor-vii/Argus-Agent-Test-Lab",
-    "prev_record_hash": "ec35adf7f5146dd9c650ac8ca7fdfffb75c6b7884c68ef19ecb5690cbb74213d",
-    "chain_head": "79309ea93491bbae",
+    "issued_at": "2026-11-01T11:42:52.716Z",
+    "date": "2026-11-01",
+    "title": "T3 battery chain v2, SUT-3 — @coinbase/cdp-sdk@1.60.0 guardrails offline battery: 9 PASS / 2 FAIL; CDP-unique defenses verified (timeout cap, malformed-requirement rejection, allowedPayees); FAIL: W-CAP2 dust, W-NO-CONTROLS default-unsafe",
+    "subject": "npm: cloudflare/agents@0.32.0 + @circle-fin/x402-batching@4.0.0 + @coinbase/cdp-sdk@1.60.0 (T3 battery chain v2, offline-by-default)",
+    "prev_record_hash": "3c428d07ce3c8b4b53e608530aa0483f5890ba1b742e5ac35b1c3253b76c3e28",
+    "chain_head": "8d487546a34e77c0",
     "scenarios": [
       {
-        "id": "proof-layer",
-        "verdict": "PUBLIC",
-        "tone": "info"
-      },
-      {
-        "id": "product-layer",
-        "verdict": "PRIVATE",
-        "tone": "info"
-      },
-      {
-        "id": "published-refs",
-        "verdict": "PUBLIC",
+        "id": "SUT-3",
+        "verdict": "MIXED (9 PASS / 2 FAIL)",
         "tone": "info"
       }
     ],
     "counts": {
-      "info": 3
+      "info": 1
     },
     "evidence": [
       {
-        "path": "attestations/evidence/0013-boundary/product-layer-manifest.json",
-        "sha256": "5ed1dedc91263117f1b0b6ce215727d7779191a2eb1840f9843f9eec5cd4603b"
+        "path": "attestations/evidence/0014-t3-battery-chain/t3-battery-export-hashes.json",
+        "sha256": "50a934f6add7a0a7e21898ad62f4d7687d4ce037c7762e565ec3241481436a0e"
       }
     ]
   }

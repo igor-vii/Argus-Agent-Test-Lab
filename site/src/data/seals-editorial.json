@@ -509,5 +509,187 @@
         "href": "https://github.com/igor-vii/Argus-Agent-Test-Lab/blob/main/attestations/evidence/0013-boundary/product-layer-manifest.json"
       }
     ]
+  },
+  "0014": {
+    "seq": "0014",
+    "date": "2026-11-01",
+    "type": "seal",
+    "title": "T3 battery chain v2, SUT-1 — cloudflare/agents@0.32.0 offline x402 battery: 4 PASS / 7 FAIL",
+    "subject": "cloudflare/agents@0.32.0 (npm dist, exact pin, unmodified)",
+    "summary": "First battery of the three-SUT x402 client chain, fully offline: mock facilitator, deterministic unfunded signer, adversarial requirement injection. CANON baseline and all three guards PASS (default $0.10 cap rejects over-cap pre-signer; upto-scheme passthrough; structuredClone blocks hook mutation) — but 7 windows confirm: W1 server-declared amount signed without price binding (cap is the only guard), W2 settle-failure wrapped as a fresh 402 → full second round, W3 double callTool = double charge, W4 token replayable across same-price tools, W5 attacker payTo signed silently (Critical — funds rerouting, same surface as #0006), W-MCP no confirmation by default (silent double-charge), W-CAP2 dust signed. Disclosure pending ≥ 2026-11-05.",
+    "verdicts": [
+      {
+        "id": "CANON + 3 controls",
+        "verdict": "PASS",
+        "tone": "pass"
+      },
+      {
+        "id": "W1/W2/W3/W5/W-MCP",
+        "verdict": "FAIL (High/Critical)",
+        "tone": "fail"
+      },
+      {
+        "id": "W4 cross-tool replay",
+        "verdict": "FAIL (Medium-High)",
+        "tone": "fail"
+      },
+      {
+        "id": "W-CAP2 dust",
+        "verdict": "FAIL (Medium)",
+        "tone": "fail"
+      }
+    ],
+    "findings": [
+      {
+        "id": "F-W5",
+        "severity": "high",
+        "text": "Critical: payTo-binding missing — attacker payTo signed silently (same surface as #0006 BlockRun F1)."
+      },
+      {
+        "id": "F-WMCP",
+        "severity": "high",
+        "text": "Silent double-charge on paid tool calls — no confirmation, no idempotency by default."
+      },
+      {
+        "id": "F-W1",
+        "severity": "high",
+        "text": "Amount-binding missing — server-declared amount signed; bounded only by the $0.10 default cap."
+      },
+      {
+        "id": "F-W2",
+        "severity": "high",
+        "text": "Settle-failure → fresh 402-with-accepts → full second round (verify/settle/exec ×2 per logical op)."
+      },
+      {
+        "id": "F-WCAP2",
+        "severity": "medium",
+        "text": "Dust amounts signed silently — no minimum check (same across all three SUTs)."
+      }
+    ],
+    "evidence": 1,
+    "links": [
+      {
+        "label": "record #0014",
+        "href": "https://github.com/igor-vii/Argus-Agent-Test-Lab/blob/main/attestations/records/0014-t3-battery-chain-v2-sut-1-cloudflare-agents-0-32-0-offline-x.seal.json"
+      }
+    ]
+  },
+  "0015": {
+    "seq": "0015",
+    "date": "2026-11-01",
+    "type": "seal",
+    "title": "T3 battery chain v2, SUT-2 — @circle-fin/x402-batching@4.0.0 offline x402 battery: 2 PASS / 10 FAIL",
+    "subject": "@circle-fin/x402-batching@4.0.0 (npm dist, exact pin, unmodified; zero @x402/* deps)",
+    "summary": "Second battery of the chain, worst posture of the three: NO default cap (W1/W-CAP1 unbounded — $2.00 signed against a $0.01 advertised price unless the user adds a hook), plus two Circle-specific Criticals-class findings: W-VERIFIER — extra.verifyingContract from the 402 response becomes the EIP-712 domain with no allowlist, the WHOLE signature binds to an attacker-supplied contract (verified byte-identical against a hand-rolled attacker-domain signature); and W-MUTATE — hook mutations leak into the signed payload via by-reference selectedRequirements (CF uses structuredClone, Circle does not). Standard windows W1–W5, W-MCP, W-CAP2 confirm as in SUT-1; signatures stay valid for the full 7-day window (W3/W4). Disclosure pending ≥ 2026-11-05.",
+    "verdicts": [
+      {
+        "id": "CANON + NEG1",
+        "verdict": "PASS",
+        "tone": "pass"
+      },
+      {
+        "id": "W1/W-CAP1 no default cap",
+        "verdict": "FAIL (High, unbounded)",
+        "tone": "fail"
+      },
+      {
+        "id": "W-VERIFIER (Circle-unique)",
+        "verdict": "FAIL (Critical)",
+        "tone": "fail"
+      },
+      {
+        "id": "W2/W3/W5/W-MCP",
+        "verdict": "FAIL (High/Critical)",
+        "tone": "fail"
+      },
+      {
+        "id": "W4/W-CAP2/W-MUTATE",
+        "verdict": "FAIL (Medium)",
+        "tone": "fail"
+      }
+    ],
+    "findings": [
+      {
+        "id": "F-WVERIFIER",
+        "severity": "high",
+        "text": "Critical: verifyingContract misbinding — whole EIP-712 signature bound to an attacker contract (Circle-unique)."
+      },
+      {
+        "id": "F-W5",
+        "severity": "high",
+        "text": "Critical: payTo-binding missing — attacker payTo signed silently (same surface as #0006)."
+      },
+      {
+        "id": "F-W1",
+        "severity": "high",
+        "text": "No default cap — amount unbounded by default; cap is opt-in via user hook."
+      },
+      {
+        "id": "F-WMUTATE",
+        "severity": "medium",
+        "text": "Hook mutations leak into the signed payload (by-reference requirements; no structuredClone)."
+      },
+      {
+        "id": "F-WMCP",
+        "severity": "high",
+        "text": "Silent double-charge — two pay() = two settlements, no confirmation, no dedup; 7-day validity widens W3/W4."
+      }
+    ],
+    "evidence": 1,
+    "links": [
+      {
+        "label": "record #0015",
+        "href": "https://github.com/igor-vii/Argus-Agent-Test-Lab/blob/main/attestations/records/0015-t3-battery-chain-v2-sut-2-circle-fin-x402-batching-4-0-0-off.seal.json"
+      }
+    ]
+  },
+  "0016": {
+    "seq": "0016",
+    "date": "2026-11-01",
+    "type": "seal",
+    "title": "T3 battery chain v2, SUT-3 — @coinbase/cdp-sdk@1.60.0 guardrails offline battery: 9 PASS / 2 FAIL",
+    "subject": "@coinbase/cdp-sdk@1.60.0 (npm dist, exact pin, unmodified; guardrails surface)",
+    "summary": "Third battery of the chain: the guardrails surface passes 8 of 9 defense probes — three CDP-unique defenses verified that CF and Circle lack: MAX_PAYMENT_TIMEOUT_SECONDS=3600 bounds the EIP-3009 validity window (86400s rejected), cross-version field spoofing rejected (malformed_requirement), and allowedPayees implements the W5 fix shape (opt-in). The two FAILs are structural: W-CAP2 no minimum-amount check (dust signed, same as CF/Circle) and W-NO-CONTROLS — CdpX402Client extends x402Client and REMOVES the upstream default $1 cap, shipping default-unsafe unless the user calls applySpendControls (constructor only console.warns). Inherited x402Client windows (W2/W3/W4/W-MCP) covered at SUT-1/SUT-2. Disclosure pending ≥ 2026-11-05.",
+    "verdicts": [
+      {
+        "id": "CANON + 7 defense probes",
+        "verdict": "PASS",
+        "tone": "pass"
+      },
+      {
+        "id": "CDP-unique defenses (timeout/malformed/payee)",
+        "verdict": "PASS (CF/Circle have no equivalent)",
+        "tone": "pass"
+      },
+      {
+        "id": "W-CAP2 dust",
+        "verdict": "FAIL (Medium)",
+        "tone": "fail"
+      },
+      {
+        "id": "W-NO-CONTROLS (CDP-unique)",
+        "verdict": "FAIL (High, default-unsafe)",
+        "tone": "fail"
+      }
+    ],
+    "findings": [
+      {
+        "id": "F-WNOCONTROLS",
+        "severity": "high",
+        "text": "CdpX402Client removes the upstream default $1 cap — default-unsafe without explicit spendControls."
+      },
+      {
+        "id": "F-WCAP2",
+        "severity": "medium",
+        "text": "Dust amounts signed silently — no minimum check (same across all three SUTs)."
+      }
+    ],
+    "evidence": 1,
+    "links": [
+      {
+        "label": "record #0016",
+        "href": "https://github.com/igor-vii/Argus-Agent-Test-Lab/blob/main/attestations/records/0016-t3-battery-chain-v2-sut-3-coinbase-cdp-sdk-1-60-0-guardrails.seal.json"
+      }
+    ]
   }
 }

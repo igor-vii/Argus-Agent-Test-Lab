@@ -512,13 +512,28 @@
     "seq": "0014",
     "date": "2026-11-01",
     "type": "seal",
-    "title": "T3 battery chain v2, SUT-1 — cloudflare/agents@0.32.0 offline x402 battery: 4 PASS / 7 FAIL; windows W1, W2, W3, W4, W5, W-MCP, W-CAP2 confirmed; Critical: W5 payTo-binding (attacker payTo signed silently)",
-    "subject": "npm: cloudflare/agents@0.32.0 + @circle-fin/x402-batching@4.0.0 + @coinbase/cdp-sdk@1.60.0 (T3 battery chain v2, offline-by-default)",
-    "summary": "This record seals the SUT-1 battery only; the SUT-2 and SUT-3 batteries of the T3 battery chain v2 are sealed as separate adjacent records sharing this evidence manifest and the same methodology. Disclosure freeze per TZ: zero public publications until >= 2026-11-05 (and none for SUT-3 before HackerOne scope clarity or an explicit coordination command) — the freeze is part of the sealed state. Reproducibility note (SUT-3): the @x402/* peer dependencies were installed manually during the run and are not covered by the committed package-lock.json — a reproducer must install them separately; recorded here so the gap is part of the sealed provenance. Evidence provenance: per boundary #0013 the export content (reports, harnesses, results, lockfiles) lives in the private product repository (commit 97ef66622a781aba55dcc87ef51fac13c37aad40, path attestations/evidence/0014-t3-battery-export/); the public record pins the hash manifest only. Acceptance verification (2026-11-01): export tar.gz + MANIFEST.sha256 match the T3 chat's declared sha256 values byte-for-byte; sha256sum -c on the unpacked archive 21/21 OK; the historical artifact manifest (2026-10-30, trace 1a18df6a5b25c5bd) cross-checks 15/15 pins against the archive. Numbering note: the artifact manifest header reads 'integrity attestation for seals 0010-0012 (SUT-1/2/3)' — that numbering was never used (#0010/#0011 are corrections, #0012 is S-BS-06 cycle 3); this record is the first and only seal for the T3 battery chain v2. Parallel-thread note: the separate S-BS-06 / PR-3920 validation attempt (Argus-VAL-3920, 2026-10-31) was stopped at precondition per its own TZ section 10 (the TZ named a lab-repo branch that exists in the product repo) and parked by owner decision 2026-11-01 — no artifacts produced; its stop report is archived product-side (attestations/evidence/val-3920-stop/) and is NOT part of this seal's evidence. A seal attests run validity and findings completeness — not bug-freeness.",
+    "title": "T3 battery chain v2, SUT-1 — cloudflare/agents@0.32.0 offline x402 battery: 4 PASS / 7 FAIL",
+    "subject": "cloudflare/agents@0.32.0 (npm dist, exact pin, unmodified)",
+    "summary": "First battery of the three-SUT x402 client chain, fully offline: mock facilitator, deterministic unfunded signer, adversarial requirement injection. CANON baseline and all three guards PASS (default $0.10 cap rejects over-cap pre-signer; upto-scheme passthrough; structuredClone blocks hook mutation) — but 7 windows confirm: W1 server-declared amount signed without price binding (cap is the only guard), W2 settle-failure wrapped as a fresh 402 → full second round, W3 double callTool = double charge, W4 token replayable across same-price tools, W5 attacker payTo signed silently (Critical — funds rerouting, same surface as #0006), W-MCP no confirmation by default (silent double-charge), W-CAP2 dust signed. Disclosure pending ≥ 2026-11-05.",
     "verdicts": [
       {
-        "id": "SUT-1",
-        "verdict": "FAIL",
+        "id": "CANON + 3 controls",
+        "verdict": "PASS",
+        "tone": "pass"
+      },
+      {
+        "id": "W1/W2/W3/W5/W-MCP",
+        "verdict": "FAIL (High/Critical)",
+        "tone": "fail"
+      },
+      {
+        "id": "W4 cross-tool replay",
+        "verdict": "FAIL (Medium-High)",
+        "tone": "fail"
+      },
+      {
+        "id": "W-CAP2 dust",
+        "verdict": "FAIL (Medium)",
         "tone": "fail"
       }
     ],
@@ -526,37 +541,27 @@
       {
         "id": "F-W5",
         "severity": "high",
-        "text": "Critical — payTo-binding missing (SUT-1 CF, SUT-2 Circle): the client signs the payment authorization over an attacker-controlled payTo from the 402 response without any check against the expected recipient — funds rerouting on-chain; same surface as BlockRun F1 (argus-seal-0006). CDP ships the fix shape (allowedPayees) but only as an opt-in guardrail."
+        "text": "Critical: payTo-binding missing — attacker payTo signed silently (same surface as #0006 BlockRun F1)."
       },
       {
         "id": "F-WMCP",
         "severity": "high",
-        "text": "Silent double-charge on paid tool calls (SUT-1 CF, SUT-2 Circle; inherited via the shared x402Client in SUT-3): no confirmation callback by default, no idempotency key, no nonce dedup — retry / double-click / eviction recovery re-signs and re-settles for one logical operation."
+        "text": "Silent double-charge on paid tool calls — no confirmation, no idempotency by default."
       },
       {
         "id": "F-W1",
         "severity": "high",
-        "text": "Amount/quote binding missing; default-cap posture uneven (W1 + W-CAP1): server-declared 402 amounts are signed without binding to the advertised price — CF bounded by its $0.10 default cap, Circle unbounded (no default cap, opt-in only), CdpX402Client removes the upstream $1 default cap (F-WNOCONTROLS); with W-CAP2 both directions of amount mismatch are unguarded by default."
+        "text": "Amount-binding missing — server-declared amount signed; bounded only by the $0.10 default cap."
       },
       {
         "id": "F-W2",
         "severity": "high",
-        "text": "Settle-after-delivery double execution (SUT-1 CF, SUT-2 Circle): SETTLEMENT_FAILED surfaces as a fresh 402-with-accepts (CF) or a throw -> caller retry (both) — a lost settle response yields a second full round (verify/settle/exec x2) with no recovery handles and no idempotency."
-      },
-      {
-        "id": "F-W3",
-        "severity": "high",
-        "text": "Retry idempotency absent (SUT-1 CF, SUT-2 Circle): every retry mints a fresh nonce with no client-side tracking or dedup; SUT-2 signatures stay valid for the full 7-day validity window — dedup is left entirely to the gateway."
-      },
-      {
-        "id": "F-W4",
-        "severity": "medium",
-        "text": "Signed token not bound to its target (SUT-1 CF: cross-tool same-price replay — token matched by scheme/network/price only; SUT-2 Circle: no resource-URL binding, 7-day window): a signature issued for one tool/resource is accepted for another."
+        "text": "Settle-failure → fresh 402-with-accepts → full second round (verify/settle/exec ×2 per logical op)."
       },
       {
         "id": "F-WCAP2",
         "severity": "medium",
-        "text": "No minimum-amount check (all three SUTs): dust amounts (1 atomic = $0.000001 vs $0.01 advertised) are signed silently — combined with W1/W-CAP1 the whole amount range is unguarded by default."
+        "text": "Dust amounts signed silently — no minimum check (same across all three SUTs)."
       }
     ],
     "evidence": 1,
@@ -571,61 +576,61 @@
     "seq": "0015",
     "date": "2026-11-01",
     "type": "seal",
-    "title": "T3 battery chain v2, SUT-2 — @circle-fin/x402-batching@4.0.0 offline x402 battery: 2 PASS / 10 FAIL; 8 standard windows plus Circle-specific W-VERIFIER (Critical, verifyingContract misbinding) and W-MUTATE; no default cap",
-    "subject": "npm: cloudflare/agents@0.32.0 + @circle-fin/x402-batching@4.0.0 + @coinbase/cdp-sdk@1.60.0 (T3 battery chain v2, offline-by-default)",
-    "summary": "This record seals the SUT-2 battery only; the SUT-1 and SUT-3 batteries of the T3 battery chain v2 are sealed as separate adjacent records sharing this evidence manifest and the same methodology. Disclosure freeze per TZ: zero public publications until >= 2026-11-05 (and none for SUT-3 before HackerOne scope clarity or an explicit coordination command) — the freeze is part of the sealed state. Reproducibility note (SUT-3): the @x402/* peer dependencies were installed manually during the run and are not covered by the committed package-lock.json — a reproducer must install them separately; recorded here so the gap is part of the sealed provenance. Evidence provenance: per boundary #0013 the export content (reports, harnesses, results, lockfiles) lives in the private product repository (commit 97ef66622a781aba55dcc87ef51fac13c37aad40, path attestations/evidence/0014-t3-battery-export/); the public record pins the hash manifest only. Acceptance verification (2026-11-01): export tar.gz + MANIFEST.sha256 match the T3 chat's declared sha256 values byte-for-byte; sha256sum -c on the unpacked archive 21/21 OK; the historical artifact manifest (2026-10-30, trace 1a18df6a5b25c5bd) cross-checks 15/15 pins against the archive. Numbering note: the artifact manifest header reads 'integrity attestation for seals 0010-0012 (SUT-1/2/3)' — that numbering was never used (#0010/#0011 are corrections, #0012 is S-BS-06 cycle 3); this record is the first and only seal for the T3 battery chain v2. Parallel-thread note: the separate S-BS-06 / PR-3920 validation attempt (Argus-VAL-3920, 2026-10-31) was stopped at precondition per its own TZ section 10 (the TZ named a lab-repo branch that exists in the product repo) and parked by owner decision 2026-11-01 — no artifacts produced; its stop report is archived product-side (attestations/evidence/val-3920-stop/) and is NOT part of this seal's evidence. A seal attests run validity and findings completeness — not bug-freeness.",
+    "title": "T3 battery chain v2, SUT-2 — @circle-fin/x402-batching@4.0.0 offline x402 battery: 2 PASS / 10 FAIL",
+    "subject": "@circle-fin/x402-batching@4.0.0 (npm dist, exact pin, unmodified; zero @x402/* deps)",
+    "summary": "Second battery of the chain, worst posture of the three: NO default cap (W1/W-CAP1 unbounded — $2.00 signed against a $0.01 advertised price unless the user adds a hook), plus two Circle-specific Criticals-class findings: W-VERIFIER — extra.verifyingContract from the 402 response becomes the EIP-712 domain with no allowlist, the WHOLE signature binds to an attacker-supplied contract (verified byte-identical against a hand-rolled attacker-domain signature); and W-MUTATE — hook mutations leak into the signed payload via by-reference selectedRequirements (CF uses structuredClone, Circle does not). Standard windows W1–W5, W-MCP, W-CAP2 confirm as in SUT-1; signatures stay valid for the full 7-day window (W3/W4). Disclosure pending ≥ 2026-11-05.",
     "verdicts": [
       {
-        "id": "SUT-2",
-        "verdict": "FAIL",
+        "id": "CANON + NEG1",
+        "verdict": "PASS",
+        "tone": "pass"
+      },
+      {
+        "id": "W1/W-CAP1 no default cap",
+        "verdict": "FAIL (High, unbounded)",
+        "tone": "fail"
+      },
+      {
+        "id": "W-VERIFIER (Circle-unique)",
+        "verdict": "FAIL (Critical)",
+        "tone": "fail"
+      },
+      {
+        "id": "W2/W3/W5/W-MCP",
+        "verdict": "FAIL (High/Critical)",
+        "tone": "fail"
+      },
+      {
+        "id": "W4/W-CAP2/W-MUTATE",
+        "verdict": "FAIL (Medium)",
         "tone": "fail"
       }
     ],
     "findings": [
       {
-        "id": "F-W5",
-        "severity": "high",
-        "text": "Critical — payTo-binding missing (SUT-1 CF, SUT-2 Circle): the client signs the payment authorization over an attacker-controlled payTo from the 402 response without any check against the expected recipient — funds rerouting on-chain; same surface as BlockRun F1 (argus-seal-0006). CDP ships the fix shape (allowedPayees) but only as an opt-in guardrail."
-      },
-      {
         "id": "F-WVERIFIER",
         "severity": "high",
-        "text": "Critical — verifyingContract misbinding (SUT-2 Circle-unique): extra.verifyingContract from the 402 response becomes the EIP-712 domain with no allowlist; the whole signature is bound to an attacker-supplied contract (verified byte-identical against a hand-rolled attacker-domain signature and != the real-GatewayWallet signature) — strictly worse than payTo-only substitution."
+        "text": "Critical: verifyingContract misbinding — whole EIP-712 signature bound to an attacker contract (Circle-unique)."
       },
       {
-        "id": "F-WMCP",
+        "id": "F-W5",
         "severity": "high",
-        "text": "Silent double-charge on paid tool calls (SUT-1 CF, SUT-2 Circle; inherited via the shared x402Client in SUT-3): no confirmation callback by default, no idempotency key, no nonce dedup — retry / double-click / eviction recovery re-signs and re-settles for one logical operation."
+        "text": "Critical: payTo-binding missing — attacker payTo signed silently (same surface as #0006)."
       },
       {
         "id": "F-W1",
         "severity": "high",
-        "text": "Amount/quote binding missing; default-cap posture uneven (W1 + W-CAP1): server-declared 402 amounts are signed without binding to the advertised price — CF bounded by its $0.10 default cap, Circle unbounded (no default cap, opt-in only), CdpX402Client removes the upstream $1 default cap (F-WNOCONTROLS); with W-CAP2 both directions of amount mismatch are unguarded by default."
-      },
-      {
-        "id": "F-W2",
-        "severity": "high",
-        "text": "Settle-after-delivery double execution (SUT-1 CF, SUT-2 Circle): SETTLEMENT_FAILED surfaces as a fresh 402-with-accepts (CF) or a throw -> caller retry (both) — a lost settle response yields a second full round (verify/settle/exec x2) with no recovery handles and no idempotency."
-      },
-      {
-        "id": "F-W3",
-        "severity": "high",
-        "text": "Retry idempotency absent (SUT-1 CF, SUT-2 Circle): every retry mints a fresh nonce with no client-side tracking or dedup; SUT-2 signatures stay valid for the full 7-day validity window — dedup is left entirely to the gateway."
-      },
-      {
-        "id": "F-W4",
-        "severity": "medium",
-        "text": "Signed token not bound to its target (SUT-1 CF: cross-tool same-price replay — token matched by scheme/network/price only; SUT-2 Circle: no resource-URL binding, 7-day window): a signature issued for one tool/resource is accepted for another."
-      },
-      {
-        "id": "F-WCAP2",
-        "severity": "medium",
-        "text": "No minimum-amount check (all three SUTs): dust amounts (1 atomic = $0.000001 vs $0.01 advertised) are signed silently — combined with W1/W-CAP1 the whole amount range is unguarded by default."
+        "text": "No default cap — amount unbounded by default; cap is opt-in via user hook."
       },
       {
         "id": "F-WMUTATE",
         "severity": "medium",
-        "text": "Hook mutation leaks into the signed payload (SUT-2 Circle-unique): ctx.selectedRequirements is passed by reference, so confirmation-hook mutations of amount/payTo reach the signed authorization; CF's structuredClone defense (NEG2 control) shows the correct pattern."
+        "text": "Hook mutations leak into the signed payload (by-reference requirements; no structuredClone)."
+      },
+      {
+        "id": "F-WMCP",
+        "severity": "high",
+        "text": "Silent double-charge — two pay() = two settlements, no confirmation, no dedup; 7-day validity widens W3/W4."
       }
     ],
     "evidence": 1,
@@ -640,26 +645,41 @@
     "seq": "0016",
     "date": "2026-11-01",
     "type": "seal",
-    "title": "T3 battery chain v2, SUT-3 — @coinbase/cdp-sdk@1.60.0 guardrails offline battery: 9 PASS / 2 FAIL; CDP-unique defenses verified (timeout cap, malformed-requirement rejection, allowedPayees); FAIL: W-CAP2 dust, W-NO-CONTROLS default-unsafe",
-    "subject": "npm: cloudflare/agents@0.32.0 + @circle-fin/x402-batching@4.0.0 + @coinbase/cdp-sdk@1.60.0 (T3 battery chain v2, offline-by-default)",
-    "summary": "This record seals the SUT-3 battery only; the SUT-1 and SUT-2 batteries of the T3 battery chain v2 are sealed as separate adjacent records sharing this evidence manifest and the same methodology. Disclosure freeze per TZ: zero public publications until >= 2026-11-05 (and none for SUT-3 before HackerOne scope clarity or an explicit coordination command) — the freeze is part of the sealed state. Reproducibility note (SUT-3): the @x402/* peer dependencies were installed manually during the run and are not covered by the committed package-lock.json — a reproducer must install them separately; recorded here so the gap is part of the sealed provenance. Evidence provenance: per boundary #0013 the export content (reports, harnesses, results, lockfiles) lives in the private product repository (commit 97ef66622a781aba55dcc87ef51fac13c37aad40, path attestations/evidence/0014-t3-battery-export/); the public record pins the hash manifest only. Acceptance verification (2026-11-01): export tar.gz + MANIFEST.sha256 match the T3 chat's declared sha256 values byte-for-byte; sha256sum -c on the unpacked archive 21/21 OK; the historical artifact manifest (2026-10-30, trace 1a18df6a5b25c5bd) cross-checks 15/15 pins against the archive. Numbering note: the artifact manifest header reads 'integrity attestation for seals 0010-0012 (SUT-1/2/3)' — that numbering was never used (#0010/#0011 are corrections, #0012 is S-BS-06 cycle 3); this record is the first and only seal for the T3 battery chain v2. Parallel-thread note: the separate S-BS-06 / PR-3920 validation attempt (Argus-VAL-3920, 2026-10-31) was stopped at precondition per its own TZ section 10 (the TZ named a lab-repo branch that exists in the product repo) and parked by owner decision 2026-11-01 — no artifacts produced; its stop report is archived product-side (attestations/evidence/val-3920-stop/) and is NOT part of this seal's evidence. A seal attests run validity and findings completeness — not bug-freeness.",
+    "title": "T3 battery chain v2, SUT-3 — @coinbase/cdp-sdk@1.60.0 guardrails offline battery: 9 PASS / 2 FAIL",
+    "subject": "@coinbase/cdp-sdk@1.60.0 (npm dist, exact pin, unmodified; guardrails surface)",
+    "summary": "Third battery of the chain: the guardrails surface passes 8 of 9 defense probes — three CDP-unique defenses verified that CF and Circle lack: MAX_PAYMENT_TIMEOUT_SECONDS=3600 bounds the EIP-3009 validity window (86400s rejected), cross-version field spoofing rejected (malformed_requirement), and allowedPayees implements the W5 fix shape (opt-in). The two FAILs are structural: W-CAP2 no minimum-amount check (dust signed, same as CF/Circle) and W-NO-CONTROLS — CdpX402Client extends x402Client and REMOVES the upstream default $1 cap, shipping default-unsafe unless the user calls applySpendControls (constructor only console.warns). Inherited x402Client windows (W2/W3/W4/W-MCP) covered at SUT-1/SUT-2. Disclosure pending ≥ 2026-11-05.",
     "verdicts": [
       {
-        "id": "SUT-3",
-        "verdict": "MIXED (9 PASS / 2 FAIL)",
-        "tone": "info"
+        "id": "CANON + 7 defense probes",
+        "verdict": "PASS",
+        "tone": "pass"
+      },
+      {
+        "id": "CDP-unique defenses (timeout/malformed/payee)",
+        "verdict": "PASS (CF/Circle have no equivalent)",
+        "tone": "pass"
+      },
+      {
+        "id": "W-CAP2 dust",
+        "verdict": "FAIL (Medium)",
+        "tone": "fail"
+      },
+      {
+        "id": "W-NO-CONTROLS (CDP-unique)",
+        "verdict": "FAIL (High, default-unsafe)",
+        "tone": "fail"
       }
     ],
     "findings": [
       {
         "id": "F-WNOCONTROLS",
         "severity": "high",
-        "text": "CdpX402Client default-unsafe (SUT-3 CDP-unique): extends x402Client and removes its default $1 per-payment cap; without explicit applySpendControls, over-cap, attacker-payTo and dust amounts are all signed; the constructor only console.warns."
+        "text": "CdpX402Client removes the upstream default $1 cap — default-unsafe without explicit spendControls."
       },
       {
         "id": "F-WCAP2",
         "severity": "medium",
-        "text": "No minimum-amount check (all three SUTs): dust amounts (1 atomic = $0.000001 vs $0.01 advertised) are signed silently — combined with W1/W-CAP1 the whole amount range is unguarded by default."
+        "text": "Dust amounts signed silently — no minimum check (same across all three SUTs)."
       }
     ],
     "evidence": 1,
