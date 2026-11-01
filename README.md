@@ -2,7 +2,11 @@
 
 [![latest-seal](https://github.com/igor-vii/Argus-Agent-Test-Lab/actions/workflows/latest-seal.yml/badge.svg)](https://github.com/igor-vii/Argus-Agent-Test-Lab/actions/workflows/latest-seal.yml)
 
-**AI Agent Testing & Reliability** · [argus-lab.tech](https://argus-lab.tech)
+**Adversarial testing for AI agents that move money** · [argus-lab.tech](https://argus-lab.tech)
+
+The lab breaks AI agents that spend, receive and settle money — buyer and
+merchant agents, and the SDKs, protocols and rails that sign and settle on
+their behalf — then seals every verdict in a public, hash-chained registry.
 
 This repository is the **public proof layer** of Argus: the sealed, hash-chained
 evidence registry, the verification tooling, and the source of

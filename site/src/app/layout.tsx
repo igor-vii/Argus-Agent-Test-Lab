@@ -17,14 +17,15 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: "Argus Agent Test Lab — adversarial testing for agentic payments",
+  title: "Argus Agent Test Lab — adversarial testing for AI agents that move money",
   description:
-    "Black-box adversarial batteries against the SDKs and platforms that move agentic money. Every verdict is an Ed25519-sealed record in a public hash chain — verifiable in one command.",
+    "We red-team AI agents that spend, receive and settle money — and the rails and SDKs behind them. Pre-registered batteries. Sealed, verifiable verdicts.",
   keywords: [
     "adversarial testing",
     "x402",
     "agentic payments",
-    "security research",
+    "agent red teaming",
+    "payment agent testing",
     "attestation registry",
     "black-box testing",
     "idempotency",
@@ -45,8 +46,8 @@ export const metadata: Metadata = {
   },
   /* OG tags — verbatim per ТЗ п.3; cover regenerated from the registry by CI (scripts/gen-og-cover.mjs) */
   openGraph: {
-    title: "Argus Lab — adversarial verification for agentic payments",
-    description: "Sealed, hash-chained evidence. x402 payment rails. Verify in one command.",
+    title: "Argus Lab — adversarial verification for AI agents that move money",
+    description: "Sealed, hash-chained evidence. AI agents that move money — and the rails they settle on. Verify in one command.",
     url: "/",
     siteName: "Argus Lab",
     type: "website",
@@ -62,8 +63,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Argus Lab — adversarial verification for agentic payments",
-    description: "Sealed, hash-chained evidence. x402 payment rails. Verify in one command.",
+    title: "Argus Lab — adversarial verification for AI agents that move money",
+    description: "Sealed, hash-chained evidence. AI agents that move money — and the rails they settle on. Verify in one command.",
     images: ["/og-cover.png"],
   },
   robots: {

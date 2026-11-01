@@ -509,7 +509,7 @@ function StructuredData() {
         url: SITE_URL,
         logo: `${SITE_URL}/logo.svg`,
         description:
-          "Independent black-box adversarial testing lab for agentic payment rails. Every verdict is an Ed25519-sealed record in a public hash chain.",
+          "Independent adversarial testing lab for AI agents that move money — and the rails they settle on. Every verdict is an Ed25519-sealed record in a public hash chain.",
         sameAs: [REPO_URL, "https://x.com/INGVAR29007836"],
         contactPoint: {
           "@type": "ContactPoint",

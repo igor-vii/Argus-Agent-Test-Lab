@@ -14,10 +14,10 @@ export type Lang = "en" | "ru";
 const en = {
   nav: { registry: "Registry", method: "Method", cases: "Cases", engage: "Engage" },
   hero: {
-    kicker: "adversarial testing lab · agentic payment rails",
-    titleA: "We sign our findings,",
-    titleB: "not our opinions.",
-    text: "Argus Agent Test Lab runs black-box adversarial batteries against the SDKs and platforms that move agentic money — x402 payment flows, credit and settlement handling, idempotency guarantees. Every verdict is a sealed record in a public hash chain that anyone can verify in one command.",
+    kicker: "adversarial testing lab — AI agents that move money, and the rails they settle on",
+    titleA: "We break AI agents that move money.",
+    titleB: "We sign our findings, not our opinions.",
+    text: "Argus runs pre-registered, black-box batteries against buyer and merchant agents — and the payment path they rely on: x402 payment flows, credit and settlement handling, idempotency guarantees. An agent is only as solvent as the code that signs for it. Every verdict is a sealed record in a public hash chain that anyone can verify in one command.",
     ctaPrimary: "Explore the registry",
     ctaSecondary: "Commission a round",
     stats: [
@@ -66,7 +66,7 @@ const en = {
   cases: {
     kicker: "cases",
     title: "Every verdict, public and linked",
-    text: "Six fronts so far — from an upstream reference client to payment SDKs carrying real money. Each card links back to sealed records and public threads; nothing on this page exists outside the registry.",
+    text: "Six fronts so far — from a live merchant agent to the SDKs and rails that sign and settle on their behalf. Each card links back to sealed records and public threads; nothing on this page exists outside the registry.",
   },
   engage: {
     kicker: "engage",
@@ -75,7 +75,7 @@ const en = {
     tracks: [
       {
         title: "Coordinated production round",
-        text: "You invited reproduction against production; we run it under written scope authorization: funded test wallet, agreed time window on 48 hours' notice, a no-debit/refund arrangement for probe transactions, full request capture shared with you. Deliverable: a sealed production-round report — either documenting that the production endpoint held against the full battery, or documenting the exact boundary where defects become live money movement.",
+        text: "Point us at a live agent that moves real money; we run the battery under written scope authorization: funded test wallet, agreed time window on 48 hours' notice, a no-debit/refund arrangement for probe transactions, full request capture shared with you. Deliverable: a sealed production-round report — either documenting that the production endpoint held against the full battery, or documenting the exact boundary where defects become live money movement.",
         meta: "from $990 / round",
       },
       {
@@ -102,7 +102,7 @@ const en = {
     ],
   },
   footer: {
-    tagline: "Independent adversarial testing for agentic payment rails. No vendor operates our stands.",
+    tagline: "Independent adversarial testing for AI agents that move money — and the rails they settle on. No vendor operates our stands.",
     chainHead: "chain head",
     records: "records",
   },
@@ -113,10 +113,10 @@ export type Dict = typeof en;
 const ru: Dict = {
   nav: { registry: "Реестр", method: "Метод", cases: "Кейсы", engage: "Заказать" },
   hero: {
-    kicker: "адверсариальная лаборатория · платёжные рельсы для агентов",
-    titleA: "Мы подписываем находки,",
-    titleB: "а не мнения.",
-    text: "Argus Agent Test Lab гоняет чёрно-ящичные адверсариальные батареи по SDK и платформам, которые двигают агентские деньги — платёжные потоки x402, обработку кредитов и расчётов, гарантии идемпотентности. Каждый вердикт — запечатанная запись в публичной hash-цепи, которую любой может проверить одной командой.",
+    kicker: "адверсариальная лаборатория — ИИ-агенты, которые двигают деньги, и рельсы, по которым они платят",
+    titleA: "Мы ломаем ИИ-агентов, которые двигают деньги.",
+    titleB: "Мы подписываем находки, а не мнения.",
+    text: "Argus проводит предрегистрированные чёрно-ящичные батареи против buyer- и merchant-агентов — и платёжного пути, на который они опираются: платёжные потоки x402, обработка кредитов и расчётов, гарантии идемпотентности. Агент солиден ровно настолько, насколько надёжен код, который подписывает за него. Каждый вердикт — запечатанная запись в публичной hash-цепи, которую любой может проверить одной командой.",
     ctaPrimary: "Открыть реестр",
     ctaSecondary: "Заказать раунд",
     stats: [
@@ -165,7 +165,7 @@ const ru: Dict = {
   cases: {
     kicker: "кейсы",
     title: "Каждый вердикт публичен и имеет ссылку",
-    text: "Шесть фронтов — от upstream reference-клиента до платёжных SDK, несущих настоящие деньги. Каждая карточка ссылается на запечатанные записи и публичные треды; ничто на этой странице не существует вне реестра.",
+    text: "Шесть фронтов — от живого merchant-агента до SDK и рельсов, которые подписывают и рассчитываются от его имени. Каждая карточка ссылается на запечатанные записи и публичные треды; ничто на этой странице не существует вне реестра.",
   },
   engage: {
     kicker: "заказать",
@@ -174,7 +174,7 @@ const ru: Dict = {
     tracks: [
       {
         title: "Координированный production-раунд",
-        text: "Вы пригласили воспроизведение на production — мы гоняем его под письменной авторизацией скоупа: финансируемый тестовый кошелёк, согласованное окно с уведомлением за 48 часов, договорённость no-debit/refund для пробных транзакций, полный захват запросов передаётся вам. Результат: запечатанный отчёт production-раунда — либо фиксация того, что endpoint выдержал всю батарею, либо точная граница, где дефекты становятся живым движением денег.",
+        text: "Укажите на живого агента, который двигает реальные деньги — мы гоняем батарею под письменной авторизацией скоупа: финансируемый тестовый кошелёк, согласованное окно с уведомлением за 48 часов, договорённость no-debit/refund для пробных транзакций, полный захват запросов передаётся вам. Результат: запечатанный отчёт production-раунда — либо фиксация того, что endpoint выдержал всю батарею, либо точная граница, где дефекты становятся живым движением денег.",
         meta: "от $990 / раунд",
       },
       {
@@ -201,7 +201,7 @@ const ru: Dict = {
     ],
   },
   footer: {
-    tagline: "Независимое адверсариальное тестирование платёжных рельсов для агентов. Наши стенды не управляются вендорами.",
+    tagline: "Независимое адверсариальное тестирование ИИ-агентов, которые двигают деньги, — и рельсов, по которым они платят. Наши стенды не управляются вендорами.",
     chainHead: "голова цепи",
     records: "записей",
   },
