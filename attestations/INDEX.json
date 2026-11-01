@@ -1,6 +1,6 @@
 {
   "registry": "argus-agent-test-lab",
-  "chain_head": "79309ea93491bbae...",
+  "chain_head": "9e511fc86a016337...",
   "records": [
     {
       "seq": "0000",
@@ -1122,6 +1122,93 @@
         }
       ],
       "signature": "tgBTYyhmmo4WtItG8rGOrLAcJ5TN3l5iGh4dspmOMpxosFNpMTv2SLRdOn8xpO1ddn0sBNd3DUHD00CwlIc7CA=="
+    },
+    {
+      "seq": "0014",
+      "record_id": "argus-seal-0014",
+      "issued_at": "2026-11-01T11:42:12.053Z",
+      "signer_key_id": "argus-lab-2026q4r2",
+      "prev_record_hash": "79309ea93491bbae7eb6033b168296fae9d3b1b9bb49fbe3c90a942a6849046e",
+      "type": "seal",
+      "title": "T3 battery chain v2, SUT-1 — cloudflare/agents@0.32.0 offline x402 battery: 4 PASS / 7 FAIL; windows W1, W2, W3, W4, W5, W-MCP, W-CAP2 confirmed; Critical: W5 payTo-binding (attacker payTo signed silently)",
+      "subject": {
+        "repo": "npm: cloudflare/agents@0.32.0 + @circle-fin/x402-batching@4.0.0 + @coinbase/cdp-sdk@1.60.0 (T3 battery chain v2, offline-by-default)",
+        "pin": "cloudflare/agents@0.32.0 — repo head-SHA be1749221ab3efc8be4e976d8e7d8344d1446032; @x402/core@2.17.0, @x402/evm@2.17.0, @x402/fetch@2.17.0, @modelcontextprotocol/sdk@1.32.2",
+        "chain": "T3 battery chain v2 — three SUT offline x402 batteries (this record: SUT-1); total across the chain: 15 PASS / 19 FAIL across 34 scenarios",
+        "method": "Black-box against npm dist, exact pins, unmodified. Fully offline: all traffic on 127.0.0.1 — mock facilitators / mock fetch emulating the vendor's own contracts, adversarial requirement injection; deterministic viem signers on throwaway unfunded wallets, no mainnet, zero prod endpoints: SUT-1 0x6D7dA5EFb28F678d53Fc4B41E8E4960a9F811C85, SUT-2 0xc7f07ca7CF91e41ADe1Bf259404379893910b1Bb, SUT-3 0xa0CF4f00eac821F81550e66C6b962C846c008EBA. Advertised price $0.01 (10000 atomic) across all batteries.",
+        "battery_run": "2026-10-30T13:01:00Z (11 scenarios)",
+        "product_evidence": {
+          "repo": "igor-vii/Argus-Agent-Test-Lab-product (private, per boundary #0013)",
+          "commit": "97ef66622a781aba55dcc87ef51fac13c37aad40",
+          "path": "attestations/evidence/0014-t3-battery-export/",
+          "note": "Export content (21 files: 3 canonical reports + harnesses + results.json + lockfiles; tar.gz sha256 101c54a5f1b1a806…) is product-layer know-how; the public record pins the hash manifest only. Accepted 2026-11-01: sha256sum -c 21/21 OK; artifact-manifest cross-check 15/15 MATCH."
+        }
+      },
+      "scenarios": [
+        {
+          "id": "SUT-1",
+          "name": "CloudflareAgentsX402",
+          "verdict": "FAIL",
+          "checks": "4 PASS / 7 FAIL (11 scenarios): CANON baseline PASS (1 paid call = 1 verify, 1 settle, 1 exec, payment-response.success=true); controls W-CAP1 (over-cap rejected pre-signer: 'Payment exceeds client cap: 200000 > 100000'), NEG1 (upto-scheme passthrough, signature NOT created), NEG2 (confirmation-callback mutation blocked by structuredClone — signed values stay original) PASS. Confirmed windows: W1 amount/quote-binding FAIL (High, bounded by the $0.10 default cap — 402 returns amount=50000 ($0.05) vs advertised 10000; client signed eip3009_value=50000 without checking against the price; the cap is the only guard); W2 settle-after-delivery FAIL (High — SETTLEMENT_FAILED wrapped as a fresh 402 with accepts; client wrapper retries once, then caller retry: exec=2, verify=2, settle=2 for one logical operation); W3 retry idempotency FAIL (High — two consecutive callTool = two full rounds; no durable pending-state, no idempotency key, no nonce dedup); W4 cross-tool replay FAIL (Medium-High — findMatchingRequirements matches scheme/network/price only, token not bound to the tool name); W5 payTo-binding FAIL (Critical, funds rerouting — 402 with payTo=0xbaadf00d…0000; client signed eip3009_to=0xbAadF00D…0000, a valid EIP-3009 witness, with no payTo-vs-expected-recipient check; same surface as BlockRun F1 / argus-seal-0006); W-MCP FAIL (High — confirmationCallback absent by default: two callTool = two signatures, two settles, two executes, zero user dialogs; silent double-charge on retry/double-click/pendingPayments eviction); W-CAP2 FAIL (Medium, dust — amount=1 ($0.000001) signed silently; onBeforePaymentCreation only rejects value<0n and value>cap, no minimum). Fixation 2026-10-30T13:01:00Z.",
+          "findings": [
+            "F-W1",
+            "F-W2",
+            "F-W3",
+            "F-W4",
+            "F-W5",
+            "F-WMCP",
+            "F-WCAP2"
+          ]
+        }
+      ],
+      "run_ts": "2026-10-30T13:01:00Z",
+      "self_run": true,
+      "findings_summary": [
+        {
+          "id": "F-W5",
+          "severity": "high",
+          "title": "Critical — payTo-binding missing (SUT-1 CF, SUT-2 Circle): the client signs the payment authorization over an attacker-controlled payTo from the 402 response without any check against the expected recipient — funds rerouting on-chain; same surface as BlockRun F1 (argus-seal-0006). CDP ships the fix shape (allowedPayees) but only as an opt-in guardrail."
+        },
+        {
+          "id": "F-WMCP",
+          "severity": "high",
+          "title": "Silent double-charge on paid tool calls (SUT-1 CF, SUT-2 Circle; inherited via the shared x402Client in SUT-3): no confirmation callback by default, no idempotency key, no nonce dedup — retry / double-click / eviction recovery re-signs and re-settles for one logical operation."
+        },
+        {
+          "id": "F-W1",
+          "severity": "high",
+          "title": "Amount/quote binding missing; default-cap posture uneven (W1 + W-CAP1): server-declared 402 amounts are signed without binding to the advertised price — CF bounded by its $0.10 default cap, Circle unbounded (no default cap, opt-in only), CdpX402Client removes the upstream $1 default cap (F-WNOCONTROLS); with W-CAP2 both directions of amount mismatch are unguarded by default."
+        },
+        {
+          "id": "F-W2",
+          "severity": "high",
+          "title": "Settle-after-delivery double execution (SUT-1 CF, SUT-2 Circle): SETTLEMENT_FAILED surfaces as a fresh 402-with-accepts (CF) or a throw -> caller retry (both) — a lost settle response yields a second full round (verify/settle/exec x2) with no recovery handles and no idempotency."
+        },
+        {
+          "id": "F-W3",
+          "severity": "high",
+          "title": "Retry idempotency absent (SUT-1 CF, SUT-2 Circle): every retry mints a fresh nonce with no client-side tracking or dedup; SUT-2 signatures stay valid for the full 7-day validity window — dedup is left entirely to the gateway."
+        },
+        {
+          "id": "F-W4",
+          "severity": "medium",
+          "title": "Signed token not bound to its target (SUT-1 CF: cross-tool same-price replay — token matched by scheme/network/price only; SUT-2 Circle: no resource-URL binding, 7-day window): a signature issued for one tool/resource is accepted for another."
+        },
+        {
+          "id": "F-WCAP2",
+          "severity": "medium",
+          "title": "No minimum-amount check (all three SUTs): dust amounts (1 atomic = $0.000001 vs $0.01 advertised) are signed silently — combined with W1/W-CAP1 the whole amount range is unguarded by default."
+        }
+      ],
+      "notes": "This record seals the SUT-1 battery only; the SUT-2 and SUT-3 batteries of the T3 battery chain v2 are sealed as separate adjacent records sharing this evidence manifest and the same methodology. Disclosure freeze per TZ: zero public publications until >= 2026-11-05 (and none for SUT-3 before HackerOne scope clarity or an explicit coordination command) — the freeze is part of the sealed state. Reproducibility note (SUT-3): the @x402/* peer dependencies were installed manually during the run and are not covered by the committed package-lock.json — a reproducer must install them separately; recorded here so the gap is part of the sealed provenance. Evidence provenance: per boundary #0013 the export content (reports, harnesses, results, lockfiles) lives in the private product repository (commit 97ef66622a781aba55dcc87ef51fac13c37aad40, path attestations/evidence/0014-t3-battery-export/); the public record pins the hash manifest only. Acceptance verification (2026-11-01): export tar.gz + MANIFEST.sha256 match the T3 chat's declared sha256 values byte-for-byte; sha256sum -c on the unpacked archive 21/21 OK; the historical artifact manifest (2026-10-30, trace 1a18df6a5b25c5bd) cross-checks 15/15 pins against the archive. Numbering note: the artifact manifest header reads 'integrity attestation for seals 0010-0012 (SUT-1/2/3)' — that numbering was never used (#0010/#0011 are corrections, #0012 is S-BS-06 cycle 3); this record is the first and only seal for the T3 battery chain v2. Parallel-thread note: the separate S-BS-06 / PR-3920 validation attempt (Argus-VAL-3920, 2026-10-31) was stopped at precondition per its own TZ section 10 (the TZ named a lab-repo branch that exists in the product repo) and parked by owner decision 2026-11-01 — no artifacts produced; its stop report is archived product-side (attestations/evidence/val-3920-stop/) and is NOT part of this seal's evidence. A seal attests run validity and findings completeness — not bug-freeness.",
+      "evidence": [
+        {
+          "kind": "file",
+          "path": "attestations/evidence/0014-t3-battery-chain/t3-battery-export-hashes.json",
+          "sha256": "50a934f6add7a0a7e21898ad62f4d7687d4ce037c7762e565ec3241481436a0e"
+        }
+      ],
+      "signature": "MSLOb24kHXxV4npwXCIqEyLuuW9DevHgqaT/RVP7EVStzV03fg+yOr9q8GrjSf+rdkuA+xZj/OV51byU8nISCA=="
     }
   ]
 }
