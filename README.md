@@ -1,6 +1,6 @@
 # Argus Agent Test Lab — public proof layer
 
-[![latest-seal](https://github.com/igor-vii/Argus-Agent-Test-Lab/actions/workflows/latest-seal.yml/badge.svg)](https://github.com/igor-vii/Argus-Agent-Test-Lab/actions/workflows/latest-seal.yml)
+[![latest-seal](https://github.com/igor-vii/Argus-Agent-Test-Lab/actions/workflows/latest-seal.yml/badge.svg)](https://github.com/igor-vii/Argus-Agent-Test-Lab/actions/workflows/latest-seal.yml) [![site-build](https://github.com/igor-vii/Argus-Agent-Test-Lab/actions/workflows/latest-seal.yml/badge.svg?job=site-build)](https://github.com/igor-vii/Argus-Agent-Test-Lab/actions/workflows/latest-seal.yml)
 
 **Adversarial testing for AI agents that move money** · [argus-lab.tech](https://argus-lab.tech)
 

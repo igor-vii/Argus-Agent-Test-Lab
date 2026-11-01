@@ -106,3 +106,27 @@ jobs:
           # Delivery is best-effort too: the deploy hook URL is a secret and
           # a hiccup here must never redden the verification contract above.
           exit 0
+
+  site-build:
+    # Smoke test for the site itself (added 2026-11-02): npm ci + next build
+    # must stay green for the workflow badge to stay green — a broken build
+    # becomes visible in the same badge line as a broken registry.
+    # Proven locally on the current tree: static prerender of /, /_not-found,
+    # /sitemap.xml completes clean.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+
+      - name: Install dependencies
+        working-directory: site
+        run: npm ci --no-audit --no-fund
+
+      - name: Build site (prebuild regenerates registry-derived data)
+        working-directory: site
+        run: npm run build
