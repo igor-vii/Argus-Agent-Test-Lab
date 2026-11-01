@@ -123,7 +123,10 @@ const evidence = (rec.evidence ?? [])
   .map((e) => ({ path: e.path, sha256: e.sha256 ?? null }));
 
 const payload = {
-  generated_at: new Date().toISOString(),
+  /* Deterministic "as of" stamp: the issued_at of the rendered record, NOT the
+   * wall clock. CI regenerates this file on every push and commits it back —
+   * a wall-clock stamp would produce a diff (and a churn commit) every run. */
+  generated_at: String(rec.issued_at ?? new Date().toISOString()),
   verify: {
     command: "node tools/registry/verify-registry.mjs",
     records: RECORD_COUNT,

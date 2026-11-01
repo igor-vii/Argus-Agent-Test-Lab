@@ -6,10 +6,13 @@ name: latest-seal
 #   this job red, publicly, on the repo's Actions tab. The registry can
 #   never silently drift from what the site claims.
 #
-# Same job also regenerates site/public/og-cover.png from the VERIFIED
-# registry (ТЗ п.3) so the cover's "chain head / N records" footer can
-# never drift from attestations/records. If the cover changed, it is
-# committed back with [skip ci]; Vercel then redeploys with fresh art.
+# Same job also regenerates the site's registry-derived artifacts from the
+# VERIFIED registry (ТЗ п.3): site/public/og-cover.png (cover art),
+# site/src/data/latest-seal.json (LATEST SEAL card) and
+# site/src/data/seals-catalog.json (chain explorer catalog). The site can
+# never drift from attestations/records: a newly sealed record reaches the
+# public site with zero manual site edits. If any artifact changed, it is
+# committed back with [skip ci]; Vercel then redeploys with fresh data.
 #
 # CI-as-distribution: after verification succeeds, the job pings IndexNow
 # (Bing/Yandex/Seznam push-indexing) so search engines learn about fresh
@@ -57,22 +60,24 @@ jobs:
           }
           grep -oE "registry intact.*" /tmp/verify-out.txt >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Regenerate OG cover from verified registry
+      - name: Regenerate site data from verified registry (cover, latest-seal card, seals catalog)
         run: |
           cd site
           npm install sharp --no-save --no-audit --no-fund
           node scripts/gen-og-cover.mjs
+          node scripts/gen-latest-seal.mjs
+          node scripts/gen-seals-catalog.mjs
 
-      - name: Commit regenerated cover (if changed)
+      - name: Commit regenerated site data (if changed)
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
           git config user.name  "argus-ci"
           git config user.email "argus.testlab@gmail.com"
-          if git diff --quiet -- site/public/og-cover.png; then
-            echo "og-cover.png already in sync with the registry"
+          if git diff --quiet -- site/public/og-cover.png site/src/data/latest-seal.json site/src/data/seals-catalog.json; then
+            echo "site data already in sync with the registry"
           else
-            git add site/public/og-cover.png
-            git commit -m "ci(latest-seal): regenerate og-cover from verified registry [skip ci]"
+            git add site/public/og-cover.png site/src/data/latest-seal.json site/src/data/seals-catalog.json
+            git commit -m "ci(latest-seal): regenerate site data from verified registry [skip ci]"
             git push
           fi
 

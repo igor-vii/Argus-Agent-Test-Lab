@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "prebuild": "node scripts/gen-latest-seal.mjs",
+    "prebuild": "node scripts/gen-latest-seal.mjs && node scripts/gen-seals-catalog.mjs",
     "build": "next build",
     "start": "next start",
     "gen:og": "node scripts/gen-og-cover.mjs"

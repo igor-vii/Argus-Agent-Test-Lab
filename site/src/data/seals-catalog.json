@@ -1,0 +1,673 @@
+[
+  {
+    "seq": "0000",
+    "date": "2026-10-23",
+    "type": "finding",
+    "title": "x402 reference client signs any server-declared 402 amount",
+    "subject": "x402-foundation/x402",
+    "summary": "The overcharge vector that started the lab: the reference client treats the server-declared 402 amount as ground truth and signs it without binding to any caller expectation. Filed upstream; became the anchor for the binding-control family.",
+    "verdicts": [
+      {
+        "id": "overcharge-vector",
+        "verdict": "finding",
+        "tone": "fail"
+      }
+    ],
+    "findings": [],
+    "evidence": 1,
+    "links": [
+      {
+        "label": "x402#3866",
+        "href": "https://github.com/x402-foundation/x402/issues/3866"
+      }
+    ]
+  },
+  {
+    "seq": "0001",
+    "date": "2026-10-23",
+    "type": "seal",
+    "title": "Block D live run — S10/S11 vs amw-paypal-agent-demo",
+    "subject": "agentmiddleware/amw-paypal-agent-demo",
+    "summary": "The lab's first live round: two scenarios against a real merchant agent demo, raw live evidence captured and sealed.",
+    "verdicts": [
+      {
+        "id": "S10",
+        "verdict": "PASS",
+        "tone": "pass"
+      },
+      {
+        "id": "S11",
+        "verdict": "PASS",
+        "tone": "pass"
+      }
+    ],
+    "findings": [
+      {
+        "id": "F2",
+        "severity": "high",
+        "text": "High-severity finding surfaced by the live run (fix path tracked with the vendor)."
+      }
+    ],
+    "evidence": 4
+  },
+  {
+    "seq": "0002",
+    "date": "2026-10-24",
+    "type": "seal",
+    "title": "Block D clean-machine reproduction — S10/S11",
+    "subject": "agentmiddleware/amw-paypal-agent-demo",
+    "summary": "Independent reproduction of #0001 on a clean machine from committed sources: verdicts identical. The reproducibility discipline starts here.",
+    "verdicts": [
+      {
+        "id": "S10",
+        "verdict": "PASS",
+        "tone": "pass"
+      },
+      {
+        "id": "S11",
+        "verdict": "PASS",
+        "tone": "pass"
+      }
+    ],
+    "findings": [
+      {
+        "id": "F2",
+        "severity": "high",
+        "text": "Reproduced on clean machine — claim REPRODUCED."
+      }
+    ],
+    "evidence": 4
+  },
+  {
+    "seq": "0003",
+    "date": "2026-10-24",
+    "type": "seal",
+    "title": "S-BS-06 binding battery — reviewer round-2 controls (official @x402 client 2.28.0)",
+    "subject": "x402-foundation/x402",
+    "summary": "Reviewer round 2 on upstream issue #3866: C1 positive control, payTo/asset/network delta probes, resource-vs-call binding, lost-response recovery — all executed on the official client. Reviewer gaps closed with live sessions.",
+    "verdicts": [
+      {
+        "id": "S-BS-06",
+        "verdict": "PASS",
+        "tone": "pass"
+      }
+    ],
+    "findings": [
+      {
+        "id": "F1x",
+        "severity": "info",
+        "text": "Attribution note: asset/network binding enforced by official client spendControls upstream of the gate."
+      }
+    ],
+    "evidence": 1,
+    "links": [
+      {
+        "label": "x402#3866",
+        "href": "https://github.com/x402-foundation/x402/issues/3866"
+      }
+    ]
+  },
+  {
+    "seq": "0004",
+    "date": "2026-10-26",
+    "type": "seal",
+    "title": "S-BS-14/15 wave 2.5 — binding-race & non-atomic-amount first run (PR #3920 @ 2b4cc47)",
+    "subject": "x402-foundation/x402",
+    "summary": "Cycle-1 red zone: two concurrent requirement sets on one quota key make the client sign BOTH payloads (signer ×2); a non-atomic decimal amount gets signed as a ×N payload. Both findings filed against the PR review.",
+    "verdicts": [
+      {
+        "id": "S-BS-14 binding-race",
+        "verdict": "FAIL",
+        "tone": "fail"
+      },
+      {
+        "id": "S-BS-15 non-atomic-amount",
+        "verdict": "FAIL",
+        "tone": "fail"
+      }
+    ],
+    "findings": [
+      {
+        "id": "F-A10",
+        "severity": "high",
+        "text": "Binding race at first contact: concurrent requirement sets, one quota key, two signatures."
+      },
+      {
+        "id": "F-A11",
+        "severity": "high",
+        "text": "Non-atomic amount signed as ×N of the resource price (cycle-1 state)."
+      }
+    ],
+    "evidence": 2,
+    "links": [
+      {
+        "label": "PR #3920",
+        "href": "https://github.com/x402-foundation/x402/pull/3920"
+      }
+    ]
+  },
+  {
+    "seq": "0005",
+    "date": "2026-10-27",
+    "type": "seal",
+    "title": "Inngest idempotency conformance — 13 probes, 0 FAIL (2 DX)",
+    "subject": "inngest@4.26.0 + @inngest/test@1.0.0 (npm dist)",
+    "summary": "13 pre-registered probes across static and dynamic phases. Everything held beyond the documented scenarios or matched the vendor's published disclosure exactly — the honest-posture outcome, stated as plainly as failures get stated. Two developer-experience findings filed in the vendor's own test engine.",
+    "verdicts": [
+      {
+        "id": "static (I1..I4)",
+        "verdict": "0 FAIL (1 PASS / 4 OBSERVED)",
+        "tone": "pass"
+      },
+      {
+        "id": "dynamic (p0..p4d)",
+        "verdict": "0 FAIL (4 PASS / 4 OBSERVED)",
+        "tone": "pass"
+      }
+    ],
+    "findings": [
+      {
+        "id": "DX1",
+        "severity": "low",
+        "text": "@inngest/test does not surface AUTOMATIC_PARALLEL_INDEXING or any execution warnings."
+      },
+      {
+        "id": "DX2",
+        "severity": "low",
+        "text": "MockedStep memo injection bypasses runtime collision indexing with no divergence flag."
+      }
+    ],
+    "evidence": 8,
+    "links": [
+      {
+        "label": "inngest#5091",
+        "href": "https://github.com/inngest/inngest/issues/5091"
+      }
+    ]
+  },
+  {
+    "seq": "0006",
+    "date": "2026-10-27",
+    "type": "seal",
+    "title": "S-BS-19 blockrun-nano-recovery — 3 FAIL / 3 HOLD (wave 4)",
+    "subject": "@blockrun/nano-client 0.8.0 (npm exact pin)",
+    "summary": "Battery against the published SDK: a shape-only payTo check signs the authorization over an attacker-controlled recipient; the default config has no spend cap (×50 signed); a lost response is a recovery dead-end whose only exit is a retry that mints a fresh nonce — a second economic execution. Three genuine guards (decimal, contract pin, replay) hold.",
+    "verdicts": [
+      {
+        "id": "P1 payto-substitution",
+        "verdict": "FAIL (vendor-side)",
+        "tone": "fail"
+      },
+      {
+        "id": "P2 overcharge-default",
+        "verdict": "FAIL (vendor-side)",
+        "tone": "fail"
+      },
+      {
+        "id": "P3 lost-response-recovery",
+        "verdict": "FAIL (vendor-side)",
+        "tone": "fail"
+      },
+      {
+        "id": "C1..C3 controls",
+        "verdict": "HOLD (3/3)",
+        "tone": "hold"
+      }
+    ],
+    "findings": [
+      {
+        "id": "BS19-F1",
+        "severity": "high",
+        "text": "payTo substitution passes the shape-only check; signature produced over attacker payTo."
+      },
+      {
+        "id": "BS19-F2",
+        "severity": "high",
+        "text": "No default spend cap: authorization signed for ×50 of requirements price; cap is opt-in."
+      },
+      {
+        "id": "BS19-F3",
+        "severity": "medium",
+        "text": "Lost-response recovery dead-end; manual retry = second economic execution, contradicting the README claim."
+      }
+    ],
+    "evidence": 6,
+    "links": [
+      {
+        "label": "blockrun-nano-client#18",
+        "href": "https://github.com/BlockRunAI/blockrun-nano-client/issues/18"
+      }
+    ]
+  },
+  {
+    "seq": "0007",
+    "date": "2026-10-27",
+    "type": "seal",
+    "title": "S-BS-20 nevermined-credit-recovery — 7 FAIL / 1 DX / 3 HOLD (wave 5)",
+    "subject": "@nevermined-io/payments 1.13.0 (npm exact pin)",
+    "summary": "Eleven probes against the published payment middleware: lost-response retry double-charges on the default token; single-use enforcement is per-process and reactive (concurrent race delivers a free service); any settle failure except one special case delivers the resource unpaid; verify reserves nothing; streamed responses never carry a settlement receipt. Three controls hold — including a genuinely well-built byte-delta disconnect probe.",
+    "verdicts": [
+      {
+        "id": "P1 lost-response-retry",
+        "verdict": "FAIL",
+        "tone": "fail"
+      },
+      {
+        "id": "P2 single-use-guard-race",
+        "verdict": "FAIL",
+        "tone": "fail"
+      },
+      {
+        "id": "P3 settle-failure-unpaid-delivery",
+        "verdict": "FAIL",
+        "tone": "fail"
+      },
+      {
+        "id": "P4 verify-settle-depletion-race",
+        "verdict": "FAIL",
+        "tone": "fail"
+      },
+      {
+        "id": "P5 streaming-no-receipt",
+        "verdict": "FAIL",
+        "tone": "fail"
+      },
+      {
+        "id": "P6 silent-v3-downgrade",
+        "verdict": "DX",
+        "tone": "dx"
+      },
+      {
+        "id": "C1+C3+C4 controls",
+        "verdict": "HOLD (3/3)",
+        "tone": "hold"
+      }
+    ],
+    "findings": [
+      {
+        "id": "NV-F1",
+        "severity": "high",
+        "text": "Lost-response retry double-charges on the default v2 token; receipt attached only to the lost response."
+      },
+      {
+        "id": "NV-F2",
+        "severity": "high",
+        "text": "Single-use guard is per-process and reactive; multi-replica sellers have no guard at all."
+      },
+      {
+        "id": "NV-F3",
+        "severity": "high",
+        "text": "Any settle failure except 0059 delivers unpaid; the documented 200+success:false shape even receives a receipt."
+      },
+      {
+        "id": "NV-F4",
+        "severity": "medium",
+        "text": "Verify checks balance but reserves nothing: depletion race delivers the second service free."
+      },
+      {
+        "id": "NV-F5",
+        "severity": "medium",
+        "text": "Streamed responses carry no settlement receipt, ever; reconciliation impossible on the dominant endpoint shape."
+      },
+      {
+        "id": "NV-DX1",
+        "severity": "low",
+        "text": "Silent v3→v2 downgrade on mint: buyer wants single-use, silently holds a reusable credential."
+      }
+    ],
+    "evidence": 5,
+    "links": [
+      {
+        "label": "nevermined-io/payments",
+        "href": "https://github.com/nevermined-io/payments"
+      }
+    ]
+  },
+  {
+    "seq": "0008",
+    "date": "2026-10-27",
+    "type": "seal",
+    "title": "S-BS-14/15 cycle 2 — PR #3920 @ b1a4d8ce cross-check",
+    "subject": "x402-foundation/x402",
+    "summary": "The re-run promised in cycle-1: green zone A1–A9 holds, and A11 (non-atomic amount) is verified CLOSED with typed fail-closed pre-signer rejection. The binding race A10a/A10b reproduces at the round-4 head — signer ×2, zero rejections — the serialization claim does not observably cover concurrent requirement sets.",
+    "verdicts": [
+      {
+        "id": "A1–A9 green zone",
+        "verdict": "PASS",
+        "tone": "pass"
+      },
+      {
+        "id": "A11 non-atomic-amount",
+        "verdict": "PASS (verified closed)",
+        "tone": "pass"
+      },
+      {
+        "id": "A10a binding-race (explicit)",
+        "verdict": "FAIL",
+        "tone": "fail"
+      },
+      {
+        "id": "A10b binding-race (first-accepted)",
+        "verdict": "FAIL",
+        "tone": "fail"
+      }
+    ],
+    "findings": [
+      {
+        "id": "F-A10",
+        "severity": "high",
+        "text": "Binding race still open at PR head: two signatures 9/8 ms apart before any slot completes."
+      },
+      {
+        "id": "A11-closed",
+        "severity": "info",
+        "text": "Vendor fix verified: scoping to enabled amount expectations works as designed."
+      }
+    ],
+    "evidence": 8,
+    "links": [
+      {
+        "label": "PR #3920",
+        "href": "https://github.com/x402-foundation/x402/pull/3920"
+      }
+    ]
+  },
+  {
+    "seq": "0009",
+    "date": "2026-10-28",
+    "type": "seal",
+    "title": "mcp-tool-idempotency external verification — v0.2.0 fixes hold (10/10)",
+    "subject": "tripl3tr3s/mcp-tool-idempotency (public repo, unmodified)",
+    "summary": "The cooperative model working end-to-end: three durability windows (lost response after commit, crash after commit, cross-instance race) reported via coordinated disclosure; the maintainer shipped owner-gated claim leases and released v0.2.0; the lab verified the fix with a ten-window battery — 10/10 PASS, suite 91/91 at tag. Credited in the project's SECURITY.md.",
+    "verdicts": [
+      {
+        "id": "T1-Before (4d665ae)",
+        "verdict": "FAIL (SUT)",
+        "tone": "fail"
+      },
+      {
+        "id": "T1-W0..W6 (v0.2.0)",
+        "verdict": "PASS",
+        "tone": "pass"
+      },
+      {
+        "id": "T1-Suite",
+        "verdict": "PASS (91/91)",
+        "tone": "pass"
+      }
+    ],
+    "findings": [
+      {
+        "id": "F1",
+        "severity": "low",
+        "text": "Lost response after commit: retry re-fires the committed side effect — documented at-least-once limit (‘failed executions are never cached’); fixed in v0.2.0."
+      },
+      {
+        "id": "F2",
+        "severity": "medium",
+        "text": "Crash after commit: dead holder's pending row unconditionally reset by the next caller — shares F3's root cause (missing liveness check), narrow crash window; fixed in v0.2.0."
+      },
+      {
+        "id": "F3",
+        "severity": "high",
+        "text": "Cross-instance race: claim loser resets the winner's LIVE pending row (fixed in v0.2.0)."
+      }
+    ],
+    "evidence": 5,
+    "links": [
+      {
+        "label": "mcp-tool-idempotency",
+        "href": "https://github.com/tripl3tr3s/mcp-tool-idempotency"
+      }
+    ]
+  },
+  {
+    "seq": "0012",
+    "date": "2026-10-31",
+    "type": "seal",
+    "title": "S-BS-06 cycle 3 — PR #3920 @ e993bef re-pin re-run: green zone holds, A10c/d + A12/A13 PASS (17/19)",
+    "subject": "x402-foundation/x402",
+    "summary": "The re-pin re-run required by the acceptance protocol after the recipient-normalization commits: full 19-session re-run at e993bef, no head mixing. Green zone A1–A9 and the A11 fail-closed rejection are unchanged. Two NEW pre-registrations go green: conflicting-offer races A10c/A10d (one commitment + one pre-signer rejection — the in-thread requested discriminating control) and case-variant recipient A12/A13 (case spelling no longer mints a fresh quote key; raised case-variant rejected pre-signer). Identical-offer A10a/A10b continues the cycle-2 pre-registration for continuity — duplicate-payment semantics per the PR author's in-thread position, outside the quote-control layer's scope.",
+    "verdicts": [
+      {
+        "id": "A1–A9 green zone",
+        "verdict": "PASS",
+        "tone": "pass"
+      },
+      {
+        "id": "A11 non-atomic-amount",
+        "verdict": "PASS (fail-closed)",
+        "tone": "pass"
+      },
+      {
+        "id": "A10a/A10b identical-offer race",
+        "verdict": "FAIL (continuity)",
+        "tone": "fail"
+      },
+      {
+        "id": "A10c/A10d conflicting-offer race",
+        "verdict": "PASS (NEW)",
+        "tone": "pass"
+      },
+      {
+        "id": "A12/A13 case-variant recipient",
+        "verdict": "PASS (NEW)",
+        "tone": "pass"
+      }
+    ],
+    "findings": [
+      {
+        "id": "F-A10",
+        "severity": "high",
+        "text": "Identical-offer first-contact race persists at e993bef: signer ×2 (8/7 ms apart) before any slot completes; verdict continues the cycle-2 pre-registration for continuity — author's position: duplicate-payment semantics, out of quote-control scope; the discriminating control A10c/A10d passes."
+      },
+      {
+        "id": "C3-delta-verified",
+        "severity": "info",
+        "text": "A12/A13 verify the e993bef normalization delta: case-variant offers ride the canonicalized quote-ledger anchor — no false positive at unchanged amount; raised case-variant rejected pre-signer where case-sensitive cycle-2 keys would have signed as a fresh key."
+      }
+    ],
+    "evidence": 8,
+    "links": [
+      {
+        "label": "PR #3920",
+        "href": "https://github.com/x402-foundation/x402/pull/3920"
+      }
+    ]
+  },
+  {
+    "seq": "0013",
+    "date": "2026-10-31",
+    "type": "seal",
+    "title": "Boundary: product layer moved private — public repository remains proof-only (registry + verification + site)",
+    "subject": "igor-vii/Argus-Agent-Test-Lab",
+    "summary": "The open-core boundary, sealed as a chain event. Engine, scenario library, SUT harnesses and engagement archives moved to a private repository (157 files, ~1.5 MB) — a forward-only split: no history rewrite, no force-push. The last public snapshot (efbf51e) is hash-pinned by a manifest, which is this record's evidence; every file that moved carries its sha256, so any future disclosure of product code stays verifiable against what was public. All 49 sealed evidence paths, the site, the verify tooling and everything referenced from public threads remain public and byte-identical.",
+    "verdicts": [
+      {
+        "id": "proof-layer (registry + verify + site)",
+        "verdict": "PUBLIC",
+        "tone": "info"
+      },
+      {
+        "id": "product-layer (engine + scenarios + SUT)",
+        "verdict": "PRIVATE",
+        "tone": "info"
+      },
+      {
+        "id": "published-refs (#3866 fixtures, branches)",
+        "verdict": "PUBLIC (byte-identical)",
+        "tone": "info"
+      }
+    ],
+    "findings": [],
+    "evidence": 1,
+    "links": [
+      {
+        "label": "manifest",
+        "href": "https://github.com/igor-vii/Argus-Agent-Test-Lab/blob/main/attestations/evidence/0013-boundary/product-layer-manifest.json"
+      }
+    ]
+  },
+  {
+    "seq": "0014",
+    "date": "2026-11-01",
+    "type": "seal",
+    "title": "T3 battery chain v2, SUT-1 — cloudflare/agents@0.32.0 offline x402 battery: 4 PASS / 7 FAIL; windows W1, W2, W3, W4, W5, W-MCP, W-CAP2 confirmed; Critical: W5 payTo-binding (attacker payTo signed silently)",
+    "subject": "npm: cloudflare/agents@0.32.0 + @circle-fin/x402-batching@4.0.0 + @coinbase/cdp-sdk@1.60.0 (T3 battery chain v2, offline-by-default)",
+    "summary": "This record seals the SUT-1 battery only; the SUT-2 and SUT-3 batteries of the T3 battery chain v2 are sealed as separate adjacent records sharing this evidence manifest and the same methodology. Disclosure freeze per TZ: zero public publications until >= 2026-11-05 (and none for SUT-3 before HackerOne scope clarity or an explicit coordination command) — the freeze is part of the sealed state. Reproducibility note (SUT-3): the @x402/* peer dependencies were installed manually during the run and are not covered by the committed package-lock.json — a reproducer must install them separately; recorded here so the gap is part of the sealed provenance. Evidence provenance: per boundary #0013 the export content (reports, harnesses, results, lockfiles) lives in the private product repository (commit 97ef66622a781aba55dcc87ef51fac13c37aad40, path attestations/evidence/0014-t3-battery-export/); the public record pins the hash manifest only. Acceptance verification (2026-11-01): export tar.gz + MANIFEST.sha256 match the T3 chat's declared sha256 values byte-for-byte; sha256sum -c on the unpacked archive 21/21 OK; the historical artifact manifest (2026-10-30, trace 1a18df6a5b25c5bd) cross-checks 15/15 pins against the archive. Numbering note: the artifact manifest header reads 'integrity attestation for seals 0010-0012 (SUT-1/2/3)' — that numbering was never used (#0010/#0011 are corrections, #0012 is S-BS-06 cycle 3); this record is the first and only seal for the T3 battery chain v2. Parallel-thread note: the separate S-BS-06 / PR-3920 validation attempt (Argus-VAL-3920, 2026-10-31) was stopped at precondition per its own TZ section 10 (the TZ named a lab-repo branch that exists in the product repo) and parked by owner decision 2026-11-01 — no artifacts produced; its stop report is archived product-side (attestations/evidence/val-3920-stop/) and is NOT part of this seal's evidence. A seal attests run validity and findings completeness — not bug-freeness.",
+    "verdicts": [
+      {
+        "id": "SUT-1",
+        "verdict": "FAIL",
+        "tone": "fail"
+      }
+    ],
+    "findings": [
+      {
+        "id": "F-W5",
+        "severity": "high",
+        "text": "Critical — payTo-binding missing (SUT-1 CF, SUT-2 Circle): the client signs the payment authorization over an attacker-controlled payTo from the 402 response without any check against the expected recipient — funds rerouting on-chain; same surface as BlockRun F1 (argus-seal-0006). CDP ships the fix shape (allowedPayees) but only as an opt-in guardrail."
+      },
+      {
+        "id": "F-WMCP",
+        "severity": "high",
+        "text": "Silent double-charge on paid tool calls (SUT-1 CF, SUT-2 Circle; inherited via the shared x402Client in SUT-3): no confirmation callback by default, no idempotency key, no nonce dedup — retry / double-click / eviction recovery re-signs and re-settles for one logical operation."
+      },
+      {
+        "id": "F-W1",
+        "severity": "high",
+        "text": "Amount/quote binding missing; default-cap posture uneven (W1 + W-CAP1): server-declared 402 amounts are signed without binding to the advertised price — CF bounded by its $0.10 default cap, Circle unbounded (no default cap, opt-in only), CdpX402Client removes the upstream $1 default cap (F-WNOCONTROLS); with W-CAP2 both directions of amount mismatch are unguarded by default."
+      },
+      {
+        "id": "F-W2",
+        "severity": "high",
+        "text": "Settle-after-delivery double execution (SUT-1 CF, SUT-2 Circle): SETTLEMENT_FAILED surfaces as a fresh 402-with-accepts (CF) or a throw -> caller retry (both) — a lost settle response yields a second full round (verify/settle/exec x2) with no recovery handles and no idempotency."
+      },
+      {
+        "id": "F-W3",
+        "severity": "high",
+        "text": "Retry idempotency absent (SUT-1 CF, SUT-2 Circle): every retry mints a fresh nonce with no client-side tracking or dedup; SUT-2 signatures stay valid for the full 7-day validity window — dedup is left entirely to the gateway."
+      },
+      {
+        "id": "F-W4",
+        "severity": "medium",
+        "text": "Signed token not bound to its target (SUT-1 CF: cross-tool same-price replay — token matched by scheme/network/price only; SUT-2 Circle: no resource-URL binding, 7-day window): a signature issued for one tool/resource is accepted for another."
+      },
+      {
+        "id": "F-WCAP2",
+        "severity": "medium",
+        "text": "No minimum-amount check (all three SUTs): dust amounts (1 atomic = $0.000001 vs $0.01 advertised) are signed silently — combined with W1/W-CAP1 the whole amount range is unguarded by default."
+      }
+    ],
+    "evidence": 1,
+    "links": [
+      {
+        "label": "record #0014",
+        "href": "https://github.com/igor-vii/Argus-Agent-Test-Lab/blob/main/attestations/records/0014-t3-battery-chain-v2-sut-1-cloudflare-agents-0-32-0-offline-x.seal.json"
+      }
+    ]
+  },
+  {
+    "seq": "0015",
+    "date": "2026-11-01",
+    "type": "seal",
+    "title": "T3 battery chain v2, SUT-2 — @circle-fin/x402-batching@4.0.0 offline x402 battery: 2 PASS / 10 FAIL; 8 standard windows plus Circle-specific W-VERIFIER (Critical, verifyingContract misbinding) and W-MUTATE; no default cap",
+    "subject": "npm: cloudflare/agents@0.32.0 + @circle-fin/x402-batching@4.0.0 + @coinbase/cdp-sdk@1.60.0 (T3 battery chain v2, offline-by-default)",
+    "summary": "This record seals the SUT-2 battery only; the SUT-1 and SUT-3 batteries of the T3 battery chain v2 are sealed as separate adjacent records sharing this evidence manifest and the same methodology. Disclosure freeze per TZ: zero public publications until >= 2026-11-05 (and none for SUT-3 before HackerOne scope clarity or an explicit coordination command) — the freeze is part of the sealed state. Reproducibility note (SUT-3): the @x402/* peer dependencies were installed manually during the run and are not covered by the committed package-lock.json — a reproducer must install them separately; recorded here so the gap is part of the sealed provenance. Evidence provenance: per boundary #0013 the export content (reports, harnesses, results, lockfiles) lives in the private product repository (commit 97ef66622a781aba55dcc87ef51fac13c37aad40, path attestations/evidence/0014-t3-battery-export/); the public record pins the hash manifest only. Acceptance verification (2026-11-01): export tar.gz + MANIFEST.sha256 match the T3 chat's declared sha256 values byte-for-byte; sha256sum -c on the unpacked archive 21/21 OK; the historical artifact manifest (2026-10-30, trace 1a18df6a5b25c5bd) cross-checks 15/15 pins against the archive. Numbering note: the artifact manifest header reads 'integrity attestation for seals 0010-0012 (SUT-1/2/3)' — that numbering was never used (#0010/#0011 are corrections, #0012 is S-BS-06 cycle 3); this record is the first and only seal for the T3 battery chain v2. Parallel-thread note: the separate S-BS-06 / PR-3920 validation attempt (Argus-VAL-3920, 2026-10-31) was stopped at precondition per its own TZ section 10 (the TZ named a lab-repo branch that exists in the product repo) and parked by owner decision 2026-11-01 — no artifacts produced; its stop report is archived product-side (attestations/evidence/val-3920-stop/) and is NOT part of this seal's evidence. A seal attests run validity and findings completeness — not bug-freeness.",
+    "verdicts": [
+      {
+        "id": "SUT-2",
+        "verdict": "FAIL",
+        "tone": "fail"
+      }
+    ],
+    "findings": [
+      {
+        "id": "F-W5",
+        "severity": "high",
+        "text": "Critical — payTo-binding missing (SUT-1 CF, SUT-2 Circle): the client signs the payment authorization over an attacker-controlled payTo from the 402 response without any check against the expected recipient — funds rerouting on-chain; same surface as BlockRun F1 (argus-seal-0006). CDP ships the fix shape (allowedPayees) but only as an opt-in guardrail."
+      },
+      {
+        "id": "F-WVERIFIER",
+        "severity": "high",
+        "text": "Critical — verifyingContract misbinding (SUT-2 Circle-unique): extra.verifyingContract from the 402 response becomes the EIP-712 domain with no allowlist; the whole signature is bound to an attacker-supplied contract (verified byte-identical against a hand-rolled attacker-domain signature and != the real-GatewayWallet signature) — strictly worse than payTo-only substitution."
+      },
+      {
+        "id": "F-WMCP",
+        "severity": "high",
+        "text": "Silent double-charge on paid tool calls (SUT-1 CF, SUT-2 Circle; inherited via the shared x402Client in SUT-3): no confirmation callback by default, no idempotency key, no nonce dedup — retry / double-click / eviction recovery re-signs and re-settles for one logical operation."
+      },
+      {
+        "id": "F-W1",
+        "severity": "high",
+        "text": "Amount/quote binding missing; default-cap posture uneven (W1 + W-CAP1): server-declared 402 amounts are signed without binding to the advertised price — CF bounded by its $0.10 default cap, Circle unbounded (no default cap, opt-in only), CdpX402Client removes the upstream $1 default cap (F-WNOCONTROLS); with W-CAP2 both directions of amount mismatch are unguarded by default."
+      },
+      {
+        "id": "F-W2",
+        "severity": "high",
+        "text": "Settle-after-delivery double execution (SUT-1 CF, SUT-2 Circle): SETTLEMENT_FAILED surfaces as a fresh 402-with-accepts (CF) or a throw -> caller retry (both) — a lost settle response yields a second full round (verify/settle/exec x2) with no recovery handles and no idempotency."
+      },
+      {
+        "id": "F-W3",
+        "severity": "high",
+        "text": "Retry idempotency absent (SUT-1 CF, SUT-2 Circle): every retry mints a fresh nonce with no client-side tracking or dedup; SUT-2 signatures stay valid for the full 7-day validity window — dedup is left entirely to the gateway."
+      },
+      {
+        "id": "F-W4",
+        "severity": "medium",
+        "text": "Signed token not bound to its target (SUT-1 CF: cross-tool same-price replay — token matched by scheme/network/price only; SUT-2 Circle: no resource-URL binding, 7-day window): a signature issued for one tool/resource is accepted for another."
+      },
+      {
+        "id": "F-WCAP2",
+        "severity": "medium",
+        "text": "No minimum-amount check (all three SUTs): dust amounts (1 atomic = $0.000001 vs $0.01 advertised) are signed silently — combined with W1/W-CAP1 the whole amount range is unguarded by default."
+      },
+      {
+        "id": "F-WMUTATE",
+        "severity": "medium",
+        "text": "Hook mutation leaks into the signed payload (SUT-2 Circle-unique): ctx.selectedRequirements is passed by reference, so confirmation-hook mutations of amount/payTo reach the signed authorization; CF's structuredClone defense (NEG2 control) shows the correct pattern."
+      }
+    ],
+    "evidence": 1,
+    "links": [
+      {
+        "label": "record #0015",
+        "href": "https://github.com/igor-vii/Argus-Agent-Test-Lab/blob/main/attestations/records/0015-t3-battery-chain-v2-sut-2-circle-fin-x402-batching-4-0-0-off.seal.json"
+      }
+    ]
+  },
+  {
+    "seq": "0016",
+    "date": "2026-11-01",
+    "type": "seal",
+    "title": "T3 battery chain v2, SUT-3 — @coinbase/cdp-sdk@1.60.0 guardrails offline battery: 9 PASS / 2 FAIL; CDP-unique defenses verified (timeout cap, malformed-requirement rejection, allowedPayees); FAIL: W-CAP2 dust, W-NO-CONTROLS default-unsafe",
+    "subject": "npm: cloudflare/agents@0.32.0 + @circle-fin/x402-batching@4.0.0 + @coinbase/cdp-sdk@1.60.0 (T3 battery chain v2, offline-by-default)",
+    "summary": "This record seals the SUT-3 battery only; the SUT-1 and SUT-2 batteries of the T3 battery chain v2 are sealed as separate adjacent records sharing this evidence manifest and the same methodology. Disclosure freeze per TZ: zero public publications until >= 2026-11-05 (and none for SUT-3 before HackerOne scope clarity or an explicit coordination command) — the freeze is part of the sealed state. Reproducibility note (SUT-3): the @x402/* peer dependencies were installed manually during the run and are not covered by the committed package-lock.json — a reproducer must install them separately; recorded here so the gap is part of the sealed provenance. Evidence provenance: per boundary #0013 the export content (reports, harnesses, results, lockfiles) lives in the private product repository (commit 97ef66622a781aba55dcc87ef51fac13c37aad40, path attestations/evidence/0014-t3-battery-export/); the public record pins the hash manifest only. Acceptance verification (2026-11-01): export tar.gz + MANIFEST.sha256 match the T3 chat's declared sha256 values byte-for-byte; sha256sum -c on the unpacked archive 21/21 OK; the historical artifact manifest (2026-10-30, trace 1a18df6a5b25c5bd) cross-checks 15/15 pins against the archive. Numbering note: the artifact manifest header reads 'integrity attestation for seals 0010-0012 (SUT-1/2/3)' — that numbering was never used (#0010/#0011 are corrections, #0012 is S-BS-06 cycle 3); this record is the first and only seal for the T3 battery chain v2. Parallel-thread note: the separate S-BS-06 / PR-3920 validation attempt (Argus-VAL-3920, 2026-10-31) was stopped at precondition per its own TZ section 10 (the TZ named a lab-repo branch that exists in the product repo) and parked by owner decision 2026-11-01 — no artifacts produced; its stop report is archived product-side (attestations/evidence/val-3920-stop/) and is NOT part of this seal's evidence. A seal attests run validity and findings completeness — not bug-freeness.",
+    "verdicts": [
+      {
+        "id": "SUT-3",
+        "verdict": "MIXED (9 PASS / 2 FAIL)",
+        "tone": "info"
+      }
+    ],
+    "findings": [
+      {
+        "id": "F-WNOCONTROLS",
+        "severity": "high",
+        "text": "CdpX402Client default-unsafe (SUT-3 CDP-unique): extends x402Client and removes its default $1 per-payment cap; without explicit applySpendControls, over-cap, attacker-payTo and dust amounts are all signed; the constructor only console.warns."
+      },
+      {
+        "id": "F-WCAP2",
+        "severity": "medium",
+        "text": "No minimum-amount check (all three SUTs): dust amounts (1 atomic = $0.000001 vs $0.01 advertised) are signed silently — combined with W1/W-CAP1 the whole amount range is unguarded by default."
+      }
+    ],
+    "evidence": 1,
+    "links": [
+      {
+        "label": "record #0016",
+        "href": "https://github.com/igor-vii/Argus-Agent-Test-Lab/blob/main/attestations/records/0016-t3-battery-chain-v2-sut-3-coinbase-cdp-sdk-1-60-0-guardrails.seal.json"
+      }
+    ]
+  }
+]
