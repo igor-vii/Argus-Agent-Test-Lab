@@ -26,6 +26,8 @@ export const SEAL_COUNT = RECORD_COUNT;
 export const SITE_URL = "https://argus-lab.tech";
 export const CONTACT_EMAIL = "argus.testlab@gmail.com";
 export const ONE_PAGER_PATH = "/argus-lab-onepager.pdf";
+/** Self-service console — separate Vercel project, subdomain of the same domain. */
+export const CONSOLE_URL = "https://console.argus-lab.tech";
 
 export type Tone = "fail" | "hold" | "pass" | "observed" | "dx" | "info";
 

@@ -12,8 +12,9 @@ import {
   SITE_URL,
   CASES,
   TAXONOMY,
+  CONSOLE_URL,
 } from "@/lib/lab-data";
-import { GitBranch, FileCheck2, FileDown, ExternalLink, Terminal, Mail } from "lucide-react";
+import { GitBranch, FileCheck2, FileDown, ExternalLink, Terminal, Mail, LayoutDashboard } from "lucide-react";
 import type { ReactNode } from "react";
 
 /* ---------------------------------- brand marks ---------------------------------- */
@@ -88,8 +89,16 @@ function TopBar() {
           <a href="#method" className="text-sm text-al-muted transition-colors hover:text-al-text">{t.nav.method}</a>
           <a href="#cases" className="text-sm text-al-muted transition-colors hover:text-al-text">{t.nav.cases}</a>
           <a href="#engage" className="text-sm text-al-muted transition-colors hover:text-al-text">{t.nav.engage}</a>
+          <a href={CONSOLE_URL} className="text-sm text-al-muted transition-colors hover:text-al-text">{t.nav.console}</a>
         </nav>
         <div className="flex items-center gap-2">
+          <a
+            href={CONSOLE_URL}
+            className="flex items-center gap-1.5 rounded-md border border-al-accent/40 bg-al-accent/10 px-3 py-1.5 font-mono text-xs font-semibold text-al-accent transition-colors hover:bg-al-accent/20"
+          >
+            <LayoutDashboard className="h-3.5 w-3.5" aria-hidden />
+            {t.nav.console}
+          </a>
           <div
             className="flex items-center rounded-md border border-al-line font-mono text-[11px]"
             role="group"
@@ -191,6 +200,13 @@ function Hero() {
           >
             {t.hero.ctaSecondary}
           </a>
+          <a
+            href={CONSOLE_URL}
+            className="inline-flex items-center gap-2 rounded-lg border border-al-accent/50 px-5 py-2.5 text-sm font-semibold text-al-accent transition-colors hover:bg-al-accent/10"
+          >
+            <LayoutDashboard className="h-4 w-4" aria-hidden />
+            {t.hero.ctaConsole}
+          </a>
         </div>
 
         <dl className="mt-14 grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-al-line bg-al-line sm:grid-cols-4">
@@ -204,6 +220,29 @@ function Hero() {
         </dl>
       </div>
     </section>
+  );
+}
+
+/* --------------------------------- console strip --------------------------------- */
+
+/** Slim announcement band between the top bar and the hero — scrolls away with the page. */
+function ConsoleAnnounce() {
+  const { t } = useLang();
+  return (
+    <div className="border-b border-al-line bg-al-panel" role="note" aria-label="Console announcement">
+      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-center gap-x-3 gap-y-1 px-4 py-2.5 text-center sm:px-6">
+        <p className="font-mono text-xs leading-relaxed text-al-muted">
+          <span className="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-al-accent align-middle" aria-hidden />
+          {t.announce.text}
+        </p>
+        <a
+          href={CONSOLE_URL}
+          className="inline-flex items-center gap-1.5 font-mono text-xs font-semibold text-al-accent underline decoration-al-accent/40 underline-offset-4 transition-colors hover:decoration-al-accent"
+        >
+          {t.hero.ctaConsole} <ExternalLink className="h-3 w-3" aria-hidden />
+        </a>
+      </div>
+    </div>
   );
 }
 
@@ -488,6 +527,11 @@ function Footer() {
               github.com/igor-vii/Argus-Agent-Test-Lab
             </a>
           </p>
+          <p className="mt-1">
+            <a href={CONSOLE_URL} className="underline decoration-al-line underline-offset-4 transition-colors hover:text-al-text">
+              console.argus-lab.tech
+            </a>
+          </p>
         </div>
       </div>
     </footer>
@@ -557,6 +601,7 @@ function LandingShell({ latest }: { latest: ReactNode }) {
       <StructuredData />
       <TopBar />
       <main>
+        <ConsoleAnnounce />
         <Hero />
         <RegistrySection latest={latest} />
         <MethodSection />

@@ -12,7 +12,7 @@ import { createContext, useContext, useSyncExternalStore, useEffect, type ReactN
 export type Lang = "en" | "ru";
 
 const en = {
-  nav: { registry: "Registry", method: "Method", cases: "Cases", engage: "Engage" },
+  nav: { registry: "Registry", method: "Method", cases: "Cases", engage: "Engage", console: "Console" },
   hero: {
     kicker: "adversarial testing lab — AI agents that move money, and the rails they settle on",
     titleA: "We break AI agents that move money.",
@@ -20,6 +20,7 @@ const en = {
     text: "Argus runs pre-registered, black-box batteries against buyer and merchant agents — and the payment path they rely on: x402 payment flows, credit and settlement handling, idempotency guarantees. An agent is only as solvent as the code that signs for it. Every verdict is a sealed record in a public hash chain that anyone can verify in one command.",
     ctaPrimary: "Explore the registry",
     ctaSecondary: "Commission a round",
+    ctaConsole: "Dashboard",
     stats: [
       { v: "sealed records, hash-chained" },
       { v: "systems under test" },
@@ -101,6 +102,9 @@ const en = {
       "No vendor operates our stands; no engagement buys a verdict.",
     ],
   },
+  announce: {
+    text: "The self-service console is live in open beta — every account starts with 3 welcome engine runs.",
+  },
   footer: {
     tagline: "Independent adversarial testing for AI agents that move money — and the rails they settle on. No vendor operates our stands.",
     chainHead: "chain head",
@@ -111,7 +115,7 @@ const en = {
 export type Dict = typeof en;
 
 const ru: Dict = {
-  nav: { registry: "Реестр", method: "Метод", cases: "Кейсы", engage: "Заказать" },
+  nav: { registry: "Реестр", method: "Метод", cases: "Кейсы", engage: "Заказать", console: "Консоль" },
   hero: {
     kicker: "адверсариальная лаборатория — ИИ-агенты, которые двигают деньги, и рельсы, по которым они платят",
     titleA: "Мы ломаем ИИ-агентов, которые двигают деньги.",
@@ -119,6 +123,7 @@ const ru: Dict = {
     text: "Argus проводит предрегистрированные чёрно-ящичные батареи против buyer- и merchant-агентов — и платёжного пути, на который они опираются: платёжные потоки x402, обработка кредитов и расчётов, гарантии идемпотентности. Агент солиден ровно настолько, насколько надёжен код, который подписывает за него. Каждый вердикт — запечатанная запись в публичной hash-цепи, которую любой может проверить одной командой.",
     ctaPrimary: "Открыть реестр",
     ctaSecondary: "Заказать раунд",
+    ctaConsole: "Дашборд",
     stats: [
       { v: "запечатанных записей в цепи" },
       { v: "систем под испытанием" },
@@ -199,6 +204,9 @@ const ru: Dict = {
       "Ответы вендора получают равное место рядом с каждой опубликованной находкой.",
       "Наши стенды не управляются вендорами; заказ не покупает вердикт.",
     ],
+  },
+  announce: {
+    text: "Консоль открыта в открытой бете — на старте у каждого аккаунта 3 приветственных прогона.",
   },
   footer: {
     tagline: "Независимое адверсариальное тестирование ИИ-агентов, которые двигают деньги, — и рельсов, по которым они платят. Наши стенды не управляются вендорами.",
