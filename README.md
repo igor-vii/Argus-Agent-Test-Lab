@@ -23,14 +23,43 @@ node tools/registry/verify-registry.mjs
 Verification uses only the Node.js standard library — no `npm install`, no
 network access, no trust in this README.
 
-## MCP server (runnable, zero-dependency)
+## Connect Argus to your coding agent (MCP)
+
+The hosted Argus Console speaks MCP (Model Context Protocol) over Streamable
+HTTP — nothing to install or run. Get your personal connector key in
+**Argus Console → Agents → cheat sheet → MCP**, then connect your client.
+
+Claude Code — one command:
+
+```bash
+claude mcp add --transport http argus https://console.argus-lab.tech/mcp \
+  --header "Authorization: Bearer argmcp_yourkey"
+```
+
+Project-wide for your whole team (commit `.mcp.json` to the repo; each
+developer uses their own key):
+
+```json
+{
+  "mcpServers": {
+    "argus": {
+      "type": "http",
+      "url": "https://console.argus-lab.tech/mcp",
+      "headers": { "Authorization": "Bearer argmcp_yourkey" }
+    }
+  }
+}
+```
+
+Cursor: Settings → MCP → add the same URL with the same header.
+Codex CLI and Claude Desktop: use the stdio bridge below.
+
+### Stdio bridge (zero-dependency fallback)
 
 This repository also ships a working MCP server: `mcp-server.mjs` is a stdio
-bridge (Model Context Protocol, JSON-RPC 2.0 over stdin/stdout) that connects
-any MCP client — Claude Desktop, Claude Code, Cursor, VS Code — to the hosted
-Argus Console endpoint at `https://console.argus-lab.tech/mcp`.
-
-Pure Node.js 18+ stdlib. No `npm install`, no build step.
+bridge (JSON-RPC 2.0 over stdin/stdout) for MCP clients without HTTP
+transport — Claude Desktop, Codex CLI. Pure Node.js 18+ stdlib, no
+`npm install`, no build step.
 
 ```bash
 ARGUS_MCP_KEY=argmcp_yourkey node mcp-server.mjs
@@ -39,7 +68,7 @@ ARGUS_MCP_KEY=argmcp_yourkey node mcp-server.mjs
 `ARGUS_MCP_URL` overrides the remote endpoint (default is the hosted console).
 `initialize` and `tools/list` work without a key (per the MCP spec — clients
 can inspect the server before signing up); `tools/call` requires your personal
-connector key: **Argus Console → Agents → cheat sheet → MCP**.
+connector key.
 
 Claude Desktop:
 
@@ -61,7 +90,7 @@ Tools: `argus_verify_agent`, `argus_list_agents`, `argus_run_simulation`
 probes, x402-ready), `argus_get_run_report` (sealed PASS / FAIL / HOLD /
 OBSERVED / DX verdicts with evidence).
 
-The testing engine itself runs server-side at console.argus-lab.tech; this
+The testing engine itself runs server-side at console.argus-lab.tech; the
 bridge is the protocol layer that speaks MCP on its behalf.
 
 ## What is sealed here
