@@ -1,0 +1,28 @@
+{
+  "name": "argus-agent-test-lab-mcp",
+  "version": "0.1.0",
+  "description": "MCP stdio server bridging MCP clients (Claude Desktop, Cursor, VS Code) to the hosted Argus Console — adversarial testing for AI agents that move money.",
+  "type": "module",
+  "bin": {
+    "argus-mcp": "./mcp-server.mjs"
+  },
+  "main": "mcp-server.mjs",
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/igor-vii/Argus-Agent-Test-Lab.git"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "mcp-server",
+    "ai-agents",
+    "x402",
+    "payments",
+    "adversarial-testing",
+    "security"
+  ]
+}

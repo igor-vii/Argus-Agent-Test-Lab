@@ -532,6 +532,23 @@ function Footer() {
               console.argus-lab.tech
             </a>
           </p>
+          <p className="mt-3">
+            <a
+              href="https://www.producthunt.com/products/argus-agent-test-lab?embed=true&utm_source=badge-featured&utm_medium=badge&utm_campaign=badge-argus-agent-test-lab"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Argus Agent Test Lab on Product Hunt"
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                alt="Argus Agent Test Lab - adversarial testing for AI agents that move money | Product Hunt"
+                width={250}
+                height={54}
+                className="h-10 w-auto"
+                src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1305684&theme=dark&t=1793898820604"
+              />
+            </a>
+          </p>
         </div>
       </div>
     </footer>

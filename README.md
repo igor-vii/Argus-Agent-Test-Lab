@@ -23,6 +23,47 @@ node tools/registry/verify-registry.mjs
 Verification uses only the Node.js standard library — no `npm install`, no
 network access, no trust in this README.
 
+## MCP server (runnable, zero-dependency)
+
+This repository also ships a working MCP server: `mcp-server.mjs` is a stdio
+bridge (Model Context Protocol, JSON-RPC 2.0 over stdin/stdout) that connects
+any MCP client — Claude Desktop, Claude Code, Cursor, VS Code — to the hosted
+Argus Console endpoint at `https://console.argus-lab.tech/mcp`.
+
+Pure Node.js 18+ stdlib. No `npm install`, no build step.
+
+```bash
+ARGUS_MCP_KEY=argmcp_yourkey node mcp-server.mjs
+```
+
+`ARGUS_MCP_URL` overrides the remote endpoint (default is the hosted console).
+`initialize` and `tools/list` work without a key (per the MCP spec — clients
+can inspect the server before signing up); `tools/call` requires your personal
+connector key: **Argus Console → Agents → cheat sheet → MCP**.
+
+Claude Desktop:
+
+```json
+{
+  "mcpServers": {
+    "argus": {
+      "command": "node",
+      "args": ["/absolute/path/to/mcp-server.mjs"],
+      "env": { "ARGUS_MCP_KEY": "argmcp_yourkey" }
+    }
+  }
+}
+```
+
+Tools: `argus_verify_agent`, `argus_list_agents`, `argus_run_simulation`
+(free simulation stand — nothing touches your agent), `argus_run_engine`
+(live battery against your agent's public URL, money-guard gate + fault
+probes, x402-ready), `argus_get_run_report` (sealed PASS / FAIL / HOLD /
+OBSERVED / DX verdicts with evidence).
+
+The testing engine itself runs server-side at console.argus-lab.tech; this
+bridge is the protocol layer that speaks MCP on its behalf.
+
 ## What is sealed here
 
 Records in `attestations/records/` are Ed25519-signed and hash-chained
@@ -61,6 +102,8 @@ permanent and were retained.
 ```
 attestations/        signed, hash-chained records + public key + index
 tools/registry/      sign / verify tooling (node stdlib only)
+mcp-server.mjs       runnable MCP server: stdio bridge to the hosted console (Node 18+ stdlib only)
+package.json         manifest for the MCP bridge (bin: argus-mcp)
 tools/paypal-adapter/evidence/   sealed live-run evidence (records 0001–0002)
 site/                argus-lab.tech source (Next.js; prebuild re-verifies the registry)
 docs/block-b/        sealed fixtures and evidence (S-BS series, records 0003+)
