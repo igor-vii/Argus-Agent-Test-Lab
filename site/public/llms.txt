@@ -52,6 +52,10 @@ Severity standing follows the chain: sealed dossiers are never edited; the lates
 3. Offline by default — all traffic on 127.0.0.1 against adversarial stands and honest mock backends modeled from the vendor's own contracts; no vendor-operated service touched without written authorization.
 4. Sealed and hash-chained — every record is Ed25519-signed and chained to the previous record's hash; verifiable in one command.
 
+## Self-service console — the canonical gate is free
+
+console.argus-lab.tech (MCP: console.argus-lab.tech/mcp) is in open beta: 33 live engine runs free (3 welcome + 30 beta pack), no card. Every run starts with the canonical payment gate — an honest 402 → pay → verify → settle → deliver pass with a well-behaved counterparty. Gate failed: the battery never starts and the run is refunded in full (net cost 0) — fix the agent and run again; until the gate passes, you pay nothing. Gate passed: the adversarial battery rides against the live endpoint under money-guard (delivery uncertainty, over-budget policy probes; the full Block B money-fault family — overcharge ×50, price swap after 402, duplicates, vendor crash — in lab-assisted rounds). What you learn for free: whether the agent works cleanly with a well-behaved counterparty — or its payment layer stalls even against a perfectly honest opponent. A green unit-test bench never shows that: tests pass, the payflow dies in battle.
+
 ## Engagement (B2B)
 
 - Track A — coordinated production round: point the lab at a live agent that moves real money; written scope, funded test wallet, 48-hour notice window, no-debit/refund arrangement, full request capture shared. Deliverable: a sealed production-round report. From $990 per round.

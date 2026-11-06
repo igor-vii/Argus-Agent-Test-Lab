@@ -93,6 +93,26 @@ OBSERVED / DX verdicts with evidence).
 The testing engine itself runs server-side at console.argus-lab.tech; the
 bridge is the protocol layer that speaks MCP on its behalf.
 
+## The canonical gate is free (real engine runs)
+
+The hosted console (console.argus-lab.tech) is in open beta: **33 live engine
+runs free (3 welcome + 30 beta pack), no card**. Every run starts with the
+canonical payment gate — an honest 402 → pay → verify → settle → deliver pass
+with a well-behaved counterparty:
+
+- **Gate failed** → the battery never starts and the run is refunded in full
+  (net cost 0). Fix your agent and run again — until the gate passes, you pay
+  nothing.
+- **Gate passed** → the adversarial battery rides against the live endpoint
+  under money-guard (delivery uncertainty, over-budget policy probes; the full
+  Block B money-fault family — overcharge ×50, price swap after 402,
+  duplicates, vendor crash — in lab-assisted rounds).
+
+What this buys you for free: you learn whether your agent completes payments
+cleanly with a well-behaved counterparty — or its payment layer stalls even
+against a perfectly honest opponent. A green unit-test bench never shows that:
+tests pass, the payflow dies in battle.
+
 ## What is sealed here
 
 Records in `attestations/records/` are Ed25519-signed and hash-chained

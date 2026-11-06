@@ -103,7 +103,7 @@ const en = {
     ],
   },
   announce: {
-    text: "The self-service console is live in open beta — 33 live engine runs free (3 welcome + 30 beta pack), no card.",
+    text: "Open beta — 33 live engine runs free (3 welcome + 30 beta pack), no card. Every run starts with the canonical payment gate: fail it and the run is refunded (net 0) — you learn for free whether your payment layer stalls even against a well-behaved counterparty.",
   },
   footer: {
     tagline: "Independent adversarial testing for AI agents that move money — and the rails they settle on. No vendor operates our stands.",
@@ -206,7 +206,7 @@ const ru: Dict = {
     ],
   },
   announce: {
-    text: "Консоль открыта в открытой бете — бесплатно 33 боевых прогона движка (3 приветственных + 30 бета-пак), без карты.",
+    text: "Открытая бета — бесплатно 33 боевых прогона движка (3 приветственных + 30 бета-пак), без карты. Каждый прогон начинается с канонического платёжного гейта: не прошёл — прогон возвращается (net 0), бесплатно узнаёшь, хандрит ли платёжный слой даже с порядочным контрагентом.",
   },
   footer: {
     tagline: "Независимое адверсариальное тестирование ИИ-агентов, которые двигают деньги, — и рельсов, по которым они платят. Наши стенды не управляются вендорами.",
