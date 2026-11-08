@@ -691,5 +691,37 @@
         "href": "https://github.com/igor-vii/Argus-Agent-Test-Lab/blob/main/attestations/records/0016-t3-battery-chain-v2-sut-3-coinbase-cdp-sdk-1-60-0-guardrails.seal.json"
       }
     ]
+  },
+  "0017": {
+    "seq": "0017",
+    "date": "2026-11-08",
+    "type": "correction",
+    "title": "CORRECTION-0012-01 — seal #0012 fixture label erratum (S-BS-06 cycle 3): stale control_under_test default; build/install receipt added",
+    "subject": "argus-seal-0012 (SUT: x402-foundation/x402 PR #3920, @x402/core 2.28.0+pr3920@e993bef)",
+    "summary": "Correction sealing the reviewer's evidence-gap note on the S-BS-06 cycle-3 battery (seal #0012): the fixture label probe_start.control_under_test carried a stale template default (built from @4232cf6) while the same fixture's pull_request.head and tarball hash record the true binding - @x402/core 2.28.0+pr3920@e993bef. A build/install receipt (docs/block-b/fixtures/S-BS-06/receipts/c3-build-receipt.json) now ties checkout, tarball and installed path/version in one reader-verifiable file, and future batteries derive the label from the recorded pull_request.head so it can never lag the build pin again. Label-only: seal #0012 verdicts (17/19 PASS; A10a/A10b identical-offer continuity FAIL) are unaffected - the identical-offer window is filed upstream as x402#4198.",
+    "verdicts": [
+      {
+        "id": "Label erratum CORRECTION-0012-01",
+        "verdict": "applied — receipt-bound, append-only",
+        "tone": "pass"
+      },
+      {
+        "id": "Seal #0012 verdicts after correction",
+        "verdict": "unaffected — 17/19 PASS; A10a/A10b FAIL",
+        "tone": "fail"
+      }
+    ],
+    "findings": [],
+    "evidence": 1,
+    "links": [
+      {
+        "label": "record #0017",
+        "href": "https://github.com/igor-vii/Argus-Agent-Test-Lab/blob/main/attestations/records/0017-correction-0012-01-seal-0012-fixture-label-erratum-probe-sta.correction.json"
+      },
+      {
+        "label": "x402#4198 (identical-offer window)",
+        "href": "https://github.com/x402-foundation/x402/issues/4198"
+      }
+    ]
   }
 }
