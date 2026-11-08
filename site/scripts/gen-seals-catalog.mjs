@@ -8,7 +8,7 @@
  *
  *   1. Runs tools/registry/verify-registry.mjs (same gate as gen-latest-seal.mjs):
  *      a tampered / broken seal fails the build, never silently renders.
- *   2. Maps every non-correction record into a Seal-shaped entry.
+ *   2. Maps every record — seals, findings, corrections — into a Seal-shaped entry.
  *   3. Merges optional editorial overrides from src/data/seals-editorial.json
  *      (object keyed by seq — title/summary/verdicts/findings/links/evidence;
  *      omitted fields fall through to the registry-derived defaults).
@@ -22,8 +22,10 @@
  *   - The output is deterministic (no timestamps) so CI regeneration is
  *     idempotent — a commit only happens when a record actually changed.
  *
- * Corrections (type "correction") stay out of the catalog: they surface as the
- * one-line pointer on the LATEST SEAL card (see gen-latest-seal.mjs).
+ * Corrections (type "correction") are part of the chain: they render in the
+ * catalog like any other record, so the explorer always reaches the chain head.
+ * The one-line pointer on the LATEST SEAL card (see gen-latest-seal.mjs) is
+ * kept as well.
  *
  * Env: REGISTRY_ROOT (default: auto-detect — repo root, cwd, or cwd/..; the
  * site lives at <repo>/site, the registry at <repo>/attestations).
@@ -88,20 +90,27 @@ let editorialCount = 0;
 
 for (const f of files) {
   const rec = JSON.parse(fs.readFileSync(path.join(RECORDS_DIR, f), "utf8"));
-  if (rec.type === "correction") continue; // renders on the LATEST SEAL card, not the catalog
+  // registry-derived verdicts; corrections carry no scenarios, so fall back to
+  // their status (editorial overlay may override anyway)
+  const derivedVerdicts =
+    (rec.scenarios ?? []).length > 0
+      ? (rec.scenarios ?? []).map((s) => ({
+          id: s.id,
+          verdict: s.verdict,
+          tone: toneOf(s.verdict),
+        }))
+      : rec.type === "correction"
+        ? [{ id: "correction status", verdict: rec.status?.state ?? "applied", tone: "info" }]
+        : [];
 
   const raw = {
     seq: rec.seq,
     date: String(rec.issued_at ?? "").slice(0, 10),
-    type: rec.type, // "seal" | "finding"
+    type: rec.type, // "seal" | "finding" | "correction"
     title: rec.title,
     subject: rec.subject?.repo ?? (typeof rec.subject === "string" ? rec.subject : ""),
     summary: rec.notes ?? "",
-    verdicts: (rec.scenarios ?? []).map((s) => ({
-      id: s.id,
-      verdict: s.verdict,
-      tone: toneOf(s.verdict),
-    })),
+    verdicts: derivedVerdicts,
     findings: (rec.findings_summary ?? []).map((x) => ({
       id: x.id,
       severity: x.severity ?? "info",

@@ -80,7 +80,7 @@ export function ChainExplorer() {
       <div className="border-t border-al-line p-5 sm:p-6">
         <div className="mb-3 flex flex-wrap items-center gap-x-3 gap-y-1">
           <span className="font-mono text-xs text-al-text">
-            {selected.type === "finding" ? "argus-finding" : "argus-seal"}-{selected.seq}
+            argus-{selected.type}-{selected.seq}
           </span>
           <span className="font-mono text-[11px] text-al-muted">{selected.date}</span>
           <span className="truncate font-mono text-[11px] text-al-muted">{selected.subject}</span>

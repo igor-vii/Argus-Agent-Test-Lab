@@ -46,7 +46,7 @@ export interface SealFinding {
 export interface Seal {
   seq: string;
   date: string;
-  type: "finding" | "seal";
+  type: "finding" | "seal" | "correction";
   title: string;
   subject: string;
   summary: string;
