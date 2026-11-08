@@ -2,15 +2,15 @@
   "generated_at": "2026-11-01T11:42:52.716Z",
   "verify": {
     "command": "node tools/registry/verify-registry.mjs",
-    "records": 17,
-    "chain_head": "8d487546a34e77c0"
+    "records": 18,
+    "chain_head": "069e2e05626c3f3e"
   },
   "correction": {
-    "seq": "0011",
-    "record_id": "argus-correction-0011",
-    "date": "2026-10-30",
-    "title": "CORRECTION-0000-01 — finding #0000 summary wording: signed authorization established, on-chain settlement not claimed (external audit review)",
-    "amends": "argus-finding-0000"
+    "seq": "0017",
+    "record_id": "argus-correction-0017",
+    "date": "2026-11-08",
+    "title": "CORRECTION-0012-01 — seal #0012 fixture label erratum: probe_start.control_under_test stale template default; build/install receipt added",
+    "amends": "argus-seal-0012"
   },
   "record": {
     "seq": "0016",
@@ -21,7 +21,7 @@
     "title": "T3 battery chain v2, SUT-3 — @coinbase/cdp-sdk@1.60.0 guardrails offline battery: 9 PASS / 2 FAIL; CDP-unique defenses verified (timeout cap, malformed-requirement rejection, allowedPayees); FAIL: W-CAP2 dust, W-NO-CONTROLS default-unsafe",
     "subject": "npm: cloudflare/agents@0.32.0 + @circle-fin/x402-batching@4.0.0 + @coinbase/cdp-sdk@1.60.0 (T3 battery chain v2, offline-by-default)",
     "prev_record_hash": "3c428d07ce3c8b4b53e608530aa0483f5890ba1b742e5ac35b1c3253b76c3e28",
-    "chain_head": "8d487546a34e77c0",
+    "chain_head": "069e2e05626c3f3e",
     "scenarios": [
       {
         "id": "SUT-3",
