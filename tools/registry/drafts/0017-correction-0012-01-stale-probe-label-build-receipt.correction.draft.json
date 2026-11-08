@@ -37,7 +37,7 @@
     {
       "kind": "file",
       "path": "docs/block-b/fixtures/S-BS-06/receipts/c3-build-receipt.json",
-      "sha256": null
+      "sha256": "a4d3584d2f76d53bd59fd145857883227daa3a325d6849ddc1b40c28cf2a2a18"
     }
   ]
 }
