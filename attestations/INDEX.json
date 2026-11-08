@@ -1,6 +1,6 @@
 {
   "registry": "argus-agent-test-lab",
-  "chain_head": "8d487546a34e77c0...",
+  "chain_head": "069e2e05626c3f3e...",
   "records": [
     {
       "seq": "0000",
@@ -1365,6 +1365,55 @@
         }
       ],
       "signature": "Hj/m89WMnKSReU5rgGgtamMw8iex+jGHzYxD7Vc/qWwYu8/xHNHsDMvhf2BPhnlVK7JBPEaHVuj2Iw9780MODg=="
+    },
+    {
+      "seq": "0017",
+      "record_id": "argus-correction-0017",
+      "issued_at": "2026-11-08T16:51:38.068Z",
+      "signer_key_id": "argus-lab-2026q4r2",
+      "prev_record_hash": "8d487546a34e77c09f542a29a9d017ce1f57e9d59c155a685335e19bd05c1951",
+      "type": "correction",
+      "title": "CORRECTION-0012-01 — seal #0012 fixture label erratum: probe_start.control_under_test stale template default; build/install receipt added",
+      "subject": {
+        "record": "argus-seal-0012",
+        "repo": "x402-foundation/x402",
+        "trigger": "NSPG13 PR #3920 evidence-gap note (2026-11-05): fixture names e993bef but probe_start.control_under_test still says @4232cf6; asked to tie checked-out commit, packed tarball hash and installed path/version together and correct the label in future runs"
+      },
+      "amends": {
+        "record_id": "argus-seal-0012",
+        "seq": "0012",
+        "label": "CORRECTION-0012-01"
+      },
+      "run_ts": "2026-11-08",
+      "changes": [
+        {
+          "item": "Fixture label probe_start.control_under_test",
+          "from": "PR #3920 SpendControls.expectedAmount (@x402/core built from feat/expected-amount @4232cf6)",
+          "to": "authoritative binding: @x402/core 2.28.0+pr3920@e993bef, source commit e993bef62c9f7eea610f27cf3240c8bcdc599ad7 (refs/pull/3920/head verified == before build), tarball sha256 6c126dbea85be3bfb290f9f5b6fc977427ddb045797d4f565cf5d30ec8d2718d",
+          "rationale": "The label is a stale template default inherited from the first crosscheck harness; the build pin moved twice after it (b1a4d8c -> 12fa8a9 -> e993bef) and the template field did not follow. The same fixture's pull_request.head, head_source and versions.tarball_sha256 record the correct binding. No verdict changes."
+        },
+        {
+          "item": "Future-run label derivation",
+          "from": "control_under_test hardcoded as a harness template default",
+          "to": "control_under_test derived from the recorded pull_request.head in every future battery run",
+          "rationale": "Reviewer-requested hygiene so the label can never again lag the build pin."
+        }
+      ],
+      "status": {
+        "state": "applied",
+        "applied_to": "build/install receipt committed at docs/block-b/fixtures/S-BS-06/receipts/c3-build-receipt.json; sealed fixture and all other evidence unchanged (append-don't-rewrite)",
+        "applied_on": "2026-11-08",
+        "sealed_dossier_text_changed": false
+      },
+      "notes": "Label-only evidence gap per the reviewer's scope statement ('no funded replay needed'); seal 0012 verdicts (17/19 PASS; A10a/A10b identical-offer continuity FAIL) are unaffected. The receipt ties checkout, tarball and installed path/version in one reader-verifiable file. Evidence hashes re-verified against the seal pins at correction time: fixture 1b2ffdcd2eae28496d58ca521f7a5d091469398d3d8091d9c9122b4a27d9e2e7, tarball 6c126dbea85be3bfb290f9f5b6fc977427ddb045797d4f565cf5d30ec8d2718d — both match.",
+      "evidence": [
+        {
+          "kind": "file",
+          "path": "docs/block-b/fixtures/S-BS-06/receipts/c3-build-receipt.json",
+          "sha256": "a4d3584d2f76d53bd59fd145857883227daa3a325d6849ddc1b40c28cf2a2a18"
+        }
+      ],
+      "signature": "z4BLklMtPRfYxkk0NSbCTZ5gM/cq1WhBta0bO5QFs/1jkWjApe35A2R4BtVok9T1p6XIU3iJJLtpngKHiL/ZAA=="
     }
   ]
 }
