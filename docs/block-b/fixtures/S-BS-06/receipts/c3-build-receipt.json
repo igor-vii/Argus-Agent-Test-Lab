@@ -1,0 +1,27 @@
+{
+  "receipt_version": 1,
+  "generated_for": "argus-seal-0012 (S-BS-06 cycle 3, x402 PR #3920 @ e993bef)",
+  "requested_by": "NSPG13 PR #3920 evidence-gap note (2026-11-05): tie checked-out commit, packed tarball hash and installed path/version together; correct the stale probe_start label in future runs",
+  "control_under_test": "@x402/core spend controls (SpendControls.expectedAmount / expectedPayTo)",
+  "label_correction": "probe_start.control_under_test in s-bs-06-pr3920-crosscheck-c3.fixture.json reads '@4232cf6' — stale template default inherited from the first crosscheck harness. The authoritative head for cycle 3 is recorded in the same fixture (pull_request.head / head_source / versions.tarball_sha256) and below. The sealed fixture is not rewritten; future runs derive the label from the recorded pull_request.head.",
+  "source_commit": "e993bef62c9f7eea610f27cf3240c8bcdc599ad7",
+  "source_binding": "refs/pull/3920/head fetched and verified == e993bef62c9f7eea610f27cf3240c8bcdc599ad7 before build",
+  "package_installed": "@x402/core 2.28.0+pr3920@e993bef (file: tarball, npm overrides; npm ls @x402/core -> single copy)",
+  "tarball": {
+    "path": "sut-x402-pr3920/x402-core-2.28.0.e993bef-c3.tgz",
+    "sha256": "6c126dbea85be3bfb290f9f5b6fc977427ddb045797d4f565cf5d30ec8d2718d"
+  },
+  "dependency_pins": {
+    "@x402/core": "2.28.0+pr3920@e993bef",
+    "@x402/evm": "2.28.0",
+    "@x402/express": "2.28.0",
+    "@x402/fetch": "2.28.0",
+    "viem": "2.48.11"
+  },
+  "runtime": "node v24.22.1",
+  "network": "Base Sepolia (eip155:84532), USDC 0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+  "battery": "sut-x402-pr3920/battery-pr3920-c3.mjs",
+  "results_fixture": "docs/block-b/fixtures/S-BS-06/s-bs-06-pr3920-crosscheck-c3.fixture.json",
+  "seal_reference": "attestations/records/0012-s-bs-06-cycle-3-x402-pr-3920-e993bef-re-pin-re-run-green-zon.seal.json",
+  "correction_record": "argus-correction-0017 (drafted as tools/registry/drafts/0017-correction-0012-01-stale-probe-label-build-receipt.correction.draft.json; signs as amendment to argus-seal-0012)"
+}
