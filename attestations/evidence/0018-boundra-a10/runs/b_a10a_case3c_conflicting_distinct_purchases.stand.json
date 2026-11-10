@@ -1,0 +1,26 @@
+{
+  "config": {
+    "family": "BS",
+    "sutRole": "client",
+    "argusServerUrl": "http://0.0.0.0:4485",
+    "label": "block-b CLI"
+  },
+  "scenarios": [
+    {
+      "scenarioId": "S-BS-06",
+      "slug": "oversize-amount",
+      "family": "BS",
+      "title": "Требования превышают реальную цену ресурса (переплата x10)",
+      "verdict": "FAIL",
+      "reasons": [
+        "FAIL (attempt 1):",
+        "платежей зафиксировано: 2; запросов: 4; окно наблюдения: 2500ms",
+        "FAIL: СУТ заплатил по завышенным требованиям (value=10000; решение В2)"
+      ],
+      "startedAtMs": 1794333356933,
+      "finishedAtMs": 1794333362418
+    }
+  ],
+  "exitCode": 1,
+  "finishedAtMs": 1794333362418
+}

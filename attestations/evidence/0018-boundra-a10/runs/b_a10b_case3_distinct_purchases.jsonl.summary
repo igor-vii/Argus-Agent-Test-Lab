@@ -1,0 +1,70 @@
+{
+  "probe": "S-BS-06 x Boundra fb09284 pre-sign reservation battery (A10a/A10b matrix, x402 #4198)",
+  "control_under_test": "Boundra pre-sign reservation (pinned fb09284)",
+  "url": "http://127.0.0.1:4488/weather",
+  "concurrency": 2,
+  "signer_call_count": 2,
+  "per_cycle": [
+    {
+      "cycle": 2,
+      "http": 200,
+      "receipt": {
+        "success": true,
+        "transaction": "0xabababababababababababababababababababababababababababababababab",
+        "network": "eip155:84532"
+      }
+    },
+    {
+      "cycle": 1,
+      "http": 200,
+      "receipt": {
+        "success": true,
+        "transaction": "0xabababababababababababababababababababababababababababababababab",
+        "network": "eip155:84532"
+      }
+    }
+  ],
+  "per_slot": [
+    {
+      "slot": 2,
+      "owner": "owner-slot-a",
+      "purchase_id": "purchase-2",
+      "started_at": "2026-11-10T17:56:18.740Z",
+      "finished_at": "2026-11-10T17:56:18.786Z",
+      "http": 200,
+      "receipt": {
+        "success": true,
+        "transaction": "0xabababababababababababababababababababababababababababababababab",
+        "network": "eip155:84532"
+      }
+    },
+    {
+      "slot": 1,
+      "owner": "owner-slot-a",
+      "purchase_id": "purchase-1",
+      "started_at": "2026-11-10T17:56:18.715Z",
+      "finished_at": "2026-11-10T17:56:18.790Z",
+      "http": 200,
+      "receipt": {
+        "success": true,
+        "transaction": "0xabababababababababababababababababababababababababababababababab",
+        "network": "eip155:84532"
+      }
+    }
+  ],
+  "presign_decisions": [
+    {
+      "slot": 2,
+      "owner": "owner-slot-a",
+      "purchase_id": "purchase-2"
+    },
+    {
+      "slot": 1,
+      "owner": "owner-slot-a",
+      "purchase_id": "purchase-1"
+    }
+  ],
+  "started_at": "2026-11-10T17:56:18.691Z",
+  "finished_at": "2026-11-10T17:56:18.790Z",
+  "distinction": "signed authorization captured; on-chain transfer NOT established (mocked settlement)"
+}

@@ -1,0 +1,3801 @@
+{
+  "rig": "S-BS-06 x Boundra fb09284 \u2014 pre-registered A10a/A10b identical-offer race matrix (x402 #4198), battery-boundra-a10.mjs",
+  "attribution": {
+    "lab": "Argus Agent Test Lab",
+    "operator": "igor-vii (run executed in the lab sandbox on the operator's behalf)",
+    "repo": "github.com/igor-vii/Argus-Agent-Test-Lab",
+    "lab_commit": "b2465e5afd8c258550e79a5d28cb192209171bfd",
+    "stand": {
+      "engine": "S-BS-06 fault-injection stand (src/cli/argus.ts run --block B --family BS --scenario S-BS-06) \u2014 UNCHANGED lab harness",
+      "source": "private product repo igor-vii/Argus-Agent-Test-Lab-product (engine moved there by sealed boundary record argus-seal-0013, snapshot efbf51e)",
+      "stand_root_commit": "4ca7c0b6ca7da2e33ddd23af408ec1dcf790bde1",
+      "spawn_flags": "--observe-window-ms 2500 --skip-gate --json --requirement-amounts <session>",
+      "deviation_note": "documented deviation: STAND_ROOT env selects the engine checkout (public repo has no src/ since the boundary split); engine code/scenario/flags identical to the cycle-3 baseline"
+    },
+    "harness": "sut-boundra-a10/ (orchestrator battery-boundra-a10.mjs; client adapter client_boundra.ts, base = sealed client_v5.ts perimeter)"
+  },
+  "provenance": {
+    "upstream_issue": "https://github.com/x402-foundation/x402/issues/4198",
+    "candidate": {
+      "repo": "gobeyondfj-cmd/boundra",
+      "commit": "fb09284434b85f824b099ade4430e1b77b4c4086",
+      "pin": "fb09284434b85f824b099ade4430e1b77b4c4086",
+      "integration": "pinned TS SDK (createX402Hook) client-side; pinned Gateway.evaluate_payment + SpendLedger decision-side via transport-only adapter (adapters/boundra_adapter_server.py, zero decision logic)",
+      "pr2_included": false
+    },
+    "pre_registration": "fixed in x402 #4198 thread (igor-vii comment 'Order and pins'); addendum items R1-R3 recorded in this fixture metadata",
+    "baseline": "cycle-1/2/3 red zone records #4/#8/#12 (argus-seal-0004/0008/0012) @ 2b4cc47 / b1a4d8c / e993bef"
+  },
+  "addendum": {
+    "repetitions": "1 canonical run per session; re-run only as documented deviation",
+    "window": "single battery run session",
+    "node_version": "v24.22.2",
+    "npm_ls": "sut-boundra-a10@1.0.0 /home/z/my-project/work/Argus-Agent-Test-Lab/sut-boundra-a10\n\u251c\u2500\u2500 @types/node@22.20.5\n\u251c\u2500\u2500 @x402/core@2.30.0\n\u251c\u2500\u2500 @x402/evm@2.30.0\n\u251c\u2500\u2500 @x402/fetch@2.30.0\n\u251c\u2500\u2500 dotenv@16.6.1\n\u251c\u2500\u2500 tsx@4.23.15\n\u251c\u2500\u2500 viem@2.57.17\n\u2514\u2500\u2500 zod@4.6.7",
+    "r1_seq_derivation": "next free seq derived from attestations/INDEX.json (min 0000, max 0017, no collision) -> 0018",
+    "r2_fresh_state": "fresh adapter process + fresh mkdtemp state dir (SQLite spend.db) per session; reservation owner state never crosses sessions",
+    "r3_no_quote_control": {
+      "fact": "client_boundra.ts does NOT configure setSpendControls(expectedAmount); the hook is created without expected_amount/expected_recipient in BOTH modes",
+      "justification": "the onBeforePaymentCreation hook API exists only in @x402/fetch 2.30.0; stacking the 2.28.0 PR build with 2.30.0 would be a larger deviation than replacing the control",
+      "mapping": "case4@A10a := A10c-equivalent; case4@A10b := A10d-equivalent; control C observable criterion = exactly 1 commitment + exactly 1 pre-signer rejection per mode (winner-agnostic)",
+      "modes_note": "A10a/A10b labels retained for topology comparability; mechanically identical for this candidate (dedup/conflict by intent digest); result divergence between modes is an anomaly"
+    },
+    "attribution_note": "winner-agnostic matchers; winning slot/amount + rejection layer logged verbatim in the event JSONL and adapter verdict log; rejected slots carry zero signer calls by construction (attribution check in facts)",
+    "case3c_note": "case3c is a SUPPLEMENTARY probe with config-dependent expectation: signer=2 is correct under reservation-only configuration; the baseline quote-control would yield 1 \u2014 configuration fact, not a regression",
+    "owners_model": "run #1 case2 = distinct owner STRINGS through ONE Gateway (UNIQUE(owner, purchase_id) scope check), not cross-process \u2014 cross-process without a shared owner is out of scope by pre-registration",
+    "out_of_scope_boundary": "post-sign ambiguity reconciliation (#4094), facilitator-side dedup, cross-process without a shared owner, DO-backed door (wave 2, cv-scvd) \u2014 recorded as boundary, not PASS/FAIL",
+    "python_deps": {
+      "python": "Python 3.12.16",
+      "fact": "the exercised decision path (Gateway.evaluate_payment + SpendLedger + PaymentIntent) is STDLIB-ONLY: the pinned modules gateway.py/spend_ledger.py/policy.py import stdlib; approval.py/mandate.py/signed_policy.py carry lazy function-level eth_account/eth_utils imports (signature/mandate flows) that were NEVER triggered in this battery \u2014 verified: import eth_account raises ModuleNotFoundError in the run sandbox while all 11 sessions completed, so no third-party python package was exercised",
+      "pip_freeze_exercised": "none (stdlib only)"
+    }
+  },
+  "preflight": {
+    "session": "als_preflight",
+    "preflight": true,
+    "matrix": null,
+    "expectation_mode_label": "explicit",
+    "requirement_amounts_served": [
+      "10000",
+      "10000"
+    ],
+    "owners_config": [
+      "owner-slot-a",
+      "owner-slot-a"
+    ],
+    "purchase_ids_config": [
+      "purchase-1",
+      "purchase-2"
+    ],
+    "matrix_row": "UNSEALED dry-run: ALS glue \u2014 each race slot must carry its own (owner, purchaseId) into evaluate() under concurrency; cross-checked against the adapter log",
+    "adapter_state_dir_policy": "fresh per session (R2)",
+    "adapter_health": {
+      "policy_summary": {
+        "per_tx_max": 1,
+        "daily_budget": 50,
+        "allowed_recipients": [
+          "0x9999999999999999999999999999999999999999"
+        ],
+        "require_approval_above": 5
+      },
+      "state_dir_basis": "fresh mkdtemp per session"
+    },
+    "observed": {
+      "signer_values": [
+        "10000",
+        "10000"
+      ],
+      "signer_call_count": 2,
+      "presign_decisions": [
+        {
+          "slot": 1,
+          "owner": "owner-slot-a",
+          "purchase_id": "purchase-1",
+          "decision": "allow",
+          "reason": null,
+          "at": "2026-11-10T17:55:28.585Z"
+        },
+        {
+          "slot": 2,
+          "owner": "owner-slot-a",
+          "purchase_id": "purchase-2",
+          "decision": "allow",
+          "reason": null,
+          "at": "2026-11-10T17:55:28.602Z"
+        }
+      ],
+      "presign_rejections": [],
+      "slots_committed": [
+        {
+          "slot": 1,
+          "http": 200,
+          "receipt_served": {
+            "success": true,
+            "transaction": "0xabababababababababababababababababababababababababababababababab",
+            "network": "eip155:84532"
+          },
+          "at": "2026-11-10T17:55:28.605Z"
+        },
+        {
+          "slot": 2,
+          "http": 200,
+          "receipt_served": {
+            "success": true,
+            "transaction": "0xabababababababababababababababababababababababababababababababab",
+            "network": "eip155:84532"
+          },
+          "at": "2026-11-10T17:55:28.606Z"
+        }
+      ],
+      "slots_errored": [],
+      "attribution": {
+        "consistent": true,
+        "note": "rejected slots carry presign_decide=rejected + slot_error and by construction have zero signer calls; signer_call_count must equal the number of committed slots"
+      },
+      "metrics": {
+        "signer_call_deltas_ms": [
+          15
+        ],
+        "both_calls_before_first_slot_completion": true
+      },
+      "adapter_owners_ok": true,
+      "adapter_verdicts": [
+        {
+          "purchase_id": "purchase-1",
+          "duplicate": false,
+          "purchase_id_conflict": false,
+          "layer": "pass",
+          "decision": "ALLOW"
+        },
+        {
+          "purchase_id": "purchase-2",
+          "duplicate": false,
+          "purchase_id_conflict": false,
+          "layer": "pass",
+          "decision": "ALLOW"
+        }
+      ],
+      "adapter_audit": [
+        {
+          "id": "40915595151f",
+          "ts": "2026-11-10T17:55:28",
+          "intent": {
+            "amount": 0.01,
+            "recipient": "0x9999999999999999999999999999999999999999",
+            "purpose": "weather API call (boundra-a10 battery)",
+            "resource": "http://127.0.0.1:4480/weather",
+            "network": "eip155:84532",
+            "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+          },
+          "agent_id": null,
+          "owner": "owner-slot-a",
+          "layer": "pass",
+          "raw_decision": "ALLOW",
+          "human": null,
+          "final": "ALLOW",
+          "reasons": [
+            "within policy \u2014 auto-approved"
+          ],
+          "policy_refs": [
+            {
+              "scope": "legacy",
+              "version": null,
+              "hash": null
+            }
+          ],
+          "mandate_id": null,
+          "purchase_id": "purchase-1",
+          "evaluation_id": "655eeac967004e0194445d546feb6b44",
+          "reservation_status": "reserved",
+          "duplicate": false,
+          "spent_today_after": 0.01
+        },
+        {
+          "id": "c963fc3feeaa",
+          "ts": "2026-11-10T17:55:28",
+          "intent": {
+            "amount": 0.01,
+            "recipient": "0x9999999999999999999999999999999999999999",
+            "purpose": "weather API call (boundra-a10 battery)",
+            "resource": "http://127.0.0.1:4480/weather",
+            "network": "eip155:84532",
+            "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+          },
+          "agent_id": null,
+          "owner": "owner-slot-a",
+          "layer": "pass",
+          "raw_decision": "ALLOW",
+          "human": null,
+          "final": "ALLOW",
+          "reasons": [
+            "within policy \u2014 auto-approved"
+          ],
+          "policy_refs": [
+            {
+              "scope": "legacy",
+              "version": null,
+              "hash": null
+            }
+          ],
+          "mandate_id": null,
+          "purchase_id": "purchase-2",
+          "evaluation_id": "d1f3d3524c2740c583283dd0fc9d0b89",
+          "reservation_status": "reserved",
+          "duplicate": false,
+          "spent_today_after": 0.02
+        }
+      ],
+      "client_rc": 0
+    },
+    "verdict": "PASS",
+    "timeline": [
+      {
+        "at": "2026-11-10T17:55:28.532Z",
+        "type": "probe_start",
+        "control_under_test": "Boundra pre-sign reservation boundary (gobeyondfj-cmd/boundra @ fb09284434b85f824b099ade4430e1b77b4c4086, TS SDK createX402Hook, transport-only local adapter)",
+        "url": "http://127.0.0.1:4480/weather",
+        "concurrency": 2,
+        "xc_expected_recorded_only": "$0.01",
+        "quote_control_configured": false,
+        "boundra": {
+          "adapter_url": "http://127.0.0.1:4610",
+          "purpose": "weather API call (boundra-a10 battery)",
+          "owners": [
+            "owner-slot-a",
+            "owner-slot-a"
+          ],
+          "purchase_ids": [
+            "purchase-1",
+            "purchase-2"
+          ]
+        },
+        "note": "rejection logic is the candidate's own (pinned Gateway+SpendLedger); this harness adds observation only (signer counts, presign decisions, verbatim errors, slot timing)"
+      },
+      {
+        "at": "2026-11-10T17:55:28.533Z",
+        "type": "slot_start",
+        "slot": 1,
+        "url": "http://127.0.0.1:4480/weather",
+        "owner": "owner-slot-a",
+        "purchase_id": "purchase-1"
+      },
+      {
+        "at": "2026-11-10T17:55:28.553Z",
+        "type": "slot_start",
+        "slot": 2,
+        "url": "http://127.0.0.1:4480/weather",
+        "owner": "owner-slot-a",
+        "purchase_id": "purchase-2"
+      },
+      {
+        "at": "2026-11-10T17:55:28.574Z",
+        "type": "quote_offered",
+        "requirements": {
+          "x402Version": 2,
+          "resource": {
+            "url": "http://127.0.0.1:4480/weather",
+            "description": "canonical resource, real price 10000 atomic units"
+          },
+          "accepts": [
+            {
+              "scheme": "exact",
+              "network": "eip155:84532",
+              "amount": "10000",
+              "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+              "payTo": "0x9999999999999999999999999999999999999999",
+              "maxTimeoutSeconds": 60,
+              "extra": {
+                "name": "USDC",
+                "version": "2"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "at": "2026-11-10T17:55:28.578Z",
+        "type": "quote_offered",
+        "requirements": {
+          "x402Version": 2,
+          "resource": {
+            "url": "http://127.0.0.1:4480/weather",
+            "description": "canonical resource, real price 10000 atomic units"
+          },
+          "accepts": [
+            {
+              "scheme": "exact",
+              "network": "eip155:84532",
+              "amount": "10000",
+              "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+              "payTo": "0x9999999999999999999999999999999999999999",
+              "maxTimeoutSeconds": 60,
+              "extra": {
+                "name": "USDC",
+                "version": "2"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "at": "2026-11-10T17:55:28.585Z",
+        "type": "presign_decide",
+        "slot": 1,
+        "owner": "owner-slot-a",
+        "purchase_id": "purchase-1",
+        "decision": "allow",
+        "reason": null
+      },
+      {
+        "at": "2026-11-10T17:55:28.587Z",
+        "type": "signer_call",
+        "call_index": 1,
+        "signer_entry": "signTypedData",
+        "primary_type": "TransferWithAuthorization",
+        "domain": {
+          "name": "USDC",
+          "version": "2",
+          "chainId": 84532,
+          "verifyingContract": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+        },
+        "to": "0x9999999999999999999999999999999999999999",
+        "value": "10000",
+        "from": "0x9b7fb0B3362819D74A358f83Da4CB9B2b68a1094",
+        "valid_after": "0",
+        "valid_before": "1794333388",
+        "nonce": "0x9e847121\u2026314b(len66)"
+      },
+      {
+        "at": "2026-11-10T17:55:28.602Z",
+        "type": "presign_decide",
+        "slot": 2,
+        "owner": "owner-slot-a",
+        "purchase_id": "purchase-2",
+        "decision": "allow",
+        "reason": null
+      },
+      {
+        "at": "2026-11-10T17:55:28.602Z",
+        "type": "signer_call",
+        "call_index": 2,
+        "signer_entry": "signTypedData",
+        "primary_type": "TransferWithAuthorization",
+        "domain": {
+          "name": "USDC",
+          "version": "2",
+          "chainId": 84532,
+          "verifyingContract": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+        },
+        "to": "0x9999999999999999999999999999999999999999",
+        "value": "10000",
+        "from": "0x9b7fb0B3362819D74A358f83Da4CB9B2b68a1094",
+        "valid_after": "0",
+        "valid_before": "1794333388",
+        "nonce": "0x7e36ec1a\u2026aed3(len66)"
+      },
+      {
+        "at": "2026-11-10T17:55:28.605Z",
+        "type": "slot_result",
+        "slot": 1,
+        "http": 200,
+        "receipt_served": {
+          "success": true,
+          "transaction": "0xabababababababababababababababababababababababababababababababab",
+          "network": "eip155:84532"
+        }
+      },
+      {
+        "at": "2026-11-10T17:55:28.606Z",
+        "type": "slot_result",
+        "slot": 2,
+        "http": 200,
+        "receipt_served": {
+          "success": true,
+          "transaction": "0xabababababababababababababababababababababababababababababababab",
+          "network": "eip155:84532"
+        }
+      }
+    ]
+  },
+  "sessions": [
+    {
+      "session": "b_a10a_case1_shared_owner",
+      "preflight": false,
+      "matrix": "case1/A10a",
+      "expectation_mode_label": "explicit",
+      "requirement_amounts_served": [
+        "10000",
+        "10000"
+      ],
+      "owners_config": [
+        "owner-slot-a",
+        "owner-slot-a"
+      ],
+      "purchase_ids_config": [
+        "purchase-1",
+        "purchase-1"
+      ],
+      "matrix_row": "same purchase / shared owner race: exactly ONE signed payment; the concurrent duplicate must be rejected pre-signer by the reservation layer (duplicate, no new token)",
+      "adapter_state_dir_policy": "fresh per session (R2)",
+      "adapter_health": {
+        "policy_summary": {
+          "per_tx_max": 1,
+          "daily_budget": 50,
+          "allowed_recipients": [
+            "0x9999999999999999999999999999999999999999"
+          ],
+          "require_approval_above": 5
+        },
+        "state_dir_basis": "fresh mkdtemp per session"
+      },
+      "observed": {
+        "signer_values": [
+          "10000"
+        ],
+        "signer_call_count": 1,
+        "presign_decisions": [
+          {
+            "slot": 2,
+            "owner": "owner-slot-a",
+            "purchase_id": "purchase-1",
+            "decision": "allow",
+            "reason": null,
+            "at": "2026-11-10T17:55:34.855Z"
+          },
+          {
+            "slot": 1,
+            "owner": "owner-slot-a",
+            "purchase_id": "purchase-1",
+            "decision": "rejected",
+            "reason": "Boundra DENY: within policy \u2014 auto-approved; purchase_id already reserved; duplicate signing permission denied",
+            "at": "2026-11-10T17:55:34.865Z"
+          }
+        ],
+        "presign_rejections": [
+          {
+            "slot": 1,
+            "owner": "owner-slot-a",
+            "purchase_id": "purchase-1",
+            "decision": "rejected",
+            "reason": "Boundra DENY: within policy \u2014 auto-approved; purchase_id already reserved; duplicate signing permission denied",
+            "at": "2026-11-10T17:55:34.865Z"
+          }
+        ],
+        "slots_committed": [
+          {
+            "slot": 2,
+            "http": 200,
+            "receipt_served": {
+              "success": true,
+              "transaction": "0xabababababababababababababababababababababababababababababababab",
+              "network": "eip155:84532"
+            },
+            "at": "2026-11-10T17:55:34.866Z"
+          }
+        ],
+        "slots_errored": [
+          {
+            "slot": 1,
+            "error": "Failed to create payment payload: Payment creation aborted: Boundra DENY: within policy \u2014 auto-approved; purchase_id already reserved; duplicate signing permission denied",
+            "error_name": "Error",
+            "at": "2026-11-10T17:55:34.865Z"
+          }
+        ],
+        "attribution": {
+          "consistent": true,
+          "note": "rejected slots carry presign_decide=rejected + slot_error and by construction have zero signer calls; signer_call_count must equal the number of committed slots"
+        },
+        "metrics": {
+          "signer_call_deltas_ms": null,
+          "both_calls_before_first_slot_completion": null
+        },
+        "adapter_owners_ok": true,
+        "adapter_verdicts": [
+          {
+            "purchase_id": "purchase-1",
+            "duplicate": false,
+            "purchase_id_conflict": false,
+            "layer": "pass",
+            "decision": "ALLOW"
+          },
+          {
+            "purchase_id": "purchase-1",
+            "duplicate": true,
+            "purchase_id_conflict": false,
+            "layer": "idempotency",
+            "decision": "DENY"
+          }
+        ],
+        "adapter_audit": [
+          {
+            "id": "645b829ad502",
+            "ts": "2026-11-10T17:55:34",
+            "intent": {
+              "amount": 0.01,
+              "recipient": "0x9999999999999999999999999999999999999999",
+              "purpose": "weather API call (boundra-a10 battery)",
+              "resource": "http://127.0.0.1:4481/weather",
+              "network": "eip155:84532",
+              "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+            },
+            "agent_id": null,
+            "owner": "owner-slot-a",
+            "layer": "pass",
+            "raw_decision": "ALLOW",
+            "human": null,
+            "final": "ALLOW",
+            "reasons": [
+              "within policy \u2014 auto-approved"
+            ],
+            "policy_refs": [
+              {
+                "scope": "legacy",
+                "version": null,
+                "hash": null
+              }
+            ],
+            "mandate_id": null,
+            "purchase_id": "purchase-1",
+            "evaluation_id": "156a476dfc3b405b8dc74a6f9adabef6",
+            "reservation_status": "reserved",
+            "duplicate": false,
+            "spent_today_after": 0.01
+          },
+          {
+            "id": "7cf763b8d665",
+            "ts": "2026-11-10T17:55:34",
+            "intent": {
+              "amount": 0.01,
+              "recipient": "0x9999999999999999999999999999999999999999",
+              "purpose": "weather API call (boundra-a10 battery)",
+              "resource": "http://127.0.0.1:4481/weather",
+              "network": "eip155:84532",
+              "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+            },
+            "agent_id": null,
+            "owner": "owner-slot-a",
+            "layer": "idempotency",
+            "raw_decision": "ALLOW",
+            "human": null,
+            "final": "DENY",
+            "reasons": [
+              "within policy \u2014 auto-approved",
+              "purchase_id already reserved; duplicate signing permission denied"
+            ],
+            "policy_refs": [
+              {
+                "scope": "legacy",
+                "version": null,
+                "hash": null
+              }
+            ],
+            "mandate_id": null,
+            "purchase_id": "purchase-1",
+            "evaluation_id": "156a476dfc3b405b8dc74a6f9adabef6",
+            "reservation_status": "reserved",
+            "duplicate": true,
+            "spent_today_after": 0.01
+          }
+        ],
+        "client_rc": 0
+      },
+      "verdict": "PASS",
+      "timeline": [
+        {
+          "at": "2026-11-10T17:55:34.795Z",
+          "type": "probe_start",
+          "control_under_test": "Boundra pre-sign reservation boundary (gobeyondfj-cmd/boundra @ fb09284434b85f824b099ade4430e1b77b4c4086, TS SDK createX402Hook, transport-only local adapter)",
+          "url": "http://127.0.0.1:4481/weather",
+          "concurrency": 2,
+          "xc_expected_recorded_only": "$0.01",
+          "quote_control_configured": false,
+          "boundra": {
+            "adapter_url": "http://127.0.0.1:4611",
+            "purpose": "weather API call (boundra-a10 battery)",
+            "owners": [
+              "owner-slot-a",
+              "owner-slot-a"
+            ],
+            "purchase_ids": [
+              "purchase-1",
+              "purchase-1"
+            ]
+          },
+          "note": "rejection logic is the candidate's own (pinned Gateway+SpendLedger); this harness adds observation only (signer counts, presign decisions, verbatim errors, slot timing)"
+        },
+        {
+          "at": "2026-11-10T17:55:34.796Z",
+          "type": "slot_start",
+          "slot": 1,
+          "url": "http://127.0.0.1:4481/weather",
+          "owner": "owner-slot-a",
+          "purchase_id": "purchase-1"
+        },
+        {
+          "at": "2026-11-10T17:55:34.822Z",
+          "type": "slot_start",
+          "slot": 2,
+          "url": "http://127.0.0.1:4481/weather",
+          "owner": "owner-slot-a",
+          "purchase_id": "purchase-1"
+        },
+        {
+          "at": "2026-11-10T17:55:34.841Z",
+          "type": "quote_offered",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4481/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "10000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0x9999999999999999999999999999999999999999",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-11-10T17:55:34.847Z",
+          "type": "quote_offered",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4481/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "10000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0x9999999999999999999999999999999999999999",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-11-10T17:55:34.855Z",
+          "type": "presign_decide",
+          "slot": 2,
+          "owner": "owner-slot-a",
+          "purchase_id": "purchase-1",
+          "decision": "allow",
+          "reason": null
+        },
+        {
+          "at": "2026-11-10T17:55:34.857Z",
+          "type": "signer_call",
+          "call_index": 1,
+          "signer_entry": "signTypedData",
+          "primary_type": "TransferWithAuthorization",
+          "domain": {
+            "name": "USDC",
+            "version": "2",
+            "chainId": 84532,
+            "verifyingContract": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+          },
+          "to": "0x9999999999999999999999999999999999999999",
+          "value": "10000",
+          "from": "0x6F54097Cf72dD37ab7Eca111E64b9F880EEBf59D",
+          "valid_after": "0",
+          "valid_before": "1794333394",
+          "nonce": "0x6be2afd1\u2026ab07(len66)"
+        },
+        {
+          "at": "2026-11-10T17:55:34.865Z",
+          "type": "presign_decide",
+          "slot": 1,
+          "owner": "owner-slot-a",
+          "purchase_id": "purchase-1",
+          "decision": "rejected",
+          "reason": "Boundra DENY: within policy \u2014 auto-approved; purchase_id already reserved; duplicate signing permission denied"
+        },
+        {
+          "at": "2026-11-10T17:55:34.865Z",
+          "type": "slot_error",
+          "slot": 1,
+          "error": "Failed to create payment payload: Payment creation aborted: Boundra DENY: within policy \u2014 auto-approved; purchase_id already reserved; duplicate signing permission denied",
+          "error_name": "Error"
+        },
+        {
+          "at": "2026-11-10T17:55:34.866Z",
+          "type": "slot_result",
+          "slot": 2,
+          "http": 200,
+          "receipt_served": {
+            "success": true,
+            "transaction": "0xabababababababababababababababababababababababababababababababab",
+            "network": "eip155:84532"
+          }
+        }
+      ]
+    },
+    {
+      "session": "b_a10a_case2_separate_owners",
+      "preflight": false,
+      "matrix": "case2/A10a",
+      "expectation_mode_label": "explicit",
+      "requirement_amounts_served": [
+        "10000",
+        "10000"
+      ],
+      "owners_config": [
+        "owner-slot-a",
+        "owner-slot-b"
+      ],
+      "purchase_ids_config": [
+        "purchase-1",
+        "purchase-1"
+      ],
+      "matrix_row": "same purchase / SEPARATE owners (boundary negative control): UNIQUE(owner, purchase_id) does not collide across owner strings \u2014 2 signed, behavior unchanged; one Gateway instance, not cross-process (out of scope by pre-registration)",
+      "adapter_state_dir_policy": "fresh per session (R2)",
+      "adapter_health": {
+        "policy_summary": {
+          "per_tx_max": 1,
+          "daily_budget": 50,
+          "allowed_recipients": [
+            "0x9999999999999999999999999999999999999999"
+          ],
+          "require_approval_above": 5
+        },
+        "state_dir_basis": "fresh mkdtemp per session"
+      },
+      "observed": {
+        "signer_values": [
+          "10000",
+          "10000"
+        ],
+        "signer_call_count": 2,
+        "presign_decisions": [
+          {
+            "slot": 2,
+            "owner": "owner-slot-b",
+            "purchase_id": "purchase-1",
+            "decision": "allow",
+            "reason": null,
+            "at": "2026-11-10T17:55:41.155Z"
+          },
+          {
+            "slot": 1,
+            "owner": "owner-slot-a",
+            "purchase_id": "purchase-1",
+            "decision": "allow",
+            "reason": null,
+            "at": "2026-11-10T17:55:41.166Z"
+          }
+        ],
+        "presign_rejections": [],
+        "slots_committed": [
+          {
+            "slot": 2,
+            "http": 200,
+            "receipt_served": {
+              "success": true,
+              "transaction": "0xabababababababababababababababababababababababababababababababab",
+              "network": "eip155:84532"
+            },
+            "at": "2026-11-10T17:55:41.170Z"
+          },
+          {
+            "slot": 1,
+            "http": 200,
+            "receipt_served": {
+              "success": true,
+              "transaction": "0xabababababababababababababababababababababababababababababababab",
+              "network": "eip155:84532"
+            },
+            "at": "2026-11-10T17:55:41.170Z"
+          }
+        ],
+        "slots_errored": [],
+        "attribution": {
+          "consistent": true,
+          "note": "rejected slots carry presign_decide=rejected + slot_error and by construction have zero signer calls; signer_call_count must equal the number of committed slots"
+        },
+        "metrics": {
+          "signer_call_deltas_ms": [
+            9
+          ],
+          "both_calls_before_first_slot_completion": true
+        },
+        "adapter_owners_ok": true,
+        "adapter_verdicts": [
+          {
+            "purchase_id": "purchase-1",
+            "duplicate": false,
+            "purchase_id_conflict": false,
+            "layer": "pass",
+            "decision": "ALLOW"
+          },
+          {
+            "purchase_id": "purchase-1",
+            "duplicate": false,
+            "purchase_id_conflict": false,
+            "layer": "pass",
+            "decision": "ALLOW"
+          }
+        ],
+        "adapter_audit": [
+          {
+            "id": "63293da29d2e",
+            "ts": "2026-11-10T17:55:41",
+            "intent": {
+              "amount": 0.01,
+              "recipient": "0x9999999999999999999999999999999999999999",
+              "purpose": "weather API call (boundra-a10 battery)",
+              "resource": "http://127.0.0.1:4482/weather",
+              "network": "eip155:84532",
+              "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+            },
+            "agent_id": null,
+            "owner": "owner-slot-b",
+            "layer": "pass",
+            "raw_decision": "ALLOW",
+            "human": null,
+            "final": "ALLOW",
+            "reasons": [
+              "within policy \u2014 auto-approved"
+            ],
+            "policy_refs": [
+              {
+                "scope": "legacy",
+                "version": null,
+                "hash": null
+              }
+            ],
+            "mandate_id": null,
+            "purchase_id": "purchase-1",
+            "evaluation_id": "c0d5d24806414d4ebae8ba19b92c7cbe",
+            "reservation_status": "reserved",
+            "duplicate": false,
+            "spent_today_after": 0.01
+          },
+          {
+            "id": "440649a3e5b9",
+            "ts": "2026-11-10T17:55:41",
+            "intent": {
+              "amount": 0.01,
+              "recipient": "0x9999999999999999999999999999999999999999",
+              "purpose": "weather API call (boundra-a10 battery)",
+              "resource": "http://127.0.0.1:4482/weather",
+              "network": "eip155:84532",
+              "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+            },
+            "agent_id": null,
+            "owner": "owner-slot-a",
+            "layer": "pass",
+            "raw_decision": "ALLOW",
+            "human": null,
+            "final": "ALLOW",
+            "reasons": [
+              "within policy \u2014 auto-approved"
+            ],
+            "policy_refs": [
+              {
+                "scope": "legacy",
+                "version": null,
+                "hash": null
+              }
+            ],
+            "mandate_id": null,
+            "purchase_id": "purchase-1",
+            "evaluation_id": "a11b16b1136a45e48fe796268b5712d1",
+            "reservation_status": "reserved",
+            "duplicate": false,
+            "spent_today_after": 0.01
+          }
+        ],
+        "client_rc": 0
+      },
+      "verdict": "PASS",
+      "timeline": [
+        {
+          "at": "2026-11-10T17:55:41.086Z",
+          "type": "probe_start",
+          "control_under_test": "Boundra pre-sign reservation boundary (gobeyondfj-cmd/boundra @ fb09284434b85f824b099ade4430e1b77b4c4086, TS SDK createX402Hook, transport-only local adapter)",
+          "url": "http://127.0.0.1:4482/weather",
+          "concurrency": 2,
+          "xc_expected_recorded_only": "$0.01",
+          "quote_control_configured": false,
+          "boundra": {
+            "adapter_url": "http://127.0.0.1:4612",
+            "purpose": "weather API call (boundra-a10 battery)",
+            "owners": [
+              "owner-slot-a",
+              "owner-slot-b"
+            ],
+            "purchase_ids": [
+              "purchase-1",
+              "purchase-1"
+            ]
+          },
+          "note": "rejection logic is the candidate's own (pinned Gateway+SpendLedger); this harness adds observation only (signer counts, presign decisions, verbatim errors, slot timing)"
+        },
+        {
+          "at": "2026-11-10T17:55:41.094Z",
+          "type": "slot_start",
+          "slot": 1,
+          "url": "http://127.0.0.1:4482/weather",
+          "owner": "owner-slot-a",
+          "purchase_id": "purchase-1"
+        },
+        {
+          "at": "2026-11-10T17:55:41.123Z",
+          "type": "slot_start",
+          "slot": 2,
+          "url": "http://127.0.0.1:4482/weather",
+          "owner": "owner-slot-b",
+          "purchase_id": "purchase-1"
+        },
+        {
+          "at": "2026-11-10T17:55:41.141Z",
+          "type": "quote_offered",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4482/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "10000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0x9999999999999999999999999999999999999999",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-11-10T17:55:41.145Z",
+          "type": "quote_offered",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4482/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "10000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0x9999999999999999999999999999999999999999",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-11-10T17:55:41.155Z",
+          "type": "presign_decide",
+          "slot": 2,
+          "owner": "owner-slot-b",
+          "purchase_id": "purchase-1",
+          "decision": "allow",
+          "reason": null
+        },
+        {
+          "at": "2026-11-10T17:55:41.157Z",
+          "type": "signer_call",
+          "call_index": 1,
+          "signer_entry": "signTypedData",
+          "primary_type": "TransferWithAuthorization",
+          "domain": {
+            "name": "USDC",
+            "version": "2",
+            "chainId": 84532,
+            "verifyingContract": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+          },
+          "to": "0x9999999999999999999999999999999999999999",
+          "value": "10000",
+          "from": "0xa2AF1794DDb12458953A0C4bCE4b5c96D8c392e2",
+          "valid_after": "0",
+          "valid_before": "1794333401",
+          "nonce": "0x2524e872\u2026322f(len66)"
+        },
+        {
+          "at": "2026-11-10T17:55:41.166Z",
+          "type": "presign_decide",
+          "slot": 1,
+          "owner": "owner-slot-a",
+          "purchase_id": "purchase-1",
+          "decision": "allow",
+          "reason": null
+        },
+        {
+          "at": "2026-11-10T17:55:41.166Z",
+          "type": "signer_call",
+          "call_index": 2,
+          "signer_entry": "signTypedData",
+          "primary_type": "TransferWithAuthorization",
+          "domain": {
+            "name": "USDC",
+            "version": "2",
+            "chainId": 84532,
+            "verifyingContract": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+          },
+          "to": "0x9999999999999999999999999999999999999999",
+          "value": "10000",
+          "from": "0xa2AF1794DDb12458953A0C4bCE4b5c96D8c392e2",
+          "valid_after": "0",
+          "valid_before": "1794333401",
+          "nonce": "0xadbdd06d\u2026c318(len66)"
+        },
+        {
+          "at": "2026-11-10T17:55:41.170Z",
+          "type": "slot_result",
+          "slot": 2,
+          "http": 200,
+          "receipt_served": {
+            "success": true,
+            "transaction": "0xabababababababababababababababababababababababababababababababab",
+            "network": "eip155:84532"
+          }
+        },
+        {
+          "at": "2026-11-10T17:55:41.170Z",
+          "type": "slot_result",
+          "slot": 1,
+          "http": 200,
+          "receipt_served": {
+            "success": true,
+            "transaction": "0xabababababababababababababababababababababababababababababababab",
+            "network": "eip155:84532"
+          }
+        }
+      ]
+    },
+    {
+      "session": "b_a10a_case3_distinct_purchases",
+      "preflight": false,
+      "matrix": "case3/A10a",
+      "expectation_mode_label": "explicit",
+      "requirement_amounts_served": [
+        "10000",
+        "10000"
+      ],
+      "owners_config": [
+        "owner-slot-a",
+        "owner-slot-a"
+      ],
+      "purchase_ids_config": [
+        "purchase-1",
+        "purchase-2"
+      ],
+      "matrix_row": "different purchase IDs over an IDENTICAL quote: reservations independent \u2014 2 signed",
+      "adapter_state_dir_policy": "fresh per session (R2)",
+      "adapter_health": {
+        "policy_summary": {
+          "per_tx_max": 1,
+          "daily_budget": 50,
+          "allowed_recipients": [
+            "0x9999999999999999999999999999999999999999"
+          ],
+          "require_approval_above": 5
+        },
+        "state_dir_basis": "fresh mkdtemp per session"
+      },
+      "observed": {
+        "signer_values": [
+          "10000",
+          "10000"
+        ],
+        "signer_call_count": 2,
+        "presign_decisions": [
+          {
+            "slot": 1,
+            "owner": "owner-slot-a",
+            "purchase_id": "purchase-1",
+            "decision": "allow",
+            "reason": null,
+            "at": "2026-11-10T17:55:47.382Z"
+          },
+          {
+            "slot": 2,
+            "owner": "owner-slot-a",
+            "purchase_id": "purchase-2",
+            "decision": "allow",
+            "reason": null,
+            "at": "2026-11-10T17:55:47.401Z"
+          }
+        ],
+        "presign_rejections": [],
+        "slots_committed": [
+          {
+            "slot": 1,
+            "http": 200,
+            "receipt_served": {
+              "success": true,
+              "transaction": "0xabababababababababababababababababababababababababababababababab",
+              "network": "eip155:84532"
+            },
+            "at": "2026-11-10T17:55:47.394Z"
+          },
+          {
+            "slot": 2,
+            "http": 200,
+            "receipt_served": {
+              "success": true,
+              "transaction": "0xabababababababababababababababababababababababababababababababab",
+              "network": "eip155:84532"
+            },
+            "at": "2026-11-10T17:55:47.405Z"
+          }
+        ],
+        "slots_errored": [],
+        "attribution": {
+          "consistent": true,
+          "note": "rejected slots carry presign_decide=rejected + slot_error and by construction have zero signer calls; signer_call_count must equal the number of committed slots"
+        },
+        "metrics": {
+          "signer_call_deltas_ms": [
+            16
+          ],
+          "both_calls_before_first_slot_completion": false
+        },
+        "adapter_owners_ok": true,
+        "adapter_verdicts": [
+          {
+            "purchase_id": "purchase-1",
+            "duplicate": false,
+            "purchase_id_conflict": false,
+            "layer": "pass",
+            "decision": "ALLOW"
+          },
+          {
+            "purchase_id": "purchase-2",
+            "duplicate": false,
+            "purchase_id_conflict": false,
+            "layer": "pass",
+            "decision": "ALLOW"
+          }
+        ],
+        "adapter_audit": [
+          {
+            "id": "be5ae86c3fb6",
+            "ts": "2026-11-10T17:55:47",
+            "intent": {
+              "amount": 0.01,
+              "recipient": "0x9999999999999999999999999999999999999999",
+              "purpose": "weather API call (boundra-a10 battery)",
+              "resource": "http://127.0.0.1:4483/weather",
+              "network": "eip155:84532",
+              "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+            },
+            "agent_id": null,
+            "owner": "owner-slot-a",
+            "layer": "pass",
+            "raw_decision": "ALLOW",
+            "human": null,
+            "final": "ALLOW",
+            "reasons": [
+              "within policy \u2014 auto-approved"
+            ],
+            "policy_refs": [
+              {
+                "scope": "legacy",
+                "version": null,
+                "hash": null
+              }
+            ],
+            "mandate_id": null,
+            "purchase_id": "purchase-1",
+            "evaluation_id": "a65c1e0ca2c54e87af3faca79c328bd6",
+            "reservation_status": "reserved",
+            "duplicate": false,
+            "spent_today_after": 0.01
+          },
+          {
+            "id": "8e58277fe85a",
+            "ts": "2026-11-10T17:55:47",
+            "intent": {
+              "amount": 0.01,
+              "recipient": "0x9999999999999999999999999999999999999999",
+              "purpose": "weather API call (boundra-a10 battery)",
+              "resource": "http://127.0.0.1:4483/weather",
+              "network": "eip155:84532",
+              "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+            },
+            "agent_id": null,
+            "owner": "owner-slot-a",
+            "layer": "pass",
+            "raw_decision": "ALLOW",
+            "human": null,
+            "final": "ALLOW",
+            "reasons": [
+              "within policy \u2014 auto-approved"
+            ],
+            "policy_refs": [
+              {
+                "scope": "legacy",
+                "version": null,
+                "hash": null
+              }
+            ],
+            "mandate_id": null,
+            "purchase_id": "purchase-2",
+            "evaluation_id": "f877b0b58b4b47aca2396259443af0fa",
+            "reservation_status": "reserved",
+            "duplicate": false,
+            "spent_today_after": 0.02
+          }
+        ],
+        "client_rc": 0
+      },
+      "verdict": "PASS",
+      "timeline": [
+        {
+          "at": "2026-11-10T17:55:47.324Z",
+          "type": "probe_start",
+          "control_under_test": "Boundra pre-sign reservation boundary (gobeyondfj-cmd/boundra @ fb09284434b85f824b099ade4430e1b77b4c4086, TS SDK createX402Hook, transport-only local adapter)",
+          "url": "http://127.0.0.1:4483/weather",
+          "concurrency": 2,
+          "xc_expected_recorded_only": "$0.01",
+          "quote_control_configured": false,
+          "boundra": {
+            "adapter_url": "http://127.0.0.1:4613",
+            "purpose": "weather API call (boundra-a10 battery)",
+            "owners": [
+              "owner-slot-a",
+              "owner-slot-a"
+            ],
+            "purchase_ids": [
+              "purchase-1",
+              "purchase-2"
+            ]
+          },
+          "note": "rejection logic is the candidate's own (pinned Gateway+SpendLedger); this harness adds observation only (signer counts, presign decisions, verbatim errors, slot timing)"
+        },
+        {
+          "at": "2026-11-10T17:55:47.325Z",
+          "type": "slot_start",
+          "slot": 1,
+          "url": "http://127.0.0.1:4483/weather",
+          "owner": "owner-slot-a",
+          "purchase_id": "purchase-1"
+        },
+        {
+          "at": "2026-11-10T17:55:47.348Z",
+          "type": "slot_start",
+          "slot": 2,
+          "url": "http://127.0.0.1:4483/weather",
+          "owner": "owner-slot-a",
+          "purchase_id": "purchase-2"
+        },
+        {
+          "at": "2026-11-10T17:55:47.367Z",
+          "type": "quote_offered",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4483/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "10000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0x9999999999999999999999999999999999999999",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-11-10T17:55:47.372Z",
+          "type": "quote_offered",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4483/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "10000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0x9999999999999999999999999999999999999999",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-11-10T17:55:47.382Z",
+          "type": "presign_decide",
+          "slot": 1,
+          "owner": "owner-slot-a",
+          "purchase_id": "purchase-1",
+          "decision": "allow",
+          "reason": null
+        },
+        {
+          "at": "2026-11-10T17:55:47.385Z",
+          "type": "signer_call",
+          "call_index": 1,
+          "signer_entry": "signTypedData",
+          "primary_type": "TransferWithAuthorization",
+          "domain": {
+            "name": "USDC",
+            "version": "2",
+            "chainId": 84532,
+            "verifyingContract": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+          },
+          "to": "0x9999999999999999999999999999999999999999",
+          "value": "10000",
+          "from": "0x7aE9C09D8EC7f5742f8680cD0a99FA51E3A20490",
+          "valid_after": "0",
+          "valid_before": "1794333407",
+          "nonce": "0x0905d1b3\u2026a0fa(len66)"
+        },
+        {
+          "at": "2026-11-10T17:55:47.394Z",
+          "type": "slot_result",
+          "slot": 1,
+          "http": 200,
+          "receipt_served": {
+            "success": true,
+            "transaction": "0xabababababababababababababababababababababababababababababababab",
+            "network": "eip155:84532"
+          }
+        },
+        {
+          "at": "2026-11-10T17:55:47.401Z",
+          "type": "presign_decide",
+          "slot": 2,
+          "owner": "owner-slot-a",
+          "purchase_id": "purchase-2",
+          "decision": "allow",
+          "reason": null
+        },
+        {
+          "at": "2026-11-10T17:55:47.401Z",
+          "type": "signer_call",
+          "call_index": 2,
+          "signer_entry": "signTypedData",
+          "primary_type": "TransferWithAuthorization",
+          "domain": {
+            "name": "USDC",
+            "version": "2",
+            "chainId": 84532,
+            "verifyingContract": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+          },
+          "to": "0x9999999999999999999999999999999999999999",
+          "value": "10000",
+          "from": "0x7aE9C09D8EC7f5742f8680cD0a99FA51E3A20490",
+          "valid_after": "0",
+          "valid_before": "1794333407",
+          "nonce": "0x5cca43f0\u2026574b(len66)"
+        },
+        {
+          "at": "2026-11-10T17:55:47.405Z",
+          "type": "slot_result",
+          "slot": 2,
+          "http": 200,
+          "receipt_served": {
+            "success": true,
+            "transaction": "0xabababababababababababababababababababababababababababababababab",
+            "network": "eip155:84532"
+          }
+        }
+      ]
+    },
+    {
+      "session": "b_a10a_case4_changed_intent",
+      "preflight": false,
+      "matrix": "case4/A10a (= A10c equivalent)",
+      "expectation_mode_label": "explicit",
+      "requirement_amounts_served": [
+        "10000",
+        "100000"
+      ],
+      "owners_config": [
+        "owner-slot-a",
+        "owner-slot-a"
+      ],
+      "purchase_ids_config": [
+        "purchase-1",
+        "purchase-1"
+      ],
+      "matrix_row": "same purchase_id / changed intent (conflicting offers, race): explicit purchase_id conflict \u2014 exactly 1 commitment + exactly 1 pre-signer rejection, 0 additional signatures after the first commitment; winner-agnostic (whichever offer wins the reservation race commits)",
+      "adapter_state_dir_policy": "fresh per session (R2)",
+      "adapter_health": {
+        "policy_summary": {
+          "per_tx_max": 1,
+          "daily_budget": 50,
+          "allowed_recipients": [
+            "0x9999999999999999999999999999999999999999"
+          ],
+          "require_approval_above": 5
+        },
+        "state_dir_basis": "fresh mkdtemp per session"
+      },
+      "observed": {
+        "signer_values": [
+          "10000"
+        ],
+        "signer_call_count": 1,
+        "presign_decisions": [
+          {
+            "slot": 1,
+            "owner": "owner-slot-a",
+            "purchase_id": "purchase-1",
+            "decision": "allow",
+            "reason": null,
+            "at": "2026-11-10T17:55:53.642Z"
+          },
+          {
+            "slot": 2,
+            "owner": "owner-slot-a",
+            "purchase_id": "purchase-1",
+            "decision": "rejected",
+            "reason": "Boundra DENY: within policy \u2014 auto-approved; purchase_id conflict: the ID is already bound to a different intent",
+            "at": "2026-11-10T17:55:53.658Z"
+          }
+        ],
+        "presign_rejections": [
+          {
+            "slot": 2,
+            "owner": "owner-slot-a",
+            "purchase_id": "purchase-1",
+            "decision": "rejected",
+            "reason": "Boundra DENY: within policy \u2014 auto-approved; purchase_id conflict: the ID is already bound to a different intent",
+            "at": "2026-11-10T17:55:53.658Z"
+          }
+        ],
+        "slots_committed": [
+          {
+            "slot": 1,
+            "http": 200,
+            "receipt_served": {
+              "success": true,
+              "transaction": "0xabababababababababababababababababababababababababababababababab",
+              "network": "eip155:84532"
+            },
+            "at": "2026-11-10T17:55:53.658Z"
+          }
+        ],
+        "slots_errored": [
+          {
+            "slot": 2,
+            "error": "Failed to create payment payload: Payment creation aborted: Boundra DENY: within policy \u2014 auto-approved; purchase_id conflict: the ID is already bound to a different intent",
+            "error_name": "Error",
+            "at": "2026-11-10T17:55:53.658Z"
+          }
+        ],
+        "attribution": {
+          "consistent": true,
+          "note": "rejected slots carry presign_decide=rejected + slot_error and by construction have zero signer calls; signer_call_count must equal the number of committed slots"
+        },
+        "metrics": {
+          "signer_call_deltas_ms": null,
+          "both_calls_before_first_slot_completion": null
+        },
+        "adapter_owners_ok": true,
+        "adapter_verdicts": [
+          {
+            "purchase_id": "purchase-1",
+            "duplicate": false,
+            "purchase_id_conflict": false,
+            "layer": "pass",
+            "decision": "ALLOW"
+          },
+          {
+            "purchase_id": "purchase-1",
+            "duplicate": true,
+            "purchase_id_conflict": true,
+            "layer": "idempotency",
+            "decision": "DENY"
+          }
+        ],
+        "adapter_audit": [
+          {
+            "id": "f30c43600a16",
+            "ts": "2026-11-10T17:55:53",
+            "intent": {
+              "amount": 0.01,
+              "recipient": "0x9999999999999999999999999999999999999999",
+              "purpose": "weather API call (boundra-a10 battery)",
+              "resource": "http://127.0.0.1:4484/weather",
+              "network": "eip155:84532",
+              "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+            },
+            "agent_id": null,
+            "owner": "owner-slot-a",
+            "layer": "pass",
+            "raw_decision": "ALLOW",
+            "human": null,
+            "final": "ALLOW",
+            "reasons": [
+              "within policy \u2014 auto-approved"
+            ],
+            "policy_refs": [
+              {
+                "scope": "legacy",
+                "version": null,
+                "hash": null
+              }
+            ],
+            "mandate_id": null,
+            "purchase_id": "purchase-1",
+            "evaluation_id": "14823ad9ad5a494a8bf5ff03101df3ad",
+            "reservation_status": "reserved",
+            "duplicate": false,
+            "spent_today_after": 0.01
+          },
+          {
+            "id": "b04afbffe91d",
+            "ts": "2026-11-10T17:55:53",
+            "intent": {
+              "amount": 0.1,
+              "recipient": "0x9999999999999999999999999999999999999999",
+              "purpose": "weather API call (boundra-a10 battery)",
+              "resource": "http://127.0.0.1:4484/weather",
+              "network": "eip155:84532",
+              "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+            },
+            "agent_id": null,
+            "owner": "owner-slot-a",
+            "layer": "idempotency",
+            "raw_decision": "ALLOW",
+            "human": null,
+            "final": "DENY",
+            "reasons": [
+              "within policy \u2014 auto-approved",
+              "purchase_id conflict: the ID is already bound to a different intent"
+            ],
+            "policy_refs": [
+              {
+                "scope": "legacy",
+                "version": null,
+                "hash": null
+              }
+            ],
+            "mandate_id": null,
+            "purchase_id": "purchase-1",
+            "evaluation_id": "14823ad9ad5a494a8bf5ff03101df3ad",
+            "reservation_status": "reserved",
+            "duplicate": true,
+            "spent_today_after": 0.01
+          }
+        ],
+        "client_rc": 0
+      },
+      "verdict": "PASS",
+      "timeline": [
+        {
+          "at": "2026-11-10T17:55:53.589Z",
+          "type": "probe_start",
+          "control_under_test": "Boundra pre-sign reservation boundary (gobeyondfj-cmd/boundra @ fb09284434b85f824b099ade4430e1b77b4c4086, TS SDK createX402Hook, transport-only local adapter)",
+          "url": "http://127.0.0.1:4484/weather",
+          "concurrency": 2,
+          "xc_expected_recorded_only": "$0.01",
+          "quote_control_configured": false,
+          "boundra": {
+            "adapter_url": "http://127.0.0.1:4614",
+            "purpose": "weather API call (boundra-a10 battery)",
+            "owners": [
+              "owner-slot-a",
+              "owner-slot-a"
+            ],
+            "purchase_ids": [
+              "purchase-1",
+              "purchase-1"
+            ]
+          },
+          "note": "rejection logic is the candidate's own (pinned Gateway+SpendLedger); this harness adds observation only (signer counts, presign decisions, verbatim errors, slot timing)"
+        },
+        {
+          "at": "2026-11-10T17:55:53.590Z",
+          "type": "slot_start",
+          "slot": 1,
+          "url": "http://127.0.0.1:4484/weather",
+          "owner": "owner-slot-a",
+          "purchase_id": "purchase-1"
+        },
+        {
+          "at": "2026-11-10T17:55:53.610Z",
+          "type": "slot_start",
+          "slot": 2,
+          "url": "http://127.0.0.1:4484/weather",
+          "owner": "owner-slot-a",
+          "purchase_id": "purchase-1"
+        },
+        {
+          "at": "2026-11-10T17:55:53.629Z",
+          "type": "quote_offered",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4484/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "10000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0x9999999999999999999999999999999999999999",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-11-10T17:55:53.633Z",
+          "type": "quote_offered",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4484/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "100000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0x9999999999999999999999999999999999999999",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-11-10T17:55:53.642Z",
+          "type": "presign_decide",
+          "slot": 1,
+          "owner": "owner-slot-a",
+          "purchase_id": "purchase-1",
+          "decision": "allow",
+          "reason": null
+        },
+        {
+          "at": "2026-11-10T17:55:53.644Z",
+          "type": "signer_call",
+          "call_index": 1,
+          "signer_entry": "signTypedData",
+          "primary_type": "TransferWithAuthorization",
+          "domain": {
+            "name": "USDC",
+            "version": "2",
+            "chainId": 84532,
+            "verifyingContract": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+          },
+          "to": "0x9999999999999999999999999999999999999999",
+          "value": "10000",
+          "from": "0x306BB664D739213486B4E747e16BFDF776f6D907",
+          "valid_after": "0",
+          "valid_before": "1794333413",
+          "nonce": "0x10291295\u2026ef5d(len66)"
+        },
+        {
+          "at": "2026-11-10T17:55:53.658Z",
+          "type": "slot_result",
+          "slot": 1,
+          "http": 200,
+          "receipt_served": {
+            "success": true,
+            "transaction": "0xabababababababababababababababababababababababababababababababab",
+            "network": "eip155:84532"
+          }
+        },
+        {
+          "at": "2026-11-10T17:55:53.658Z",
+          "type": "presign_decide",
+          "slot": 2,
+          "owner": "owner-slot-a",
+          "purchase_id": "purchase-1",
+          "decision": "rejected",
+          "reason": "Boundra DENY: within policy \u2014 auto-approved; purchase_id conflict: the ID is already bound to a different intent"
+        },
+        {
+          "at": "2026-11-10T17:55:53.658Z",
+          "type": "slot_error",
+          "slot": 2,
+          "error": "Failed to create payment payload: Payment creation aborted: Boundra DENY: within policy \u2014 auto-approved; purchase_id conflict: the ID is already bound to a different intent",
+          "error_name": "Error"
+        }
+      ]
+    },
+    {
+      "session": "b_a10a_case3c_conflicting_distinct_purchases",
+      "preflight": false,
+      "matrix": "case3c/A10a (supplementary)",
+      "expectation_mode_label": "explicit",
+      "requirement_amounts_served": [
+        "10000",
+        "100000"
+      ],
+      "owners_config": [
+        "owner-slot-a",
+        "owner-slot-a"
+      ],
+      "purchase_ids_config": [
+        "purchase-1",
+        "purchase-2"
+      ],
+      "matrix_row": "SUPPLEMENTARY probe, config-dependent expectation: conflicting offers under DISTINCT purchase_ids \u2014 2 signed under reservation-only configuration (baseline quote-control would yield 1); configuration fact, not a regression",
+      "adapter_state_dir_policy": "fresh per session (R2)",
+      "adapter_health": {
+        "policy_summary": {
+          "per_tx_max": 1,
+          "daily_budget": 50,
+          "allowed_recipients": [
+            "0x9999999999999999999999999999999999999999"
+          ],
+          "require_approval_above": 5
+        },
+        "state_dir_basis": "fresh mkdtemp per session"
+      },
+      "observed": {
+        "signer_values": [
+          "10000",
+          "100000"
+        ],
+        "signer_call_count": 2,
+        "presign_decisions": [
+          {
+            "slot": 1,
+            "owner": "owner-slot-a",
+            "purchase_id": "purchase-1",
+            "decision": "allow",
+            "reason": null,
+            "at": "2026-11-10T17:55:59.896Z"
+          },
+          {
+            "slot": 2,
+            "owner": "owner-slot-a",
+            "purchase_id": "purchase-2",
+            "decision": "allow",
+            "reason": null,
+            "at": "2026-11-10T17:55:59.905Z"
+          }
+        ],
+        "presign_rejections": [],
+        "slots_committed": [
+          {
+            "slot": 1,
+            "http": 200,
+            "receipt_served": {
+              "success": true,
+              "transaction": "0xabababababababababababababababababababababababababababababababab",
+              "network": "eip155:84532"
+            },
+            "at": "2026-11-10T17:55:59.908Z"
+          },
+          {
+            "slot": 2,
+            "http": 200,
+            "receipt_served": {
+              "success": true,
+              "transaction": "0xabababababababababababababababababababababababababababababababab",
+              "network": "eip155:84532"
+            },
+            "at": "2026-11-10T17:55:59.909Z"
+          }
+        ],
+        "slots_errored": [],
+        "attribution": {
+          "consistent": true,
+          "note": "rejected slots carry presign_decide=rejected + slot_error and by construction have zero signer calls; signer_call_count must equal the number of committed slots"
+        },
+        "metrics": {
+          "signer_call_deltas_ms": [
+            7
+          ],
+          "both_calls_before_first_slot_completion": true
+        },
+        "adapter_owners_ok": true,
+        "adapter_verdicts": [
+          {
+            "purchase_id": "purchase-2",
+            "duplicate": false,
+            "purchase_id_conflict": false,
+            "layer": "pass",
+            "decision": "ALLOW"
+          },
+          {
+            "purchase_id": "purchase-1",
+            "duplicate": false,
+            "purchase_id_conflict": false,
+            "layer": "pass",
+            "decision": "ALLOW"
+          }
+        ],
+        "adapter_audit": [
+          {
+            "id": "a8d33e159bde",
+            "ts": "2026-11-10T17:55:59",
+            "intent": {
+              "amount": 0.1,
+              "recipient": "0x9999999999999999999999999999999999999999",
+              "purpose": "weather API call (boundra-a10 battery)",
+              "resource": "http://127.0.0.1:4485/weather",
+              "network": "eip155:84532",
+              "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+            },
+            "agent_id": null,
+            "owner": "owner-slot-a",
+            "layer": "pass",
+            "raw_decision": "ALLOW",
+            "human": null,
+            "final": "ALLOW",
+            "reasons": [
+              "within policy \u2014 auto-approved"
+            ],
+            "policy_refs": [
+              {
+                "scope": "legacy",
+                "version": null,
+                "hash": null
+              }
+            ],
+            "mandate_id": null,
+            "purchase_id": "purchase-2",
+            "evaluation_id": "943d79558eb74dd4b8694f6884a37038",
+            "reservation_status": "reserved",
+            "duplicate": false,
+            "spent_today_after": 0.1
+          },
+          {
+            "id": "8bbf6e30ada3",
+            "ts": "2026-11-10T17:55:59",
+            "intent": {
+              "amount": 0.01,
+              "recipient": "0x9999999999999999999999999999999999999999",
+              "purpose": "weather API call (boundra-a10 battery)",
+              "resource": "http://127.0.0.1:4485/weather",
+              "network": "eip155:84532",
+              "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+            },
+            "agent_id": null,
+            "owner": "owner-slot-a",
+            "layer": "pass",
+            "raw_decision": "ALLOW",
+            "human": null,
+            "final": "ALLOW",
+            "reasons": [
+              "within policy \u2014 auto-approved"
+            ],
+            "policy_refs": [
+              {
+                "scope": "legacy",
+                "version": null,
+                "hash": null
+              }
+            ],
+            "mandate_id": null,
+            "purchase_id": "purchase-1",
+            "evaluation_id": "fd98e8547dde408bb4612e5ca5b32c9f",
+            "reservation_status": "reserved",
+            "duplicate": false,
+            "spent_today_after": 0.11
+          }
+        ],
+        "client_rc": 0
+      },
+      "verdict": "PASS",
+      "timeline": [
+        {
+          "at": "2026-11-10T17:55:59.835Z",
+          "type": "probe_start",
+          "control_under_test": "Boundra pre-sign reservation boundary (gobeyondfj-cmd/boundra @ fb09284434b85f824b099ade4430e1b77b4c4086, TS SDK createX402Hook, transport-only local adapter)",
+          "url": "http://127.0.0.1:4485/weather",
+          "concurrency": 2,
+          "xc_expected_recorded_only": "$0.01",
+          "quote_control_configured": false,
+          "boundra": {
+            "adapter_url": "http://127.0.0.1:4615",
+            "purpose": "weather API call (boundra-a10 battery)",
+            "owners": [
+              "owner-slot-a",
+              "owner-slot-a"
+            ],
+            "purchase_ids": [
+              "purchase-1",
+              "purchase-2"
+            ]
+          },
+          "note": "rejection logic is the candidate's own (pinned Gateway+SpendLedger); this harness adds observation only (signer counts, presign decisions, verbatim errors, slot timing)"
+        },
+        {
+          "at": "2026-11-10T17:55:59.836Z",
+          "type": "slot_start",
+          "slot": 1,
+          "url": "http://127.0.0.1:4485/weather",
+          "owner": "owner-slot-a",
+          "purchase_id": "purchase-1"
+        },
+        {
+          "at": "2026-11-10T17:55:59.860Z",
+          "type": "slot_start",
+          "slot": 2,
+          "url": "http://127.0.0.1:4485/weather",
+          "owner": "owner-slot-a",
+          "purchase_id": "purchase-2"
+        },
+        {
+          "at": "2026-11-10T17:55:59.879Z",
+          "type": "quote_offered",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4485/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "10000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0x9999999999999999999999999999999999999999",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-11-10T17:55:59.884Z",
+          "type": "quote_offered",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4485/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "100000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0x9999999999999999999999999999999999999999",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-11-10T17:55:59.896Z",
+          "type": "presign_decide",
+          "slot": 1,
+          "owner": "owner-slot-a",
+          "purchase_id": "purchase-1",
+          "decision": "allow",
+          "reason": null
+        },
+        {
+          "at": "2026-11-10T17:55:59.898Z",
+          "type": "signer_call",
+          "call_index": 1,
+          "signer_entry": "signTypedData",
+          "primary_type": "TransferWithAuthorization",
+          "domain": {
+            "name": "USDC",
+            "version": "2",
+            "chainId": 84532,
+            "verifyingContract": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+          },
+          "to": "0x9999999999999999999999999999999999999999",
+          "value": "10000",
+          "from": "0x199C29ac5634e5c6E758EB0c39028b02616Bb126",
+          "valid_after": "0",
+          "valid_before": "1794333419",
+          "nonce": "0xb4a4f1c0\u2026a2a2(len66)"
+        },
+        {
+          "at": "2026-11-10T17:55:59.905Z",
+          "type": "presign_decide",
+          "slot": 2,
+          "owner": "owner-slot-a",
+          "purchase_id": "purchase-2",
+          "decision": "allow",
+          "reason": null
+        },
+        {
+          "at": "2026-11-10T17:55:59.905Z",
+          "type": "signer_call",
+          "call_index": 2,
+          "signer_entry": "signTypedData",
+          "primary_type": "TransferWithAuthorization",
+          "domain": {
+            "name": "USDC",
+            "version": "2",
+            "chainId": 84532,
+            "verifyingContract": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+          },
+          "to": "0x9999999999999999999999999999999999999999",
+          "value": "100000",
+          "from": "0x199C29ac5634e5c6E758EB0c39028b02616Bb126",
+          "valid_after": "0",
+          "valid_before": "1794333419",
+          "nonce": "0xf4132730\u2026ae35(len66)"
+        },
+        {
+          "at": "2026-11-10T17:55:59.908Z",
+          "type": "slot_result",
+          "slot": 1,
+          "http": 200,
+          "receipt_served": {
+            "success": true,
+            "transaction": "0xabababababababababababababababababababababababababababababababab",
+            "network": "eip155:84532"
+          }
+        },
+        {
+          "at": "2026-11-10T17:55:59.909Z",
+          "type": "slot_result",
+          "slot": 2,
+          "http": 200,
+          "receipt_served": {
+            "success": true,
+            "transaction": "0xabababababababababababababababababababababababababababababababab",
+            "network": "eip155:84532"
+          }
+        }
+      ]
+    },
+    {
+      "session": "b_a10b_case1_shared_owner",
+      "preflight": false,
+      "matrix": "case1/A10b",
+      "expectation_mode_label": "first-accepted",
+      "requirement_amounts_served": [
+        "10000",
+        "10000"
+      ],
+      "owners_config": [
+        "owner-slot-a",
+        "owner-slot-a"
+      ],
+      "purchase_ids_config": [
+        "purchase-1",
+        "purchase-1"
+      ],
+      "matrix_row": "same as case1/A10a in first-accepted labeling (modes mechanically identical for this candidate; divergence is an anomaly)",
+      "adapter_state_dir_policy": "fresh per session (R2)",
+      "adapter_health": {
+        "policy_summary": {
+          "per_tx_max": 1,
+          "daily_budget": 50,
+          "allowed_recipients": [
+            "0x9999999999999999999999999999999999999999"
+          ],
+          "require_approval_above": 5
+        },
+        "state_dir_basis": "fresh mkdtemp per session"
+      },
+      "observed": {
+        "signer_values": [
+          "10000"
+        ],
+        "signer_call_count": 1,
+        "presign_decisions": [
+          {
+            "slot": 2,
+            "owner": "owner-slot-a",
+            "purchase_id": "purchase-1",
+            "decision": "allow",
+            "reason": null,
+            "at": "2026-11-10T17:56:06.151Z"
+          },
+          {
+            "slot": 1,
+            "owner": "owner-slot-a",
+            "purchase_id": "purchase-1",
+            "decision": "rejected",
+            "reason": "Boundra DENY: within policy \u2014 auto-approved; purchase_id already reserved; duplicate signing permission denied",
+            "at": "2026-11-10T17:56:06.164Z"
+          }
+        ],
+        "presign_rejections": [
+          {
+            "slot": 1,
+            "owner": "owner-slot-a",
+            "purchase_id": "purchase-1",
+            "decision": "rejected",
+            "reason": "Boundra DENY: within policy \u2014 auto-approved; purchase_id already reserved; duplicate signing permission denied",
+            "at": "2026-11-10T17:56:06.164Z"
+          }
+        ],
+        "slots_committed": [
+          {
+            "slot": 2,
+            "http": 200,
+            "receipt_served": {
+              "success": true,
+              "transaction": "0xabababababababababababababababababababababababababababababababab",
+              "network": "eip155:84532"
+            },
+            "at": "2026-11-10T17:56:06.161Z"
+          }
+        ],
+        "slots_errored": [
+          {
+            "slot": 1,
+            "error": "Failed to create payment payload: Payment creation aborted: Boundra DENY: within policy \u2014 auto-approved; purchase_id already reserved; duplicate signing permission denied",
+            "error_name": "Error",
+            "at": "2026-11-10T17:56:06.164Z"
+          }
+        ],
+        "attribution": {
+          "consistent": true,
+          "note": "rejected slots carry presign_decide=rejected + slot_error and by construction have zero signer calls; signer_call_count must equal the number of committed slots"
+        },
+        "metrics": {
+          "signer_call_deltas_ms": null,
+          "both_calls_before_first_slot_completion": null
+        },
+        "adapter_owners_ok": true,
+        "adapter_verdicts": [
+          {
+            "purchase_id": "purchase-1",
+            "duplicate": false,
+            "purchase_id_conflict": false,
+            "layer": "pass",
+            "decision": "ALLOW"
+          },
+          {
+            "purchase_id": "purchase-1",
+            "duplicate": true,
+            "purchase_id_conflict": false,
+            "layer": "idempotency",
+            "decision": "DENY"
+          }
+        ],
+        "adapter_audit": [
+          {
+            "id": "e77353cdcc6a",
+            "ts": "2026-11-10T17:56:06",
+            "intent": {
+              "amount": 0.01,
+              "recipient": "0x9999999999999999999999999999999999999999",
+              "purpose": "weather API call (boundra-a10 battery)",
+              "resource": "http://127.0.0.1:4486/weather",
+              "network": "eip155:84532",
+              "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+            },
+            "agent_id": null,
+            "owner": "owner-slot-a",
+            "layer": "pass",
+            "raw_decision": "ALLOW",
+            "human": null,
+            "final": "ALLOW",
+            "reasons": [
+              "within policy \u2014 auto-approved"
+            ],
+            "policy_refs": [
+              {
+                "scope": "legacy",
+                "version": null,
+                "hash": null
+              }
+            ],
+            "mandate_id": null,
+            "purchase_id": "purchase-1",
+            "evaluation_id": "b1980d77443b4dd89caacf26db3a316e",
+            "reservation_status": "reserved",
+            "duplicate": false,
+            "spent_today_after": 0.01
+          },
+          {
+            "id": "013000a3d303",
+            "ts": "2026-11-10T17:56:06",
+            "intent": {
+              "amount": 0.01,
+              "recipient": "0x9999999999999999999999999999999999999999",
+              "purpose": "weather API call (boundra-a10 battery)",
+              "resource": "http://127.0.0.1:4486/weather",
+              "network": "eip155:84532",
+              "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+            },
+            "agent_id": null,
+            "owner": "owner-slot-a",
+            "layer": "idempotency",
+            "raw_decision": "ALLOW",
+            "human": null,
+            "final": "DENY",
+            "reasons": [
+              "within policy \u2014 auto-approved",
+              "purchase_id already reserved; duplicate signing permission denied"
+            ],
+            "policy_refs": [
+              {
+                "scope": "legacy",
+                "version": null,
+                "hash": null
+              }
+            ],
+            "mandate_id": null,
+            "purchase_id": "purchase-1",
+            "evaluation_id": "b1980d77443b4dd89caacf26db3a316e",
+            "reservation_status": "reserved",
+            "duplicate": true,
+            "spent_today_after": 0.01
+          }
+        ],
+        "client_rc": 0
+      },
+      "verdict": "PASS",
+      "timeline": [
+        {
+          "at": "2026-11-10T17:56:06.099Z",
+          "type": "probe_start",
+          "control_under_test": "Boundra pre-sign reservation boundary (gobeyondfj-cmd/boundra @ fb09284434b85f824b099ade4430e1b77b4c4086, TS SDK createX402Hook, transport-only local adapter)",
+          "url": "http://127.0.0.1:4486/weather",
+          "concurrency": 2,
+          "xc_expected_recorded_only": "first-accepted",
+          "quote_control_configured": false,
+          "boundra": {
+            "adapter_url": "http://127.0.0.1:4616",
+            "purpose": "weather API call (boundra-a10 battery)",
+            "owners": [
+              "owner-slot-a",
+              "owner-slot-a"
+            ],
+            "purchase_ids": [
+              "purchase-1",
+              "purchase-1"
+            ]
+          },
+          "note": "rejection logic is the candidate's own (pinned Gateway+SpendLedger); this harness adds observation only (signer counts, presign decisions, verbatim errors, slot timing)"
+        },
+        {
+          "at": "2026-11-10T17:56:06.100Z",
+          "type": "slot_start",
+          "slot": 1,
+          "url": "http://127.0.0.1:4486/weather",
+          "owner": "owner-slot-a",
+          "purchase_id": "purchase-1"
+        },
+        {
+          "at": "2026-11-10T17:56:06.120Z",
+          "type": "slot_start",
+          "slot": 2,
+          "url": "http://127.0.0.1:4486/weather",
+          "owner": "owner-slot-a",
+          "purchase_id": "purchase-1"
+        },
+        {
+          "at": "2026-11-10T17:56:06.139Z",
+          "type": "quote_offered",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4486/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "10000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0x9999999999999999999999999999999999999999",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-11-10T17:56:06.144Z",
+          "type": "quote_offered",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4486/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "10000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0x9999999999999999999999999999999999999999",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-11-10T17:56:06.151Z",
+          "type": "presign_decide",
+          "slot": 2,
+          "owner": "owner-slot-a",
+          "purchase_id": "purchase-1",
+          "decision": "allow",
+          "reason": null
+        },
+        {
+          "at": "2026-11-10T17:56:06.153Z",
+          "type": "signer_call",
+          "call_index": 1,
+          "signer_entry": "signTypedData",
+          "primary_type": "TransferWithAuthorization",
+          "domain": {
+            "name": "USDC",
+            "version": "2",
+            "chainId": 84532,
+            "verifyingContract": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+          },
+          "to": "0x9999999999999999999999999999999999999999",
+          "value": "10000",
+          "from": "0x1b80615A8e45b157637f6b985a18b1F867cC772a",
+          "valid_after": "0",
+          "valid_before": "1794333426",
+          "nonce": "0xa9a0f28f\u2026852f(len66)"
+        },
+        {
+          "at": "2026-11-10T17:56:06.161Z",
+          "type": "slot_result",
+          "slot": 2,
+          "http": 200,
+          "receipt_served": {
+            "success": true,
+            "transaction": "0xabababababababababababababababababababababababababababababababab",
+            "network": "eip155:84532"
+          }
+        },
+        {
+          "at": "2026-11-10T17:56:06.164Z",
+          "type": "presign_decide",
+          "slot": 1,
+          "owner": "owner-slot-a",
+          "purchase_id": "purchase-1",
+          "decision": "rejected",
+          "reason": "Boundra DENY: within policy \u2014 auto-approved; purchase_id already reserved; duplicate signing permission denied"
+        },
+        {
+          "at": "2026-11-10T17:56:06.164Z",
+          "type": "slot_error",
+          "slot": 1,
+          "error": "Failed to create payment payload: Payment creation aborted: Boundra DENY: within policy \u2014 auto-approved; purchase_id already reserved; duplicate signing permission denied",
+          "error_name": "Error"
+        }
+      ]
+    },
+    {
+      "session": "b_a10b_case2_separate_owners",
+      "preflight": false,
+      "matrix": "case2/A10b",
+      "expectation_mode_label": "first-accepted",
+      "requirement_amounts_served": [
+        "10000",
+        "10000"
+      ],
+      "owners_config": [
+        "owner-slot-a",
+        "owner-slot-b"
+      ],
+      "purchase_ids_config": [
+        "purchase-1",
+        "purchase-1"
+      ],
+      "matrix_row": "same as case2/A10a in first-accepted labeling (boundary negative control)",
+      "adapter_state_dir_policy": "fresh per session (R2)",
+      "adapter_health": {
+        "policy_summary": {
+          "per_tx_max": 1,
+          "daily_budget": 50,
+          "allowed_recipients": [
+            "0x9999999999999999999999999999999999999999"
+          ],
+          "require_approval_above": 5
+        },
+        "state_dir_basis": "fresh mkdtemp per session"
+      },
+      "observed": {
+        "signer_values": [
+          "10000",
+          "10000"
+        ],
+        "signer_call_count": 2,
+        "presign_decisions": [
+          {
+            "slot": 1,
+            "owner": "owner-slot-a",
+            "purchase_id": "purchase-1",
+            "decision": "allow",
+            "reason": null,
+            "at": "2026-11-10T17:56:12.388Z"
+          },
+          {
+            "slot": 2,
+            "owner": "owner-slot-b",
+            "purchase_id": "purchase-1",
+            "decision": "allow",
+            "reason": null,
+            "at": "2026-11-10T17:56:12.399Z"
+          }
+        ],
+        "presign_rejections": [],
+        "slots_committed": [
+          {
+            "slot": 1,
+            "http": 200,
+            "receipt_served": {
+              "success": true,
+              "transaction": "0xabababababababababababababababababababababababababababababababab",
+              "network": "eip155:84532"
+            },
+            "at": "2026-11-10T17:56:12.403Z"
+          },
+          {
+            "slot": 2,
+            "http": 200,
+            "receipt_served": {
+              "success": true,
+              "transaction": "0xabababababababababababababababababababababababababababababababab",
+              "network": "eip155:84532"
+            },
+            "at": "2026-11-10T17:56:12.404Z"
+          }
+        ],
+        "slots_errored": [],
+        "attribution": {
+          "consistent": true,
+          "note": "rejected slots carry presign_decide=rejected + slot_error and by construction have zero signer calls; signer_call_count must equal the number of committed slots"
+        },
+        "metrics": {
+          "signer_call_deltas_ms": [
+            10
+          ],
+          "both_calls_before_first_slot_completion": true
+        },
+        "adapter_owners_ok": true,
+        "adapter_verdicts": [
+          {
+            "purchase_id": "purchase-1",
+            "duplicate": false,
+            "purchase_id_conflict": false,
+            "layer": "pass",
+            "decision": "ALLOW"
+          },
+          {
+            "purchase_id": "purchase-1",
+            "duplicate": false,
+            "purchase_id_conflict": false,
+            "layer": "pass",
+            "decision": "ALLOW"
+          }
+        ],
+        "adapter_audit": [
+          {
+            "id": "e9e63b6a6449",
+            "ts": "2026-11-10T17:56:12",
+            "intent": {
+              "amount": 0.01,
+              "recipient": "0x9999999999999999999999999999999999999999",
+              "purpose": "weather API call (boundra-a10 battery)",
+              "resource": "http://127.0.0.1:4487/weather",
+              "network": "eip155:84532",
+              "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+            },
+            "agent_id": null,
+            "owner": "owner-slot-b",
+            "layer": "pass",
+            "raw_decision": "ALLOW",
+            "human": null,
+            "final": "ALLOW",
+            "reasons": [
+              "within policy \u2014 auto-approved"
+            ],
+            "policy_refs": [
+              {
+                "scope": "legacy",
+                "version": null,
+                "hash": null
+              }
+            ],
+            "mandate_id": null,
+            "purchase_id": "purchase-1",
+            "evaluation_id": "3efa6acacb474814a75d64194b3bdbdb",
+            "reservation_status": "reserved",
+            "duplicate": false,
+            "spent_today_after": 0.01
+          },
+          {
+            "id": "b8c31f37345d",
+            "ts": "2026-11-10T17:56:12",
+            "intent": {
+              "amount": 0.01,
+              "recipient": "0x9999999999999999999999999999999999999999",
+              "purpose": "weather API call (boundra-a10 battery)",
+              "resource": "http://127.0.0.1:4487/weather",
+              "network": "eip155:84532",
+              "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+            },
+            "agent_id": null,
+            "owner": "owner-slot-a",
+            "layer": "pass",
+            "raw_decision": "ALLOW",
+            "human": null,
+            "final": "ALLOW",
+            "reasons": [
+              "within policy \u2014 auto-approved"
+            ],
+            "policy_refs": [
+              {
+                "scope": "legacy",
+                "version": null,
+                "hash": null
+              }
+            ],
+            "mandate_id": null,
+            "purchase_id": "purchase-1",
+            "evaluation_id": "17ea23c9330346279bea9692cde2b963",
+            "reservation_status": "reserved",
+            "duplicate": false,
+            "spent_today_after": 0.01
+          }
+        ],
+        "client_rc": 0
+      },
+      "verdict": "PASS",
+      "timeline": [
+        {
+          "at": "2026-11-10T17:56:12.330Z",
+          "type": "probe_start",
+          "control_under_test": "Boundra pre-sign reservation boundary (gobeyondfj-cmd/boundra @ fb09284434b85f824b099ade4430e1b77b4c4086, TS SDK createX402Hook, transport-only local adapter)",
+          "url": "http://127.0.0.1:4487/weather",
+          "concurrency": 2,
+          "xc_expected_recorded_only": "first-accepted",
+          "quote_control_configured": false,
+          "boundra": {
+            "adapter_url": "http://127.0.0.1:4617",
+            "purpose": "weather API call (boundra-a10 battery)",
+            "owners": [
+              "owner-slot-a",
+              "owner-slot-b"
+            ],
+            "purchase_ids": [
+              "purchase-1",
+              "purchase-1"
+            ]
+          },
+          "note": "rejection logic is the candidate's own (pinned Gateway+SpendLedger); this harness adds observation only (signer counts, presign decisions, verbatim errors, slot timing)"
+        },
+        {
+          "at": "2026-11-10T17:56:12.331Z",
+          "type": "slot_start",
+          "slot": 1,
+          "url": "http://127.0.0.1:4487/weather",
+          "owner": "owner-slot-a",
+          "purchase_id": "purchase-1"
+        },
+        {
+          "at": "2026-11-10T17:56:12.352Z",
+          "type": "slot_start",
+          "slot": 2,
+          "url": "http://127.0.0.1:4487/weather",
+          "owner": "owner-slot-b",
+          "purchase_id": "purchase-1"
+        },
+        {
+          "at": "2026-11-10T17:56:12.373Z",
+          "type": "quote_offered",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4487/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "10000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0x9999999999999999999999999999999999999999",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-11-10T17:56:12.377Z",
+          "type": "quote_offered",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4487/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "10000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0x9999999999999999999999999999999999999999",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-11-10T17:56:12.388Z",
+          "type": "presign_decide",
+          "slot": 1,
+          "owner": "owner-slot-a",
+          "purchase_id": "purchase-1",
+          "decision": "allow",
+          "reason": null
+        },
+        {
+          "at": "2026-11-10T17:56:12.390Z",
+          "type": "signer_call",
+          "call_index": 1,
+          "signer_entry": "signTypedData",
+          "primary_type": "TransferWithAuthorization",
+          "domain": {
+            "name": "USDC",
+            "version": "2",
+            "chainId": 84532,
+            "verifyingContract": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+          },
+          "to": "0x9999999999999999999999999999999999999999",
+          "value": "10000",
+          "from": "0x6e0A044F8C38EBfD592DF8AD1159E2a08806B390",
+          "valid_after": "0",
+          "valid_before": "1794333432",
+          "nonce": "0xd6aa024d\u2026b186(len66)"
+        },
+        {
+          "at": "2026-11-10T17:56:12.399Z",
+          "type": "presign_decide",
+          "slot": 2,
+          "owner": "owner-slot-b",
+          "purchase_id": "purchase-1",
+          "decision": "allow",
+          "reason": null
+        },
+        {
+          "at": "2026-11-10T17:56:12.400Z",
+          "type": "signer_call",
+          "call_index": 2,
+          "signer_entry": "signTypedData",
+          "primary_type": "TransferWithAuthorization",
+          "domain": {
+            "name": "USDC",
+            "version": "2",
+            "chainId": 84532,
+            "verifyingContract": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+          },
+          "to": "0x9999999999999999999999999999999999999999",
+          "value": "10000",
+          "from": "0x6e0A044F8C38EBfD592DF8AD1159E2a08806B390",
+          "valid_after": "0",
+          "valid_before": "1794333432",
+          "nonce": "0x09315f34\u20266106(len66)"
+        },
+        {
+          "at": "2026-11-10T17:56:12.403Z",
+          "type": "slot_result",
+          "slot": 1,
+          "http": 200,
+          "receipt_served": {
+            "success": true,
+            "transaction": "0xabababababababababababababababababababababababababababababababab",
+            "network": "eip155:84532"
+          }
+        },
+        {
+          "at": "2026-11-10T17:56:12.404Z",
+          "type": "slot_result",
+          "slot": 2,
+          "http": 200,
+          "receipt_served": {
+            "success": true,
+            "transaction": "0xabababababababababababababababababababababababababababababababab",
+            "network": "eip155:84532"
+          }
+        }
+      ]
+    },
+    {
+      "session": "b_a10b_case3_distinct_purchases",
+      "preflight": false,
+      "matrix": "case3/A10b",
+      "expectation_mode_label": "first-accepted",
+      "requirement_amounts_served": [
+        "10000",
+        "10000"
+      ],
+      "owners_config": [
+        "owner-slot-a",
+        "owner-slot-a"
+      ],
+      "purchase_ids_config": [
+        "purchase-1",
+        "purchase-2"
+      ],
+      "matrix_row": "same as case3/A10b in first-accepted labeling",
+      "adapter_state_dir_policy": "fresh per session (R2)",
+      "adapter_health": {
+        "policy_summary": {
+          "per_tx_max": 1,
+          "daily_budget": 50,
+          "allowed_recipients": [
+            "0x9999999999999999999999999999999999999999"
+          ],
+          "require_approval_above": 5
+        },
+        "state_dir_basis": "fresh mkdtemp per session"
+      },
+      "observed": {
+        "signer_values": [
+          "10000",
+          "10000"
+        ],
+        "signer_call_count": 2,
+        "presign_decisions": [
+          {
+            "slot": 2,
+            "owner": "owner-slot-a",
+            "purchase_id": "purchase-2",
+            "decision": "allow",
+            "reason": null,
+            "at": "2026-11-10T17:56:18.777Z"
+          },
+          {
+            "slot": 1,
+            "owner": "owner-slot-a",
+            "purchase_id": "purchase-1",
+            "decision": "allow",
+            "reason": null,
+            "at": "2026-11-10T17:56:18.787Z"
+          }
+        ],
+        "presign_rejections": [],
+        "slots_committed": [
+          {
+            "slot": 2,
+            "http": 200,
+            "receipt_served": {
+              "success": true,
+              "transaction": "0xabababababababababababababababababababababababababababababababab",
+              "network": "eip155:84532"
+            },
+            "at": "2026-11-10T17:56:18.786Z"
+          },
+          {
+            "slot": 1,
+            "http": 200,
+            "receipt_served": {
+              "success": true,
+              "transaction": "0xabababababababababababababababababababababababababababababababab",
+              "network": "eip155:84532"
+            },
+            "at": "2026-11-10T17:56:18.790Z"
+          }
+        ],
+        "slots_errored": [],
+        "attribution": {
+          "consistent": true,
+          "note": "rejected slots carry presign_decide=rejected + slot_error and by construction have zero signer calls; signer_call_count must equal the number of committed slots"
+        },
+        "metrics": {
+          "signer_call_deltas_ms": [
+            8
+          ],
+          "both_calls_before_first_slot_completion": false
+        },
+        "adapter_owners_ok": true,
+        "adapter_verdicts": [
+          {
+            "purchase_id": "purchase-2",
+            "duplicate": false,
+            "purchase_id_conflict": false,
+            "layer": "pass",
+            "decision": "ALLOW"
+          },
+          {
+            "purchase_id": "purchase-1",
+            "duplicate": false,
+            "purchase_id_conflict": false,
+            "layer": "pass",
+            "decision": "ALLOW"
+          }
+        ],
+        "adapter_audit": [
+          {
+            "id": "bb8485b807f2",
+            "ts": "2026-11-10T17:56:18",
+            "intent": {
+              "amount": 0.01,
+              "recipient": "0x9999999999999999999999999999999999999999",
+              "purpose": "weather API call (boundra-a10 battery)",
+              "resource": "http://127.0.0.1:4488/weather",
+              "network": "eip155:84532",
+              "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+            },
+            "agent_id": null,
+            "owner": "owner-slot-a",
+            "layer": "pass",
+            "raw_decision": "ALLOW",
+            "human": null,
+            "final": "ALLOW",
+            "reasons": [
+              "within policy \u2014 auto-approved"
+            ],
+            "policy_refs": [
+              {
+                "scope": "legacy",
+                "version": null,
+                "hash": null
+              }
+            ],
+            "mandate_id": null,
+            "purchase_id": "purchase-2",
+            "evaluation_id": "3c9314047a02426d963b3b815ae12c10",
+            "reservation_status": "reserved",
+            "duplicate": false,
+            "spent_today_after": 0.01
+          },
+          {
+            "id": "03b63e8c6970",
+            "ts": "2026-11-10T17:56:18",
+            "intent": {
+              "amount": 0.01,
+              "recipient": "0x9999999999999999999999999999999999999999",
+              "purpose": "weather API call (boundra-a10 battery)",
+              "resource": "http://127.0.0.1:4488/weather",
+              "network": "eip155:84532",
+              "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+            },
+            "agent_id": null,
+            "owner": "owner-slot-a",
+            "layer": "pass",
+            "raw_decision": "ALLOW",
+            "human": null,
+            "final": "ALLOW",
+            "reasons": [
+              "within policy \u2014 auto-approved"
+            ],
+            "policy_refs": [
+              {
+                "scope": "legacy",
+                "version": null,
+                "hash": null
+              }
+            ],
+            "mandate_id": null,
+            "purchase_id": "purchase-1",
+            "evaluation_id": "f089b0fe932846688b228854b2411b71",
+            "reservation_status": "reserved",
+            "duplicate": false,
+            "spent_today_after": 0.02
+          }
+        ],
+        "client_rc": 0
+      },
+      "verdict": "PASS",
+      "timeline": [
+        {
+          "at": "2026-11-10T17:56:18.714Z",
+          "type": "probe_start",
+          "control_under_test": "Boundra pre-sign reservation boundary (gobeyondfj-cmd/boundra @ fb09284434b85f824b099ade4430e1b77b4c4086, TS SDK createX402Hook, transport-only local adapter)",
+          "url": "http://127.0.0.1:4488/weather",
+          "concurrency": 2,
+          "xc_expected_recorded_only": "first-accepted",
+          "quote_control_configured": false,
+          "boundra": {
+            "adapter_url": "http://127.0.0.1:4618",
+            "purpose": "weather API call (boundra-a10 battery)",
+            "owners": [
+              "owner-slot-a",
+              "owner-slot-a"
+            ],
+            "purchase_ids": [
+              "purchase-1",
+              "purchase-2"
+            ]
+          },
+          "note": "rejection logic is the candidate's own (pinned Gateway+SpendLedger); this harness adds observation only (signer counts, presign decisions, verbatim errors, slot timing)"
+        },
+        {
+          "at": "2026-11-10T17:56:18.715Z",
+          "type": "slot_start",
+          "slot": 1,
+          "url": "http://127.0.0.1:4488/weather",
+          "owner": "owner-slot-a",
+          "purchase_id": "purchase-1"
+        },
+        {
+          "at": "2026-11-10T17:56:18.740Z",
+          "type": "slot_start",
+          "slot": 2,
+          "url": "http://127.0.0.1:4488/weather",
+          "owner": "owner-slot-a",
+          "purchase_id": "purchase-2"
+        },
+        {
+          "at": "2026-11-10T17:56:18.762Z",
+          "type": "quote_offered",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4488/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "10000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0x9999999999999999999999999999999999999999",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-11-10T17:56:18.768Z",
+          "type": "quote_offered",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4488/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "10000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0x9999999999999999999999999999999999999999",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-11-10T17:56:18.777Z",
+          "type": "presign_decide",
+          "slot": 2,
+          "owner": "owner-slot-a",
+          "purchase_id": "purchase-2",
+          "decision": "allow",
+          "reason": null
+        },
+        {
+          "at": "2026-11-10T17:56:18.779Z",
+          "type": "signer_call",
+          "call_index": 1,
+          "signer_entry": "signTypedData",
+          "primary_type": "TransferWithAuthorization",
+          "domain": {
+            "name": "USDC",
+            "version": "2",
+            "chainId": 84532,
+            "verifyingContract": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+          },
+          "to": "0x9999999999999999999999999999999999999999",
+          "value": "10000",
+          "from": "0x2B46E799400A3095F51331992543e6AbF00AEa90",
+          "valid_after": "0",
+          "valid_before": "1794333438",
+          "nonce": "0x0063b42a\u2026b81a(len66)"
+        },
+        {
+          "at": "2026-11-10T17:56:18.786Z",
+          "type": "slot_result",
+          "slot": 2,
+          "http": 200,
+          "receipt_served": {
+            "success": true,
+            "transaction": "0xabababababababababababababababababababababababababababababababab",
+            "network": "eip155:84532"
+          }
+        },
+        {
+          "at": "2026-11-10T17:56:18.787Z",
+          "type": "presign_decide",
+          "slot": 1,
+          "owner": "owner-slot-a",
+          "purchase_id": "purchase-1",
+          "decision": "allow",
+          "reason": null
+        },
+        {
+          "at": "2026-11-10T17:56:18.787Z",
+          "type": "signer_call",
+          "call_index": 2,
+          "signer_entry": "signTypedData",
+          "primary_type": "TransferWithAuthorization",
+          "domain": {
+            "name": "USDC",
+            "version": "2",
+            "chainId": 84532,
+            "verifyingContract": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+          },
+          "to": "0x9999999999999999999999999999999999999999",
+          "value": "10000",
+          "from": "0x2B46E799400A3095F51331992543e6AbF00AEa90",
+          "valid_after": "0",
+          "valid_before": "1794333438",
+          "nonce": "0x6fa681b3\u2026c8b7(len66)"
+        },
+        {
+          "at": "2026-11-10T17:56:18.790Z",
+          "type": "slot_result",
+          "slot": 1,
+          "http": 200,
+          "receipt_served": {
+            "success": true,
+            "transaction": "0xabababababababababababababababababababababababababababababababab",
+            "network": "eip155:84532"
+          }
+        }
+      ]
+    },
+    {
+      "session": "b_a10b_case4_changed_intent",
+      "preflight": false,
+      "matrix": "case4/A10b (= A10d equivalent)",
+      "expectation_mode_label": "first-accepted",
+      "requirement_amounts_served": [
+        "10000",
+        "100000"
+      ],
+      "owners_config": [
+        "owner-slot-a",
+        "owner-slot-a"
+      ],
+      "purchase_ids_config": [
+        "purchase-1",
+        "purchase-1"
+      ],
+      "matrix_row": "same as case4/A10a in first-accepted labeling (= A10d equivalent): exactly 1 commitment + exactly 1 pre-signer rejection, winner-agnostic",
+      "adapter_state_dir_policy": "fresh per session (R2)",
+      "adapter_health": {
+        "policy_summary": {
+          "per_tx_max": 1,
+          "daily_budget": 50,
+          "allowed_recipients": [
+            "0x9999999999999999999999999999999999999999"
+          ],
+          "require_approval_above": 5
+        },
+        "state_dir_basis": "fresh mkdtemp per session"
+      },
+      "observed": {
+        "signer_values": [
+          "100000"
+        ],
+        "signer_call_count": 1,
+        "presign_decisions": [
+          {
+            "slot": 2,
+            "owner": "owner-slot-a",
+            "purchase_id": "purchase-1",
+            "decision": "allow",
+            "reason": null,
+            "at": "2026-11-10T17:56:25.028Z"
+          },
+          {
+            "slot": 1,
+            "owner": "owner-slot-a",
+            "purchase_id": "purchase-1",
+            "decision": "rejected",
+            "reason": "Boundra DENY: within policy \u2014 auto-approved; purchase_id conflict: the ID is already bound to a different intent",
+            "at": "2026-11-10T17:56:25.037Z"
+          }
+        ],
+        "presign_rejections": [
+          {
+            "slot": 1,
+            "owner": "owner-slot-a",
+            "purchase_id": "purchase-1",
+            "decision": "rejected",
+            "reason": "Boundra DENY: within policy \u2014 auto-approved; purchase_id conflict: the ID is already bound to a different intent",
+            "at": "2026-11-10T17:56:25.037Z"
+          }
+        ],
+        "slots_committed": [
+          {
+            "slot": 2,
+            "http": 200,
+            "receipt_served": {
+              "success": true,
+              "transaction": "0xabababababababababababababababababababababababababababababababab",
+              "network": "eip155:84532"
+            },
+            "at": "2026-11-10T17:56:25.040Z"
+          }
+        ],
+        "slots_errored": [
+          {
+            "slot": 1,
+            "error": "Failed to create payment payload: Payment creation aborted: Boundra DENY: within policy \u2014 auto-approved; purchase_id conflict: the ID is already bound to a different intent",
+            "error_name": "Error",
+            "at": "2026-11-10T17:56:25.037Z"
+          }
+        ],
+        "attribution": {
+          "consistent": true,
+          "note": "rejected slots carry presign_decide=rejected + slot_error and by construction have zero signer calls; signer_call_count must equal the number of committed slots"
+        },
+        "metrics": {
+          "signer_call_deltas_ms": null,
+          "both_calls_before_first_slot_completion": null
+        },
+        "adapter_owners_ok": true,
+        "adapter_verdicts": [
+          {
+            "purchase_id": "purchase-1",
+            "duplicate": false,
+            "purchase_id_conflict": false,
+            "layer": "pass",
+            "decision": "ALLOW"
+          },
+          {
+            "purchase_id": "purchase-1",
+            "duplicate": true,
+            "purchase_id_conflict": true,
+            "layer": "idempotency",
+            "decision": "DENY"
+          }
+        ],
+        "adapter_audit": [
+          {
+            "id": "1d9b7de9acf8",
+            "ts": "2026-11-10T17:56:25",
+            "intent": {
+              "amount": 0.1,
+              "recipient": "0x9999999999999999999999999999999999999999",
+              "purpose": "weather API call (boundra-a10 battery)",
+              "resource": "http://127.0.0.1:4489/weather",
+              "network": "eip155:84532",
+              "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+            },
+            "agent_id": null,
+            "owner": "owner-slot-a",
+            "layer": "pass",
+            "raw_decision": "ALLOW",
+            "human": null,
+            "final": "ALLOW",
+            "reasons": [
+              "within policy \u2014 auto-approved"
+            ],
+            "policy_refs": [
+              {
+                "scope": "legacy",
+                "version": null,
+                "hash": null
+              }
+            ],
+            "mandate_id": null,
+            "purchase_id": "purchase-1",
+            "evaluation_id": "fca54002a6374c5c9b2972b4bf1fd81d",
+            "reservation_status": "reserved",
+            "duplicate": false,
+            "spent_today_after": 0.1
+          },
+          {
+            "id": "50c7b1153f75",
+            "ts": "2026-11-10T17:56:25",
+            "intent": {
+              "amount": 0.01,
+              "recipient": "0x9999999999999999999999999999999999999999",
+              "purpose": "weather API call (boundra-a10 battery)",
+              "resource": "http://127.0.0.1:4489/weather",
+              "network": "eip155:84532",
+              "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+            },
+            "agent_id": null,
+            "owner": "owner-slot-a",
+            "layer": "idempotency",
+            "raw_decision": "ALLOW",
+            "human": null,
+            "final": "DENY",
+            "reasons": [
+              "within policy \u2014 auto-approved",
+              "purchase_id conflict: the ID is already bound to a different intent"
+            ],
+            "policy_refs": [
+              {
+                "scope": "legacy",
+                "version": null,
+                "hash": null
+              }
+            ],
+            "mandate_id": null,
+            "purchase_id": "purchase-1",
+            "evaluation_id": "fca54002a6374c5c9b2972b4bf1fd81d",
+            "reservation_status": "reserved",
+            "duplicate": true,
+            "spent_today_after": 0.1
+          }
+        ],
+        "client_rc": 0
+      },
+      "verdict": "PASS",
+      "timeline": [
+        {
+          "at": "2026-11-10T17:56:24.974Z",
+          "type": "probe_start",
+          "control_under_test": "Boundra pre-sign reservation boundary (gobeyondfj-cmd/boundra @ fb09284434b85f824b099ade4430e1b77b4c4086, TS SDK createX402Hook, transport-only local adapter)",
+          "url": "http://127.0.0.1:4489/weather",
+          "concurrency": 2,
+          "xc_expected_recorded_only": "first-accepted",
+          "quote_control_configured": false,
+          "boundra": {
+            "adapter_url": "http://127.0.0.1:4619",
+            "purpose": "weather API call (boundra-a10 battery)",
+            "owners": [
+              "owner-slot-a",
+              "owner-slot-a"
+            ],
+            "purchase_ids": [
+              "purchase-1",
+              "purchase-1"
+            ]
+          },
+          "note": "rejection logic is the candidate's own (pinned Gateway+SpendLedger); this harness adds observation only (signer counts, presign decisions, verbatim errors, slot timing)"
+        },
+        {
+          "at": "2026-11-10T17:56:24.975Z",
+          "type": "slot_start",
+          "slot": 1,
+          "url": "http://127.0.0.1:4489/weather",
+          "owner": "owner-slot-a",
+          "purchase_id": "purchase-1"
+        },
+        {
+          "at": "2026-11-10T17:56:24.995Z",
+          "type": "slot_start",
+          "slot": 2,
+          "url": "http://127.0.0.1:4489/weather",
+          "owner": "owner-slot-a",
+          "purchase_id": "purchase-1"
+        },
+        {
+          "at": "2026-11-10T17:56:25.014Z",
+          "type": "quote_offered",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4489/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "10000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0x9999999999999999999999999999999999999999",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-11-10T17:56:25.018Z",
+          "type": "quote_offered",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4489/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "100000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0x9999999999999999999999999999999999999999",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-11-10T17:56:25.028Z",
+          "type": "presign_decide",
+          "slot": 2,
+          "owner": "owner-slot-a",
+          "purchase_id": "purchase-1",
+          "decision": "allow",
+          "reason": null
+        },
+        {
+          "at": "2026-11-10T17:56:25.030Z",
+          "type": "signer_call",
+          "call_index": 1,
+          "signer_entry": "signTypedData",
+          "primary_type": "TransferWithAuthorization",
+          "domain": {
+            "name": "USDC",
+            "version": "2",
+            "chainId": 84532,
+            "verifyingContract": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+          },
+          "to": "0x9999999999999999999999999999999999999999",
+          "value": "100000",
+          "from": "0x6355beCF28a9c658e3E99FBd4912BE5f7454d4a8",
+          "valid_after": "0",
+          "valid_before": "1794333445",
+          "nonce": "0x1d85412e\u202661a1(len66)"
+        },
+        {
+          "at": "2026-11-10T17:56:25.037Z",
+          "type": "presign_decide",
+          "slot": 1,
+          "owner": "owner-slot-a",
+          "purchase_id": "purchase-1",
+          "decision": "rejected",
+          "reason": "Boundra DENY: within policy \u2014 auto-approved; purchase_id conflict: the ID is already bound to a different intent"
+        },
+        {
+          "at": "2026-11-10T17:56:25.037Z",
+          "type": "slot_error",
+          "slot": 1,
+          "error": "Failed to create payment payload: Payment creation aborted: Boundra DENY: within policy \u2014 auto-approved; purchase_id conflict: the ID is already bound to a different intent",
+          "error_name": "Error"
+        },
+        {
+          "at": "2026-11-10T17:56:25.040Z",
+          "type": "slot_result",
+          "slot": 2,
+          "http": 200,
+          "receipt_served": {
+            "success": true,
+            "transaction": "0xabababababababababababababababababababababababababababababababab",
+            "network": "eip155:84532"
+          }
+        }
+      ]
+    },
+    {
+      "session": "b_a10b_case3c_conflicting_distinct_purchases",
+      "preflight": false,
+      "matrix": "case3c/A10b (supplementary)",
+      "expectation_mode_label": "first-accepted",
+      "requirement_amounts_served": [
+        "10000",
+        "100000"
+      ],
+      "owners_config": [
+        "owner-slot-a",
+        "owner-slot-a"
+      ],
+      "purchase_ids_config": [
+        "purchase-1",
+        "purchase-2"
+      ],
+      "matrix_row": "same as case3c/A10a in first-accepted labeling (supplementary, config-dependent expectation)",
+      "adapter_state_dir_policy": "fresh per session (R2)",
+      "adapter_health": {
+        "policy_summary": {
+          "per_tx_max": 1,
+          "daily_budget": 50,
+          "allowed_recipients": [
+            "0x9999999999999999999999999999999999999999"
+          ],
+          "require_approval_above": 5
+        },
+        "state_dir_basis": "fresh mkdtemp per session"
+      },
+      "observed": {
+        "signer_values": [
+          "100000",
+          "10000"
+        ],
+        "signer_call_count": 2,
+        "presign_decisions": [
+          {
+            "slot": 2,
+            "owner": "owner-slot-a",
+            "purchase_id": "purchase-2",
+            "decision": "allow",
+            "reason": null,
+            "at": "2026-11-10T17:56:31.278Z"
+          },
+          {
+            "slot": 1,
+            "owner": "owner-slot-a",
+            "purchase_id": "purchase-1",
+            "decision": "allow",
+            "reason": null,
+            "at": "2026-11-10T17:56:31.290Z"
+          }
+        ],
+        "presign_rejections": [],
+        "slots_committed": [
+          {
+            "slot": 2,
+            "http": 200,
+            "receipt_served": {
+              "success": true,
+              "transaction": "0xabababababababababababababababababababababababababababababababab",
+              "network": "eip155:84532"
+            },
+            "at": "2026-11-10T17:56:31.296Z"
+          },
+          {
+            "slot": 1,
+            "http": 200,
+            "receipt_served": {
+              "success": true,
+              "transaction": "0xabababababababababababababababababababababababababababababababab",
+              "network": "eip155:84532"
+            },
+            "at": "2026-11-10T17:56:31.297Z"
+          }
+        ],
+        "slots_errored": [],
+        "attribution": {
+          "consistent": true,
+          "note": "rejected slots carry presign_decide=rejected + slot_error and by construction have zero signer calls; signer_call_count must equal the number of committed slots"
+        },
+        "metrics": {
+          "signer_call_deltas_ms": [
+            11
+          ],
+          "both_calls_before_first_slot_completion": true
+        },
+        "adapter_owners_ok": true,
+        "adapter_verdicts": [
+          {
+            "purchase_id": "purchase-2",
+            "duplicate": false,
+            "purchase_id_conflict": false,
+            "layer": "pass",
+            "decision": "ALLOW"
+          },
+          {
+            "purchase_id": "purchase-1",
+            "duplicate": false,
+            "purchase_id_conflict": false,
+            "layer": "pass",
+            "decision": "ALLOW"
+          }
+        ],
+        "adapter_audit": [
+          {
+            "id": "58cc2d106404",
+            "ts": "2026-11-10T17:56:31",
+            "intent": {
+              "amount": 0.1,
+              "recipient": "0x9999999999999999999999999999999999999999",
+              "purpose": "weather API call (boundra-a10 battery)",
+              "resource": "http://127.0.0.1:4490/weather",
+              "network": "eip155:84532",
+              "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+            },
+            "agent_id": null,
+            "owner": "owner-slot-a",
+            "layer": "pass",
+            "raw_decision": "ALLOW",
+            "human": null,
+            "final": "ALLOW",
+            "reasons": [
+              "within policy \u2014 auto-approved"
+            ],
+            "policy_refs": [
+              {
+                "scope": "legacy",
+                "version": null,
+                "hash": null
+              }
+            ],
+            "mandate_id": null,
+            "purchase_id": "purchase-2",
+            "evaluation_id": "2185ca4ec69f4c2a868fc8295d810d5f",
+            "reservation_status": "reserved",
+            "duplicate": false,
+            "spent_today_after": 0.1
+          },
+          {
+            "id": "a18fd6b4e4ba",
+            "ts": "2026-11-10T17:56:31",
+            "intent": {
+              "amount": 0.01,
+              "recipient": "0x9999999999999999999999999999999999999999",
+              "purpose": "weather API call (boundra-a10 battery)",
+              "resource": "http://127.0.0.1:4490/weather",
+              "network": "eip155:84532",
+              "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+            },
+            "agent_id": null,
+            "owner": "owner-slot-a",
+            "layer": "pass",
+            "raw_decision": "ALLOW",
+            "human": null,
+            "final": "ALLOW",
+            "reasons": [
+              "within policy \u2014 auto-approved"
+            ],
+            "policy_refs": [
+              {
+                "scope": "legacy",
+                "version": null,
+                "hash": null
+              }
+            ],
+            "mandate_id": null,
+            "purchase_id": "purchase-1",
+            "evaluation_id": "58c693fec4094af893426569278d102a",
+            "reservation_status": "reserved",
+            "duplicate": false,
+            "spent_today_after": 0.11
+          }
+        ],
+        "client_rc": 0
+      },
+      "verdict": "PASS",
+      "timeline": [
+        {
+          "at": "2026-11-10T17:56:31.222Z",
+          "type": "probe_start",
+          "control_under_test": "Boundra pre-sign reservation boundary (gobeyondfj-cmd/boundra @ fb09284434b85f824b099ade4430e1b77b4c4086, TS SDK createX402Hook, transport-only local adapter)",
+          "url": "http://127.0.0.1:4490/weather",
+          "concurrency": 2,
+          "xc_expected_recorded_only": "first-accepted",
+          "quote_control_configured": false,
+          "boundra": {
+            "adapter_url": "http://127.0.0.1:4620",
+            "purpose": "weather API call (boundra-a10 battery)",
+            "owners": [
+              "owner-slot-a",
+              "owner-slot-a"
+            ],
+            "purchase_ids": [
+              "purchase-1",
+              "purchase-2"
+            ]
+          },
+          "note": "rejection logic is the candidate's own (pinned Gateway+SpendLedger); this harness adds observation only (signer counts, presign decisions, verbatim errors, slot timing)"
+        },
+        {
+          "at": "2026-11-10T17:56:31.223Z",
+          "type": "slot_start",
+          "slot": 1,
+          "url": "http://127.0.0.1:4490/weather",
+          "owner": "owner-slot-a",
+          "purchase_id": "purchase-1"
+        },
+        {
+          "at": "2026-11-10T17:56:31.244Z",
+          "type": "slot_start",
+          "slot": 2,
+          "url": "http://127.0.0.1:4490/weather",
+          "owner": "owner-slot-a",
+          "purchase_id": "purchase-2"
+        },
+        {
+          "at": "2026-11-10T17:56:31.262Z",
+          "type": "quote_offered",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4490/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "10000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0x9999999999999999999999999999999999999999",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-11-10T17:56:31.267Z",
+          "type": "quote_offered",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4490/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "100000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0x9999999999999999999999999999999999999999",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-11-10T17:56:31.278Z",
+          "type": "presign_decide",
+          "slot": 2,
+          "owner": "owner-slot-a",
+          "purchase_id": "purchase-2",
+          "decision": "allow",
+          "reason": null
+        },
+        {
+          "at": "2026-11-10T17:56:31.280Z",
+          "type": "signer_call",
+          "call_index": 1,
+          "signer_entry": "signTypedData",
+          "primary_type": "TransferWithAuthorization",
+          "domain": {
+            "name": "USDC",
+            "version": "2",
+            "chainId": 84532,
+            "verifyingContract": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+          },
+          "to": "0x9999999999999999999999999999999999999999",
+          "value": "100000",
+          "from": "0x09828AD3Df69DB536A630C34E0723E19b014CEdA",
+          "valid_after": "0",
+          "valid_before": "1794333451",
+          "nonce": "0xea7fffb3\u20263bc6(len66)"
+        },
+        {
+          "at": "2026-11-10T17:56:31.290Z",
+          "type": "presign_decide",
+          "slot": 1,
+          "owner": "owner-slot-a",
+          "purchase_id": "purchase-1",
+          "decision": "allow",
+          "reason": null
+        },
+        {
+          "at": "2026-11-10T17:56:31.291Z",
+          "type": "signer_call",
+          "call_index": 2,
+          "signer_entry": "signTypedData",
+          "primary_type": "TransferWithAuthorization",
+          "domain": {
+            "name": "USDC",
+            "version": "2",
+            "chainId": 84532,
+            "verifyingContract": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+          },
+          "to": "0x9999999999999999999999999999999999999999",
+          "value": "10000",
+          "from": "0x09828AD3Df69DB536A630C34E0723E19b014CEdA",
+          "valid_after": "0",
+          "valid_before": "1794333451",
+          "nonce": "0x56067558\u2026bd3f(len66)"
+        },
+        {
+          "at": "2026-11-10T17:56:31.296Z",
+          "type": "slot_result",
+          "slot": 2,
+          "http": 200,
+          "receipt_served": {
+            "success": true,
+            "transaction": "0xabababababababababababababababababababababababababababababababab",
+            "network": "eip155:84532"
+          }
+        },
+        {
+          "at": "2026-11-10T17:56:31.297Z",
+          "type": "slot_result",
+          "slot": 1,
+          "http": 200,
+          "receipt_served": {
+            "success": true,
+            "transaction": "0xabababababababababababababababababababababababababababababababab",
+            "network": "eip155:84532"
+          }
+        }
+      ]
+    }
+  ],
+  "green_zone_definition": "exactly one signed payment per purchase across the three matrix cases (case1, case2-control unchanged, case3), with conflict controls green (case4: 1 commitment + 1 pre-signer rejection in both modes)",
+  "evidence_discipline": {
+    "established": "pre-signer rejection (presign_decide=rejected + slot_error, signer untouched) or signing (signer_call) at the signer boundary",
+    "not_established": "an on-chain transfer: settlement is mocked; per-session throwaway unfunded wallets",
+    "redaction": "no private keys, no signatures, no usable authorizations; nonces truncated"
+  }
+}

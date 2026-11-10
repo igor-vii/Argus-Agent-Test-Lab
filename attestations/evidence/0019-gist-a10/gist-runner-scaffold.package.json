@@ -1,0 +1,7 @@
+{
+  "name": "gist-run-x402-presign-replay",
+  "private": true,
+  "version": "1.0.0",
+  "description": "VERBATIM runner scaffold for pinned gist e319a833 (pre-sign-owner-replay.mjs @ df69c25) — the gist file itself is NOT modified",
+  "type": "module"
+}

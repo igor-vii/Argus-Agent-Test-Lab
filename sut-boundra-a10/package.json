@@ -1,0 +1,22 @@
+{
+  "name": "sut-boundra-a10",
+  "private": true,
+  "version": "1.0.0",
+  "description": "SUT battery: Boundra @ fb09284 pre-sign reservation boundary vs pre-registered A10a/A10b identical-offer race matrix (x402 #4198)",
+  "type": "module",
+  "scripts": {
+    "battery": "node battery-boundra-a10.mjs"
+  },
+  "dependencies": {
+    "@x402/core": "2.30.0",
+    "@x402/evm": "2.30.0",
+    "@x402/fetch": "2.30.0",
+    "dotenv": "^16.4.7",
+    "tsx": "^4.21.0",
+    "viem": "^2.48.11",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.4"
+  }
+}

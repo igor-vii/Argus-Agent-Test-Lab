@@ -1,0 +1,25 @@
+{
+  "name": "sut-gist-a10",
+  "private": true,
+  "version": "1.0.0",
+  "description": "SUT battery: pinned gist e319a833@df69c25 pre-sign owner fence vs pre-registered A10a/A10b identical-offer race matrix (x402 #4198, run #2)",
+  "type": "module",
+  "scripts": {
+    "battery": "node battery-gist-a10.mjs"
+  },
+  "dependencies": {
+    "@x402/core": "2.30.0",
+    "@x402/evm": "2.30.0",
+    "@x402/fetch": "2.30.0",
+    "dotenv": "^16.4.7",
+    "tsx": "^4.21.0",
+    "viem": "^2.48.11",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.4"
+  },
+  "allowScripts": {
+    "esbuild@0.28.2": true
+  }
+}

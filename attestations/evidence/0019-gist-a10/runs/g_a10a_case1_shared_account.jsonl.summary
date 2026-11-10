@@ -1,0 +1,62 @@
+{
+  "probe": "S-BS-06 x gist df69c25 pre-sign owner fence battery (A10a/A10b matrix, x402 #4198)",
+  "control_under_test": "gist pre-sign owner fence (pinned df69c25, verbatim fragment)",
+  "url": "http://127.0.0.1:4581/weather",
+  "concurrency": 2,
+  "signer_call_count": 1,
+  "per_cycle": [
+    {
+      "cycle": 2,
+      "error": "Failed to create payment payload: Payment creation aborted: held",
+      "error_name": "Error"
+    },
+    {
+      "cycle": 1,
+      "http": 200,
+      "receipt": {
+        "success": true,
+        "transaction": "0xabababababababababababababababababababababababababababababababab",
+        "network": "eip155:84532"
+      }
+    }
+  ],
+  "per_slot": [
+    {
+      "slot": 2,
+      "account": "account-slot-a",
+      "purchase_id": "purchase-1",
+      "started_at": "2026-11-10T18:10:14.823Z",
+      "finished_at": "2026-11-10T18:10:14.863Z",
+      "error": "Failed to create payment payload: Payment creation aborted: held",
+      "error_name": "Error"
+    },
+    {
+      "slot": 1,
+      "account": "account-slot-a",
+      "purchase_id": "purchase-1",
+      "started_at": "2026-11-10T18:10:14.800Z",
+      "finished_at": "2026-11-10T18:10:14.865Z",
+      "http": 200,
+      "receipt": {
+        "success": true,
+        "transaction": "0xabababababababababababababababababababababababababababababababab",
+        "network": "eip155:84532"
+      }
+    }
+  ],
+  "presign_decisions": [
+    {
+      "slot": 2,
+      "account": "account-slot-a",
+      "purchase_id": "purchase-1"
+    },
+    {
+      "slot": 1,
+      "account": "account-slot-a",
+      "purchase_id": "purchase-1"
+    }
+  ],
+  "started_at": "2026-11-10T18:10:14.777Z",
+  "finished_at": "2026-11-10T18:10:14.865Z",
+  "distinction": "signed authorization captured; on-chain transfer NOT established (mocked settlement)"
+}

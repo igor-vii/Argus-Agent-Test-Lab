@@ -1,0 +1,3074 @@
+{
+  "rig": "S-BS-06 x gist df69c25 pre-sign owner fence — pre-registered A10a/A10b identical-offer race matrix (x402 #4198), battery-gist-a10.mjs (Layer 2)",
+  "attribution": {
+    "lab": "Argus Agent Test Lab",
+    "operator": "igor-vii (run executed in the lab sandbox on the operator's behalf)",
+    "repo": "github.com/igor-vii/Argus-Agent-Test-Lab",
+    "lab_commit": "b2465e5afd8c258550e79a5d28cb192209171bfd",
+    "stand": {
+      "engine": "S-BS-06 fault-injection stand (src/cli/argus.ts run --block B --family BS --scenario S-BS-06) — UNCHANGED lab harness",
+      "source": "private product repo igor-vii/Argus-Agent-Test-Lab-product (engine moved there by sealed boundary record argus-seal-0013, snapshot efbf51e)",
+      "stand_root_commit": "4ca7c0b6ca7da2e33ddd23af408ec1dcf790bde1",
+      "spawn_flags": "--observe-window-ms 2500 --skip-gate --json --requirement-amounts <session>",
+      "deviation_note": "documented deviation: STAND_ROOT env selects the engine checkout (public repo has no src/ since the boundary split); engine code/scenario/flags identical to the cycle-3 baseline"
+    },
+    "harness": "sut-gist-a10/ (orchestrator battery-gist-a10.mjs; client adapter client_gist.ts, base = sealed client_v5.ts perimeter, same instrumentation structure as run #1 client_boundra.ts)"
+  },
+  "provenance": {
+    "upstream_issue": "https://github.com/x402-foundation/x402/issues/4198",
+    "candidate": {
+      "kind": "public gist (pre-sign-owner-replay.mjs)",
+      "gist_id": "e319a833e1be184a0df16ec69f474b72",
+      "revision": "df69c25fac01f68f6b71981e57b71699c12fd1b2",
+      "file_sha256": "d4395716de9feef0288288ac89b9b326569cf06c97dae50ac148bdb2e40dc6e6",
+      "integration": "Layer 1 = gist's own 12 cases VERBATIM (node pre-sign-owner-replay.mjs, exit 0, results embedded below); Layer 2 (this battery) = pinned sha/canonical/digest/reserve fragment (lines 14-38) byte-verified against the pinned file (fragment_sha256 below) running in a transport-only sidecar (adapters/gist_sidecar_server.mjs, zero decision logic outside the fragment); client glue mirrors the pinned hook shape (lines 64-69) with GET/empty-body adaptation, documented in client_gist.ts",
+      "fragment_lines": "14-38",
+      "fragment_sha256": "c6d61c7b43fe8b9c8ef28d57f234b3a9c4b4956384ab2bc75355e4eb310180b6",
+      "fragment_byte_equal_to_pinned_slice": true,
+      "node_version_note": "gist header says 'Node 22'; sandbox runs node v24.22.2 — Layer 1 verbatim run passed 12/12 on Node 24 (no engine errors), recorded as the appendix deviation",
+      "layer1_run": {
+        "command": "node pre-sign-owner-replay.mjs (run in /home/z/my-project/work/gist-run with the gist's own npm install --no-save --ignore-scripts @x402/fetch@2.30.0 @x402/core@2.30.0 zod@4.6.7)",
+        "exit_code": 0,
+        "cases": [
+          {
+            "name": "same purchase, shared owner",
+            "outcomes": [
+              "delivered",
+              "held"
+            ],
+            "signCalls": 1
+          },
+          {
+            "name": "same purchase, isolated owners (negative control)",
+            "outcomes": [
+              "delivered",
+              "delivered"
+            ],
+            "signCalls": 2
+          },
+          {
+            "name": "different purchase IDs, same quote and input",
+            "outcomes": [
+              "delivered",
+              "delivered"
+            ],
+            "signCalls": 2
+          },
+          {
+            "name": "same ID, different payer accounts",
+            "outcomes": [
+              "delivered",
+              "delivered"
+            ],
+            "signCalls": 2
+          },
+          {
+            "name": "same ID, changed input",
+            "outcomes": [
+              "conflict",
+              "delivered"
+            ],
+            "signCalls": 1
+          },
+          {
+            "name": "same ID, changed terms",
+            "outcomes": [
+              "conflict",
+              "delivered"
+            ],
+            "signCalls": 1
+          },
+          {
+            "name": "lost reply after signed submission",
+            "outcomes": [
+              "unresolved"
+            ],
+            "signCalls": 1,
+            "boundary": "x402 #4094 lost-reply class — boundary observation, not PASS/FAIL"
+          },
+          {
+            "name": "later process still refuses to sign",
+            "outcomes": [
+              "held"
+            ],
+            "signCalls": 0
+          },
+          {
+            "name": "failure before signer starts retains fence",
+            "outcomes": [
+              "fenced"
+            ],
+            "signCalls": 0
+          },
+          {
+            "name": "later process does not guess it is safe",
+            "outcomes": [
+              "held"
+            ],
+            "signCalls": 0
+          },
+          {
+            "name": "native cap refuses before reservation",
+            "outcomes": [
+              "cap-refused"
+            ],
+            "signCalls": 0
+          },
+          {
+            "name": "over-cap offer did not reserve purchase",
+            "outcomes": [
+              "delivered"
+            ],
+            "signCalls": 1
+          }
+        ],
+        "total_sign_calls": 11
+      }
+    },
+    "pre_registration": "fixed in x402 #4198 thread (igor-vii comment 'Order and pins'); addendum items R1-R3 recorded in this fixture metadata; run order: candidate 1 (boundra fb09284, record 0018) then candidate 2 (this gist, record 0019)",
+    "baseline": "cycle-1/2/3 red zone records #4/#8/#12 (argus-seal-0004/0008/0012) @ 2b4cc47 / b1a4d8c / e993bef"
+  },
+  "addendum": {
+    "repetitions": "1 canonical run per session; re-run only as documented deviation",
+    "window": "single battery run session",
+    "node_version": "v24.22.2",
+    "npm_ls": "sut-gist-a10@1.0.0 /home/z/my-project/work/Argus-Agent-Test-Lab/sut-gist-a10\n├── @types/node@22.20.5\n├── @x402/core@2.30.0\n├── @x402/evm@2.30.0\n├── @x402/fetch@2.30.0\n├── dotenv@16.6.1\n├── tsx@4.23.15\n├── viem@2.57.17\n└── zod@4.6.7",
+    "gist_runner_npm_ls": "gist-run-x402-presign-replay@1.0.0 /home/z/my-project/work/gist-run\n├── @x402/core@2.30.0 extraneous\n├── @x402/fetch@2.30.0 extraneous\n└── zod@4.6.7 extraneous",
+    "r1_seq_derivation": "next free seq derived from attestations/INDEX.json + records dir (min 0000, max 0017) -> run #1 = 0018, run #2 (this) = 0019",
+    "r2_fresh_state": "fresh sidecar process + fresh mkdtemp fence root per session; reservation state never crosses sessions",
+    "r3_gist": {
+      "fact": "client_gist.ts does NOT configure an expectedAmount quote-control; native spendControls are ENABLED but NON-TRIGGERING (allowedAssets maxAmountPerPayment '1000000' >= stand amounts 10000/100000) — candidate-shaped (the gist's own client sets cap '2000' at its own fixture scale; scaled here to avoid colliding with the stand's atomic amounts)",
+      "justification": "the cap-refusal class is exercised VERBATIM by Layer 1 (gist cases 11-12: cap-refused + over-cap offer did not reserve); stacking a quote-control into the lab client would change the candidate's client shape",
+      "mapping": "case4@A10a := A10c-equivalent; case4@A10b := A10d-equivalent; control C observable criterion = exactly 1 commitment + exactly 1 pre-signer rejection per mode (winner-agnostic)",
+      "modes_note": "A10a/A10b labels retained for topology comparability; mechanically identical for this candidate (dedup/conflict by canonical intent digest); result divergence between modes is an anomaly"
+    },
+    "attribution_note": "winner-agnostic matchers; winning slot/amount + rejection decision logged verbatim in the event JSONL and sidecar log; rejected slots carry zero signer calls by construction (attribution check in facts)",
+    "case3c_note": "case3c is a SUPPLEMENTARY probe with config-dependent expectation: signer=2 is correct under fence-only configuration; the baseline quote-control would yield 1 — configuration fact, not a regression",
+    "owners_model": "run #2 case2 = distinct account STRINGS (fence key = digest([account, purchaseId])) through ONE fence root — single shared filesystem is the reference owner per the gist's own model; cross-process/independent-roots behavior is the gist's own Layer-1 negative control (its case 2) and is out of scope for the lab matrix",
+    "out_of_scope_boundary": "post-sign ambiguity reconciliation (#4094 lost-reply class — exercised verbatim by Layer 1 cases 7-8, boundary observation), facilitator-side dedup, cross-process without a shared owner, DO-backed door (wave 2, cv-scvd) — recorded as boundary, not PASS/FAIL"
+  },
+  "preflight": {
+    "session": "als_preflight",
+    "preflight": true,
+    "matrix": null,
+    "expectation_mode_label": "explicit",
+    "requirement_amounts_served": [
+      "10000",
+      "10000"
+    ],
+    "accounts_config": [
+      "account-slot-a",
+      "account-slot-a"
+    ],
+    "purchase_ids_config": [
+      "purchase-1",
+      "purchase-2"
+    ],
+    "matrix_row": "UNSEALED dry-run: ALS glue — each race slot must carry its own (account, purchaseId) into reserve() under concurrency; cross-checked against the sidecar log",
+    "sidecar_state_dir_policy": "fresh per session (R2)",
+    "sidecar_health": {
+      "ok": true,
+      "root": "/tmp/gist-a10-state-Tx6SZV"
+    },
+    "observed": {
+      "signer_values": [
+        "10000",
+        "10000"
+      ],
+      "signer_call_count": 2,
+      "presign_decisions": [
+        {
+          "slot": 1,
+          "account": "account-slot-a",
+          "purchase_id": "purchase-1",
+          "decision": "allow",
+          "reason": null,
+          "raw_decision": "reserved",
+          "at": "2026-11-10T18:10:08.605Z"
+        },
+        {
+          "slot": 2,
+          "account": "account-slot-a",
+          "purchase_id": "purchase-2",
+          "decision": "allow",
+          "reason": null,
+          "raw_decision": "reserved",
+          "at": "2026-11-10T18:10:08.618Z"
+        }
+      ],
+      "presign_rejections": [],
+      "slots_committed": [
+        {
+          "slot": 1,
+          "http": 200,
+          "receipt_served": {
+            "success": true,
+            "transaction": "0xabababababababababababababababababababababababababababababababab",
+            "network": "eip155:84532"
+          },
+          "at": "2026-11-10T18:10:08.623Z"
+        },
+        {
+          "slot": 2,
+          "http": 200,
+          "receipt_served": {
+            "success": true,
+            "transaction": "0xabababababababababababababababababababababababababababababababab",
+            "network": "eip155:84532"
+          },
+          "at": "2026-11-10T18:10:08.625Z"
+        }
+      ],
+      "slots_errored": [],
+      "attribution": {
+        "consistent": true,
+        "note": "rejected slots carry presign_decide=rejected + slot_error and by construction have zero signer calls; signer_call_count must equal the number of committed slots"
+      },
+      "metrics": {
+        "signer_call_deltas_ms": [
+          9
+        ],
+        "both_calls_before_first_slot_completion": true
+      },
+      "sidecar_accounts_ok": true,
+      "sidecar_verdicts": [
+        {
+          "purchase_id": "purchase-1",
+          "decision": "reserved",
+          "intent_digest": "3cfbf4c5324b0ae7ebd8ab98a6c7e61bb804554d4e0b3ee6b4b2373ca7d0eb7e",
+          "key_digest": "362543c243b2b63be0ff6f5363e0d33ad62c746e5bbefec9dad6938fc2eea450"
+        },
+        {
+          "purchase_id": "purchase-2",
+          "decision": "reserved",
+          "intent_digest": "3cfbf4c5324b0ae7ebd8ab98a6c7e61bb804554d4e0b3ee6b4b2373ca7d0eb7e",
+          "key_digest": "3eb6289539d3bcfe4686b50d62be766972ca8286fe6d1beeb0eb98d97aa8ccae"
+        }
+      ],
+      "client_rc": 0
+    },
+    "verdict": "PASS",
+    "timeline": [
+      {
+        "at": "2026-11-10T18:10:08.548Z",
+        "type": "probe_start",
+        "control_under_test": "gist pre-sign owner fence (e319a833e1be184a0df16ec69f474b72 @ df69c25fac01f68f6b71981e57b71699c12fd1b2, verbatim reserve/digest via transport-only sidecar)",
+        "url": "http://127.0.0.1:4580/weather",
+        "concurrency": 2,
+        "xc_expected_recorded_only": "$0.01",
+        "quote_control_configured": false,
+        "native_spend_controls": "enabled, non-triggering (maxAmountPerPayment 1000000 >= stand amounts; candidate-shaped)",
+        "gist": {
+          "sidecar_url": "http://127.0.0.1:4710",
+          "accounts": [
+            "account-slot-a",
+            "account-slot-a"
+          ],
+          "purchase_ids": [
+            "purchase-1",
+            "purchase-2"
+          ]
+        },
+        "note": "rejection logic is the candidate's own (pinned verbatim reserve/digest); this harness adds observation only (signer counts, presign decisions, verbatim errors, slot timing)"
+      },
+      {
+        "at": "2026-11-10T18:10:08.549Z",
+        "type": "slot_start",
+        "slot": 1,
+        "url": "http://127.0.0.1:4580/weather",
+        "account": "account-slot-a",
+        "purchase_id": "purchase-1"
+      },
+      {
+        "at": "2026-11-10T18:10:08.573Z",
+        "type": "slot_start",
+        "slot": 2,
+        "url": "http://127.0.0.1:4580/weather",
+        "account": "account-slot-a",
+        "purchase_id": "purchase-2"
+      },
+      {
+        "at": "2026-11-10T18:10:08.592Z",
+        "type": "quote_offered",
+        "requirements": {
+          "x402Version": 2,
+          "resource": {
+            "url": "http://127.0.0.1:4580/weather",
+            "description": "canonical resource, real price 10000 atomic units"
+          },
+          "accepts": [
+            {
+              "scheme": "exact",
+              "network": "eip155:84532",
+              "amount": "10000",
+              "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+              "payTo": "0x9999999999999999999999999999999999999999",
+              "maxTimeoutSeconds": 60,
+              "extra": {
+                "name": "USDC",
+                "version": "2"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "at": "2026-11-10T18:10:08.596Z",
+        "type": "quote_offered",
+        "requirements": {
+          "x402Version": 2,
+          "resource": {
+            "url": "http://127.0.0.1:4580/weather",
+            "description": "canonical resource, real price 10000 atomic units"
+          },
+          "accepts": [
+            {
+              "scheme": "exact",
+              "network": "eip155:84532",
+              "amount": "10000",
+              "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+              "payTo": "0x9999999999999999999999999999999999999999",
+              "maxTimeoutSeconds": 60,
+              "extra": {
+                "name": "USDC",
+                "version": "2"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "at": "2026-11-10T18:10:08.605Z",
+        "type": "presign_decide",
+        "slot": 1,
+        "account": "account-slot-a",
+        "purchase_id": "purchase-1",
+        "decision": "allow",
+        "reason": null,
+        "raw_decision": "reserved"
+      },
+      {
+        "at": "2026-11-10T18:10:08.609Z",
+        "type": "signer_call",
+        "call_index": 1,
+        "signer_entry": "signTypedData",
+        "primary_type": "TransferWithAuthorization",
+        "domain": {
+          "name": "USDC",
+          "version": "2",
+          "chainId": 84532,
+          "verifyingContract": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+        },
+        "to": "0x9999999999999999999999999999999999999999",
+        "value": "10000",
+        "from": "0xDDeC76ac9ffDAC396985d57A7C2c0eE7476d63E4",
+        "valid_after": "0",
+        "valid_before": "1794334268",
+        "nonce": "0x95fbb805…7ae0(len66)"
+      },
+      {
+        "at": "2026-11-10T18:10:08.618Z",
+        "type": "presign_decide",
+        "slot": 2,
+        "account": "account-slot-a",
+        "purchase_id": "purchase-2",
+        "decision": "allow",
+        "reason": null,
+        "raw_decision": "reserved"
+      },
+      {
+        "at": "2026-11-10T18:10:08.618Z",
+        "type": "signer_call",
+        "call_index": 2,
+        "signer_entry": "signTypedData",
+        "primary_type": "TransferWithAuthorization",
+        "domain": {
+          "name": "USDC",
+          "version": "2",
+          "chainId": 84532,
+          "verifyingContract": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+        },
+        "to": "0x9999999999999999999999999999999999999999",
+        "value": "10000",
+        "from": "0xDDeC76ac9ffDAC396985d57A7C2c0eE7476d63E4",
+        "valid_after": "0",
+        "valid_before": "1794334268",
+        "nonce": "0x1750483f…32db(len66)"
+      },
+      {
+        "at": "2026-11-10T18:10:08.623Z",
+        "type": "slot_result",
+        "slot": 1,
+        "http": 200,
+        "receipt_served": {
+          "success": true,
+          "transaction": "0xabababababababababababababababababababababababababababababababab",
+          "network": "eip155:84532"
+        }
+      },
+      {
+        "at": "2026-11-10T18:10:08.625Z",
+        "type": "slot_result",
+        "slot": 2,
+        "http": 200,
+        "receipt_served": {
+          "success": true,
+          "transaction": "0xabababababababababababababababababababababababababababababababab",
+          "network": "eip155:84532"
+        }
+      }
+    ]
+  },
+  "sessions": [
+    {
+      "session": "g_a10a_case1_shared_account",
+      "preflight": false,
+      "matrix": "case1/A10a",
+      "expectation_mode_label": "explicit",
+      "requirement_amounts_served": [
+        "10000",
+        "10000"
+      ],
+      "accounts_config": [
+        "account-slot-a",
+        "account-slot-a"
+      ],
+      "purchase_ids_config": [
+        "purchase-1",
+        "purchase-1"
+      ],
+      "matrix_row": "same purchase / shared account race: exactly ONE signed payment; the concurrent duplicate must be rejected pre-signer with the candidate's own 'held' decision (same intent already reserved)",
+      "sidecar_state_dir_policy": "fresh per session (R2)",
+      "sidecar_health": {
+        "ok": true,
+        "root": "/tmp/gist-a10-state-m51L5o"
+      },
+      "observed": {
+        "signer_values": [
+          "10000"
+        ],
+        "signer_call_count": 1,
+        "presign_decisions": [
+          {
+            "slot": 1,
+            "account": "account-slot-a",
+            "purchase_id": "purchase-1",
+            "decision": "allow",
+            "reason": null,
+            "raw_decision": "reserved",
+            "at": "2026-11-10T18:10:14.855Z"
+          },
+          {
+            "slot": 2,
+            "account": "account-slot-a",
+            "purchase_id": "purchase-1",
+            "decision": "rejected",
+            "reason": "held",
+            "raw_decision": "held",
+            "at": "2026-11-10T18:10:14.863Z"
+          }
+        ],
+        "presign_rejections": [
+          {
+            "slot": 2,
+            "account": "account-slot-a",
+            "purchase_id": "purchase-1",
+            "decision": "rejected",
+            "reason": "held",
+            "raw_decision": "held",
+            "at": "2026-11-10T18:10:14.863Z"
+          }
+        ],
+        "slots_committed": [
+          {
+            "slot": 1,
+            "http": 200,
+            "receipt_served": {
+              "success": true,
+              "transaction": "0xabababababababababababababababababababababababababababababababab",
+              "network": "eip155:84532"
+            },
+            "at": "2026-11-10T18:10:14.865Z"
+          }
+        ],
+        "slots_errored": [
+          {
+            "slot": 2,
+            "error": "Failed to create payment payload: Payment creation aborted: held",
+            "error_name": "Error",
+            "at": "2026-11-10T18:10:14.863Z"
+          }
+        ],
+        "attribution": {
+          "consistent": true,
+          "note": "rejected slots carry presign_decide=rejected + slot_error and by construction have zero signer calls; signer_call_count must equal the number of committed slots"
+        },
+        "metrics": {
+          "signer_call_deltas_ms": null,
+          "both_calls_before_first_slot_completion": null
+        },
+        "sidecar_accounts_ok": true,
+        "sidecar_verdicts": [
+          {
+            "purchase_id": "purchase-1",
+            "decision": "reserved",
+            "intent_digest": "1887fa11935b1e25251fc1f07c8c383456ccd59cb2183c2ae90fd378fb8d0145",
+            "key_digest": "f9e2e71486d58803248b4c03ef70c31e4dcbce8a2d5df3b585c6b9dee586e3b0"
+          },
+          {
+            "purchase_id": "purchase-1",
+            "decision": "held",
+            "intent_digest": "1887fa11935b1e25251fc1f07c8c383456ccd59cb2183c2ae90fd378fb8d0145",
+            "key_digest": "f9e2e71486d58803248b4c03ef70c31e4dcbce8a2d5df3b585c6b9dee586e3b0"
+          }
+        ],
+        "client_rc": 0
+      },
+      "verdict": "PASS",
+      "timeline": [
+        {
+          "at": "2026-11-10T18:10:14.799Z",
+          "type": "probe_start",
+          "control_under_test": "gist pre-sign owner fence (e319a833e1be184a0df16ec69f474b72 @ df69c25fac01f68f6b71981e57b71699c12fd1b2, verbatim reserve/digest via transport-only sidecar)",
+          "url": "http://127.0.0.1:4581/weather",
+          "concurrency": 2,
+          "xc_expected_recorded_only": "$0.01",
+          "quote_control_configured": false,
+          "native_spend_controls": "enabled, non-triggering (maxAmountPerPayment 1000000 >= stand amounts; candidate-shaped)",
+          "gist": {
+            "sidecar_url": "http://127.0.0.1:4711",
+            "accounts": [
+              "account-slot-a",
+              "account-slot-a"
+            ],
+            "purchase_ids": [
+              "purchase-1",
+              "purchase-1"
+            ]
+          },
+          "note": "rejection logic is the candidate's own (pinned verbatim reserve/digest); this harness adds observation only (signer counts, presign decisions, verbatim errors, slot timing)"
+        },
+        {
+          "at": "2026-11-10T18:10:14.800Z",
+          "type": "slot_start",
+          "slot": 1,
+          "url": "http://127.0.0.1:4581/weather",
+          "account": "account-slot-a",
+          "purchase_id": "purchase-1"
+        },
+        {
+          "at": "2026-11-10T18:10:14.823Z",
+          "type": "slot_start",
+          "slot": 2,
+          "url": "http://127.0.0.1:4581/weather",
+          "account": "account-slot-a",
+          "purchase_id": "purchase-1"
+        },
+        {
+          "at": "2026-11-10T18:10:14.841Z",
+          "type": "quote_offered",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4581/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "10000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0x9999999999999999999999999999999999999999",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-11-10T18:10:14.846Z",
+          "type": "quote_offered",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4581/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "10000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0x9999999999999999999999999999999999999999",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-11-10T18:10:14.855Z",
+          "type": "presign_decide",
+          "slot": 1,
+          "account": "account-slot-a",
+          "purchase_id": "purchase-1",
+          "decision": "allow",
+          "reason": null,
+          "raw_decision": "reserved"
+        },
+        {
+          "at": "2026-11-10T18:10:14.857Z",
+          "type": "signer_call",
+          "call_index": 1,
+          "signer_entry": "signTypedData",
+          "primary_type": "TransferWithAuthorization",
+          "domain": {
+            "name": "USDC",
+            "version": "2",
+            "chainId": 84532,
+            "verifyingContract": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+          },
+          "to": "0x9999999999999999999999999999999999999999",
+          "value": "10000",
+          "from": "0xE37Fec2c2F8882d0841E66B826233Da5235C0813",
+          "valid_after": "0",
+          "valid_before": "1794334274",
+          "nonce": "0xd435b608…6c88(len66)"
+        },
+        {
+          "at": "2026-11-10T18:10:14.863Z",
+          "type": "presign_decide",
+          "slot": 2,
+          "account": "account-slot-a",
+          "purchase_id": "purchase-1",
+          "decision": "rejected",
+          "reason": "held",
+          "raw_decision": "held"
+        },
+        {
+          "at": "2026-11-10T18:10:14.863Z",
+          "type": "slot_error",
+          "slot": 2,
+          "error": "Failed to create payment payload: Payment creation aborted: held",
+          "error_name": "Error"
+        },
+        {
+          "at": "2026-11-10T18:10:14.865Z",
+          "type": "slot_result",
+          "slot": 1,
+          "http": 200,
+          "receipt_served": {
+            "success": true,
+            "transaction": "0xabababababababababababababababababababababababababababababababab",
+            "network": "eip155:84532"
+          }
+        }
+      ]
+    },
+    {
+      "session": "g_a10a_case2_separate_accounts",
+      "preflight": false,
+      "matrix": "case2/A10a",
+      "expectation_mode_label": "explicit",
+      "requirement_amounts_served": [
+        "10000",
+        "10000"
+      ],
+      "accounts_config": [
+        "account-slot-a",
+        "account-slot-b"
+      ],
+      "purchase_ids_config": [
+        "purchase-1",
+        "purchase-1"
+      ],
+      "matrix_row": "same purchase / SEPARATE accounts (boundary negative control): the fence key digest([account, purchaseId]) does not collide across account strings — 2 signed, behavior unchanged; distinct owner STRINGS, one fence root (per pre-registration scope)",
+      "sidecar_state_dir_policy": "fresh per session (R2)",
+      "sidecar_health": {
+        "ok": true,
+        "root": "/tmp/gist-a10-state-BXiHBV"
+      },
+      "observed": {
+        "signer_values": [
+          "10000",
+          "10000"
+        ],
+        "signer_call_count": 2,
+        "presign_decisions": [
+          {
+            "slot": 1,
+            "account": "account-slot-a",
+            "purchase_id": "purchase-1",
+            "decision": "allow",
+            "reason": null,
+            "raw_decision": "reserved",
+            "at": "2026-11-10T18:10:21.095Z"
+          },
+          {
+            "slot": 2,
+            "account": "account-slot-b",
+            "purchase_id": "purchase-1",
+            "decision": "allow",
+            "reason": null,
+            "raw_decision": "reserved",
+            "at": "2026-11-10T18:10:21.105Z"
+          }
+        ],
+        "presign_rejections": [],
+        "slots_committed": [
+          {
+            "slot": 1,
+            "http": 200,
+            "receipt_served": {
+              "success": true,
+              "transaction": "0xabababababababababababababababababababababababababababababababab",
+              "network": "eip155:84532"
+            },
+            "at": "2026-11-10T18:10:21.110Z"
+          },
+          {
+            "slot": 2,
+            "http": 200,
+            "receipt_served": {
+              "success": true,
+              "transaction": "0xabababababababababababababababababababababababababababababababab",
+              "network": "eip155:84532"
+            },
+            "at": "2026-11-10T18:10:21.110Z"
+          }
+        ],
+        "slots_errored": [],
+        "attribution": {
+          "consistent": true,
+          "note": "rejected slots carry presign_decide=rejected + slot_error and by construction have zero signer calls; signer_call_count must equal the number of committed slots"
+        },
+        "metrics": {
+          "signer_call_deltas_ms": [
+            8
+          ],
+          "both_calls_before_first_slot_completion": true
+        },
+        "sidecar_accounts_ok": true,
+        "sidecar_verdicts": [
+          {
+            "purchase_id": "purchase-1",
+            "decision": "reserved",
+            "intent_digest": "fdcee413fb89373676eddb0ca3a8d68bb7ec742e81f6330c0dc18f92b18a7a47",
+            "key_digest": "d6dedcb09fc9eb4e636a993ac69769d8ddd1f79d3b00c99ed4e0ab81ee052485"
+          },
+          {
+            "purchase_id": "purchase-1",
+            "decision": "reserved",
+            "intent_digest": "fdcee413fb89373676eddb0ca3a8d68bb7ec742e81f6330c0dc18f92b18a7a47",
+            "key_digest": "7e0302f6460dd94f13eeec05745e613cc302d03dad48044a91547585fc3d50d5"
+          }
+        ],
+        "client_rc": 0
+      },
+      "verdict": "PASS",
+      "timeline": [
+        {
+          "at": "2026-11-10T18:10:21.040Z",
+          "type": "probe_start",
+          "control_under_test": "gist pre-sign owner fence (e319a833e1be184a0df16ec69f474b72 @ df69c25fac01f68f6b71981e57b71699c12fd1b2, verbatim reserve/digest via transport-only sidecar)",
+          "url": "http://127.0.0.1:4582/weather",
+          "concurrency": 2,
+          "xc_expected_recorded_only": "$0.01",
+          "quote_control_configured": false,
+          "native_spend_controls": "enabled, non-triggering (maxAmountPerPayment 1000000 >= stand amounts; candidate-shaped)",
+          "gist": {
+            "sidecar_url": "http://127.0.0.1:4712",
+            "accounts": [
+              "account-slot-a",
+              "account-slot-b"
+            ],
+            "purchase_ids": [
+              "purchase-1",
+              "purchase-1"
+            ]
+          },
+          "note": "rejection logic is the candidate's own (pinned verbatim reserve/digest); this harness adds observation only (signer counts, presign decisions, verbatim errors, slot timing)"
+        },
+        {
+          "at": "2026-11-10T18:10:21.041Z",
+          "type": "slot_start",
+          "slot": 1,
+          "url": "http://127.0.0.1:4582/weather",
+          "account": "account-slot-a",
+          "purchase_id": "purchase-1"
+        },
+        {
+          "at": "2026-11-10T18:10:21.064Z",
+          "type": "slot_start",
+          "slot": 2,
+          "url": "http://127.0.0.1:4582/weather",
+          "account": "account-slot-b",
+          "purchase_id": "purchase-1"
+        },
+        {
+          "at": "2026-11-10T18:10:21.082Z",
+          "type": "quote_offered",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4582/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "10000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0x9999999999999999999999999999999999999999",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-11-10T18:10:21.087Z",
+          "type": "quote_offered",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4582/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "10000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0x9999999999999999999999999999999999999999",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-11-10T18:10:21.095Z",
+          "type": "presign_decide",
+          "slot": 1,
+          "account": "account-slot-a",
+          "purchase_id": "purchase-1",
+          "decision": "allow",
+          "reason": null,
+          "raw_decision": "reserved"
+        },
+        {
+          "at": "2026-11-10T18:10:21.098Z",
+          "type": "signer_call",
+          "call_index": 1,
+          "signer_entry": "signTypedData",
+          "primary_type": "TransferWithAuthorization",
+          "domain": {
+            "name": "USDC",
+            "version": "2",
+            "chainId": 84532,
+            "verifyingContract": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+          },
+          "to": "0x9999999999999999999999999999999999999999",
+          "value": "10000",
+          "from": "0xd7c0C7ea2c8F070A53AbfCE7dDbbfB4FAcD12bF6",
+          "valid_after": "0",
+          "valid_before": "1794334281",
+          "nonce": "0xda9472a1…0afa(len66)"
+        },
+        {
+          "at": "2026-11-10T18:10:21.105Z",
+          "type": "presign_decide",
+          "slot": 2,
+          "account": "account-slot-b",
+          "purchase_id": "purchase-1",
+          "decision": "allow",
+          "reason": null,
+          "raw_decision": "reserved"
+        },
+        {
+          "at": "2026-11-10T18:10:21.106Z",
+          "type": "signer_call",
+          "call_index": 2,
+          "signer_entry": "signTypedData",
+          "primary_type": "TransferWithAuthorization",
+          "domain": {
+            "name": "USDC",
+            "version": "2",
+            "chainId": 84532,
+            "verifyingContract": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+          },
+          "to": "0x9999999999999999999999999999999999999999",
+          "value": "10000",
+          "from": "0xd7c0C7ea2c8F070A53AbfCE7dDbbfB4FAcD12bF6",
+          "valid_after": "0",
+          "valid_before": "1794334281",
+          "nonce": "0x16ee22c1…ca2a(len66)"
+        },
+        {
+          "at": "2026-11-10T18:10:21.110Z",
+          "type": "slot_result",
+          "slot": 1,
+          "http": 200,
+          "receipt_served": {
+            "success": true,
+            "transaction": "0xabababababababababababababababababababababababababababababababab",
+            "network": "eip155:84532"
+          }
+        },
+        {
+          "at": "2026-11-10T18:10:21.110Z",
+          "type": "slot_result",
+          "slot": 2,
+          "http": 200,
+          "receipt_served": {
+            "success": true,
+            "transaction": "0xabababababababababababababababababababababababababababababababab",
+            "network": "eip155:84532"
+          }
+        }
+      ]
+    },
+    {
+      "session": "g_a10a_case3_distinct_purchases",
+      "preflight": false,
+      "matrix": "case3/A10a",
+      "expectation_mode_label": "explicit",
+      "requirement_amounts_served": [
+        "10000",
+        "10000"
+      ],
+      "accounts_config": [
+        "account-slot-a",
+        "account-slot-a"
+      ],
+      "purchase_ids_config": [
+        "purchase-1",
+        "purchase-2"
+      ],
+      "matrix_row": "different purchase IDs over an IDENTICAL quote: reservations independent — 2 signed",
+      "sidecar_state_dir_policy": "fresh per session (R2)",
+      "sidecar_health": {
+        "ok": true,
+        "root": "/tmp/gist-a10-state-YAa1Ab"
+      },
+      "observed": {
+        "signer_values": [
+          "10000",
+          "10000"
+        ],
+        "signer_call_count": 2,
+        "presign_decisions": [
+          {
+            "slot": 1,
+            "account": "account-slot-a",
+            "purchase_id": "purchase-1",
+            "decision": "allow",
+            "reason": null,
+            "raw_decision": "reserved",
+            "at": "2026-11-10T18:10:27.356Z"
+          },
+          {
+            "slot": 2,
+            "account": "account-slot-a",
+            "purchase_id": "purchase-2",
+            "decision": "allow",
+            "reason": null,
+            "raw_decision": "reserved",
+            "at": "2026-11-10T18:10:27.368Z"
+          }
+        ],
+        "presign_rejections": [],
+        "slots_committed": [
+          {
+            "slot": 1,
+            "http": 200,
+            "receipt_served": {
+              "success": true,
+              "transaction": "0xabababababababababababababababababababababababababababababababab",
+              "network": "eip155:84532"
+            },
+            "at": "2026-11-10T18:10:27.383Z"
+          },
+          {
+            "slot": 2,
+            "http": 200,
+            "receipt_served": {
+              "success": true,
+              "transaction": "0xabababababababababababababababababababababababababababababababab",
+              "network": "eip155:84532"
+            },
+            "at": "2026-11-10T18:10:27.384Z"
+          }
+        ],
+        "slots_errored": [],
+        "attribution": {
+          "consistent": true,
+          "note": "rejected slots carry presign_decide=rejected + slot_error and by construction have zero signer calls; signer_call_count must equal the number of committed slots"
+        },
+        "metrics": {
+          "signer_call_deltas_ms": [
+            10
+          ],
+          "both_calls_before_first_slot_completion": true
+        },
+        "sidecar_accounts_ok": true,
+        "sidecar_verdicts": [
+          {
+            "purchase_id": "purchase-1",
+            "decision": "reserved",
+            "intent_digest": "16ec6cf497551dd8eb04233d7c002e7dbe1c425e5e4fa78cf5d617a0367ccfe1",
+            "key_digest": "c3d02fe49de891c58f6428daa9163ea63f176b651d1525db0a642a94e0b1025c"
+          },
+          {
+            "purchase_id": "purchase-2",
+            "decision": "reserved",
+            "intent_digest": "16ec6cf497551dd8eb04233d7c002e7dbe1c425e5e4fa78cf5d617a0367ccfe1",
+            "key_digest": "358e104b8e35bdd6b7d20d59642af6686fa3c3a22a555db77a4a4b44478b5154"
+          }
+        ],
+        "client_rc": 0
+      },
+      "verdict": "PASS",
+      "timeline": [
+        {
+          "at": "2026-11-10T18:10:27.292Z",
+          "type": "probe_start",
+          "control_under_test": "gist pre-sign owner fence (e319a833e1be184a0df16ec69f474b72 @ df69c25fac01f68f6b71981e57b71699c12fd1b2, verbatim reserve/digest via transport-only sidecar)",
+          "url": "http://127.0.0.1:4583/weather",
+          "concurrency": 2,
+          "xc_expected_recorded_only": "$0.01",
+          "quote_control_configured": false,
+          "native_spend_controls": "enabled, non-triggering (maxAmountPerPayment 1000000 >= stand amounts; candidate-shaped)",
+          "gist": {
+            "sidecar_url": "http://127.0.0.1:4713",
+            "accounts": [
+              "account-slot-a",
+              "account-slot-a"
+            ],
+            "purchase_ids": [
+              "purchase-1",
+              "purchase-2"
+            ]
+          },
+          "note": "rejection logic is the candidate's own (pinned verbatim reserve/digest); this harness adds observation only (signer counts, presign decisions, verbatim errors, slot timing)"
+        },
+        {
+          "at": "2026-11-10T18:10:27.293Z",
+          "type": "slot_start",
+          "slot": 1,
+          "url": "http://127.0.0.1:4583/weather",
+          "account": "account-slot-a",
+          "purchase_id": "purchase-1"
+        },
+        {
+          "at": "2026-11-10T18:10:27.313Z",
+          "type": "slot_start",
+          "slot": 2,
+          "url": "http://127.0.0.1:4583/weather",
+          "account": "account-slot-a",
+          "purchase_id": "purchase-2"
+        },
+        {
+          "at": "2026-11-10T18:10:27.337Z",
+          "type": "quote_offered",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4583/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "10000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0x9999999999999999999999999999999999999999",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-11-10T18:10:27.341Z",
+          "type": "quote_offered",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4583/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "10000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0x9999999999999999999999999999999999999999",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-11-10T18:10:27.356Z",
+          "type": "presign_decide",
+          "slot": 1,
+          "account": "account-slot-a",
+          "purchase_id": "purchase-1",
+          "decision": "allow",
+          "reason": null,
+          "raw_decision": "reserved"
+        },
+        {
+          "at": "2026-11-10T18:10:27.358Z",
+          "type": "signer_call",
+          "call_index": 1,
+          "signer_entry": "signTypedData",
+          "primary_type": "TransferWithAuthorization",
+          "domain": {
+            "name": "USDC",
+            "version": "2",
+            "chainId": 84532,
+            "verifyingContract": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+          },
+          "to": "0x9999999999999999999999999999999999999999",
+          "value": "10000",
+          "from": "0xF8fde4b711C13E7fd684bAa90d4b32B831d732aA",
+          "valid_after": "0",
+          "valid_before": "1794334287",
+          "nonce": "0xeb58b251…18ab(len66)"
+        },
+        {
+          "at": "2026-11-10T18:10:27.368Z",
+          "type": "presign_decide",
+          "slot": 2,
+          "account": "account-slot-a",
+          "purchase_id": "purchase-2",
+          "decision": "allow",
+          "reason": null,
+          "raw_decision": "reserved"
+        },
+        {
+          "at": "2026-11-10T18:10:27.368Z",
+          "type": "signer_call",
+          "call_index": 2,
+          "signer_entry": "signTypedData",
+          "primary_type": "TransferWithAuthorization",
+          "domain": {
+            "name": "USDC",
+            "version": "2",
+            "chainId": 84532,
+            "verifyingContract": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+          },
+          "to": "0x9999999999999999999999999999999999999999",
+          "value": "10000",
+          "from": "0xF8fde4b711C13E7fd684bAa90d4b32B831d732aA",
+          "valid_after": "0",
+          "valid_before": "1794334287",
+          "nonce": "0x6480fce7…06c6(len66)"
+        },
+        {
+          "at": "2026-11-10T18:10:27.383Z",
+          "type": "slot_result",
+          "slot": 1,
+          "http": 200,
+          "receipt_served": {
+            "success": true,
+            "transaction": "0xabababababababababababababababababababababababababababababababab",
+            "network": "eip155:84532"
+          }
+        },
+        {
+          "at": "2026-11-10T18:10:27.384Z",
+          "type": "slot_result",
+          "slot": 2,
+          "http": 200,
+          "receipt_served": {
+            "success": true,
+            "transaction": "0xabababababababababababababababababababababababababababababababab",
+            "network": "eip155:84532"
+          }
+        }
+      ]
+    },
+    {
+      "session": "g_a10a_case4_changed_intent",
+      "preflight": false,
+      "matrix": "case4/A10a (= A10c equivalent)",
+      "expectation_mode_label": "explicit",
+      "requirement_amounts_served": [
+        "10000",
+        "100000"
+      ],
+      "accounts_config": [
+        "account-slot-a",
+        "account-slot-a"
+      ],
+      "purchase_ids_config": [
+        "purchase-1",
+        "purchase-1"
+      ],
+      "matrix_row": "same purchase_id / changed intent (conflicting offers, race): the candidate's own 'conflict' decision — exactly 1 commitment + exactly 1 pre-signer rejection, 0 additional signatures after the first commitment; winner-agnostic (whichever offer wins the reservation race commits)",
+      "sidecar_state_dir_policy": "fresh per session (R2)",
+      "sidecar_health": {
+        "ok": true,
+        "root": "/tmp/gist-a10-state-9JEgry"
+      },
+      "observed": {
+        "signer_values": [
+          "10000"
+        ],
+        "signer_call_count": 1,
+        "presign_decisions": [
+          {
+            "slot": 1,
+            "account": "account-slot-a",
+            "purchase_id": "purchase-1",
+            "decision": "allow",
+            "reason": null,
+            "raw_decision": "reserved",
+            "at": "2026-11-10T18:10:33.612Z"
+          },
+          {
+            "slot": 2,
+            "account": "account-slot-a",
+            "purchase_id": "purchase-1",
+            "decision": "rejected",
+            "reason": "conflict",
+            "raw_decision": "conflict",
+            "at": "2026-11-10T18:10:33.622Z"
+          }
+        ],
+        "presign_rejections": [
+          {
+            "slot": 2,
+            "account": "account-slot-a",
+            "purchase_id": "purchase-1",
+            "decision": "rejected",
+            "reason": "conflict",
+            "raw_decision": "conflict",
+            "at": "2026-11-10T18:10:33.622Z"
+          }
+        ],
+        "slots_committed": [
+          {
+            "slot": 1,
+            "http": 200,
+            "receipt_served": {
+              "success": true,
+              "transaction": "0xabababababababababababababababababababababababababababababababab",
+              "network": "eip155:84532"
+            },
+            "at": "2026-11-10T18:10:33.628Z"
+          }
+        ],
+        "slots_errored": [
+          {
+            "slot": 2,
+            "error": "Failed to create payment payload: Payment creation aborted: conflict",
+            "error_name": "Error",
+            "at": "2026-11-10T18:10:33.622Z"
+          }
+        ],
+        "attribution": {
+          "consistent": true,
+          "note": "rejected slots carry presign_decide=rejected + slot_error and by construction have zero signer calls; signer_call_count must equal the number of committed slots"
+        },
+        "metrics": {
+          "signer_call_deltas_ms": null,
+          "both_calls_before_first_slot_completion": null
+        },
+        "sidecar_accounts_ok": true,
+        "sidecar_verdicts": [
+          {
+            "purchase_id": "purchase-1",
+            "decision": "reserved",
+            "intent_digest": "914414b9b7e401eba932f308099ea93509e118f989f9f9a6aad74b8d5e1add57",
+            "key_digest": "8ded79397aee690f9eaface255e3a969bea0d971285f4408e0ed61a4bf21b300"
+          },
+          {
+            "purchase_id": "purchase-1",
+            "decision": "conflict",
+            "intent_digest": "6367c7ba09fd9c47f42911b99b54cbf2cf9c436613d79d1eb3e35f066d9b114b",
+            "key_digest": "8ded79397aee690f9eaface255e3a969bea0d971285f4408e0ed61a4bf21b300"
+          }
+        ],
+        "client_rc": 0
+      },
+      "verdict": "PASS",
+      "timeline": [
+        {
+          "at": "2026-11-10T18:10:33.562Z",
+          "type": "probe_start",
+          "control_under_test": "gist pre-sign owner fence (e319a833e1be184a0df16ec69f474b72 @ df69c25fac01f68f6b71981e57b71699c12fd1b2, verbatim reserve/digest via transport-only sidecar)",
+          "url": "http://127.0.0.1:4584/weather",
+          "concurrency": 2,
+          "xc_expected_recorded_only": "$0.01",
+          "quote_control_configured": false,
+          "native_spend_controls": "enabled, non-triggering (maxAmountPerPayment 1000000 >= stand amounts; candidate-shaped)",
+          "gist": {
+            "sidecar_url": "http://127.0.0.1:4714",
+            "accounts": [
+              "account-slot-a",
+              "account-slot-a"
+            ],
+            "purchase_ids": [
+              "purchase-1",
+              "purchase-1"
+            ]
+          },
+          "note": "rejection logic is the candidate's own (pinned verbatim reserve/digest); this harness adds observation only (signer counts, presign decisions, verbatim errors, slot timing)"
+        },
+        {
+          "at": "2026-11-10T18:10:33.563Z",
+          "type": "slot_start",
+          "slot": 1,
+          "url": "http://127.0.0.1:4584/weather",
+          "account": "account-slot-a",
+          "purchase_id": "purchase-1"
+        },
+        {
+          "at": "2026-11-10T18:10:33.583Z",
+          "type": "slot_start",
+          "slot": 2,
+          "url": "http://127.0.0.1:4584/weather",
+          "account": "account-slot-a",
+          "purchase_id": "purchase-1"
+        },
+        {
+          "at": "2026-11-10T18:10:33.601Z",
+          "type": "quote_offered",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4584/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "10000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0x9999999999999999999999999999999999999999",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-11-10T18:10:33.606Z",
+          "type": "quote_offered",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4584/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "100000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0x9999999999999999999999999999999999999999",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-11-10T18:10:33.612Z",
+          "type": "presign_decide",
+          "slot": 1,
+          "account": "account-slot-a",
+          "purchase_id": "purchase-1",
+          "decision": "allow",
+          "reason": null,
+          "raw_decision": "reserved"
+        },
+        {
+          "at": "2026-11-10T18:10:33.614Z",
+          "type": "signer_call",
+          "call_index": 1,
+          "signer_entry": "signTypedData",
+          "primary_type": "TransferWithAuthorization",
+          "domain": {
+            "name": "USDC",
+            "version": "2",
+            "chainId": 84532,
+            "verifyingContract": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+          },
+          "to": "0x9999999999999999999999999999999999999999",
+          "value": "10000",
+          "from": "0xE0932222bec91b46655c397d5Fadf180921C468A",
+          "valid_after": "0",
+          "valid_before": "1794334293",
+          "nonce": "0xa82eb331…4670(len66)"
+        },
+        {
+          "at": "2026-11-10T18:10:33.622Z",
+          "type": "presign_decide",
+          "slot": 2,
+          "account": "account-slot-a",
+          "purchase_id": "purchase-1",
+          "decision": "rejected",
+          "reason": "conflict",
+          "raw_decision": "conflict"
+        },
+        {
+          "at": "2026-11-10T18:10:33.622Z",
+          "type": "slot_error",
+          "slot": 2,
+          "error": "Failed to create payment payload: Payment creation aborted: conflict",
+          "error_name": "Error"
+        },
+        {
+          "at": "2026-11-10T18:10:33.628Z",
+          "type": "slot_result",
+          "slot": 1,
+          "http": 200,
+          "receipt_served": {
+            "success": true,
+            "transaction": "0xabababababababababababababababababababababababababababababababab",
+            "network": "eip155:84532"
+          }
+        }
+      ]
+    },
+    {
+      "session": "g_a10a_case3c_conflicting_distinct_purchases",
+      "preflight": false,
+      "matrix": "case3c/A10a (supplementary)",
+      "expectation_mode_label": "explicit",
+      "requirement_amounts_served": [
+        "10000",
+        "100000"
+      ],
+      "accounts_config": [
+        "account-slot-a",
+        "account-slot-a"
+      ],
+      "purchase_ids_config": [
+        "purchase-1",
+        "purchase-2"
+      ],
+      "matrix_row": "SUPPLEMENTARY probe, config-dependent expectation: conflicting offers under DISTINCT purchase_ids — 2 signed under fence-only configuration (baseline quote-control would yield 1); configuration fact, not a regression",
+      "sidecar_state_dir_policy": "fresh per session (R2)",
+      "sidecar_health": {
+        "ok": true,
+        "root": "/tmp/gist-a10-state-2XYNpu"
+      },
+      "observed": {
+        "signer_values": [
+          "10000",
+          "100000"
+        ],
+        "signer_call_count": 2,
+        "presign_decisions": [
+          {
+            "slot": 1,
+            "account": "account-slot-a",
+            "purchase_id": "purchase-1",
+            "decision": "allow",
+            "reason": null,
+            "raw_decision": "reserved",
+            "at": "2026-11-10T18:10:39.919Z"
+          },
+          {
+            "slot": 2,
+            "account": "account-slot-a",
+            "purchase_id": "purchase-2",
+            "decision": "allow",
+            "reason": null,
+            "raw_decision": "reserved",
+            "at": "2026-11-10T18:10:39.936Z"
+          }
+        ],
+        "presign_rejections": [],
+        "slots_committed": [
+          {
+            "slot": 1,
+            "http": 200,
+            "receipt_served": {
+              "success": true,
+              "transaction": "0xabababababababababababababababababababababababababababababababab",
+              "network": "eip155:84532"
+            },
+            "at": "2026-11-10T18:10:39.949Z"
+          },
+          {
+            "slot": 2,
+            "http": 200,
+            "receipt_served": {
+              "success": true,
+              "transaction": "0xabababababababababababababababababababababababababababababababab",
+              "network": "eip155:84532"
+            },
+            "at": "2026-11-10T18:10:39.950Z"
+          }
+        ],
+        "slots_errored": [],
+        "attribution": {
+          "consistent": true,
+          "note": "rejected slots carry presign_decide=rejected + slot_error and by construction have zero signer calls; signer_call_count must equal the number of committed slots"
+        },
+        "metrics": {
+          "signer_call_deltas_ms": [
+            9
+          ],
+          "both_calls_before_first_slot_completion": true
+        },
+        "sidecar_accounts_ok": true,
+        "sidecar_verdicts": [
+          {
+            "purchase_id": "purchase-1",
+            "decision": "reserved",
+            "intent_digest": "d1354e2d1e68572604bdb2e414ea34bf707a72bdd7c1139cdd3499dbd530b1f7",
+            "key_digest": "84fb9bd18feaea4bb15e73591698700d08d98c0e1e0ca56f13ce9bc6bcef8b76"
+          },
+          {
+            "purchase_id": "purchase-2",
+            "decision": "reserved",
+            "intent_digest": "3707e7fa7637cdc6dc317681a6b162ebfab8ebf26106957bbdda2d69060e470a",
+            "key_digest": "2084195a00e914362dc421d60554f30185e3d640baefbd3529ddd921d1aaad7d"
+          }
+        ],
+        "client_rc": 0
+      },
+      "verdict": "PASS",
+      "timeline": [
+        {
+          "at": "2026-11-10T18:10:39.852Z",
+          "type": "probe_start",
+          "control_under_test": "gist pre-sign owner fence (e319a833e1be184a0df16ec69f474b72 @ df69c25fac01f68f6b71981e57b71699c12fd1b2, verbatim reserve/digest via transport-only sidecar)",
+          "url": "http://127.0.0.1:4585/weather",
+          "concurrency": 2,
+          "xc_expected_recorded_only": "$0.01",
+          "quote_control_configured": false,
+          "native_spend_controls": "enabled, non-triggering (maxAmountPerPayment 1000000 >= stand amounts; candidate-shaped)",
+          "gist": {
+            "sidecar_url": "http://127.0.0.1:4715",
+            "accounts": [
+              "account-slot-a",
+              "account-slot-a"
+            ],
+            "purchase_ids": [
+              "purchase-1",
+              "purchase-2"
+            ]
+          },
+          "note": "rejection logic is the candidate's own (pinned verbatim reserve/digest); this harness adds observation only (signer counts, presign decisions, verbatim errors, slot timing)"
+        },
+        {
+          "at": "2026-11-10T18:10:39.853Z",
+          "type": "slot_start",
+          "slot": 1,
+          "url": "http://127.0.0.1:4585/weather",
+          "account": "account-slot-a",
+          "purchase_id": "purchase-1"
+        },
+        {
+          "at": "2026-11-10T18:10:39.875Z",
+          "type": "slot_start",
+          "slot": 2,
+          "url": "http://127.0.0.1:4585/weather",
+          "account": "account-slot-a",
+          "purchase_id": "purchase-2"
+        },
+        {
+          "at": "2026-11-10T18:10:39.904Z",
+          "type": "quote_offered",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4585/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "10000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0x9999999999999999999999999999999999999999",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-11-10T18:10:39.910Z",
+          "type": "quote_offered",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4585/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "100000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0x9999999999999999999999999999999999999999",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-11-10T18:10:39.919Z",
+          "type": "presign_decide",
+          "slot": 1,
+          "account": "account-slot-a",
+          "purchase_id": "purchase-1",
+          "decision": "allow",
+          "reason": null,
+          "raw_decision": "reserved"
+        },
+        {
+          "at": "2026-11-10T18:10:39.928Z",
+          "type": "signer_call",
+          "call_index": 1,
+          "signer_entry": "signTypedData",
+          "primary_type": "TransferWithAuthorization",
+          "domain": {
+            "name": "USDC",
+            "version": "2",
+            "chainId": 84532,
+            "verifyingContract": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+          },
+          "to": "0x9999999999999999999999999999999999999999",
+          "value": "10000",
+          "from": "0x8f4683c5a4422bbaB03e897eb21D5117286EA54C",
+          "valid_after": "0",
+          "valid_before": "1794334299",
+          "nonce": "0x796d8c04…37ac(len66)"
+        },
+        {
+          "at": "2026-11-10T18:10:39.936Z",
+          "type": "presign_decide",
+          "slot": 2,
+          "account": "account-slot-a",
+          "purchase_id": "purchase-2",
+          "decision": "allow",
+          "reason": null,
+          "raw_decision": "reserved"
+        },
+        {
+          "at": "2026-11-10T18:10:39.937Z",
+          "type": "signer_call",
+          "call_index": 2,
+          "signer_entry": "signTypedData",
+          "primary_type": "TransferWithAuthorization",
+          "domain": {
+            "name": "USDC",
+            "version": "2",
+            "chainId": 84532,
+            "verifyingContract": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+          },
+          "to": "0x9999999999999999999999999999999999999999",
+          "value": "100000",
+          "from": "0x8f4683c5a4422bbaB03e897eb21D5117286EA54C",
+          "valid_after": "0",
+          "valid_before": "1794334299",
+          "nonce": "0xe7c21553…dac4(len66)"
+        },
+        {
+          "at": "2026-11-10T18:10:39.949Z",
+          "type": "slot_result",
+          "slot": 1,
+          "http": 200,
+          "receipt_served": {
+            "success": true,
+            "transaction": "0xabababababababababababababababababababababababababababababababab",
+            "network": "eip155:84532"
+          }
+        },
+        {
+          "at": "2026-11-10T18:10:39.950Z",
+          "type": "slot_result",
+          "slot": 2,
+          "http": 200,
+          "receipt_served": {
+            "success": true,
+            "transaction": "0xabababababababababababababababababababababababababababababababab",
+            "network": "eip155:84532"
+          }
+        }
+      ]
+    },
+    {
+      "session": "g_a10b_case1_shared_account",
+      "preflight": false,
+      "matrix": "case1/A10b",
+      "expectation_mode_label": "first-accepted",
+      "requirement_amounts_served": [
+        "10000",
+        "10000"
+      ],
+      "accounts_config": [
+        "account-slot-a",
+        "account-slot-a"
+      ],
+      "purchase_ids_config": [
+        "purchase-1",
+        "purchase-1"
+      ],
+      "matrix_row": "same as case1/A10a in first-accepted labeling (modes mechanically identical for this candidate; divergence is an anomaly)",
+      "sidecar_state_dir_policy": "fresh per session (R2)",
+      "sidecar_health": {
+        "ok": true,
+        "root": "/tmp/gist-a10-state-MEJQ7T"
+      },
+      "observed": {
+        "signer_values": [
+          "10000"
+        ],
+        "signer_call_count": 1,
+        "presign_decisions": [
+          {
+            "slot": 1,
+            "account": "account-slot-a",
+            "purchase_id": "purchase-1",
+            "decision": "allow",
+            "reason": null,
+            "raw_decision": "reserved",
+            "at": "2026-11-10T18:10:46.162Z"
+          },
+          {
+            "slot": 2,
+            "account": "account-slot-a",
+            "purchase_id": "purchase-1",
+            "decision": "rejected",
+            "reason": "held",
+            "raw_decision": "held",
+            "at": "2026-11-10T18:10:46.175Z"
+          }
+        ],
+        "presign_rejections": [
+          {
+            "slot": 2,
+            "account": "account-slot-a",
+            "purchase_id": "purchase-1",
+            "decision": "rejected",
+            "reason": "held",
+            "raw_decision": "held",
+            "at": "2026-11-10T18:10:46.175Z"
+          }
+        ],
+        "slots_committed": [
+          {
+            "slot": 1,
+            "http": 200,
+            "receipt_served": {
+              "success": true,
+              "transaction": "0xabababababababababababababababababababababababababababababababab",
+              "network": "eip155:84532"
+            },
+            "at": "2026-11-10T18:10:46.176Z"
+          }
+        ],
+        "slots_errored": [
+          {
+            "slot": 2,
+            "error": "Failed to create payment payload: Payment creation aborted: held",
+            "error_name": "Error",
+            "at": "2026-11-10T18:10:46.175Z"
+          }
+        ],
+        "attribution": {
+          "consistent": true,
+          "note": "rejected slots carry presign_decide=rejected + slot_error and by construction have zero signer calls; signer_call_count must equal the number of committed slots"
+        },
+        "metrics": {
+          "signer_call_deltas_ms": null,
+          "both_calls_before_first_slot_completion": null
+        },
+        "sidecar_accounts_ok": true,
+        "sidecar_verdicts": [
+          {
+            "purchase_id": "purchase-1",
+            "decision": "reserved",
+            "intent_digest": "723957b3632c064c6c3ccea694b26febd93147942630f16f43b924977c904d1e",
+            "key_digest": "d4da3f2f460c2532ea8e1e9f26bf6cf47c561b5227e515d58ab3b652755e9a6e"
+          },
+          {
+            "purchase_id": "purchase-1",
+            "decision": "held",
+            "intent_digest": "723957b3632c064c6c3ccea694b26febd93147942630f16f43b924977c904d1e",
+            "key_digest": "d4da3f2f460c2532ea8e1e9f26bf6cf47c561b5227e515d58ab3b652755e9a6e"
+          }
+        ],
+        "client_rc": 0
+      },
+      "verdict": "PASS",
+      "timeline": [
+        {
+          "at": "2026-11-10T18:10:46.105Z",
+          "type": "probe_start",
+          "control_under_test": "gist pre-sign owner fence (e319a833e1be184a0df16ec69f474b72 @ df69c25fac01f68f6b71981e57b71699c12fd1b2, verbatim reserve/digest via transport-only sidecar)",
+          "url": "http://127.0.0.1:4586/weather",
+          "concurrency": 2,
+          "xc_expected_recorded_only": "first-accepted",
+          "quote_control_configured": false,
+          "native_spend_controls": "enabled, non-triggering (maxAmountPerPayment 1000000 >= stand amounts; candidate-shaped)",
+          "gist": {
+            "sidecar_url": "http://127.0.0.1:4716",
+            "accounts": [
+              "account-slot-a",
+              "account-slot-a"
+            ],
+            "purchase_ids": [
+              "purchase-1",
+              "purchase-1"
+            ]
+          },
+          "note": "rejection logic is the candidate's own (pinned verbatim reserve/digest); this harness adds observation only (signer counts, presign decisions, verbatim errors, slot timing)"
+        },
+        {
+          "at": "2026-11-10T18:10:46.106Z",
+          "type": "slot_start",
+          "slot": 1,
+          "url": "http://127.0.0.1:4586/weather",
+          "account": "account-slot-a",
+          "purchase_id": "purchase-1"
+        },
+        {
+          "at": "2026-11-10T18:10:46.127Z",
+          "type": "slot_start",
+          "slot": 2,
+          "url": "http://127.0.0.1:4586/weather",
+          "account": "account-slot-a",
+          "purchase_id": "purchase-1"
+        },
+        {
+          "at": "2026-11-10T18:10:46.145Z",
+          "type": "quote_offered",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4586/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "10000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0x9999999999999999999999999999999999999999",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-11-10T18:10:46.150Z",
+          "type": "quote_offered",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4586/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "10000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0x9999999999999999999999999999999999999999",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-11-10T18:10:46.162Z",
+          "type": "presign_decide",
+          "slot": 1,
+          "account": "account-slot-a",
+          "purchase_id": "purchase-1",
+          "decision": "allow",
+          "reason": null,
+          "raw_decision": "reserved"
+        },
+        {
+          "at": "2026-11-10T18:10:46.166Z",
+          "type": "signer_call",
+          "call_index": 1,
+          "signer_entry": "signTypedData",
+          "primary_type": "TransferWithAuthorization",
+          "domain": {
+            "name": "USDC",
+            "version": "2",
+            "chainId": 84532,
+            "verifyingContract": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+          },
+          "to": "0x9999999999999999999999999999999999999999",
+          "value": "10000",
+          "from": "0x1106CE60C37006bd4e1F87E017dB82044E868eaa",
+          "valid_after": "0",
+          "valid_before": "1794334306",
+          "nonce": "0x72e5425b…c063(len66)"
+        },
+        {
+          "at": "2026-11-10T18:10:46.175Z",
+          "type": "presign_decide",
+          "slot": 2,
+          "account": "account-slot-a",
+          "purchase_id": "purchase-1",
+          "decision": "rejected",
+          "reason": "held",
+          "raw_decision": "held"
+        },
+        {
+          "at": "2026-11-10T18:10:46.175Z",
+          "type": "slot_error",
+          "slot": 2,
+          "error": "Failed to create payment payload: Payment creation aborted: held",
+          "error_name": "Error"
+        },
+        {
+          "at": "2026-11-10T18:10:46.176Z",
+          "type": "slot_result",
+          "slot": 1,
+          "http": 200,
+          "receipt_served": {
+            "success": true,
+            "transaction": "0xabababababababababababababababababababababababababababababababab",
+            "network": "eip155:84532"
+          }
+        }
+      ]
+    },
+    {
+      "session": "g_a10b_case2_separate_accounts",
+      "preflight": false,
+      "matrix": "case2/A10b",
+      "expectation_mode_label": "first-accepted",
+      "requirement_amounts_served": [
+        "10000",
+        "10000"
+      ],
+      "accounts_config": [
+        "account-slot-a",
+        "account-slot-b"
+      ],
+      "purchase_ids_config": [
+        "purchase-1",
+        "purchase-1"
+      ],
+      "matrix_row": "same as case2/A10a in first-accepted labeling (boundary negative control)",
+      "sidecar_state_dir_policy": "fresh per session (R2)",
+      "sidecar_health": {
+        "ok": true,
+        "root": "/tmp/gist-a10-state-X8J7BX"
+      },
+      "observed": {
+        "signer_values": [
+          "10000",
+          "10000"
+        ],
+        "signer_call_count": 2,
+        "presign_decisions": [
+          {
+            "slot": 1,
+            "account": "account-slot-a",
+            "purchase_id": "purchase-1",
+            "decision": "allow",
+            "reason": null,
+            "raw_decision": "reserved",
+            "at": "2026-11-10T18:10:52.452Z"
+          },
+          {
+            "slot": 2,
+            "account": "account-slot-b",
+            "purchase_id": "purchase-1",
+            "decision": "allow",
+            "reason": null,
+            "raw_decision": "reserved",
+            "at": "2026-11-10T18:10:52.464Z"
+          }
+        ],
+        "presign_rejections": [],
+        "slots_committed": [
+          {
+            "slot": 1,
+            "http": 200,
+            "receipt_served": {
+              "success": true,
+              "transaction": "0xabababababababababababababababababababababababababababababababab",
+              "network": "eip155:84532"
+            },
+            "at": "2026-11-10T18:10:52.468Z"
+          },
+          {
+            "slot": 2,
+            "http": 200,
+            "receipt_served": {
+              "success": true,
+              "transaction": "0xabababababababababababababababababababababababababababababababab",
+              "network": "eip155:84532"
+            },
+            "at": "2026-11-10T18:10:52.469Z"
+          }
+        ],
+        "slots_errored": [],
+        "attribution": {
+          "consistent": true,
+          "note": "rejected slots carry presign_decide=rejected + slot_error and by construction have zero signer calls; signer_call_count must equal the number of committed slots"
+        },
+        "metrics": {
+          "signer_call_deltas_ms": [
+            10
+          ],
+          "both_calls_before_first_slot_completion": true
+        },
+        "sidecar_accounts_ok": true,
+        "sidecar_verdicts": [
+          {
+            "purchase_id": "purchase-1",
+            "decision": "reserved",
+            "intent_digest": "dfdd7373122ea892244cc92fa6971f02cdc77e1f46ccc95f049bb3dbfcaf12a4",
+            "key_digest": "dcb6242be88936a2efd630b0ac7386378bbf186dc3007220b75427c07cc91b9b"
+          },
+          {
+            "purchase_id": "purchase-1",
+            "decision": "reserved",
+            "intent_digest": "dfdd7373122ea892244cc92fa6971f02cdc77e1f46ccc95f049bb3dbfcaf12a4",
+            "key_digest": "f3345485d5767eeed06f6d412f3246d0f283ee234bb2e2f185222185f5481e72"
+          }
+        ],
+        "client_rc": 0
+      },
+      "verdict": "PASS",
+      "timeline": [
+        {
+          "at": "2026-11-10T18:10:52.394Z",
+          "type": "probe_start",
+          "control_under_test": "gist pre-sign owner fence (e319a833e1be184a0df16ec69f474b72 @ df69c25fac01f68f6b71981e57b71699c12fd1b2, verbatim reserve/digest via transport-only sidecar)",
+          "url": "http://127.0.0.1:4587/weather",
+          "concurrency": 2,
+          "xc_expected_recorded_only": "first-accepted",
+          "quote_control_configured": false,
+          "native_spend_controls": "enabled, non-triggering (maxAmountPerPayment 1000000 >= stand amounts; candidate-shaped)",
+          "gist": {
+            "sidecar_url": "http://127.0.0.1:4717",
+            "accounts": [
+              "account-slot-a",
+              "account-slot-b"
+            ],
+            "purchase_ids": [
+              "purchase-1",
+              "purchase-1"
+            ]
+          },
+          "note": "rejection logic is the candidate's own (pinned verbatim reserve/digest); this harness adds observation only (signer counts, presign decisions, verbatim errors, slot timing)"
+        },
+        {
+          "at": "2026-11-10T18:10:52.395Z",
+          "type": "slot_start",
+          "slot": 1,
+          "url": "http://127.0.0.1:4587/weather",
+          "account": "account-slot-a",
+          "purchase_id": "purchase-1"
+        },
+        {
+          "at": "2026-11-10T18:10:52.418Z",
+          "type": "slot_start",
+          "slot": 2,
+          "url": "http://127.0.0.1:4587/weather",
+          "account": "account-slot-b",
+          "purchase_id": "purchase-1"
+        },
+        {
+          "at": "2026-11-10T18:10:52.438Z",
+          "type": "quote_offered",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4587/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "10000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0x9999999999999999999999999999999999999999",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-11-10T18:10:52.444Z",
+          "type": "quote_offered",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4587/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "10000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0x9999999999999999999999999999999999999999",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-11-10T18:10:52.452Z",
+          "type": "presign_decide",
+          "slot": 1,
+          "account": "account-slot-a",
+          "purchase_id": "purchase-1",
+          "decision": "allow",
+          "reason": null,
+          "raw_decision": "reserved"
+        },
+        {
+          "at": "2026-11-10T18:10:52.454Z",
+          "type": "signer_call",
+          "call_index": 1,
+          "signer_entry": "signTypedData",
+          "primary_type": "TransferWithAuthorization",
+          "domain": {
+            "name": "USDC",
+            "version": "2",
+            "chainId": 84532,
+            "verifyingContract": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+          },
+          "to": "0x9999999999999999999999999999999999999999",
+          "value": "10000",
+          "from": "0x2cCf04d87Ddb0e45e6CF5445EB7d6F7d518aaAb3",
+          "valid_after": "0",
+          "valid_before": "1794334312",
+          "nonce": "0xf975a4a4…8462(len66)"
+        },
+        {
+          "at": "2026-11-10T18:10:52.464Z",
+          "type": "presign_decide",
+          "slot": 2,
+          "account": "account-slot-b",
+          "purchase_id": "purchase-1",
+          "decision": "allow",
+          "reason": null,
+          "raw_decision": "reserved"
+        },
+        {
+          "at": "2026-11-10T18:10:52.464Z",
+          "type": "signer_call",
+          "call_index": 2,
+          "signer_entry": "signTypedData",
+          "primary_type": "TransferWithAuthorization",
+          "domain": {
+            "name": "USDC",
+            "version": "2",
+            "chainId": 84532,
+            "verifyingContract": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+          },
+          "to": "0x9999999999999999999999999999999999999999",
+          "value": "10000",
+          "from": "0x2cCf04d87Ddb0e45e6CF5445EB7d6F7d518aaAb3",
+          "valid_after": "0",
+          "valid_before": "1794334312",
+          "nonce": "0x07829a14…ae7b(len66)"
+        },
+        {
+          "at": "2026-11-10T18:10:52.468Z",
+          "type": "slot_result",
+          "slot": 1,
+          "http": 200,
+          "receipt_served": {
+            "success": true,
+            "transaction": "0xabababababababababababababababababababababababababababababababab",
+            "network": "eip155:84532"
+          }
+        },
+        {
+          "at": "2026-11-10T18:10:52.469Z",
+          "type": "slot_result",
+          "slot": 2,
+          "http": 200,
+          "receipt_served": {
+            "success": true,
+            "transaction": "0xabababababababababababababababababababababababababababababababab",
+            "network": "eip155:84532"
+          }
+        }
+      ]
+    },
+    {
+      "session": "g_a10b_case3_distinct_purchases",
+      "preflight": false,
+      "matrix": "case3/A10b",
+      "expectation_mode_label": "first-accepted",
+      "requirement_amounts_served": [
+        "10000",
+        "10000"
+      ],
+      "accounts_config": [
+        "account-slot-a",
+        "account-slot-a"
+      ],
+      "purchase_ids_config": [
+        "purchase-1",
+        "purchase-2"
+      ],
+      "matrix_row": "same as case3/A10b in first-accepted labeling",
+      "sidecar_state_dir_policy": "fresh per session (R2)",
+      "sidecar_health": {
+        "ok": true,
+        "root": "/tmp/gist-a10-state-bbMZXK"
+      },
+      "observed": {
+        "signer_values": [
+          "10000",
+          "10000"
+        ],
+        "signer_call_count": 2,
+        "presign_decisions": [
+          {
+            "slot": 1,
+            "account": "account-slot-a",
+            "purchase_id": "purchase-1",
+            "decision": "allow",
+            "reason": null,
+            "raw_decision": "reserved",
+            "at": "2026-11-10T18:10:58.721Z"
+          },
+          {
+            "slot": 2,
+            "account": "account-slot-a",
+            "purchase_id": "purchase-2",
+            "decision": "allow",
+            "reason": null,
+            "raw_decision": "reserved",
+            "at": "2026-11-10T18:10:58.730Z"
+          }
+        ],
+        "presign_rejections": [],
+        "slots_committed": [
+          {
+            "slot": 1,
+            "http": 200,
+            "receipt_served": {
+              "success": true,
+              "transaction": "0xabababababababababababababababababababababababababababababababab",
+              "network": "eip155:84532"
+            },
+            "at": "2026-11-10T18:10:58.734Z"
+          },
+          {
+            "slot": 2,
+            "http": 200,
+            "receipt_served": {
+              "success": true,
+              "transaction": "0xabababababababababababababababababababababababababababababababab",
+              "network": "eip155:84532"
+            },
+            "at": "2026-11-10T18:10:58.735Z"
+          }
+        ],
+        "slots_errored": [],
+        "attribution": {
+          "consistent": true,
+          "note": "rejected slots carry presign_decide=rejected + slot_error and by construction have zero signer calls; signer_call_count must equal the number of committed slots"
+        },
+        "metrics": {
+          "signer_call_deltas_ms": [
+            8
+          ],
+          "both_calls_before_first_slot_completion": true
+        },
+        "sidecar_accounts_ok": true,
+        "sidecar_verdicts": [
+          {
+            "purchase_id": "purchase-1",
+            "decision": "reserved",
+            "intent_digest": "891dcf40dbebf90ce89ced0e1e4ebf853005b646f1aa9c43a543368907d108fc",
+            "key_digest": "4c6165acf3c35b48c0f51c96853816066341b5009c176d3b908ac99be6447d10"
+          },
+          {
+            "purchase_id": "purchase-2",
+            "decision": "reserved",
+            "intent_digest": "891dcf40dbebf90ce89ced0e1e4ebf853005b646f1aa9c43a543368907d108fc",
+            "key_digest": "8d559115a20712fc400747b5bfb533503bf28fc388460c6f137f8db1cf0cad38"
+          }
+        ],
+        "client_rc": 0
+      },
+      "verdict": "PASS",
+      "timeline": [
+        {
+          "at": "2026-11-10T18:10:58.662Z",
+          "type": "probe_start",
+          "control_under_test": "gist pre-sign owner fence (e319a833e1be184a0df16ec69f474b72 @ df69c25fac01f68f6b71981e57b71699c12fd1b2, verbatim reserve/digest via transport-only sidecar)",
+          "url": "http://127.0.0.1:4588/weather",
+          "concurrency": 2,
+          "xc_expected_recorded_only": "first-accepted",
+          "quote_control_configured": false,
+          "native_spend_controls": "enabled, non-triggering (maxAmountPerPayment 1000000 >= stand amounts; candidate-shaped)",
+          "gist": {
+            "sidecar_url": "http://127.0.0.1:4718",
+            "accounts": [
+              "account-slot-a",
+              "account-slot-a"
+            ],
+            "purchase_ids": [
+              "purchase-1",
+              "purchase-2"
+            ]
+          },
+          "note": "rejection logic is the candidate's own (pinned verbatim reserve/digest); this harness adds observation only (signer counts, presign decisions, verbatim errors, slot timing)"
+        },
+        {
+          "at": "2026-11-10T18:10:58.663Z",
+          "type": "slot_start",
+          "slot": 1,
+          "url": "http://127.0.0.1:4588/weather",
+          "account": "account-slot-a",
+          "purchase_id": "purchase-1"
+        },
+        {
+          "at": "2026-11-10T18:10:58.685Z",
+          "type": "slot_start",
+          "slot": 2,
+          "url": "http://127.0.0.1:4588/weather",
+          "account": "account-slot-a",
+          "purchase_id": "purchase-2"
+        },
+        {
+          "at": "2026-11-10T18:10:58.708Z",
+          "type": "quote_offered",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4588/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "10000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0x9999999999999999999999999999999999999999",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-11-10T18:10:58.714Z",
+          "type": "quote_offered",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4588/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "10000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0x9999999999999999999999999999999999999999",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-11-10T18:10:58.721Z",
+          "type": "presign_decide",
+          "slot": 1,
+          "account": "account-slot-a",
+          "purchase_id": "purchase-1",
+          "decision": "allow",
+          "reason": null,
+          "raw_decision": "reserved"
+        },
+        {
+          "at": "2026-11-10T18:10:58.723Z",
+          "type": "signer_call",
+          "call_index": 1,
+          "signer_entry": "signTypedData",
+          "primary_type": "TransferWithAuthorization",
+          "domain": {
+            "name": "USDC",
+            "version": "2",
+            "chainId": 84532,
+            "verifyingContract": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+          },
+          "to": "0x9999999999999999999999999999999999999999",
+          "value": "10000",
+          "from": "0xCAd0ae416D3f4905039867445E8d15f8E5e59AbC",
+          "valid_after": "0",
+          "valid_before": "1794334318",
+          "nonce": "0x79418a95…79a8(len66)"
+        },
+        {
+          "at": "2026-11-10T18:10:58.730Z",
+          "type": "presign_decide",
+          "slot": 2,
+          "account": "account-slot-a",
+          "purchase_id": "purchase-2",
+          "decision": "allow",
+          "reason": null,
+          "raw_decision": "reserved"
+        },
+        {
+          "at": "2026-11-10T18:10:58.731Z",
+          "type": "signer_call",
+          "call_index": 2,
+          "signer_entry": "signTypedData",
+          "primary_type": "TransferWithAuthorization",
+          "domain": {
+            "name": "USDC",
+            "version": "2",
+            "chainId": 84532,
+            "verifyingContract": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+          },
+          "to": "0x9999999999999999999999999999999999999999",
+          "value": "10000",
+          "from": "0xCAd0ae416D3f4905039867445E8d15f8E5e59AbC",
+          "valid_after": "0",
+          "valid_before": "1794334318",
+          "nonce": "0xf9294560…c9e3(len66)"
+        },
+        {
+          "at": "2026-11-10T18:10:58.734Z",
+          "type": "slot_result",
+          "slot": 1,
+          "http": 200,
+          "receipt_served": {
+            "success": true,
+            "transaction": "0xabababababababababababababababababababababababababababababababab",
+            "network": "eip155:84532"
+          }
+        },
+        {
+          "at": "2026-11-10T18:10:58.735Z",
+          "type": "slot_result",
+          "slot": 2,
+          "http": 200,
+          "receipt_served": {
+            "success": true,
+            "transaction": "0xabababababababababababababababababababababababababababababababab",
+            "network": "eip155:84532"
+          }
+        }
+      ]
+    },
+    {
+      "session": "g_a10b_case4_changed_intent",
+      "preflight": false,
+      "matrix": "case4/A10b (= A10d equivalent)",
+      "expectation_mode_label": "first-accepted",
+      "requirement_amounts_served": [
+        "10000",
+        "100000"
+      ],
+      "accounts_config": [
+        "account-slot-a",
+        "account-slot-a"
+      ],
+      "purchase_ids_config": [
+        "purchase-1",
+        "purchase-1"
+      ],
+      "matrix_row": "same as case4/A10a in first-accepted labeling (= A10d equivalent): exactly 1 commitment + exactly 1 pre-signer rejection, winner-agnostic",
+      "sidecar_state_dir_policy": "fresh per session (R2)",
+      "sidecar_health": {
+        "ok": true,
+        "root": "/tmp/gist-a10-state-ti4BiI"
+      },
+      "observed": {
+        "signer_values": [
+          "10000"
+        ],
+        "signer_call_count": 1,
+        "presign_decisions": [
+          {
+            "slot": 1,
+            "account": "account-slot-a",
+            "purchase_id": "purchase-1",
+            "decision": "allow",
+            "reason": null,
+            "raw_decision": "reserved",
+            "at": "2026-11-10T18:11:04.999Z"
+          },
+          {
+            "slot": 2,
+            "account": "account-slot-a",
+            "purchase_id": "purchase-1",
+            "decision": "rejected",
+            "reason": "conflict",
+            "raw_decision": "conflict",
+            "at": "2026-11-10T18:11:05.010Z"
+          }
+        ],
+        "presign_rejections": [
+          {
+            "slot": 2,
+            "account": "account-slot-a",
+            "purchase_id": "purchase-1",
+            "decision": "rejected",
+            "reason": "conflict",
+            "raw_decision": "conflict",
+            "at": "2026-11-10T18:11:05.010Z"
+          }
+        ],
+        "slots_committed": [
+          {
+            "slot": 1,
+            "http": 200,
+            "receipt_served": {
+              "success": true,
+              "transaction": "0xabababababababababababababababababababababababababababababababab",
+              "network": "eip155:84532"
+            },
+            "at": "2026-11-10T18:11:05.014Z"
+          }
+        ],
+        "slots_errored": [
+          {
+            "slot": 2,
+            "error": "Failed to create payment payload: Payment creation aborted: conflict",
+            "error_name": "Error",
+            "at": "2026-11-10T18:11:05.011Z"
+          }
+        ],
+        "attribution": {
+          "consistent": true,
+          "note": "rejected slots carry presign_decide=rejected + slot_error and by construction have zero signer calls; signer_call_count must equal the number of committed slots"
+        },
+        "metrics": {
+          "signer_call_deltas_ms": null,
+          "both_calls_before_first_slot_completion": null
+        },
+        "sidecar_accounts_ok": true,
+        "sidecar_verdicts": [
+          {
+            "purchase_id": "purchase-1",
+            "decision": "reserved",
+            "intent_digest": "830aa107efd75f1cc8103f7bf45ed9630bcfd3c9d47d62ab91a2234e49008af9",
+            "key_digest": "301eab0960abc4da317db9ad7e12d273159e966a89474bc88cee41a3887c133d"
+          },
+          {
+            "purchase_id": "purchase-1",
+            "decision": "conflict",
+            "intent_digest": "8fcbb474ed5251d0f6ee49c0181492372633c83a60916ce6015a6e1826a3fc81",
+            "key_digest": "301eab0960abc4da317db9ad7e12d273159e966a89474bc88cee41a3887c133d"
+          }
+        ],
+        "client_rc": 0
+      },
+      "verdict": "PASS",
+      "timeline": [
+        {
+          "at": "2026-11-10T18:11:04.940Z",
+          "type": "probe_start",
+          "control_under_test": "gist pre-sign owner fence (e319a833e1be184a0df16ec69f474b72 @ df69c25fac01f68f6b71981e57b71699c12fd1b2, verbatim reserve/digest via transport-only sidecar)",
+          "url": "http://127.0.0.1:4589/weather",
+          "concurrency": 2,
+          "xc_expected_recorded_only": "first-accepted",
+          "quote_control_configured": false,
+          "native_spend_controls": "enabled, non-triggering (maxAmountPerPayment 1000000 >= stand amounts; candidate-shaped)",
+          "gist": {
+            "sidecar_url": "http://127.0.0.1:4719",
+            "accounts": [
+              "account-slot-a",
+              "account-slot-a"
+            ],
+            "purchase_ids": [
+              "purchase-1",
+              "purchase-1"
+            ]
+          },
+          "note": "rejection logic is the candidate's own (pinned verbatim reserve/digest); this harness adds observation only (signer counts, presign decisions, verbatim errors, slot timing)"
+        },
+        {
+          "at": "2026-11-10T18:11:04.940Z",
+          "type": "slot_start",
+          "slot": 1,
+          "url": "http://127.0.0.1:4589/weather",
+          "account": "account-slot-a",
+          "purchase_id": "purchase-1"
+        },
+        {
+          "at": "2026-11-10T18:11:04.962Z",
+          "type": "slot_start",
+          "slot": 2,
+          "url": "http://127.0.0.1:4589/weather",
+          "account": "account-slot-a",
+          "purchase_id": "purchase-1"
+        },
+        {
+          "at": "2026-11-10T18:11:04.985Z",
+          "type": "quote_offered",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4589/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "10000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0x9999999999999999999999999999999999999999",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-11-10T18:11:04.989Z",
+          "type": "quote_offered",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4589/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "100000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0x9999999999999999999999999999999999999999",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-11-10T18:11:04.999Z",
+          "type": "presign_decide",
+          "slot": 1,
+          "account": "account-slot-a",
+          "purchase_id": "purchase-1",
+          "decision": "allow",
+          "reason": null,
+          "raw_decision": "reserved"
+        },
+        {
+          "at": "2026-11-10T18:11:05.002Z",
+          "type": "signer_call",
+          "call_index": 1,
+          "signer_entry": "signTypedData",
+          "primary_type": "TransferWithAuthorization",
+          "domain": {
+            "name": "USDC",
+            "version": "2",
+            "chainId": 84532,
+            "verifyingContract": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+          },
+          "to": "0x9999999999999999999999999999999999999999",
+          "value": "10000",
+          "from": "0x3c9fF34821746d623DEA75402D8fCD4d9199D249",
+          "valid_after": "0",
+          "valid_before": "1794334325",
+          "nonce": "0x645ab155…249f(len66)"
+        },
+        {
+          "at": "2026-11-10T18:11:05.010Z",
+          "type": "presign_decide",
+          "slot": 2,
+          "account": "account-slot-a",
+          "purchase_id": "purchase-1",
+          "decision": "rejected",
+          "reason": "conflict",
+          "raw_decision": "conflict"
+        },
+        {
+          "at": "2026-11-10T18:11:05.011Z",
+          "type": "slot_error",
+          "slot": 2,
+          "error": "Failed to create payment payload: Payment creation aborted: conflict",
+          "error_name": "Error"
+        },
+        {
+          "at": "2026-11-10T18:11:05.014Z",
+          "type": "slot_result",
+          "slot": 1,
+          "http": 200,
+          "receipt_served": {
+            "success": true,
+            "transaction": "0xabababababababababababababababababababababababababababababababab",
+            "network": "eip155:84532"
+          }
+        }
+      ]
+    },
+    {
+      "session": "g_a10b_case3c_conflicting_distinct_purchases",
+      "preflight": false,
+      "matrix": "case3c/A10b (supplementary)",
+      "expectation_mode_label": "first-accepted",
+      "requirement_amounts_served": [
+        "10000",
+        "100000"
+      ],
+      "accounts_config": [
+        "account-slot-a",
+        "account-slot-a"
+      ],
+      "purchase_ids_config": [
+        "purchase-1",
+        "purchase-2"
+      ],
+      "matrix_row": "same as case3c/A10a in first-accepted labeling (supplementary, config-dependent expectation)",
+      "sidecar_state_dir_policy": "fresh per session (R2)",
+      "sidecar_health": {
+        "ok": true,
+        "root": "/tmp/gist-a10-state-MP3GBJ"
+      },
+      "observed": {
+        "signer_values": [
+          "10000",
+          "100000"
+        ],
+        "signer_call_count": 2,
+        "presign_decisions": [
+          {
+            "slot": 1,
+            "account": "account-slot-a",
+            "purchase_id": "purchase-1",
+            "decision": "allow",
+            "reason": null,
+            "raw_decision": "reserved",
+            "at": "2026-11-10T18:11:11.306Z"
+          },
+          {
+            "slot": 2,
+            "account": "account-slot-a",
+            "purchase_id": "purchase-2",
+            "decision": "allow",
+            "reason": null,
+            "raw_decision": "reserved",
+            "at": "2026-11-10T18:11:11.320Z"
+          }
+        ],
+        "presign_rejections": [],
+        "slots_committed": [
+          {
+            "slot": 1,
+            "http": 200,
+            "receipt_served": {
+              "success": true,
+              "transaction": "0xabababababababababababababababababababababababababababababababab",
+              "network": "eip155:84532"
+            },
+            "at": "2026-11-10T18:11:11.329Z"
+          },
+          {
+            "slot": 2,
+            "http": 200,
+            "receipt_served": {
+              "success": true,
+              "transaction": "0xabababababababababababababababababababababababababababababababab",
+              "network": "eip155:84532"
+            },
+            "at": "2026-11-10T18:11:11.331Z"
+          }
+        ],
+        "slots_errored": [],
+        "attribution": {
+          "consistent": true,
+          "note": "rejected slots carry presign_decide=rejected + slot_error and by construction have zero signer calls; signer_call_count must equal the number of committed slots"
+        },
+        "metrics": {
+          "signer_call_deltas_ms": [
+            9
+          ],
+          "both_calls_before_first_slot_completion": true
+        },
+        "sidecar_accounts_ok": true,
+        "sidecar_verdicts": [
+          {
+            "purchase_id": "purchase-1",
+            "decision": "reserved",
+            "intent_digest": "79376e067f5e840af25a11692e3bb884803ea8da17764a4e82987be107975dba",
+            "key_digest": "5400d76340db2fbfe0fc36072493604f16dadbacbba6db596e1e598fc1e12ba5"
+          },
+          {
+            "purchase_id": "purchase-2",
+            "decision": "reserved",
+            "intent_digest": "2567f8bc0778b6f4b05e3ea8b05507f276af2da62abb3f0bcc632bc1c80fc6af",
+            "key_digest": "e05f3b0e60af0791b2ba0792e4e487efbd22ad68096615005a021f8cb6e6ba6b"
+          }
+        ],
+        "client_rc": 0
+      },
+      "verdict": "PASS",
+      "timeline": [
+        {
+          "at": "2026-11-10T18:11:11.247Z",
+          "type": "probe_start",
+          "control_under_test": "gist pre-sign owner fence (e319a833e1be184a0df16ec69f474b72 @ df69c25fac01f68f6b71981e57b71699c12fd1b2, verbatim reserve/digest via transport-only sidecar)",
+          "url": "http://127.0.0.1:4590/weather",
+          "concurrency": 2,
+          "xc_expected_recorded_only": "first-accepted",
+          "quote_control_configured": false,
+          "native_spend_controls": "enabled, non-triggering (maxAmountPerPayment 1000000 >= stand amounts; candidate-shaped)",
+          "gist": {
+            "sidecar_url": "http://127.0.0.1:4720",
+            "accounts": [
+              "account-slot-a",
+              "account-slot-a"
+            ],
+            "purchase_ids": [
+              "purchase-1",
+              "purchase-2"
+            ]
+          },
+          "note": "rejection logic is the candidate's own (pinned verbatim reserve/digest); this harness adds observation only (signer counts, presign decisions, verbatim errors, slot timing)"
+        },
+        {
+          "at": "2026-11-10T18:11:11.248Z",
+          "type": "slot_start",
+          "slot": 1,
+          "url": "http://127.0.0.1:4590/weather",
+          "account": "account-slot-a",
+          "purchase_id": "purchase-1"
+        },
+        {
+          "at": "2026-11-10T18:11:11.271Z",
+          "type": "slot_start",
+          "slot": 2,
+          "url": "http://127.0.0.1:4590/weather",
+          "account": "account-slot-a",
+          "purchase_id": "purchase-2"
+        },
+        {
+          "at": "2026-11-10T18:11:11.291Z",
+          "type": "quote_offered",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4590/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "10000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0x9999999999999999999999999999999999999999",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-11-10T18:11:11.296Z",
+          "type": "quote_offered",
+          "requirements": {
+            "x402Version": 2,
+            "resource": {
+              "url": "http://127.0.0.1:4590/weather",
+              "description": "canonical resource, real price 10000 atomic units"
+            },
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "amount": "100000",
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "payTo": "0x9999999999999999999999999999999999999999",
+                "maxTimeoutSeconds": 60,
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-11-10T18:11:11.306Z",
+          "type": "presign_decide",
+          "slot": 1,
+          "account": "account-slot-a",
+          "purchase_id": "purchase-1",
+          "decision": "allow",
+          "reason": null,
+          "raw_decision": "reserved"
+        },
+        {
+          "at": "2026-11-10T18:11:11.311Z",
+          "type": "signer_call",
+          "call_index": 1,
+          "signer_entry": "signTypedData",
+          "primary_type": "TransferWithAuthorization",
+          "domain": {
+            "name": "USDC",
+            "version": "2",
+            "chainId": 84532,
+            "verifyingContract": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+          },
+          "to": "0x9999999999999999999999999999999999999999",
+          "value": "10000",
+          "from": "0xa18c194cc0638013890BD046cd6c87a905a9353B",
+          "valid_after": "0",
+          "valid_before": "1794334331",
+          "nonce": "0x79626959…245d(len66)"
+        },
+        {
+          "at": "2026-11-10T18:11:11.320Z",
+          "type": "presign_decide",
+          "slot": 2,
+          "account": "account-slot-a",
+          "purchase_id": "purchase-2",
+          "decision": "allow",
+          "reason": null,
+          "raw_decision": "reserved"
+        },
+        {
+          "at": "2026-11-10T18:11:11.320Z",
+          "type": "signer_call",
+          "call_index": 2,
+          "signer_entry": "signTypedData",
+          "primary_type": "TransferWithAuthorization",
+          "domain": {
+            "name": "USDC",
+            "version": "2",
+            "chainId": 84532,
+            "verifyingContract": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+          },
+          "to": "0x9999999999999999999999999999999999999999",
+          "value": "100000",
+          "from": "0xa18c194cc0638013890BD046cd6c87a905a9353B",
+          "valid_after": "0",
+          "valid_before": "1794334331",
+          "nonce": "0xb2f88839…0edb(len66)"
+        },
+        {
+          "at": "2026-11-10T18:11:11.329Z",
+          "type": "slot_result",
+          "slot": 1,
+          "http": 200,
+          "receipt_served": {
+            "success": true,
+            "transaction": "0xabababababababababababababababababababababababababababababababab",
+            "network": "eip155:84532"
+          }
+        },
+        {
+          "at": "2026-11-10T18:11:11.331Z",
+          "type": "slot_result",
+          "slot": 2,
+          "http": 200,
+          "receipt_served": {
+            "success": true,
+            "transaction": "0xabababababababababababababababababababababababababababababababab",
+            "network": "eip155:84532"
+          }
+        }
+      ]
+    }
+  ],
+  "green_zone_definition": "exactly one signed payment per purchase across the three matrix cases (case1, case2-control unchanged, case3), with conflict controls green (case4: 1 commitment + 1 pre-signer rejection in both modes)",
+  "evidence_discipline": {
+    "established": "pre-signer rejection (presign_decide=rejected + slot_error, signer untouched) or signing (signer_call) at the signer boundary",
+    "not_established": "an on-chain transfer: settlement is mocked; per-session throwaway unfunded wallets",
+    "redaction": "no private keys, no signatures, no usable authorizations; nonces truncated"
+  }
+}

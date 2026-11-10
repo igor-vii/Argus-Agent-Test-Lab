@@ -1,0 +1,62 @@
+{
+  "probe": "S-BS-06 x Boundra fb09284 pre-sign reservation battery (A10a/A10b matrix, x402 #4198)",
+  "control_under_test": "Boundra pre-sign reservation (pinned fb09284)",
+  "url": "http://127.0.0.1:4484/weather",
+  "concurrency": 2,
+  "signer_call_count": 1,
+  "per_cycle": [
+    {
+      "cycle": 1,
+      "http": 200,
+      "receipt": {
+        "success": true,
+        "transaction": "0xabababababababababababababababababababababababababababababababab",
+        "network": "eip155:84532"
+      }
+    },
+    {
+      "cycle": 2,
+      "error": "Failed to create payment payload: Payment creation aborted: Boundra DENY: within policy — auto-approved; purchase_id conflict: the ID is already bound to a different intent",
+      "error_name": "Error"
+    }
+  ],
+  "per_slot": [
+    {
+      "slot": 1,
+      "owner": "owner-slot-a",
+      "purchase_id": "purchase-1",
+      "started_at": "2026-11-10T17:55:53.590Z",
+      "finished_at": "2026-11-10T17:55:53.657Z",
+      "http": 200,
+      "receipt": {
+        "success": true,
+        "transaction": "0xabababababababababababababababababababababababababababababababab",
+        "network": "eip155:84532"
+      }
+    },
+    {
+      "slot": 2,
+      "owner": "owner-slot-a",
+      "purchase_id": "purchase-1",
+      "started_at": "2026-11-10T17:55:53.610Z",
+      "finished_at": "2026-11-10T17:55:53.658Z",
+      "error": "Failed to create payment payload: Payment creation aborted: Boundra DENY: within policy — auto-approved; purchase_id conflict: the ID is already bound to a different intent",
+      "error_name": "Error"
+    }
+  ],
+  "presign_decisions": [
+    {
+      "slot": 1,
+      "owner": "owner-slot-a",
+      "purchase_id": "purchase-1"
+    },
+    {
+      "slot": 2,
+      "owner": "owner-slot-a",
+      "purchase_id": "purchase-1"
+    }
+  ],
+  "started_at": "2026-11-10T17:55:53.562Z",
+  "finished_at": "2026-11-10T17:55:53.658Z",
+  "distinction": "signed authorization captured; on-chain transfer NOT established (mocked settlement)"
+}
