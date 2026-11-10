@@ -1,0 +1,12 @@
+{"name":"same purchase, shared owner","outcomes":["delivered","held"],"signCalls":1,"submissions":1}
+{"name":"same purchase, isolated owners (negative control)","outcomes":["delivered","delivered"],"signCalls":2,"submissions":2}
+{"name":"different purchase IDs, same quote and input","outcomes":["delivered","delivered"],"signCalls":2,"submissions":2}
+{"name":"same ID, different payer accounts","outcomes":["delivered","delivered"],"signCalls":2,"submissions":2}
+{"name":"same ID, changed input","outcomes":["conflict","delivered"],"signCalls":1,"submissions":1}
+{"name":"same ID, changed terms","outcomes":["conflict","delivered"],"signCalls":1,"submissions":1}
+{"name":"lost reply after signed submission","outcomes":["unresolved"],"signCalls":1,"submissions":1}
+{"name":"later process still refuses to sign","outcomes":["held"],"signCalls":0,"submissions":0}
+{"name":"failure before signer starts retains fence","outcomes":["fenced"],"signCalls":0,"submissions":0}
+{"name":"later process does not guess it is safe","outcomes":["held"],"signCalls":0,"submissions":0}
+{"name":"native cap refuses before reservation","outcomes":["cap-refused"],"signCalls":0,"submissions":0}
+{"name":"over-cap offer did not reserve purchase","outcomes":["delivered"],"signCalls":1,"submissions":1}
