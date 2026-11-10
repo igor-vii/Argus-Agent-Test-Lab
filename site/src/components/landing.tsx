@@ -479,76 +479,127 @@ function EngageSection() {
 
 /* ----------------------------------- footer ----------------------------------- */
 
+function FooterCol({ title, children }: { title: string; children: ReactNode }) {
+  return (
+    <div>
+      <p className="font-mono text-[11px] uppercase tracking-widest text-al-muted/80">{title}</p>
+      <ul className="mt-3 space-y-2 text-xs">{children}</ul>
+    </div>
+  );
+}
+
+function FooterLink({ href, children, external = false }: { href: string; children: ReactNode; external?: boolean }) {
+  return (
+    <li>
+      <a
+        href={href}
+        {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+        className="text-al-muted underline decoration-al-line underline-offset-4 transition-colors hover:text-al-text"
+      >
+        {children}
+      </a>
+    </li>
+  );
+}
+
 function Footer() {
   const { t } = useLang();
   return (
     <footer className="mt-auto border-t border-al-line bg-al-bg">
-      <div className="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-8 pb-[max(2rem,env(safe-area-inset-bottom))] sm:flex-row sm:items-start sm:justify-between sm:px-6">
-        <div>
-          <p className="flex items-center gap-2 font-mono text-sm font-semibold tracking-widest text-al-text">
-            <LogoMark className="h-4 w-4 text-al-ink" />
-            ARGUS<span className="text-al-muted">·</span>LAB
-          </p>
-          <p className="mt-1 max-w-md text-xs text-al-muted">{t.footer.tagline}</p>
-          {/* contacts: X · TG · mail (ТЗ п.5) */}
-          <p className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[11px] text-al-muted">
-            <a
-              href="https://x.com/INGVAR29007836"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="underline decoration-al-line underline-offset-4 transition-colors hover:text-al-text"
-            >
-              X @INGVAR29007836
-            </a>
-            <span className="text-al-line">·</span>
-            <a
-              href="https://t.me/IVANOVVII"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="underline decoration-al-line underline-offset-4 transition-colors hover:text-al-text"
-            >
-              TG @IVANOVVII
-            </a>
-            <span className="text-al-line">·</span>
-            <a
-              href={`mailto:${CONTACT_EMAIL}`}
-              className="underline decoration-al-line underline-offset-4 transition-colors hover:text-al-text"
-            >
-              {CONTACT_EMAIL}
-            </a>
-          </p>
+      <div className="mx-auto max-w-6xl px-4 pt-10 sm:px-6">
+        {/* product / trust / legal columns */}
+        <div className="grid gap-8 sm:grid-cols-3">
+          <FooterCol title={t.footer.cols.product}>
+            <FooterLink href="#registry">{t.footer.links.registry}</FooterLink>
+            <FooterLink href="#method">{t.footer.links.method}</FooterLink>
+            <FooterLink href="#cases">{t.footer.links.cases}</FooterLink>
+            <FooterLink href={CONSOLE_URL}>{t.footer.links.console}</FooterLink>
+            <FooterLink href={ONE_PAGER_PATH}>{t.footer.links.onePager}</FooterLink>
+            <li className="pt-1 font-mono text-[11px] text-al-muted/70">{t.footer.notes.mcp}</li>
+          </FooterCol>
+          <FooterCol title={t.footer.cols.trust}>
+            <FooterLink href="#method">{t.footer.links.sealProves}</FooterLink>
+            <FooterLink href={REPO_URL} external>{t.footer.links.verifyChain}</FooterLink>
+            <FooterLink href="/terms#consent">{t.footer.links.consent}</FooterLink>
+            <FooterLink href="https://sealkeeper.run" external>{t.footer.links.listingSealkeeper}</FooterLink>
+            <FooterLink href="https://glama.ai" external>{t.footer.links.listingGlama}</FooterLink>
+            <li className="pt-1 font-mono text-[11px] text-al-muted/70">{t.footer.links.infra}</li>
+          </FooterCol>
+          <FooterCol title={t.footer.cols.legal}>
+            <FooterLink href="/terms">{t.footer.links.terms}</FooterLink>
+            <FooterLink href="/privacy">{t.footer.links.privacy}</FooterLink>
+            <FooterLink href={`mailto:${CONTACT_EMAIL}`}>{t.footer.links.contact}</FooterLink>
+            <li className="pt-1 font-mono text-[11px] text-al-muted/70">{t.footer.notes.scope}</li>
+          </FooterCol>
         </div>
-        <div className="font-mono text-[11px] leading-relaxed text-al-muted">
-          <p>
-            {t.footer.chainHead} <span className="text-al-accent/80">{CHAIN_HEAD}…</span> · {SEAL_COUNT} {t.footer.records} · Ed25519
-          </p>
-          <p className="mt-1">
-            <a href={REPO_URL} target="_blank" rel="noopener noreferrer" className="underline decoration-al-line underline-offset-4 transition-colors hover:text-al-text">
-              github.com/igor-vii/Argus-Agent-Test-Lab
-            </a>
-          </p>
-          <p className="mt-1">
-            <a href={CONSOLE_URL} className="underline decoration-al-line underline-offset-4 transition-colors hover:text-al-text">
-              console.argus-lab.tech
-            </a>
-          </p>
-          <p className="mt-3">
-            <a
-              href="https://www.producthunt.com/products/argus-agent-test-lab?embed=true&utm_source=badge-featured&utm_medium=badge&utm_campaign=badge-argus-agent-test-lab"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Argus Agent Test Lab on Product Hunt"
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                alt="Argus Agent Test Lab - adversarial testing for AI agents that move money | Product Hunt"
-                width={250}
-                height={54}
-                className="h-10 w-auto"
-                src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1305684&theme=dark&t=1793898820604"
-              />
-            </a>
-          </p>
+
+        <div className="mt-10 flex flex-col gap-4 border-t border-al-line py-8 pb-[max(2rem,env(safe-area-inset-bottom))] sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <p className="flex items-center gap-2 font-mono text-sm font-semibold tracking-widest text-al-text">
+              <LogoMark className="h-4 w-4 text-al-ink" />
+              ARGUS<span className="text-al-muted">·</span>LAB
+            </p>
+            <p className="mt-1 max-w-md text-xs text-al-muted">{t.footer.tagline}</p>
+            {/* contacts: X · TG · mail (ТЗ п.5) */}
+            <p className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[11px] text-al-muted">
+              <a
+                href="https://x.com/INGVAR29007836"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline decoration-al-line underline-offset-4 transition-colors hover:text-al-text"
+              >
+                X @INGVAR29007836
+              </a>
+              <span className="text-al-line">·</span>
+              <a
+                href="https://t.me/IVANOVVII"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline decoration-al-line underline-offset-4 transition-colors hover:text-al-text"
+              >
+                TG @IVANOVVII
+              </a>
+              <span className="text-al-line">·</span>
+              <a
+                href={`mailto:${CONTACT_EMAIL}`}
+                className="underline decoration-al-line underline-offset-4 transition-colors hover:text-al-text"
+              >
+                {CONTACT_EMAIL}
+              </a>
+            </p>
+          </div>
+          <div className="font-mono text-[11px] leading-relaxed text-al-muted">
+            <p>
+              {t.footer.chainHead} <span className="text-al-accent/80">{CHAIN_HEAD}…</span> · {SEAL_COUNT} {t.footer.records} · Ed25519
+            </p>
+            <p className="mt-1">
+              <a href={REPO_URL} target="_blank" rel="noopener noreferrer" className="underline decoration-al-line underline-offset-4 transition-colors hover:text-al-text">
+                github.com/igor-vii/Argus-Agent-Test-Lab
+              </a>
+            </p>
+            <p className="mt-1">
+              <a href={CONSOLE_URL} className="underline decoration-al-line underline-offset-4 transition-colors hover:text-al-text">
+                console.argus-lab.tech
+              </a>
+            </p>
+            <p className="mt-3">
+              <a
+                href="https://www.producthunt.com/products/argus-agent-test-lab?embed=true&utm_source=badge-featured&utm_medium=badge&utm_campaign=badge-argus-agent-test-lab"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Argus Agent Test Lab on Product Hunt"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  alt="Argus Agent Test Lab - adversarial testing for AI agents that move money | Product Hunt"
+                  width={250}
+                  height={54}
+                  className="h-10 w-auto"
+                  src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1305684&theme=dark&t=1793898820604"
+                />
+              </a>
+            </p>
+          </div>
         </div>
       </div>
     </footer>
