@@ -95,8 +95,11 @@ bridge is the protocol layer that speaks MCP on its behalf.
 
 ## The canonical gate is free (real engine runs)
 
-The hosted console (console.argus-lab.tech) is in open beta: **33 live engine
-runs free (3 welcome + 30 beta pack), no card**. Every run starts with the
+The hosted console (console.argus-lab.tech) is in open beta — and while the
+beta window lasts, it is free: **checkout is switched off, so nothing can be
+charged; 33 live engine runs per account (3 welcome + 30 beta pack), no
+card**. When the beta period closes, paid tiers go live first — nothing is
+billed before that. Every run starts with the
 canonical payment gate — an honest 402 → pay → verify → settle → deliver pass
 with a well-behaved counterparty:
 

@@ -103,7 +103,7 @@ const en = {
     ],
   },
   announce: {
-    text: "Open beta — 33 live engine runs free (3 welcome + 30 beta pack), no card. Every run starts with the canonical payment gate: fail it and the run is refunded (net 0) — you learn for free whether your payment layer stalls even against a well-behaved counterparty.",
+    text: "Open beta — free until the beta window closes: checkout is switched off, no card, nothing to pay. Real-engine allowance: 3 welcome + 30 beta-pack runs per account; simulation stand 25 runs / 24 h. Every engine run starts with the canonical payment gate: fail it and the run is refunded (net 0) — you learn for free whether your payment layer stalls even against a well-behaved counterparty.",
   },
   footer: {
     tagline: "Independent adversarial testing for AI agents that move money — and the rails they settle on. No vendor operates our stands.",
@@ -206,7 +206,7 @@ const ru: Dict = {
     ],
   },
   announce: {
-    text: "Открытая бета — бесплатно 33 боевых прогона движка (3 приветственных + 30 бета-пак), без карты. Каждый прогон начинается с канонического платёжного гейта: не прошёл — прогон возвращается (net 0), бесплатно узнаёшь, хандрит ли платёжный слой даже с порядочным контрагентом.",
+    text: "Открытая бета — бесплатно, пока бета-окно не закроют: checkout выключен, карты нет, платить нечем. На аккаунте: 3 приветственных + 30 бета-пак прогонов реального движка; симулятор — 25 прогонов / 24 ч. Каждый прогон движка начинается с канонического платёжного гейта: не прошёл — прогон возвращается (net 0), бесплатно узнаёшь, хандрит ли платёжный слой даже с порядочным контрагентом.",
   },
   footer: {
     tagline: "Независимое адверсариальное тестирование ИИ-агентов, которые двигают деньги, — и рельсов, по которым они платят. Наши стенды не управляются вендорами.",
