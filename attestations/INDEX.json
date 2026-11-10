@@ -1,6 +1,6 @@
 {
   "registry": "argus-agent-test-lab",
-  "chain_head": "069e2e05626c3f3e...",
+  "chain_head": "db105efe12c78c76...",
   "records": [
     {
       "seq": "0000",
@@ -1414,6 +1414,254 @@
         }
       ],
       "signature": "z4BLklMtPRfYxkk0NSbCTZ5gM/cq1WhBta0bO5QFs/1jkWjApe35A2R4BtVok9T1p6XIU3iJJLtpngKHiL/ZAA=="
+    },
+    {
+      "seq": "0018",
+      "record_id": "argus-seal-0018",
+      "issued_at": "2026-11-10T21:26:39.249Z",
+      "signer_key_id": "argus-lab-2026q4r2",
+      "prev_record_hash": "069e2e05626c3f3ec2c7770af9ccd2f8cbfe382480fd0ff140ea8dcb3c645be9",
+      "type": "seal",
+      "title": "S-BS-06 x Boundra @ fb09284 — pre-registered identical-offer race A10a/A10b (x402 #4198): pre-sign reservation dedup/conflict boundary holds — preflight + 10/10 sealed sessions PASS (case1 signer=1 duplicate-DENY, case2 separate-owners control unchanged signer=2, case3 signer=2, case4 conflict: exactly 1 commitment + 1 pre-signer rejection per mode, case3c supplementary signer=2)",
+      "subject": {
+        "repo": "gobeyondfj-cmd/boundra",
+        "sut_note": "Candidate pinned at fb09284434b85f824b099ade4430e1b77b4c4086 (main head, PR boundra#2 'asymmetric-test-vectors' EXCLUDED per pre-registration — vendor's own test vectors, not shipped code). ALL rejection decisions come verbatim from the pinned checkout: Gateway.evaluate_payment + SpendLedger (SQLite BEGIN IMMEDIATE, UNIQUE(owner, purchase_id), SHA-256 intent_digest over the canonical intent) loaded from BOUNDRA_REPO by a transport-only adapter (sut-boundra-a10/adapters/boundra_adapter_server.py, stdlib http.server, ZERO decision logic — every ALLOW/DENY in the evidence is the candidate's own code). Client side = the pinned TS SDK surface (BoundraClient + createX402Hook from sdk/typescript/src/index.ts) registered as the client's onBeforePaymentCreation hook; per-slot (owner, purchaseId) identity carried through AsyncLocalStorage (ALS preflight session verifies the glue under the race). Harness (constant): S-BS-06 fault-injection stand + sealed client_v5.ts race perimeter (CONCURRENCY=2 via Promise.allSettled, ONE process, shared client; signer-call counter with ms deltas on the wrapped viem signTypedData/signTypedDataAsync; JSONL event ledger; PROBE_SUMMARY; settlement MOCKED, per-session throwaway unfunded keys, signatures NOT logged, nonces truncated) — same perimeter as sealed cycles argus-seal-0004 @ 2b4cc47 / argus-seal-0008 @ b1a4d8ce / argus-seal-0012 @ e993bef. Stand engine lives in the private product repo since the boundary split (argus-seal-0013, snapshot efbf51e): this run used igor-vii/Argus-Agent-Test-Lab-product @ 4ca7c0b6ca7da2e33ddd23af408ec1dcf790bde1 with the SAME scenario and spawn flags as battery-pr3920-c3.mjs (documented deviation: source checkout only, engine unchanged). Stack: @x402/core+evm+fetch 2.30.0 (NOT the 2.28.0 PR build — see addendum R3), viem 2.57.17, node v24.22.2, Base Sepolia parameters (eip155:84532, USDC 0x036CbD53842c5426634e7929541eC2318f3dCF7e, payTo 0x9999…9999), fully offline, no vendor-operated service touched. Canonical run = single run (2026-11-10T17:55:34Z -> 17:56:31Z, ALS preflight + 10 sealed sessions, ~57 s); fresh adapter process + fresh SQLite state dir per session (addendum R2).",
+        "lab_run_commit": "b2465e5a",
+        "lab_run_branch": "main (public proof-layer repo; harness sut-boundra-a10/ untracked new directory, files hash-pinned in evidence)",
+        "pre_registration": "x402-foundation/x402 issue #4198 thread, igor-vii comment 'Order and pins' — two candidates in fixed order: (1) boundra fb09284, (2) gist df69c25. Addendum R1-R3 recorded by the operator before any run; resolutions: R1 seq numbering derived from attestations/INDEX.json + records dir (max seq 0017 -> this record is 0018, run #2 drafts as 0019); R2 fresh adapter process + fresh state dir per session (held); R3 quote-control absence recorded (see findings_summary['boundra-a10-configuration'])"
+      },
+      "scenarios": [
+        {
+          "id": "als_preflight",
+          "name": "AsyncLocalStorage-Glue-Preflight-UNSEALED",
+          "verdict": "PASS",
+          "checks": "UNSEALED dry-run before the sealed matrix: CONCURRENCY=2 race with distinct purchase_ids — each slot carried its OWN (owner, purchase_id) into the candidate's evaluate() under the race (adapter-side cross-check adapter_owners_ok=true: both evaluates seen by the pinned Gateway match the per-slot intent, count equality holds); signer=2, deltas 15 ms, both calls before any slot completed; harness-glue validation only, not a matrix row",
+          "findings": []
+        },
+        {
+          "id": "case1/A10a+case1/A10b",
+          "name": "IdenticalOfferRace-SharedOwner-Dedup",
+          "verdict": "PASS",
+          "checks": "Identical concurrent offers (requirement-amounts 10000,10000), same owner string, same purchase_id, one Gateway: exactly ONE signed payment per mode (signer=1, committed=1); the concurrent duplicate is rejected PRE-SIGNER at the candidate's idempotency layer, verbatim: 'Boundra DENY: within policy — auto-approved; purchase_id already reserved; duplicate signing permission denied' (duplicate=true, purchase_id_conflict=false); rejected slot carries presign_decide=rejected + slot_error and ZERO signer calls (attribution check consistent in both modes); SQLite BEGIN IMMEDIATE serializes the reservation write so the first-arriving evaluate wins and the second never reaches the signer",
+          "findings": []
+        },
+        {
+          "id": "case2/A10a+case2/A10b",
+          "name": "SeparateOwners-SamePurchaseId-NegativeControl",
+          "verdict": "PASS",
+          "checks": "Boundary negative control, both modes: DISTINCT owner strings with the SAME purchase_id through ONE Gateway — UNIQUE(owner, purchase_id) does not collide across owners: signer=2, committed=2, zero rejections, behavior unchanged (deltas 9/10 ms). Scope note per pre-registration: owner model = distinct owner STRINGS through one Gateway instance; cross-process without a shared owner is out of scope (recorded, not tested)",
+          "findings": []
+        },
+        {
+          "id": "case3/A10a+case3/A10b",
+          "name": "DistinctPurchases-IdenticalQuote",
+          "verdict": "PASS",
+          "checks": "Different purchase_ids over an IDENTICAL quote (10000,10000), shared owner, both modes: reservations independent — signer=2, committed=2, zero rejections; no over-blocking of legitimate concurrent purchases",
+          "findings": []
+        },
+        {
+          "id": "case4/A10a (=A10c-equivalent) + case4/A10b (=A10d-equivalent)",
+          "name": "ConflictingOfferRace-ChangedIntent",
+          "verdict": "PASS",
+          "checks": "Same purchase_id, CONFLICTING intents (requirement-amounts 10000,100000 — stand serves the raised offer to one slot), race, both modes: exactly 1 commitment + exactly 1 PRE-SIGNER rejection per mode (signer=1 per mode); the conflict is explicit at the candidate's idempotency layer, verbatim: 'Boundra DENY: within policy — auto-approved; purchase_id conflict: the ID is already bound to a different intent' (duplicate=true, purchase_id_conflict=true); 0 additional signatures after the first commitment. Winner-agnostic per pre-registration (matchers never assert WHICH slot won; winning amount + rejection direction recorded verbatim in the event JSONL): A10a — slot1 committed 10000 (slot2 conflict-rejected); A10b — slot2 committed 100000 (slot1 conflict-rejected). Since the candidate client carries no quote-control (addendum R3), this row doubles as the conflicting-offer control C for BOTH modes: 1 commitment + 1 pre-signer rejection holds in both",
+          "findings": []
+        },
+        {
+          "id": "case3c/A10a+case3c/A10b",
+          "name": "ConflictingOffers-DistinctPurchaseIds-Supplementary",
+          "verdict": "PASS",
+          "checks": "SUPPLEMENTARY probe with config-dependent expectation (pre-registered): conflicting offers (10000 vs 100000) under DISTINCT purchase_ids — signer=2, committed=2, zero rejections in both modes. Under the candidate's reservation-only configuration this is the CORRECT behavior (independent purchase ids); the baseline quote-control harness would yield signer=1 here — a configuration fact of the SUT boundary, NOT a regression and not comparable to the cycle-1/2/3 baseline rows",
+          "findings": []
+        }
+      ],
+      "run_ts": "2026-11-10T17:55:34Z",
+      "self_run": true,
+      "findings_summary": [
+        {
+          "id": "boundra-a10-configuration",
+          "severity": "info",
+          "title": "Configuration facts recorded per pre-registration addendum R3: (a) NO quote-control in the candidate client — setSpendControls(expectedAmount) is NOT configured and the hook is created without expected_amount/expected_recipient in BOTH modes (the candidate's dedup/conflict semantics are expectation-independent: SHA-256 digest over the canonical intent); (b) the onBeforePaymentCreation hook API exists only in @x402/fetch 2.30.0 — stacking the 2.28.0 PR build with 2.30.0 would be the larger deviation, so the whole stack is 2.30.0 and the cycle-1/2/3 baseline (2.28.0 PR build) is NOT byte-comparable on client deps; (c) therefore case4@A10a := A10c-equivalent and case4@A10b := A10d-equivalent (conflicting-offer control), and the A10a/A10b mode labels are retained for topology comparability only — mechanically identical for this candidate, a result divergence BETWEEN modes is an anomaly, not a mode effect (none observed); (d) rejected slots carry zero signer calls by construction (verified per session: signer_call_count == committed slots in all 10 sessions)"
+        },
+        {
+          "id": "boundra-a10-result",
+          "severity": "info",
+          "title": "Result: the pinned Boundra pre-sign reservation boundary satisfies the pre-registered matrix on ALL rows — identical concurrent offers admit exactly one signature (duplicate DENY, idempotency layer), conflicting offers under one purchase_id admit exactly one commitment + one explicit pre-signer rejection (purchase_id conflict, idempotency layer), separate owners and distinct purchase ids continue to sign independently (no over-blocking). Signer-call deltas 7-16 ms across race sessions (baseline band 7-9 ms). Verdicts are claims about the CANDIDATE's boundary vs the pre-registered matrix, not about the x402 protocol or the #4198 baseline: the baseline client (no reservation layer) still exhibits the F-A10 identical-offer race per argus-seal-0008/0012"
+        }
+      ],
+      "notes": "First of the two pre-registered candidates of the x402 #4198 identical-offer-race test (order fixed in the issue thread: boundra fb09284 -> gist df69c25; the second run drafts as record 0019). Harness = lab constant, candidate = variable: the ONLY behavioral surface under test is the candidate's pre-sign reservation boundary (pinned Gateway+SpendLedger decisions via a transport-only adapter) wired into the sealed client_v5.ts race perimeter through the candidate's own TS SDK hook; the harness perimeter (signer counter, JSONL ledger, Promise.allSettled CONCURRENCY=2, S-BS-06 stand, mocked settlement, throwaway keys) is byte-equivalent to the sealed cycles. Deviations, all documented in the fixture (s-bs-06-boundra-a10.fixture.json): (1) STAND_ROOT — the S-BS-06 engine was loaded from the private product repo checkout 4ca7c0b6 (post-boundary location per argus-seal-0013; engine code/scenario/flags unchanged); (2) stack 2.30.0 instead of the 2.28.0 PR build (hook API availability, addendum R3b); (3) no quote-control wired (R3a) — pre-registered, not a silent omission. Out of scope (boundary, not PASS/FAIL): post-sign ambiguity reconciliation (#4094 lost-reply class), facilitator-side dedup, cross-process owners without a shared owner, DO-backed reservation door (wave 2, cv-scvd). Evidence discipline: signer-boundary observability (presign_decide=rejected + slot_error, signer untouched) or signing (signer_call); NO on-chain transfer established (settlement mocked); no private keys, no signatures, no usable authorizations in evidence; session event ledgers + adapter verdict logs + per-session SQLite state exported to attestations/evidence/0018-boundra-a10/ with export-hashes.json. Verdict taxonomy: PASS = observed behavior satisfies the pre-registered matrix row (winner-agnostic matchers: totals only, winning slot/amount logged verbatim, never asserted); FAIL = conformance gap; HARNESS_ERROR would be recorded as such. Attribution: executed per the Argus Agent Test Lab scenario series (A10a/A10b identical-offer race -> S-BS-06). Any reuse or derivative MUST retain this banner.\nlegacy oversize verdict FAIL is expected under R3a; green zone is scoped to A10a/A10b counts",
+      "evidence": [
+        {
+          "kind": "file",
+          "path": "docs/block-b/fixtures/S-BS-06/s-bs-06-boundra-a10.fixture.json",
+          "sha256": "33f43c93d943c29043e748d07b1e0dfa59c27d94f19d946241003badd363cb2e"
+        },
+        {
+          "kind": "file",
+          "path": "attestations/evidence/0018-boundra-a10/export-hashes.json",
+          "sha256": "701f763b51d3c46b553b43726b883651731688a6f2a540104178a60014b14802"
+        },
+        {
+          "kind": "file",
+          "path": "sut-boundra-a10/battery-boundra-a10.mjs",
+          "sha256": "53859ea546b294015899cad2df23690d5bcaa1b68627d17ee0464eb0164e1dbc"
+        },
+        {
+          "kind": "file",
+          "path": "sut-boundra-a10/client_boundra.ts",
+          "sha256": "f1012e2164d410add6fb53a0cb76d2dad8da9be35e979927937d745276da44a3"
+        },
+        {
+          "kind": "file",
+          "path": "sut-boundra-a10/adapters/boundra_adapter_server.py",
+          "sha256": "c6019998a89795a0afce998b226f36eeb469820eb51adb1c70b5bd27e11858a9"
+        },
+        {
+          "kind": "file",
+          "path": "sut-boundra-a10/adapters/glue-check.mjs",
+          "sha256": "2861aff91573c89a51dd52960372afe70989252b7bb220114000cb50d86dd53b"
+        },
+        {
+          "kind": "file",
+          "path": "sut-boundra-a10/package.json",
+          "sha256": "ac4a40e6fe6373b22adaf7415a30cae9ccc333855c2d534e557d7bb82fa211fc"
+        },
+        {
+          "kind": "file",
+          "path": "sut-boundra-a10/package-lock.json",
+          "sha256": "421c382aafbc051028c4386ed407a4674db81bbde33a9420d1381430a2214799"
+        }
+      ],
+      "signature": "RntRxQaqMh4IxGAyVYIHcL1LMMEOKxbDPP/LoIDW9ZD+2vD8xBm3d6I/ZzUrVivIn95oRzzbT8GFt6Rvc/AWBQ=="
+    },
+    {
+      "seq": "0019",
+      "record_id": "argus-seal-0019",
+      "issued_at": "2026-11-10T21:31:10.203Z",
+      "signer_key_id": "argus-lab-2026q4r2",
+      "prev_record_hash": "fb5475fdc3adeff31b7a59777c39405de876c5d0c1a4f34636ab1481aa6c712d",
+      "type": "seal",
+      "title": "S-BS-06 x gist e319a833@df69c25 — pre-registered identical-offer race A10a/A10b (x402 #4198, run #2): pre-sign owner fence holds — Layer 1 verbatim 12/12 (own cases, exit 0) + Layer 2 preflight + 10/10 sealed sessions PASS (case1 signer=1 loser 'held', case2 separate-accounts control unchanged signer=2, case3 signer=2, case4 conflict: exactly 1 commitment + 1 pre-signer rejection per mode, case3c supplementary signer=2)",
+      "subject": {
+        "repo": "gist gist.github.com/e319a833e1be184a0df16ec69f474b72 (pre-sign-owner-replay.mjs)",
+        "sut_note": "Candidate pinned at revision df69c25fac01f68f6b71981e57b71699c12fd1b2 (current HEAD at pre-registration), file sha256 d4395716de9feef0288288ac89b9b326569cf06c97dae50ac148bdb2e40dc6e6 — a self-contained x402 v2 client-side pre-sign owner fence: canonical-JSON SHA-256 intent digest + filesystem reservation (link() atomicity; key = digest([account, purchaseId]); 'held' on same-intent reservation, 'conflict' on intent divergence), fork/IPC start gate, inert signer, 12 built-in cases with own signCalls/submissions counters. TWO layers per pre-registration. Layer 1 (verbatim): the gist's own 12 cases executed unmodified (node pre-sign-owner-replay.mjs) — exit 0, all internal asserts pass, 12/12 (engine note: gist header says 'Node 22', executed on node v24.22.2 with the gist's own dependency line @x402/fetch/@x402/core 2.30.0 + zod 4.6.7 — no engine errors; runner scaffold package.json added, the gist FILE itself byte-unmodified). Layer 2 (lab matrix): the pinned decision fragment (sha/canonical/digest/reserve, gist lines 14-38, fragment sha256 c6d61c7b43fe8b9c8ef28d57f234b3a9c4b4956384ab2bc75355e4eb310180b6) byte-verified against the pinned file and run inside a transport-only sidecar (adapters/gist_sidecar_server.mjs, ZERO decision logic outside the fragment); client side = the lab race perimeter (client_gist.ts, base = sealed client_v5.ts) hooking onBeforePaymentCreation -> sidecar /reserve, glue mirrors the pinned gist hook shape (its lines 64-69) with GET/empty-body adaptation; per-slot (account, purchaseId) identity via AsyncLocalStorage. Harness (constant): S-BS-06 fault-injection stand (product repo @ 4ca7c0b6, boundary argus-seal-0013) + signer-call counter with ms deltas + JSONL ledger + PROBE_SUMMARY; settlement MOCKED, per-session throwaway unfunded keys, signatures NOT logged, nonces truncated — same perimeter as sealed cycles #4/#8/#12 and run #1 (argus-seal-0018). Stack: @x402/core+evm+fetch 2.30.0, viem 2.57.17, node v24.22.2, Base Sepolia parameters, fully offline. Canonical run = single run (Layer 2 2026-11-10T18:10Z -> 18:11Z, preflight + 10 sealed sessions); fresh sidecar process + fresh fence root per session (addendum R2).",
+        "lab_run_commit": "b2465e5a",
+        "lab_run_branch": "main (public proof-layer repo; harness sut-gist-a10/ untracked new directory, files hash-pinned in evidence)",
+        "pre_registration": "x402-foundation/x402 issue #4198 thread, igor-vii comment 'Order and pins' — candidate 2 of 2 (after boundra fb09284, argus-seal-0018). Addendum R1-R3 recorded before any run; resolutions: R1 seq from records dir (max 0017 -> 0018 run #1, 0019 this record); R2 fresh sidecar + fresh fence root per session (held); R3-equivalent recorded (no expectedAmount quote-control; native spendControls enabled but NON-TRIGGERING, cap scaled '1000000' vs the gist's own '2000' at its own fixture scale — the cap-refusal class is exercised VERBATIM by Layer 1 cases 11-12)"
+      },
+      "scenarios": [
+        {
+          "id": "layer1-verbatim",
+          "name": "GistOwnCases-Verbatim",
+          "verdict": "PASS",
+          "checks": "The gist's own 12 cases, unmodified, node v24.22.2: same purchase/shared owner -> delivered+held signer=1; isolated owners (negative control, independent fence roots — the gist's own caveat model) -> 2 delivered signer=2; different purchase IDs -> 2 signer=2; same ID different payer accounts -> 2 signer=2; same ID changed input -> conflict+delivered signer=1; same ID changed terms (amount 1001 vs 1000) -> conflict+delivered signer=1; lost reply after signed submission -> unresolved (x402 #4094 boundary class, recorded not judged) and the later process still refuses ('held', signer=0); pre-sign failure -> 'fenced' and later process does not guess it is safe ('held', signer=0); native cap refuses BEFORE reservation ('cap-refused', signer=0) and the over-cap offer did not reserve (later process delivered) — the reservation is not consumed by a refused offer. Exit 0; candidate's own counters total 11 sign calls",
+          "findings": []
+        },
+        {
+          "id": "als_preflight",
+          "name": "AsyncLocalStorage-Glue-Preflight-UNSEALED",
+          "verdict": "PASS",
+          "checks": "UNSEALED dry-run: CONCURRENCY=2 race with distinct purchase_ids — each slot carried its OWN (account, purchaseId) into reserve() under the race (sidecar cross-check sidecar_accounts_ok=true, count equality); signer=2, delta 9 ms, both calls before any slot completed; harness-glue validation only, not a matrix row",
+          "findings": []
+        },
+        {
+          "id": "case1/A10a+case1/A10b",
+          "name": "IdenticalOfferRace-SharedAccount-Dedup",
+          "verdict": "PASS",
+          "checks": "Identical concurrent offers (10000,10000), same account string, same purchase_id, one fence root, both modes: exactly ONE signed payment per mode (signer=1, committed=1, winner verbatim 10000); the concurrent duplicate is rejected PRE-SIGNER with the candidate's own decision 'held' (same intent already reserved — sidecar logged decision=held on the identical intent digest); rejected slot carries presign_decide=rejected + slot_error and ZERO signer calls (attribution consistent in both modes); link() atomicity arbitrates the race — first reservation wins, the loser never reaches the signer",
+          "findings": []
+        },
+        {
+          "id": "case2/A10a+case2/A10b",
+          "name": "SeparateAccounts-SamePurchaseId-NegativeControl",
+          "verdict": "PASS",
+          "checks": "Boundary negative control, both modes: DISTINCT account strings with the SAME purchase_id through one fence root — the fence key digest([account, purchaseId]) does not collide across accounts: signer=2, committed=2, zero rejections (deltas 8/10 ms), behavior unchanged; scope per pre-registration: distinct owner STRINGS, single shared filesystem root (the reference owner per the gist's own model); cross-process/independent-roots is the gist's own Layer-1 negative control and is out of scope for the lab matrix",
+          "findings": []
+        },
+        {
+          "id": "case3/A10a+case3/A10b",
+          "name": "DistinctPurchases-IdenticalQuote",
+          "verdict": "PASS",
+          "checks": "Different purchase_ids over an IDENTICAL quote (10000,10000 — identical intent digest on both keys), shared account, both modes: reservations independent — signer=2, committed=2, zero rejections; no over-blocking of legitimate concurrent purchases",
+          "findings": []
+        },
+        {
+          "id": "case4/A10a (=A10c-equivalent) + case4/A10b (=A10d-equivalent)",
+          "name": "ConflictingOfferRace-ChangedIntent",
+          "verdict": "PASS",
+          "checks": "Same purchase_id, CONFLICTING intents (10000,100000 — stand serves the raised offer to one slot), race, both modes: exactly 1 commitment + exactly 1 PRE-SIGNER rejection per mode (signer=1 per mode); the conflict is the candidate's own 'conflict' decision (intent digests diverge on the same fence key, verbatim in the sidecar log: A10a reserved 914414b9… vs conflict 6367c7ba…; A10b reserved 830aa107… vs conflict 8fcbb474…); 0 additional signatures after the first commitment. Winner-agnostic (matchers never assert WHICH slot won; winner recorded verbatim: A10a slot1 10000, A10b slot1 10000). The candidate client carries no expectedAmount quote-control (R3-equivalent), so this row doubles as the conflicting-offer control C for BOTH modes: 1 commitment + 1 pre-signer rejection holds in both",
+          "findings": []
+        },
+        {
+          "id": "case3c/A10a+case3c/A10b",
+          "name": "ConflictingOffers-DistinctPurchaseIds-Supplementary",
+          "verdict": "PASS",
+          "checks": "SUPPLEMENTARY probe, config-dependent expectation (pre-registered): conflicting offers (10000 vs 100000) under DISTINCT purchase_ids — signer=2, committed=2, zero rejections in both modes (distinct intent digests on distinct keys). Under the candidate's fence-only configuration this is the CORRECT behavior; the baseline quote-control harness would yield signer=1 here — configuration fact, NOT a regression",
+          "findings": []
+        }
+      ],
+      "run_ts": "2026-11-10T18:10:14.799Z",
+      "self_run": true,
+      "findings_summary": [
+        {
+          "id": "gist-a10-configuration",
+          "severity": "info",
+          "title": "Configuration facts recorded per pre-registration addendum R3: (a) NO expectedAmount quote-control in the lab client (the fence digests the canonical intent — expectation-independent semantics); (b) native spendControls ENABLED but NON-TRIGGERING: the gist's own client sets allowedAssets maxAmountPerPayment '2000' at its own fixture scale; scaled to '1000000' for the lab stand's atomic amounts — the cap-refusal class (refusal must precede reservation and must not consume it) is exercised VERBATIM by Layer 1 cases 11-12; (c) therefore case4@A10a := A10c-equivalent and case4@A10b := A10d-equivalent, and A10a/A10b labels are topology-comparability only — mechanically identical for this candidate, no between-mode divergence observed; (d) rejected slots carry zero signer calls by construction (verified per session: signer_call_count == committed slots in all 10 sessions); (e) gist header says 'Node 22', executed on node v24.22.2 — Layer 1 passed 12/12 on Node 24, recorded as the appendix deviation, no engine errors"
+        },
+        {
+          "id": "gist-a10-result",
+          "severity": "info",
+          "title": "Result: the pinned gist pre-sign owner fence satisfies the pre-registered matrix on ALL rows — identical concurrent offers admit exactly one signature ('held'), conflicting offers under one purchase_id admit exactly one commitment + one explicit pre-signer rejection ('conflict'), separate accounts and distinct purchase ids continue to sign independently (no over-blocking); the fence also retains state through pre-sign failures and lost replies (Layer 1 cases 7-10) and never lets a refused over-cap offer consume the reservation (Layer 1 cases 11-12). Signer-call deltas 8-10 ms across race sessions (baseline band 7-9 ms). Both pre-registered candidates of x402 #4198 (boundra fb09284 -> argus-seal-0018, gist df69c25 -> this record) PASS the same matrix on the same harness perimeter; verdicts are claims about the CANDIDATES' boundaries vs the pre-registered matrix, not about the x402 protocol or the #4198 baseline client (which still exhibits the F-A10 identical-offer race per argus-seal-0008/0012)"
+        }
+      ],
+      "notes": "Second of the two pre-registered candidates of the x402 #4198 identical-offer-race test (order fixed in the issue thread: boundra fb09284 -> gist df69c25). Harness = lab constant, candidate = variable: the ONLY behavioral surface under test is the candidate's pre-sign reservation mechanism (verbatim fragment in a transport-only sidecar, byte-verified) wired into the sealed client_v5.ts race perimeter through a hook that mirrors the gist's own hook shape; the harness perimeter (signer counter, JSONL ledger, Promise.allSettled CONCURRENCY=2, S-BS-06 stand, mocked settlement, throwaway keys) is byte-equivalent to the sealed cycles and to run #1. Deviations, all documented in the fixture (s-bs-06-gist-a10.fixture.json): (1) STAND_ROOT — the S-BS-06 engine was loaded from the private product repo checkout 4ca7c0b6 (post-boundary location per argus-seal-0013; engine code/scenario/flags unchanged); (2) node v24.22.2 vs the gist header's 'Node 22' (Layer 1 verbatim passed, no engine errors); (3) native spendControls cap scaled '2000'->'1000000' (candidate-shaped, non-triggering; cap class covered by Layer 1); (4) GET/empty-body intent adaptation in the glue (the stand resource is a GET — the pinned hook shape retained). Out of scope (boundary, not PASS/FAIL): post-sign ambiguity reconciliation (#4094 lost-reply class — exercised verbatim by Layer 1 cases 7-8: 'unresolved' + later 'held'), facilitator-side dedup, cross-process without a shared owner, DO-backed reservation door (wave 2, cv-scvd). Evidence discipline: signer-boundary observability (presign_decide=rejected + slot_error, signer untouched) or signing (signer_call); NO on-chain transfer established (settlement mocked); no private keys, no signatures, no usable authorizations in evidence; session event ledgers + sidecar decision logs + per-session fence state + the Layer-1 verbatim run log exported to attestations/evidence/0019-gist-a10/ with export-hashes.json. Verdict taxonomy: PASS = observed behavior satisfies the pre-registered matrix row (winner-agnostic matchers: totals only, winning slot/amount logged verbatim, never asserted); FAIL = conformance gap; HARNESS_ERROR would be recorded as such. Attribution: executed per the Argus Agent Test Lab scenario series (A10a/A10b identical-offer race -> S-BS-06). Any reuse or derivative MUST retain this banner.\nlegacy oversize verdict FAIL is expected under R3a; green zone is scoped to A10a/A10b counts",
+      "evidence": [
+        {
+          "kind": "file",
+          "path": "docs/block-b/fixtures/S-BS-06/s-bs-06-gist-a10.fixture.json",
+          "sha256": "20dc615209cb3df223e50ce6ae955c343d9f54abd0ae6c957f0dc1c26f3e97bc"
+        },
+        {
+          "kind": "file",
+          "path": "attestations/evidence/0019-gist-a10/export-hashes.json",
+          "sha256": "c9d70d6898046f3ae6c4a41ab2b1948466d6606be8bd99aec4ef743f40098a29"
+        },
+        {
+          "kind": "file",
+          "path": "attestations/evidence/0019-gist-a10/layer1-verbatim-run.log",
+          "sha256": "da7cb69cfc7f749c3eb933c967c41ccdf3e982260d52a6ec7785832e7ffe2e58"
+        },
+        {
+          "kind": "file",
+          "path": "attestations/evidence/0019-gist-a10/gist-runner-scaffold.package.json",
+          "sha256": "3a1db9032a1202f886d635120129500c573a570b781d50087236f79eb5a05f3e"
+        },
+        {
+          "kind": "file",
+          "path": "sut-gist-a10/battery-gist-a10.mjs",
+          "sha256": "9d0503fc796cf68251904e2804c0a843b067dfce051a8069b7a54c043ce4f098"
+        },
+        {
+          "kind": "file",
+          "path": "sut-gist-a10/client_gist.ts",
+          "sha256": "67843ae82f84faecaee5b7a7aacd4b505ec0183d7da39da66bacc8a410869ea5"
+        },
+        {
+          "kind": "file",
+          "path": "sut-gist-a10/adapters/gist_sidecar_server.mjs",
+          "sha256": "ec8fae643462b95ceb18af5b6d4f5629c625f2b1e6210b6ecd3ee0dd9ed0d0e5"
+        },
+        {
+          "kind": "file",
+          "path": "sut-gist-a10/adapters/build-gist-sidecar.mjs",
+          "sha256": "d4ab9ebdfe01abf85015a0af0c7db1d80d39a6eb267b4e2f2dc8ee7f63a98170"
+        },
+        {
+          "kind": "file",
+          "path": "sut-gist-a10/package.json",
+          "sha256": "8cf8586b967f7050c4ce7555b0bd7936895f20d5e13e23cab493bac79f71a040"
+        }
+      ],
+      "signature": "oHjvlLdgl3I7oNDe2zjBbOpXsA5lkQiqRnzi2qohRZk/GM76Xw3jVAgDlLHRYV2GC/FJqE/vcVaOKjJaKP+4DQ=="
     }
   ]
 }
