@@ -1,9 +1,9 @@
 {
-  "generated_at": "2026-11-01T11:42:52.716Z",
+  "generated_at": "2026-11-10T21:31:10.203Z",
   "verify": {
     "command": "node tools/registry/verify-registry.mjs",
-    "records": 18,
-    "chain_head": "069e2e05626c3f3e"
+    "records": 20,
+    "chain_head": "db105efe12c78c76"
   },
   "correction": {
     "seq": "0017",
@@ -13,29 +13,91 @@
     "amends": "argus-seal-0012"
   },
   "record": {
-    "seq": "0016",
-    "record_id": "argus-seal-0016",
+    "seq": "0019",
+    "record_id": "argus-seal-0019",
     "type": "seal",
-    "issued_at": "2026-11-01T11:42:52.716Z",
-    "date": "2026-11-01",
-    "title": "T3 battery chain v2, SUT-3 — @coinbase/cdp-sdk@1.60.0 guardrails offline battery: 9 PASS / 2 FAIL; CDP-unique defenses verified (timeout cap, malformed-requirement rejection, allowedPayees); FAIL: W-CAP2 dust, W-NO-CONTROLS default-unsafe",
-    "subject": "npm: cloudflare/agents@0.32.0 + @circle-fin/x402-batching@4.0.0 + @coinbase/cdp-sdk@1.60.0 (T3 battery chain v2, offline-by-default)",
-    "prev_record_hash": "3c428d07ce3c8b4b53e608530aa0483f5890ba1b742e5ac35b1c3253b76c3e28",
-    "chain_head": "069e2e05626c3f3e",
+    "issued_at": "2026-11-10T21:31:10.203Z",
+    "date": "2026-11-10",
+    "title": "S-BS-06 x gist e319a833@df69c25 — pre-registered identical-offer race A10a/A10b (x402 #4198, run #2): pre-sign owner fence holds — Layer 1 verbatim 12/12 (own cases, exit 0) + Layer 2 preflight + 10/10 sealed sessions PASS (case1 signer=1 loser 'held', case2 separate-accounts control unchanged signer=2, case3 signer=2, case4 conflict: exactly 1 commitment + 1 pre-signer rejection per mode, case3c supplementary signer=2)",
+    "subject": "gist gist.github.com/e319a833e1be184a0df16ec69f474b72 (pre-sign-owner-replay.mjs)",
+    "prev_record_hash": "fb5475fdc3adeff31b7a59777c39405de876c5d0c1a4f34636ab1481aa6c712d",
+    "chain_head": "db105efe12c78c76",
     "scenarios": [
       {
-        "id": "SUT-3",
-        "verdict": "MIXED (9 PASS / 2 FAIL)",
-        "tone": "info"
+        "id": "layer1-verbatim",
+        "verdict": "PASS",
+        "tone": "pass"
+      },
+      {
+        "id": "als_preflight",
+        "verdict": "PASS",
+        "tone": "pass"
+      },
+      {
+        "id": "case1/A10a+case1/A10b",
+        "verdict": "PASS",
+        "tone": "pass"
+      },
+      {
+        "id": "case2/A10a+case2/A10b",
+        "verdict": "PASS",
+        "tone": "pass"
+      },
+      {
+        "id": "case3/A10a+case3/A10b",
+        "verdict": "PASS",
+        "tone": "pass"
+      },
+      {
+        "id": "case4/A10a (=A10c-equivalent) + case4/A10b (=A10d-equivalent)",
+        "verdict": "PASS",
+        "tone": "pass"
+      },
+      {
+        "id": "case3c/A10a+case3c/A10b",
+        "verdict": "PASS",
+        "tone": "pass"
       }
     ],
     "counts": {
-      "info": 1
+      "pass": 7
     },
     "evidence": [
       {
-        "path": "attestations/evidence/0014-t3-battery-chain/t3-battery-export-hashes.json",
-        "sha256": "50a934f6add7a0a7e21898ad62f4d7687d4ce037c7762e565ec3241481436a0e"
+        "path": "docs/block-b/fixtures/S-BS-06/s-bs-06-gist-a10.fixture.json",
+        "sha256": "20dc615209cb3df223e50ce6ae955c343d9f54abd0ae6c957f0dc1c26f3e97bc"
+      },
+      {
+        "path": "attestations/evidence/0019-gist-a10/export-hashes.json",
+        "sha256": "c9d70d6898046f3ae6c4a41ab2b1948466d6606be8bd99aec4ef743f40098a29"
+      },
+      {
+        "path": "attestations/evidence/0019-gist-a10/layer1-verbatim-run.log",
+        "sha256": "da7cb69cfc7f749c3eb933c967c41ccdf3e982260d52a6ec7785832e7ffe2e58"
+      },
+      {
+        "path": "attestations/evidence/0019-gist-a10/gist-runner-scaffold.package.json",
+        "sha256": "3a1db9032a1202f886d635120129500c573a570b781d50087236f79eb5a05f3e"
+      },
+      {
+        "path": "sut-gist-a10/battery-gist-a10.mjs",
+        "sha256": "9d0503fc796cf68251904e2804c0a843b067dfce051a8069b7a54c043ce4f098"
+      },
+      {
+        "path": "sut-gist-a10/client_gist.ts",
+        "sha256": "67843ae82f84faecaee5b7a7aacd4b505ec0183d7da39da66bacc8a410869ea5"
+      },
+      {
+        "path": "sut-gist-a10/adapters/gist_sidecar_server.mjs",
+        "sha256": "ec8fae643462b95ceb18af5b6d4f5629c625f2b1e6210b6ecd3ee0dd9ed0d0e5"
+      },
+      {
+        "path": "sut-gist-a10/adapters/build-gist-sidecar.mjs",
+        "sha256": "d4ab9ebdfe01abf85015a0af0c7db1d80d39a6eb267b4e2f2dc8ee7f63a98170"
+      },
+      {
+        "path": "sut-gist-a10/package.json",
+        "sha256": "8cf8586b967f7050c4ce7555b0bd7936895f20d5e13e23cab493bac79f71a040"
       }
     ]
   }
