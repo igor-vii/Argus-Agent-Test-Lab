@@ -357,7 +357,7 @@ function CasesSection() {
             {c.quote && (
               <blockquote className="mb-4 border-l-2 border-al-accent/60 pl-4">
                 <p className="text-sm leading-relaxed text-al-text">&ldquo;{c.quote.text}&rdquo;</p>
-                <footer className="mt-1.5 font-mono text-[11px] uppercase tracking-wide text-al-muted/70">
+                <footer className="mt-1.5 font-mono text-[11px] uppercase tracking-wide text-al-muted">
                   &mdash; {c.quote.attribution}
                 </footer>
               </blockquote>
@@ -365,7 +365,7 @@ function CasesSection() {
 
             <div className="mt-auto flex flex-wrap items-center justify-between gap-3 border-t border-al-line pt-4">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="font-mono text-[11px] text-al-muted/70">seals</span>
+                <span className="font-mono text-[11px] text-al-muted">seals</span>
                 {c.seals.map((s) => (
                   <span key={s} className="rounded border border-al-line px-1.5 py-0.5 font-mono text-[10px] text-al-muted">
                     #{s}
@@ -460,7 +460,7 @@ function EngageSection() {
               {CONTACT_EMAIL}
             </a>
           </div>
-          <p className="mt-3 font-mono text-[11px] text-al-muted/70">{t.engage.contactNote}</p>
+          <p className="mt-3 font-mono text-[11px] text-al-muted">{t.engage.contactNote}</p>
         </div>
 
         {/* principles */}
@@ -482,7 +482,7 @@ function EngageSection() {
 function FooterCol({ title, children }: { title: string; children: ReactNode }) {
   return (
     <div>
-      <p className="font-mono text-[11px] uppercase tracking-widest text-al-muted/80">{title}</p>
+      <p className="font-mono text-[11px] uppercase tracking-widest text-al-muted">{title}</p>
       <ul className="mt-3 space-y-2 text-xs">{children}</ul>
     </div>
   );
@@ -515,7 +515,7 @@ function Footer() {
             <FooterLink href="#cases">{t.footer.links.cases}</FooterLink>
             <FooterLink href={CONSOLE_URL}>{t.footer.links.console}</FooterLink>
             <FooterLink href={ONE_PAGER_PATH}>{t.footer.links.onePager}</FooterLink>
-            <li className="pt-1 font-mono text-[11px] text-al-muted/70">{t.footer.notes.mcp}</li>
+            <li className="pt-1 font-mono text-[11px] text-al-muted">{t.footer.notes.mcp}</li>
           </FooterCol>
           <FooterCol title={t.footer.cols.trust}>
             <FooterLink href="#method">{t.footer.links.sealProves}</FooterLink>
@@ -523,13 +523,13 @@ function Footer() {
             <FooterLink href="/terms#consent">{t.footer.links.consent}</FooterLink>
             <FooterLink href="https://sealkeeper.run" external>{t.footer.links.listingSealkeeper}</FooterLink>
             <FooterLink href="https://glama.ai" external>{t.footer.links.listingGlama}</FooterLink>
-            <li className="pt-1 font-mono text-[11px] text-al-muted/70">{t.footer.links.infra}</li>
+            <li className="pt-1 font-mono text-[11px] text-al-muted">{t.footer.links.infra}</li>
           </FooterCol>
           <FooterCol title={t.footer.cols.legal}>
             <FooterLink href="/terms">{t.footer.links.terms}</FooterLink>
             <FooterLink href="/privacy">{t.footer.links.privacy}</FooterLink>
             <FooterLink href={`mailto:${CONTACT_EMAIL}`}>{t.footer.links.contact}</FooterLink>
-            <li className="pt-1 font-mono text-[11px] text-al-muted/70">{t.footer.notes.scope}</li>
+            <li className="pt-1 font-mono text-[11px] text-al-muted">{t.footer.notes.scope}</li>
           </FooterCol>
         </div>
 

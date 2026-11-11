@@ -97,7 +97,7 @@ export function ChainExplorer() {
                 <VerdictBadge key={v.id} label={`${v.id}: ${v.verdict}`} tone={v.tone} />
               ))}
             </div>
-            <p className="mt-3 font-mono text-[11px] text-al-muted/70">
+            <p className="mt-3 font-mono text-[11px] text-al-muted">
               {selected.evidence} hash-pinned evidence file{selected.evidence === 1 ? "" : "s"}
             </p>
           </div>
@@ -105,7 +105,7 @@ export function ChainExplorer() {
           <div>
             <p className="mb-2 font-mono text-[11px] uppercase tracking-widest text-al-muted">findings</p>
             {selected.findings.length === 0 ? (
-              <p className="font-mono text-xs text-al-muted/70">— none recorded on this record —</p>
+              <p className="font-mono text-xs text-al-muted">— none recorded on this record —</p>
             ) : (
               <ul className="space-y-1.5">
                 {selected.findings.map((f) => (
@@ -113,7 +113,7 @@ export function ChainExplorer() {
                     <SeverityDot severity={f.severity} />
                     <span>
                       <span className="font-mono text-al-text">{f.id}</span>{" "}
-                      <span className="font-mono text-al-muted/70">({f.severity})</span> {f.text}
+                      <span className="font-mono text-al-muted">({f.severity})</span> {f.text}
                     </span>
                   </li>
                 ))}
@@ -142,8 +142,8 @@ export function ChainExplorer() {
       {/* verify line — chain ok is a status: accent allowed here */}
       <div className="border-t border-al-line px-5 py-3">
         <p className="font-mono text-[11px] leading-relaxed text-al-muted">
-          <span className="text-al-muted/60">$</span> node tools/registry/verify-registry.mjs{"  "}
-          <span className="text-al-muted/60">→</span> <span className="text-al-accent">registry intact: {RECORD_COUNT} records, chain head {CHAIN_HEAD}…</span>{" "}
+          <span className="text-al-muted">$</span> node tools/registry/verify-registry.mjs{"  "}
+          <span className="text-al-muted">→</span> <span className="text-al-accent">registry intact: {RECORD_COUNT} records, chain head {CHAIN_HEAD}…</span>{" "}
           <a href={`${REPO_URL}/tree/main/attestations/records`} target="_blank" rel="noopener noreferrer" className="ml-2 text-al-text underline decoration-al-muted/40 underline-offset-4 transition-colors hover:decoration-al-text">
             records ↗
           </a>

@@ -79,7 +79,7 @@ export function LatestSealBlock() {
          * take the seal slot, so the pointer lives here, chain-derived. */}
         {latest.correction && (
           <p className="mb-5 font-mono text-xs leading-relaxed text-al-muted">
-            <span className="text-al-muted/60">latest correction</span>{" "}
+            <span className="text-al-muted">latest correction</span>{" "}
             <span className="text-al-text">{latest.correction.record_id}</span>
             {" · "}
             <a
@@ -118,9 +118,9 @@ export function LatestSealBlock() {
       {/* verify line — one command, public */}
       <div className="border-t border-al-line px-5 py-3 sm:px-6">
         <p className="font-mono text-[11px] leading-relaxed text-al-muted">
-          <span className="text-al-muted/60">$</span> git clone {REPO_URL.replace("https://", "")} && node
+          <span className="text-al-muted">$</span> git clone {REPO_URL.replace("https://", "")} && node
           tools/registry/verify-registry.mjs{"  "}
-          <span className="text-al-muted/60">→</span>{" "}
+          <span className="text-al-muted">→</span>{" "}
           <span className="text-al-accent">registry intact: {latest.verify.records} records, chain head {short(latest.verify.chain_head)}…</span>
         </p>
       </div>
