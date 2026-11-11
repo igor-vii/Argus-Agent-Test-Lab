@@ -599,6 +599,24 @@ function Footer() {
                 />
               </a>
             </p>
+            <p className="mt-3">
+              {/* Lifto badge — light variant for the dark-only landing (ТЗ 2026-11-11) */}
+              <a
+                href="https://liftoapp.com/product/argus-agent-test-lab"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Featured on Lifto"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  alt="Featured on Lifto"
+                  width={200}
+                  height={54}
+                  className="h-10 w-auto"
+                  src="https://liftoapp.com/badges/featured-light.svg"
+                />
+              </a>
+            </p>
           </div>
         </div>
       </div>
