@@ -1,0 +1,28 @@
+{
+  "name": "Argus Agent Test Lab",
+  "description": "Adversarial testing for AI agents that move money: commissioned sealed runs with a public, hash-chained registry of verdicts. Not an A2A task-executing agent - commission a run or contact us at https://argus-lab.tech.",
+  "supportedInterfaces": [
+    { "url": "https://argus-lab.tech", "protocolBinding": "HTTP+JSON", "protocolVersion": "1.0" }
+  ],
+  "provider": { "organization": "Argus Lab", "url": "https://argus-lab.tech" },
+  "version": "1.0.0",
+  "documentationUrl": "https://github.com/igor-vii/Argus-Agent-Test-Lab",
+  "capabilities": { "streaming": false, "pushNotifications": false, "extensions": [] },
+  "defaultInputModes": ["application/json", "text/plain"],
+  "defaultOutputModes": ["application/json"],
+  "skills": [
+    {
+      "id": "adversarial-testing-run",
+      "name": "Adversarial Testing Run",
+      "description": "Commissioned sealed adversarial run against a money-moving AI agent: attack scenarios, frozen scope, sealed verdicts. Pricing: founding $350 / standard $990.",
+      "tags": ["adversarial-testing", "agent-safety", "x402", "agentic-payments"],
+      "examples": ["Run our x402 checkout agent against a canonical-price-overrun suite"]
+    },
+    {
+      "id": "verdict-registry",
+      "name": "Sealed Verdict Registry",
+      "description": "Public hash-chained registry of sealed run verdicts (S-BS seals) at argus-lab.tech - independently verifiable outcomes.",
+      "tags": ["attestation", "transparency", "audit"]
+    }
+  ]
+}
