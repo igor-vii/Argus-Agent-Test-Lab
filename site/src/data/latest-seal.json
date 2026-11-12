@@ -1,9 +1,9 @@
 {
-  "generated_at": "2026-11-12T18:57:54.364Z",
+  "generated_at": "2026-11-12T21:08:17.266Z",
   "verify": {
     "command": "node tools/registry/verify-registry.mjs",
-    "records": 21,
-    "chain_head": "07a5412b93e3bd45"
+    "records": 22,
+    "chain_head": "47acb4ef32bab1df"
   },
   "correction": {
     "seq": "0017",
@@ -13,94 +13,113 @@
     "amends": "argus-seal-0012"
   },
   "record": {
-    "seq": "0020",
-    "record_id": "argus-seal-0020",
+    "seq": "0021",
+    "record_id": "argus-seal-0021",
     "type": "seal",
-    "issued_at": "2026-11-12T18:57:54.364Z",
+    "issued_at": "2026-11-12T21:08:17.266Z",
     "date": "2026-11-12",
-    "title": "Wave 2 claim-layer offline re-implementation @ scvd-general-store-repo 56d6db3 — pre-registered H2 (amended) + C2 battery",
-    "subject": "cv-scvd/scvd-general-store-repo @ 56d6db340505dec2fec9d89780a498ff9ba37bfb",
-    "prev_record_hash": "db105efe12c78c76229a335113a4b559f5d78f3862f5faf3bfe60b2807e438cf",
-    "chain_head": "07a5412b93e3bd45",
+    "title": "Nano cross-process idempotency battery @ agent-passport-gateway 99888e8 — pre-registered R1/R2a/R2b/R3/R4 + invariant (PR #14)",
+    "subject": "agent-passport-system/agent-passport-gateway @ 99888e8f143eb0c281ccd62759750038c1a1aa9e",
+    "prev_record_hash": "07a5412b93e3bd459da03584786f52085c2915c78a89c42f80151094ba36ce2d",
+    "chain_head": "47acb4ef32bab1df",
     "scenarios": [
       {
-        "id": "h2-a-wins-b1",
+        "id": "r1-1",
         "verdict": "PASS",
         "tone": "pass"
       },
       {
-        "id": "h2-a-wins-b2",
+        "id": "r1-2",
         "verdict": "PASS",
         "tone": "pass"
       },
       {
-        "id": "h2-a-wins-b3",
+        "id": "r1-3",
         "verdict": "PASS",
         "tone": "pass"
       },
       {
-        "id": "h2-a-wins-b4",
+        "id": "r2a-1",
         "verdict": "PASS",
         "tone": "pass"
       },
       {
-        "id": "h2-b-wins-b1",
+        "id": "r2a-2",
         "verdict": "PASS",
         "tone": "pass"
       },
       {
-        "id": "h2-b-wins-b2",
+        "id": "r2b-1",
         "verdict": "PASS",
         "tone": "pass"
       },
       {
-        "id": "h2-b-wins-b3",
+        "id": "r2b-2",
         "verdict": "PASS",
         "tone": "pass"
       },
       {
-        "id": "h2-b-wins-b4",
+        "id": "r2b-3",
         "verdict": "PASS",
         "tone": "pass"
       },
       {
-        "id": "c2a-asserted-unverified-payer",
+        "id": "r3-1",
         "verdict": "PASS",
         "tone": "pass"
       },
       {
-        "id": "c2b-verified-stranger-different-slot",
+        "id": "r3-2",
+        "verdict": "PASS",
+        "tone": "pass"
+      },
+      {
+        "id": "r3-3",
+        "verdict": "PASS",
+        "tone": "pass"
+      },
+      {
+        "id": "r4-1",
+        "verdict": "PASS",
+        "tone": "pass"
+      },
+      {
+        "id": "invariant",
         "verdict": "PASS",
         "tone": "pass"
       }
     ],
     "counts": {
-      "pass": 10
+      "pass": 13
     },
     "evidence": [
       {
-        "path": "attestations/evidence/0020-wave2-claim-layer/layer1-log.jsonl",
-        "sha256": "418378c11940cdfa0c37d00ae323d730017e231e02819af84399f12c0bdc0362"
+        "path": "attestations/evidence/0021-nano-cross-process-battery/layer1-gate.md",
+        "sha256": "1ee3b6128522371d492134093778bb025be56e234a6a6a7c85e97c097502afc3"
       },
       {
-        "path": "attestations/evidence/0020-wave2-claim-layer/layer1-asserts.jsonl",
-        "sha256": "ffb6db0e105d8d88c5c3338603b138111c447bb72cb15d9bb3b3510d469b9246"
+        "path": "attestations/evidence/0021-nano-cross-process-battery/layer1-log.jsonl",
+        "sha256": "fd2dd2cb59805f8aa2b2301dadfcc93399ac1c873bf967c5c88104abe8652c47"
       },
       {
-        "path": "attestations/evidence/0020-wave2-claim-layer/verdicts.md",
-        "sha256": "50bc2c3f7657b24c7d28bc932b65718d66b6ba9d49902e30e93f8ff9e2931848"
+        "path": "attestations/evidence/0021-nano-cross-process-battery/verdicts.jsonl",
+        "sha256": "fba7db45aea476a37e2c36321eaa410c30d3a74353603763ccbca4863067cd76"
       },
       {
-        "path": "attestations/evidence/0020-wave2-claim-layer/layer1-gate.md",
-        "sha256": "5ffc999a718b00dc765abb284aaade58f716c5bcef9ee2d52bc2e03f0fdc2275"
+        "path": "attestations/evidence/0021-nano-cross-process-battery/verdicts.md",
+        "sha256": "9baa4938fbaaa06f77d7cbec7b1f08b092a5d55e52b4576aeb58b8ccb9c0bc43"
       },
       {
-        "path": "sut-wave2-claim-layer/battery-wave2-claim-layer.mjs",
-        "sha256": "26f60fd318c60158a86549550a5e3030e97f6afebc0a4b6ae6a0500c2acd0bde"
+        "path": "sut-nano-cross-process-battery/worker.ts",
+        "sha256": "c388018c1657e709aafa7d5f0ccbbccb7f22d93a1800a3213f1267ab02ecf6e5"
       },
       {
-        "path": "attestations/evidence/0020-wave2-claim-layer/export-hashes.json",
-        "sha256": "59111490541576456692ac4e72a78bc8473a6e2a900792dac042fe15f8db8e31"
+        "path": "sut-nano-cross-process-battery/run-battery.mjs",
+        "sha256": "0897ff60f75fff556c09a0e6d61192f0dbd38f2fdb8b4c788654d9e54fb97a63"
+      },
+      {
+        "path": "attestations/evidence/0021-nano-cross-process-battery/export-hashes.json",
+        "sha256": "4139d216334c4575f54a44db5cdcfd7f3aaaabbf2c4522387132c5c3dd64ae93"
       }
     ]
   }

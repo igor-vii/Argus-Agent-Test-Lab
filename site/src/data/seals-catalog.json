@@ -974,5 +974,109 @@
         "href": "https://github.com/igor-vii/Argus-Agent-Test-Lab/blob/main/attestations/records/0020-wave-2-claim-layer-offline-re-implementation-scvd-general-st.seal.json"
       }
     ]
+  },
+  {
+    "seq": "0021",
+    "date": "2026-11-12",
+    "type": "seal",
+    "title": "Nano cross-process idempotency battery @ agent-passport-gateway 99888e8 — pre-registered R1/R2a/R2b/R3/R4 + invariant (PR #14)",
+    "subject": "agent-passport-system/agent-passport-gateway @ 99888e8f143eb0c281ccd62759750038c1a1aa9e",
+    "summary": "Battery result: 12 trials + invariant = 13/13 rows PASS, 106/106 checks, zero divergences (verdicts.md). R1 (both orderings + simultaneous): exactly one reservation wins in every ordering; the loser observes the original operation (replay: true, same op id) without reserving or signing again; delegation budget decremented exactly once (1000 raw on both hops of the two-hop chain in every trial); the winner alone prepares (one account_info, one work_generate), commits and publishes once — exactly one process call, and the published block is byte-identical to the stored block_json. R2a (pre-existing key, both processes race with changed amount/recipient): both receive idempotency_mismatch (= 409 under the pinned route mapping); zero new reservations (the pre-op's holds only); the stored operation row is byte-identical after the race; budget untouched; zero node calls. R2b (fresh key, different amounts 1000 vs 2000, both orderings + simultaneous): exactly one reservation — the first writer under BEGIN IMMEDIATE commits, the loser receives idempotency_mismatch (409) against the winner's stored fingerprint; budget decremented exactly once, by the winner only (1000 on both hops when A wins, 2000 on both hops when B wins). R3 (different keys, same wallet, first payment unfinished, both orderings + simultaneous): the second operation is refused with wallet_busy (409); exactly one wallet_ops row, status reserved (unfinished); neither process signs — zero node calls at all; budget decremented once. R4 (retry after publication, across processes): process A reserves, prepares the one block, commits and publishes (accepted); process B retries the same key and payment, receives the original operation (replay: true, same op id, status admitted), never calls prepareOp — B's node log contains exactly one action: process; B takes over the expired lease, commits one more attempt and publishes the SAME stored block — the two process calls are byte-identical and both match the stored block_json; attempt history [1: accepted, 2: accepted]; attempt_count = 2; one operation, one reservation, budget decremented once. Invariant: reservation count == 1 in every R1 trial (distinct reserved op ids, one set of holds); no budget underflow (spend_used_minor <= spend_limit_minor on every delegation in every trial); no double-reserve anywhere.",
+    "verdicts": [
+      {
+        "id": "r1-1",
+        "verdict": "PASS",
+        "tone": "pass"
+      },
+      {
+        "id": "r1-2",
+        "verdict": "PASS",
+        "tone": "pass"
+      },
+      {
+        "id": "r1-3",
+        "verdict": "PASS",
+        "tone": "pass"
+      },
+      {
+        "id": "r2a-1",
+        "verdict": "PASS",
+        "tone": "pass"
+      },
+      {
+        "id": "r2a-2",
+        "verdict": "PASS",
+        "tone": "pass"
+      },
+      {
+        "id": "r2b-1",
+        "verdict": "PASS",
+        "tone": "pass"
+      },
+      {
+        "id": "r2b-2",
+        "verdict": "PASS",
+        "tone": "pass"
+      },
+      {
+        "id": "r2b-3",
+        "verdict": "PASS",
+        "tone": "pass"
+      },
+      {
+        "id": "r3-1",
+        "verdict": "PASS",
+        "tone": "pass"
+      },
+      {
+        "id": "r3-2",
+        "verdict": "PASS",
+        "tone": "pass"
+      },
+      {
+        "id": "r3-3",
+        "verdict": "PASS",
+        "tone": "pass"
+      },
+      {
+        "id": "r4-1",
+        "verdict": "PASS",
+        "tone": "pass"
+      },
+      {
+        "id": "invariant",
+        "verdict": "PASS",
+        "tone": "pass"
+      }
+    ],
+    "findings": [
+      {
+        "id": "nano-pin-acquisition",
+        "severity": "info",
+        "text": "Pin acquisition: commit 99888e8 dated 2026-11-11 22:18:15 -0800 (= 2026-11-12T06:18:15Z), an ancestor of current main (PR #14 merged as 4784153) — plain clone+checkout, no fetch-by-SHA. All validation and the battery ran on the pinned checkout only, per the owner's explicit request."
+      },
+      {
+        "id": "nano-gate-line-by-line",
+        "severity": "info",
+        "text": "Layer-1 gate passed before the first artifact: all thread quotes verified verbatim at the pin (S1-S8, layer1-gate.md) — reserveSend single .immediate() transaction with key+budgets+inserts, replayOrMismatch fingerprint semantics, refuseIfAccountBusy wallet_busy, 409 route mapping, commitAttempt/publishAttempt one-token stored-block semantics (vendor's own C3 pins retry-identical-block), takeOver claim fencing, WAL/busy_timeout substrate. Ten pinned files hash-pinned. Vendor's own wallet-ops suite: 22/22 PASS at the pin in this environment before the battery was built."
+      },
+      {
+        "id": "nano-harness-iterations",
+        "severity": "info",
+        "text": "Harness iterations disclosed: an infrastructure smoke trial (distinct key, not a registered row) and one full-battery iteration exposed three harness defects (missing dbFile param; fixture delegation chain not linked so the budget decremented one hop only; R4 role-A control-flow fall-through into the retry branch). All three are battery-harness bugs, not SUT divergences; no registered expectation was altered to accommodate them. The sealed verdicts are from the corrected runner; observed SUT behavior was identical across iterations."
+      },
+      {
+        "id": "nano-scope-boundary",
+        "severity": "info",
+        "text": "Scope facts: the battery drives the vendor's real code cross-process; sim trials observe a true simultaneous race (winner recorded, assertions order-agnostic), sequenced trials fix the interleave. The fake Nano node records every call (account_info/work_generate/process) — signature count is observable through the node log since prepareOp is the only signing path. No HTTP routes booted: 409 expectations verified at the WalletOpError layer with the pinned route mapping cited. No defect claim — all registered rows PASS on the pinned implementation."
+      }
+    ],
+    "evidence": 7,
+    "links": [
+      {
+        "label": "record #0021",
+        "href": "https://github.com/igor-vii/Argus-Agent-Test-Lab/blob/main/attestations/records/0021-nano-cross-process-idempotency-battery-agent-passport-gatewa.seal.json"
+      }
+    ]
   }
 ]
