@@ -1,0 +1,83 @@
+{"row":"H2-A-wins-B1","name":"winner admitted and owns slot","ok":true,"actual":"true","expected":"true"}
+{"row":"H2-A-wins-B1","name":"exactly one settlement attempt","ok":true,"actual":"1","expected":"1"}
+{"row":"H2-A-wins-B1","name":"loser outcome inside registered range","ok":true,"actual":"true","expected":"true"}
+{"row":"H2-A-wins-B1","name":"loser code matches registered branch","ok":true,"actual":"Original purchase admission pending","expected":"Original purchase admission pending"}
+{"row":"H2-A-wins-B1","name":"loser settlement_attempted false","ok":true,"actual":"n/a(error-throw)","expected":"n/a(error-throw)"}
+{"row":"H2-A-wins-B1","name":"loser charged_again false","ok":true,"actual":"n/a(error-throw)","expected":"n/a(error-throw)"}
+{"row":"H2-A-wins-B1","name":"loser body is claim-path shape (no idempotent_replay)","ok":true,"actual":"false","expected":"false"}
+{"row":"H2-A-wins-B1","name":"no owner-mismatch divergence","ok":true,"actual":"false","expected":"false"}
+{"row":"H2-A-wins-B1","name":"final record state","ok":true,"actual":"settled","expected":"settled"}
+{"row":"H2-A-wins-B2","name":"winner admitted and owns slot","ok":true,"actual":"true","expected":"true"}
+{"row":"H2-A-wins-B2","name":"exactly one settlement attempt","ok":true,"actual":"1","expected":"1"}
+{"row":"H2-A-wins-B2","name":"loser outcome inside registered range","ok":true,"actual":"true","expected":"true"}
+{"row":"H2-A-wins-B2","name":"loser code matches registered branch","ok":true,"actual":"settlement_unknown","expected":"settlement_unknown"}
+{"row":"H2-A-wins-B2","name":"loser settlement_attempted false","ok":true,"actual":"false","expected":"false"}
+{"row":"H2-A-wins-B2","name":"loser charged_again false","ok":true,"actual":"false","expected":"false"}
+{"row":"H2-A-wins-B2","name":"loser body is claim-path shape (no idempotent_replay)","ok":true,"actual":"false","expected":"false"}
+{"row":"H2-A-wins-B2","name":"no owner-mismatch divergence","ok":true,"actual":"false","expected":"false"}
+{"row":"H2-A-wins-B2","name":"final record state","ok":true,"actual":"settled","expected":"settled"}
+{"row":"H2-A-wins-B3","name":"winner admitted and owns slot","ok":true,"actual":"true","expected":"true"}
+{"row":"H2-A-wins-B3","name":"exactly one settlement attempt","ok":true,"actual":"1","expected":"1"}
+{"row":"H2-A-wins-B3","name":"loser outcome inside registered range","ok":true,"actual":"true","expected":"true"}
+{"row":"H2-A-wins-B3","name":"loser code matches registered branch","ok":true,"actual":"purchase_recovery_pending","expected":"purchase_recovery_pending"}
+{"row":"H2-A-wins-B3","name":"loser settlement_attempted false","ok":true,"actual":"false","expected":"false"}
+{"row":"H2-A-wins-B3","name":"loser charged_again false","ok":true,"actual":"false","expected":"false"}
+{"row":"H2-A-wins-B3","name":"loser body is claim-path shape (no idempotent_replay)","ok":true,"actual":"false","expected":"false"}
+{"row":"H2-A-wins-B3","name":"no owner-mismatch divergence","ok":true,"actual":"false","expected":"false"}
+{"row":"H2-A-wins-B3","name":"final record state","ok":true,"actual":"settled","expected":"settled"}
+{"row":"H2-A-wins-B4","name":"winner admitted and owns slot","ok":true,"actual":"true","expected":"true"}
+{"row":"H2-A-wins-B4","name":"exactly one settlement attempt","ok":true,"actual":"1","expected":"1"}
+{"row":"H2-A-wins-B4","name":"loser outcome inside registered range","ok":true,"actual":"true","expected":"true"}
+{"row":"H2-A-wins-B4","name":"loser code matches registered branch","ok":true,"actual":"purchase_not_settled","expected":"purchase_not_settled"}
+{"row":"H2-A-wins-B4","name":"loser settlement_attempted false","ok":true,"actual":"false","expected":"false"}
+{"row":"H2-A-wins-B4","name":"loser charged_again false","ok":true,"actual":"false","expected":"false"}
+{"row":"H2-A-wins-B4","name":"loser body is claim-path shape (no idempotent_replay)","ok":true,"actual":"false","expected":"false"}
+{"row":"H2-A-wins-B4","name":"no owner-mismatch divergence","ok":true,"actual":"false","expected":"false"}
+{"row":"H2-A-wins-B4","name":"final record state","ok":true,"actual":"declined","expected":"declined"}
+{"row":"H2-B-wins-B1","name":"winner admitted and owns slot","ok":true,"actual":"true","expected":"true"}
+{"row":"H2-B-wins-B1","name":"exactly one settlement attempt","ok":true,"actual":"1","expected":"1"}
+{"row":"H2-B-wins-B1","name":"loser outcome inside registered range","ok":true,"actual":"true","expected":"true"}
+{"row":"H2-B-wins-B1","name":"loser code matches registered branch","ok":true,"actual":"Original purchase admission pending","expected":"Original purchase admission pending"}
+{"row":"H2-B-wins-B1","name":"loser settlement_attempted false","ok":true,"actual":"n/a(error-throw)","expected":"n/a(error-throw)"}
+{"row":"H2-B-wins-B1","name":"loser charged_again false","ok":true,"actual":"n/a(error-throw)","expected":"n/a(error-throw)"}
+{"row":"H2-B-wins-B1","name":"loser body is claim-path shape (no idempotent_replay)","ok":true,"actual":"false","expected":"false"}
+{"row":"H2-B-wins-B1","name":"no owner-mismatch divergence","ok":true,"actual":"false","expected":"false"}
+{"row":"H2-B-wins-B1","name":"final record state","ok":true,"actual":"settled","expected":"settled"}
+{"row":"H2-B-wins-B2","name":"winner admitted and owns slot","ok":true,"actual":"true","expected":"true"}
+{"row":"H2-B-wins-B2","name":"exactly one settlement attempt","ok":true,"actual":"1","expected":"1"}
+{"row":"H2-B-wins-B2","name":"loser outcome inside registered range","ok":true,"actual":"true","expected":"true"}
+{"row":"H2-B-wins-B2","name":"loser code matches registered branch","ok":true,"actual":"settlement_unknown","expected":"settlement_unknown"}
+{"row":"H2-B-wins-B2","name":"loser settlement_attempted false","ok":true,"actual":"false","expected":"false"}
+{"row":"H2-B-wins-B2","name":"loser charged_again false","ok":true,"actual":"false","expected":"false"}
+{"row":"H2-B-wins-B2","name":"loser body is claim-path shape (no idempotent_replay)","ok":true,"actual":"false","expected":"false"}
+{"row":"H2-B-wins-B2","name":"no owner-mismatch divergence","ok":true,"actual":"false","expected":"false"}
+{"row":"H2-B-wins-B2","name":"final record state","ok":true,"actual":"settled","expected":"settled"}
+{"row":"H2-B-wins-B3","name":"winner admitted and owns slot","ok":true,"actual":"true","expected":"true"}
+{"row":"H2-B-wins-B3","name":"exactly one settlement attempt","ok":true,"actual":"1","expected":"1"}
+{"row":"H2-B-wins-B3","name":"loser outcome inside registered range","ok":true,"actual":"true","expected":"true"}
+{"row":"H2-B-wins-B3","name":"loser code matches registered branch","ok":true,"actual":"purchase_recovery_pending","expected":"purchase_recovery_pending"}
+{"row":"H2-B-wins-B3","name":"loser settlement_attempted false","ok":true,"actual":"false","expected":"false"}
+{"row":"H2-B-wins-B3","name":"loser charged_again false","ok":true,"actual":"false","expected":"false"}
+{"row":"H2-B-wins-B3","name":"loser body is claim-path shape (no idempotent_replay)","ok":true,"actual":"false","expected":"false"}
+{"row":"H2-B-wins-B3","name":"no owner-mismatch divergence","ok":true,"actual":"false","expected":"false"}
+{"row":"H2-B-wins-B3","name":"final record state","ok":true,"actual":"settled","expected":"settled"}
+{"row":"H2-B-wins-B4","name":"winner admitted and owns slot","ok":true,"actual":"true","expected":"true"}
+{"row":"H2-B-wins-B4","name":"exactly one settlement attempt","ok":true,"actual":"1","expected":"1"}
+{"row":"H2-B-wins-B4","name":"loser outcome inside registered range","ok":true,"actual":"true","expected":"true"}
+{"row":"H2-B-wins-B4","name":"loser code matches registered branch","ok":true,"actual":"purchase_not_settled","expected":"purchase_not_settled"}
+{"row":"H2-B-wins-B4","name":"loser settlement_attempted false","ok":true,"actual":"false","expected":"false"}
+{"row":"H2-B-wins-B4","name":"loser charged_again false","ok":true,"actual":"false","expected":"false"}
+{"row":"H2-B-wins-B4","name":"loser body is claim-path shape (no idempotent_replay)","ok":true,"actual":"false","expected":"false"}
+{"row":"H2-B-wins-B4","name":"no owner-mismatch divergence","ok":true,"actual":"false","expected":"false"}
+{"row":"H2-B-wins-B4","name":"final record state","ok":true,"actual":"declined","expected":"declined"}
+{"row":"C2a-asserted-unverified-payer","name":"cached purchase not served to stranger","ok":true,"actual":"null","expected":"null"}
+{"row":"C2a-asserted-unverified-payer","name":"read denied before cache consultation","ok":true,"actual":"true","expected":"true"}
+{"row":"C2a-asserted-unverified-payer","name":"verified-payer slot not consulted via DO on read path","ok":true,"actual":"0","expected":"0"}
+{"row":"C2a-asserted-unverified-payer","name":"P's cache entry intact after the attempt","ok":true,"actual":"true","expected":"true"}
+{"row":"C2a-asserted-unverified-payer","name":"exactly one settlement in setup","ok":true,"actual":"1","expected":"1"}
+{"row":"C2b-verified-stranger-different-slot","name":"cached purchase not served to stranger","ok":true,"actual":"null","expected":"null"}
+{"row":"C2b-verified-stranger-different-slot","name":"verified stranger gets cache miss","ok":true,"actual":"true","expected":"true"}
+{"row":"C2b-verified-stranger-different-slot","name":"P's cache entry not readable via stranger slot","ok":true,"actual":"true","expected":"true"}
+{"row":"C2b-verified-stranger-different-slot","name":"P's cache entry intact after the attempt","ok":true,"actual":"true","expected":"true"}
+{"row":"C2b-verified-stranger-different-slot","name":"exactly one settlement in setup","ok":true,"actual":"1","expected":"1"}
+{"row":"C2b-verified-stranger-different-slot","name":"stranger slot differs from P's slot","ok":true,"actual":"true","expected":"true"}
