@@ -890,5 +890,89 @@
         "href": "https://github.com/igor-vii/Argus-Agent-Test-Lab/blob/main/attestations/records/0019-s-bs-06-x-gist-e319a833-df69c25-pre-registered-identical-off.seal.json"
       }
     ]
+  },
+  {
+    "seq": "0020",
+    "date": "2026-11-12",
+    "type": "seal",
+    "title": "Wave 2 claim-layer offline re-implementation @ scvd-general-store-repo 56d6db3 — pre-registered H2 (amended) + C2 battery",
+    "subject": "cv-scvd/scvd-general-store-repo @ 56d6db340505dec2fec9d89780a498ff9ba37bfb",
+    "summary": "Battery result: 10/10 rows PASS, 83/83 asserts, zero divergences (verdicts.md). H2 (both orders A-wins and B-wins): exactly one settlement attempt per case; loser outcome inside the registered closed range with exact branch mapping — B1 'Original purchase admission pending', B2 'settlement_unknown', B3 'purchase_recovery_pending', B4 'purchase_not_settled'; settlement_attempted=false and charged_again=false on every recorded-body row; claim-path body carries no idempotent_replay key (the RecordedPurchase record-status shape, distinct from the KV replay); no owner-mismatch divergence (consistency checks pass by construction). C2a: asserted-but-unverified payer denied the read before cache consultation; cached purchase not served; payer's cache entry intact. C2b: verified stranger keys on their own payer -> cache miss; stranger slot name differs from payer's slot name. Freezer rule honored: rows frozen before the first artifact; nothing added, removed or re-interpreted after the run started.",
+    "verdicts": [
+      {
+        "id": "h2-a-wins-b1",
+        "verdict": "PASS",
+        "tone": "pass"
+      },
+      {
+        "id": "h2-a-wins-b2",
+        "verdict": "PASS",
+        "tone": "pass"
+      },
+      {
+        "id": "h2-a-wins-b3",
+        "verdict": "PASS",
+        "tone": "pass"
+      },
+      {
+        "id": "h2-a-wins-b4",
+        "verdict": "PASS",
+        "tone": "pass"
+      },
+      {
+        "id": "h2-b-wins-b1",
+        "verdict": "PASS",
+        "tone": "pass"
+      },
+      {
+        "id": "h2-b-wins-b2",
+        "verdict": "PASS",
+        "tone": "pass"
+      },
+      {
+        "id": "h2-b-wins-b3",
+        "verdict": "PASS",
+        "tone": "pass"
+      },
+      {
+        "id": "h2-b-wins-b4",
+        "verdict": "PASS",
+        "tone": "pass"
+      },
+      {
+        "id": "c2a-asserted-unverified-payer",
+        "verdict": "PASS",
+        "tone": "pass"
+      },
+      {
+        "id": "c2b-verified-stranger-different-slot",
+        "verdict": "PASS",
+        "tone": "pass"
+      }
+    ],
+    "findings": [
+      {
+        "id": "wave2-pin-acquisition",
+        "severity": "info",
+        "text": "Pin acquisition: commit date 2026-10-31T10:26:02-04:00 = 2026-10-31T14:26:02Z, exactly the timestamp @cv-scvd cited for the unchanged re-check. The pin is NOT an ancestor of current origin/main (794549cf) — obtained via git fetch-by-SHA (GitHub serves it); all validation and the battery ran on that checkout. Commit-page probe: HTTP 200 on scvd-general-store-repo, 404 on the other 15 public repos of the account."
+      },
+      {
+        "id": "wave2-gate-line-by-line",
+        "severity": "info",
+        "text": "Layer-1 gate (runner-spec §2) passed before the first artifact: all thread quotes verified verbatim at the pin, S1-S4 + C2 gating; three pinned vendor files hash-pinned; no divergence found, so the battery proceeded."
+      },
+      {
+        "id": "wave2-scope-boundary",
+        "severity": "info",
+        "text": "Scope facts: the wall-clock race is replaced by a controlled interleave at the loser's read point (deterministic branch matrix) — the registered assertion is the closed outcome range + branch mapping + no-second-settlement, not wall-clock probabilities. The KV response-cache replay (idempotent_replay: true) is a separate post-settlement mechanism and stayed out of scope on H2 rows (cache empty); C2 rows exercise the cache gating itself. No claim of defect in the vendor implementation — the run attests behavior matching the registered range on our re-implementation at the pin."
+      }
+    ],
+    "evidence": 6,
+    "links": [
+      {
+        "label": "record #0020",
+        "href": "https://github.com/igor-vii/Argus-Agent-Test-Lab/blob/main/attestations/records/0020-wave-2-claim-layer-offline-re-implementation-scvd-general-st.seal.json"
+      }
+    ]
   }
 ]

@@ -1,9 +1,9 @@
 {
-  "generated_at": "2026-11-10T21:31:10.203Z",
+  "generated_at": "2026-11-12T18:57:54.364Z",
   "verify": {
     "command": "node tools/registry/verify-registry.mjs",
-    "records": 20,
-    "chain_head": "db105efe12c78c76"
+    "records": 21,
+    "chain_head": "07a5412b93e3bd45"
   },
   "correction": {
     "seq": "0017",
@@ -13,91 +13,94 @@
     "amends": "argus-seal-0012"
   },
   "record": {
-    "seq": "0019",
-    "record_id": "argus-seal-0019",
+    "seq": "0020",
+    "record_id": "argus-seal-0020",
     "type": "seal",
-    "issued_at": "2026-11-10T21:31:10.203Z",
-    "date": "2026-11-10",
-    "title": "S-BS-06 x gist e319a833@df69c25 — pre-registered identical-offer race A10a/A10b (x402 #4198, run #2): pre-sign owner fence holds — Layer 1 verbatim 12/12 (own cases, exit 0) + Layer 2 preflight + 10/10 sealed sessions PASS (case1 signer=1 loser 'held', case2 separate-accounts control unchanged signer=2, case3 signer=2, case4 conflict: exactly 1 commitment + 1 pre-signer rejection per mode, case3c supplementary signer=2)",
-    "subject": "gist gist.github.com/e319a833e1be184a0df16ec69f474b72 (pre-sign-owner-replay.mjs)",
-    "prev_record_hash": "fb5475fdc3adeff31b7a59777c39405de876c5d0c1a4f34636ab1481aa6c712d",
-    "chain_head": "db105efe12c78c76",
+    "issued_at": "2026-11-12T18:57:54.364Z",
+    "date": "2026-11-12",
+    "title": "Wave 2 claim-layer offline re-implementation @ scvd-general-store-repo 56d6db3 — pre-registered H2 (amended) + C2 battery",
+    "subject": "cv-scvd/scvd-general-store-repo @ 56d6db340505dec2fec9d89780a498ff9ba37bfb",
+    "prev_record_hash": "db105efe12c78c76229a335113a4b559f5d78f3862f5faf3bfe60b2807e438cf",
+    "chain_head": "07a5412b93e3bd45",
     "scenarios": [
       {
-        "id": "layer1-verbatim",
+        "id": "h2-a-wins-b1",
         "verdict": "PASS",
         "tone": "pass"
       },
       {
-        "id": "als_preflight",
+        "id": "h2-a-wins-b2",
         "verdict": "PASS",
         "tone": "pass"
       },
       {
-        "id": "case1/A10a+case1/A10b",
+        "id": "h2-a-wins-b3",
         "verdict": "PASS",
         "tone": "pass"
       },
       {
-        "id": "case2/A10a+case2/A10b",
+        "id": "h2-a-wins-b4",
         "verdict": "PASS",
         "tone": "pass"
       },
       {
-        "id": "case3/A10a+case3/A10b",
+        "id": "h2-b-wins-b1",
         "verdict": "PASS",
         "tone": "pass"
       },
       {
-        "id": "case4/A10a (=A10c-equivalent) + case4/A10b (=A10d-equivalent)",
+        "id": "h2-b-wins-b2",
         "verdict": "PASS",
         "tone": "pass"
       },
       {
-        "id": "case3c/A10a+case3c/A10b",
+        "id": "h2-b-wins-b3",
+        "verdict": "PASS",
+        "tone": "pass"
+      },
+      {
+        "id": "h2-b-wins-b4",
+        "verdict": "PASS",
+        "tone": "pass"
+      },
+      {
+        "id": "c2a-asserted-unverified-payer",
+        "verdict": "PASS",
+        "tone": "pass"
+      },
+      {
+        "id": "c2b-verified-stranger-different-slot",
         "verdict": "PASS",
         "tone": "pass"
       }
     ],
     "counts": {
-      "pass": 7
+      "pass": 10
     },
     "evidence": [
       {
-        "path": "docs/block-b/fixtures/S-BS-06/s-bs-06-gist-a10.fixture.json",
-        "sha256": "20dc615209cb3df223e50ce6ae955c343d9f54abd0ae6c957f0dc1c26f3e97bc"
+        "path": "attestations/evidence/0020-wave2-claim-layer/layer1-log.jsonl",
+        "sha256": "418378c11940cdfa0c37d00ae323d730017e231e02819af84399f12c0bdc0362"
       },
       {
-        "path": "attestations/evidence/0019-gist-a10/export-hashes.json",
-        "sha256": "c9d70d6898046f3ae6c4a41ab2b1948466d6606be8bd99aec4ef743f40098a29"
+        "path": "attestations/evidence/0020-wave2-claim-layer/layer1-asserts.jsonl",
+        "sha256": "ffb6db0e105d8d88c5c3338603b138111c447bb72cb15d9bb3b3510d469b9246"
       },
       {
-        "path": "attestations/evidence/0019-gist-a10/layer1-verbatim-run.log",
-        "sha256": "da7cb69cfc7f749c3eb933c967c41ccdf3e982260d52a6ec7785832e7ffe2e58"
+        "path": "attestations/evidence/0020-wave2-claim-layer/verdicts.md",
+        "sha256": "50bc2c3f7657b24c7d28bc932b65718d66b6ba9d49902e30e93f8ff9e2931848"
       },
       {
-        "path": "attestations/evidence/0019-gist-a10/gist-runner-scaffold.package.json",
-        "sha256": "3a1db9032a1202f886d635120129500c573a570b781d50087236f79eb5a05f3e"
+        "path": "attestations/evidence/0020-wave2-claim-layer/layer1-gate.md",
+        "sha256": "5ffc999a718b00dc765abb284aaade58f716c5bcef9ee2d52bc2e03f0fdc2275"
       },
       {
-        "path": "sut-gist-a10/battery-gist-a10.mjs",
-        "sha256": "9d0503fc796cf68251904e2804c0a843b067dfce051a8069b7a54c043ce4f098"
+        "path": "sut-wave2-claim-layer/battery-wave2-claim-layer.mjs",
+        "sha256": "26f60fd318c60158a86549550a5e3030e97f6afebc0a4b6ae6a0500c2acd0bde"
       },
       {
-        "path": "sut-gist-a10/client_gist.ts",
-        "sha256": "67843ae82f84faecaee5b7a7aacd4b505ec0183d7da39da66bacc8a410869ea5"
-      },
-      {
-        "path": "sut-gist-a10/adapters/gist_sidecar_server.mjs",
-        "sha256": "ec8fae643462b95ceb18af5b6d4f5629c625f2b1e6210b6ecd3ee0dd9ed0d0e5"
-      },
-      {
-        "path": "sut-gist-a10/adapters/build-gist-sidecar.mjs",
-        "sha256": "d4ab9ebdfe01abf85015a0af0c7db1d80d39a6eb267b4e2f2dc8ee7f63a98170"
-      },
-      {
-        "path": "sut-gist-a10/package.json",
-        "sha256": "8cf8586b967f7050c4ce7555b0bd7936895f20d5e13e23cab493bac79f71a040"
+        "path": "attestations/evidence/0020-wave2-claim-layer/export-hashes.json",
+        "sha256": "59111490541576456692ac4e72a78bc8473a6e2a900792dac042fe15f8db8e31"
       }
     ]
   }
