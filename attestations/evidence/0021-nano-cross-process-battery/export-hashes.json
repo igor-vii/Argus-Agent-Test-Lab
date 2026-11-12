@@ -1,0 +1,21 @@
+{
+  "export_version": 1,
+  "record_target": "argus-seal-0021 (Nano cross-process idempotency battery @ agent-passport-gateway 99888e8 — pre-registered R1/R2a/R2b/R3/R4 + invariant)",
+  "source_dir": "battery-argus/run (sealed outputs) + battery-argus sources in the SUT clone @ pin",
+  "contents": {
+    "layer1-gate.md": "Layer-1 gate record: pin acquisition/metadata, pinned-file sha256, line-by-line quote verification table, procedure/freeze notes, harness-iteration disclosure",
+    "layer1-log.jsonl": "meta line (pin, pinned-file hashes, runner hashes, node version, scope notes) + one row per trial with observed outcomes",
+    "verdicts.jsonl": "all 13 rows with all 106 individual checks (id, ok, observed detail)",
+    "verdicts.md": "per-row verdict table and per-check detail",
+    "sut-nano-cross-process-battery/worker.ts": "worker source (one OS process per role; vendor fixtures mirrored; fake Nano node; file barriers)",
+    "sut-nano-cross-process-battery/run-battery.mjs": "parent orchestrator source (trial matrix, barrier sequencing, direct-SQL assertions)"
+  },
+  "sha256": {
+    "attestations/evidence/0021-nano-cross-process-battery/layer1-gate.md": "1ee3b6128522371d492134093778bb025be56e234a6a6a7c85e97c097502afc3",
+    "attestations/evidence/0021-nano-cross-process-battery/layer1-log.jsonl": "fd2dd2cb59805f8aa2b2301dadfcc93399ac1c873bf967c5c88104abe8652c47",
+    "attestations/evidence/0021-nano-cross-process-battery/verdicts.jsonl": "fba7db45aea476a37e2c36321eaa410c30d3a74353603763ccbca4863067cd76",
+    "attestations/evidence/0021-nano-cross-process-battery/verdicts.md": "9baa4938fbaaa06f77d7cbec7b1f08b092a5d55e52b4576aeb58b8ccb9c0bc43",
+    "sut-nano-cross-process-battery/worker.ts": "c388018c1657e709aafa7d5f0ccbbccb7f22d93a1800a3213f1267ab02ecf6e5",
+    "sut-nano-cross-process-battery/run-battery.mjs": "0897ff60f75fff556c09a0e6d61192f0dbd38f2fdb8b4c788654d9e54fb97a63"
+  }
+}
