@@ -1,0 +1,130 @@
+{
+  "seq": "0020",
+  "record_id": "argus-seal-0020",
+  "issued_at": "2026-11-12T18:57:54.364Z",
+  "signer_key_id": "argus-lab-2026q4r2",
+  "prev_record_hash": "db105efe12c78c76229a335113a4b559f5d78f3862f5faf3bfe60b2807e438cf",
+  "type": "seal",
+  "title": "Wave 2 claim-layer offline re-implementation @ scvd-general-store-repo 56d6db3 — pre-registered H2 (amended) + C2 battery",
+  "subject": {
+    "repo": "cv-scvd/scvd-general-store-repo @ 56d6db340505dec2fec9d89780a498ff9ba37bfb",
+    "sut_note": "Offline re-implementation of the pinned claim-layer semantics (sut-wave2-claim-layer/battery-wave2-claim-layer.mjs, sha256 26f60fd318c60158a86549550a5e3030e97f6afebc0a4b6ae6a0500c2acd0bde, node v24.22.2, no network, no keys, no wallet, settlement mocked, inert signer). Mirrors at the pin: claimIdempotentPurchase() (src/services/paid-recovery.ts:221-228), beginVerifiedPurchaseIntent() (src/services/purchase-intent.ts:321-333), RecordedPurchase body mapping (src/services/purchase-intent.ts:160-166 + codes :21-22), response-cache key derivation and gating (src/lib/idempotency.ts:277-310,370-438; src/lib/payment-gate.ts:1328-1358; src/lib/kv-keys.ts:352-354). Platform single-writer-per-ID serialization carried as an explicit pinned assumption (per-slot transaction mutex offline); verdicts scoped to that boundary. Pinned vendor files sha256 at the pin: idempotency.ts 5eb55c01…, paid-recovery.ts 4212ace7…, purchase-intent.ts bd796c7b… (full values in layer1-gate.md).",
+    "lab_run_branch": "main (public proof-layer registry; evidence hash-pinned in this record)",
+    "pre_registration": "Pre-registration posted in the campaign thread (cv-scvd/scvd-general-store-repo issue, igor-vii): 'Wave 2 pre-registration — offline re-implementation of the claim layer (pin 56d6db3)'. Amended INSIDE the 24-hour review hold per @cv-scvd's source-verified correction: H2 loser side registered as a four-value range (branches 1-4 incl. the !saved 'Original purchase admission pending' throw), primitive corrected from begin()/RecoveryClaim to claimIdempotentPurchase(); C2 confirmed unchanged; freeze proceeded on the original schedule after the hold expired with no extension requested. Rows, expectations and PASS/FAIL criteria frozen before the first artifact (runner-spec §freeze rule)."
+  },
+  "scenarios": [
+    {
+      "id": "h2-a-wins-b1",
+      "name": "H2-loser-A-wins-B1",
+      "verdict": "PASS",
+      "checks": "Two concurrent signed-shaped artifacts, shared Idempotency-Key, distinct identities (two nonces of one payer), winner=A; controlled interleave at the loser's read point. winner's record not yet persisted at the loser's read -> 'Original purchase admission pending' (the !saved throw, before the state mapping). Asserts (9): winner owns slot; exactly one settlement attempt (settleCalls=1); loser outcome inside the registered range; loser code matches the registered branch; settlement_attempted=false; charged_again=false; loser body is claim-path shape (no idempotent_replay key); no owner-mismatch divergence; final record state as injected."
+    },
+    {
+      "id": "h2-a-wins-b2",
+      "name": "H2-loser-A-wins-B2",
+      "verdict": "PASS",
+      "checks": "Two concurrent signed-shaped artifacts, shared Idempotency-Key, distinct identities (two nonces of one payer), winner=A; controlled interleave at the loser's read point. record present, state unknown (winner mid-settlement) -> 'settlement_unknown'. Asserts (9): winner owns slot; exactly one settlement attempt (settleCalls=1); loser outcome inside the registered range; loser code matches the registered branch; settlement_attempted=false; charged_again=false; loser body is claim-path shape (no idempotent_replay key); no owner-mismatch divergence; final record state as injected."
+    },
+    {
+      "id": "h2-a-wins-b3",
+      "name": "H2-loser-A-wins-B3",
+      "verdict": "PASS",
+      "checks": "Two concurrent signed-shaped artifacts, shared Idempotency-Key, distinct identities (two nonces of one payer), winner=A; controlled interleave at the loser's read point. record settled -> 'purchase_recovery_pending'. Asserts (9): winner owns slot; exactly one settlement attempt (settleCalls=1); loser outcome inside the registered range; loser code matches the registered branch; settlement_attempted=false; charged_again=false; loser body is claim-path shape (no idempotent_replay key); no owner-mismatch divergence; final record state as injected."
+    },
+    {
+      "id": "h2-a-wins-b4",
+      "name": "H2-loser-A-wins-B4",
+      "verdict": "PASS",
+      "checks": "Two concurrent signed-shaped artifacts, shared Idempotency-Key, distinct identities (two nonces of one payer), winner=A; controlled interleave at the loser's read point. record otherwise (refused settlement outcome injected) -> 'purchase_not_settled'. Asserts (9): winner owns slot; exactly one settlement attempt (settleCalls=1); loser outcome inside the registered range; loser code matches the registered branch; settlement_attempted=false; charged_again=false; loser body is claim-path shape (no idempotent_replay key); no owner-mismatch divergence; final record state as injected."
+    },
+    {
+      "id": "h2-b-wins-b1",
+      "name": "H2-loser-B-wins-B1",
+      "verdict": "PASS",
+      "checks": "Two concurrent signed-shaped artifacts, shared Idempotency-Key, distinct identities (two nonces of one payer), winner=B; controlled interleave at the loser's read point. winner's record not yet persisted at the loser's read -> 'Original purchase admission pending' (the !saved throw, before the state mapping). Asserts (9): winner owns slot; exactly one settlement attempt (settleCalls=1); loser outcome inside the registered range; loser code matches the registered branch; settlement_attempted=false; charged_again=false; loser body is claim-path shape (no idempotent_replay key); no owner-mismatch divergence; final record state as injected."
+    },
+    {
+      "id": "h2-b-wins-b2",
+      "name": "H2-loser-B-wins-B2",
+      "verdict": "PASS",
+      "checks": "Two concurrent signed-shaped artifacts, shared Idempotency-Key, distinct identities (two nonces of one payer), winner=B; controlled interleave at the loser's read point. record present, state unknown (winner mid-settlement) -> 'settlement_unknown'. Asserts (9): winner owns slot; exactly one settlement attempt (settleCalls=1); loser outcome inside the registered range; loser code matches the registered branch; settlement_attempted=false; charged_again=false; loser body is claim-path shape (no idempotent_replay key); no owner-mismatch divergence; final record state as injected."
+    },
+    {
+      "id": "h2-b-wins-b3",
+      "name": "H2-loser-B-wins-B3",
+      "verdict": "PASS",
+      "checks": "Two concurrent signed-shaped artifacts, shared Idempotency-Key, distinct identities (two nonces of one payer), winner=B; controlled interleave at the loser's read point. record settled -> 'purchase_recovery_pending'. Asserts (9): winner owns slot; exactly one settlement attempt (settleCalls=1); loser outcome inside the registered range; loser code matches the registered branch; settlement_attempted=false; charged_again=false; loser body is claim-path shape (no idempotent_replay key); no owner-mismatch divergence; final record state as injected."
+    },
+    {
+      "id": "h2-b-wins-b4",
+      "name": "H2-loser-B-wins-B4",
+      "verdict": "PASS",
+      "checks": "Two concurrent signed-shaped artifacts, shared Idempotency-Key, distinct identities (two nonces of one payer), winner=B; controlled interleave at the loser's read point. record otherwise (refused settlement outcome injected) -> 'purchase_not_settled'. Asserts (9): winner owns slot; exactly one settlement attempt (settleCalls=1); loser outcome inside the registered range; loser code matches the registered branch; settlement_attempted=false; charged_again=false; loser body is claim-path shape (no idempotent_replay key); no owner-mismatch divergence; final record state as injected."
+    },
+    {
+      "id": "c2a-asserted-unverified-payer",
+      "name": "C2-asserted-unverified-payer",
+      "verdict": "PASS",
+      "checks": "Control (per cv-scvd's first-post requirement, frozen unchanged): a stranger ASSERTS the settled payer's address without a verified payload. Asserts (5): cached purchase not served (served=null); read denied before cache consultation (payment_identity_unavailable gate); verified-payer slot not consulted via the DO on the read path (claim-call delta 0); P's cache entry byte-identical after the attempt; exactly one settlement in setup."
+    },
+    {
+      "id": "c2b-verified-stranger-different-slot",
+      "name": "C2-verified-stranger-different-slot",
+      "verdict": "PASS",
+      "checks": "Control: a stranger verifies as THEMSELVES with the same computed key. Asserts (6): cached purchase not served (cache miss); P's entry not readable via the stranger's slot; P's cache entry byte-identical after the attempt; exactly one settlement in setup; stranger slot name differs from P's slot name (idempotency:<sha256(kvKeyFor(surface,payer,key))> bakes the payer in)."
+    }
+  ],
+  "run_ts": "2026-11-12T16:22:56.000Z",
+  "self_run": true,
+  "findings_summary": [
+    {
+      "id": "wave2-pin-acquisition",
+      "severity": "info",
+      "title": "Pin acquisition: commit date 2026-10-31T10:26:02-04:00 = 2026-10-31T14:26:02Z, exactly the timestamp @cv-scvd cited for the unchanged re-check. The pin is NOT an ancestor of current origin/main (794549cf) — obtained via git fetch-by-SHA (GitHub serves it); all validation and the battery ran on that checkout. Commit-page probe: HTTP 200 on scvd-general-store-repo, 404 on the other 15 public repos of the account."
+    },
+    {
+      "id": "wave2-gate-line-by-line",
+      "severity": "info",
+      "title": "Layer-1 gate (runner-spec §2) passed before the first artifact: all thread quotes verified verbatim at the pin, S1-S4 + C2 gating; three pinned vendor files hash-pinned; no divergence found, so the battery proceeded."
+    },
+    {
+      "id": "wave2-scope-boundary",
+      "severity": "info",
+      "title": "Scope facts: the wall-clock race is replaced by a controlled interleave at the loser's read point (deterministic branch matrix) — the registered assertion is the closed outcome range + branch mapping + no-second-settlement, not wall-clock probabilities. The KV response-cache replay (idempotent_replay: true) is a separate post-settlement mechanism and stayed out of scope on H2 rows (cache empty); C2 rows exercise the cache gating itself. No claim of defect in the vendor implementation — the run attests behavior matching the registered range on our re-implementation at the pin."
+    }
+  ],
+  "notes": "Battery result: 10/10 rows PASS, 83/83 asserts, zero divergences (verdicts.md). H2 (both orders A-wins and B-wins): exactly one settlement attempt per case; loser outcome inside the registered closed range with exact branch mapping — B1 'Original purchase admission pending', B2 'settlement_unknown', B3 'purchase_recovery_pending', B4 'purchase_not_settled'; settlement_attempted=false and charged_again=false on every recorded-body row; claim-path body carries no idempotent_replay key (the RecordedPurchase record-status shape, distinct from the KV replay); no owner-mismatch divergence (consistency checks pass by construction). C2a: asserted-but-unverified payer denied the read before cache consultation; cached purchase not served; payer's cache entry intact. C2b: verified stranger keys on their own payer -> cache miss; stranger slot name differs from payer's slot name. Freezer rule honored: rows frozen before the first artifact; nothing added, removed or re-interpreted after the run started.",
+  "evidence": [
+    {
+      "kind": "file",
+      "path": "attestations/evidence/0020-wave2-claim-layer/layer1-log.jsonl",
+      "sha256": "418378c11940cdfa0c37d00ae323d730017e231e02819af84399f12c0bdc0362"
+    },
+    {
+      "kind": "file",
+      "path": "attestations/evidence/0020-wave2-claim-layer/layer1-asserts.jsonl",
+      "sha256": "ffb6db0e105d8d88c5c3338603b138111c447bb72cb15d9bb3b3510d469b9246"
+    },
+    {
+      "kind": "file",
+      "path": "attestations/evidence/0020-wave2-claim-layer/verdicts.md",
+      "sha256": "50bc2c3f7657b24c7d28bc932b65718d66b6ba9d49902e30e93f8ff9e2931848"
+    },
+    {
+      "kind": "file",
+      "path": "attestations/evidence/0020-wave2-claim-layer/layer1-gate.md",
+      "sha256": "5ffc999a718b00dc765abb284aaade58f716c5bcef9ee2d52bc2e03f0fdc2275"
+    },
+    {
+      "kind": "file",
+      "path": "sut-wave2-claim-layer/battery-wave2-claim-layer.mjs",
+      "sha256": "26f60fd318c60158a86549550a5e3030e97f6afebc0a4b6ae6a0500c2acd0bde"
+    },
+    {
+      "kind": "file",
+      "path": "attestations/evidence/0020-wave2-claim-layer/export-hashes.json",
+      "sha256": "59111490541576456692ac4e72a78bc8473a6e2a900792dac042fe15f8db8e31"
+    }
+  ],
+  "signature": "Umuvhw2u/P6maP+eqM0atQZN5t3tWzVRt0y4gGRnHIX3woI1r8V5WvVRzL4q69xkYdISU83bDZKE2KmifuL/Dg=="
+}
