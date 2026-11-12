@@ -14,7 +14,7 @@
     {
       "id": "adversarial-testing-run",
       "name": "Adversarial Testing Run",
-      "description": "Commissioned sealed adversarial run against a money-moving AI agent: attack scenarios, frozen scope, sealed verdicts. Pricing: founding $350 / standard $990.",
+      "description": "Sealed adversarial conformance batteries for money-moving AI agents. Self-serve at https://console.argus-lab.tech (MCP: https://console.argus-lab.tech/mcp): Free $0 forever - 3 welcome + 30 beta runs; Starter $29/mo - 30 runs; Standard $79/mo - 90 runs; Top-up $49 - +50 runs, never expires. Paid tiers activate after the beta window (checkout is off during beta).",
       "tags": ["adversarial-testing", "agent-safety", "x402", "agentic-payments"],
       "examples": ["Run our x402 checkout agent against a canonical-price-overrun suite"]
     },
