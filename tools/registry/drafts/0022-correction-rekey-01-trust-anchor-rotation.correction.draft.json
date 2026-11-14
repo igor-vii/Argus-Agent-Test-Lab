@@ -1,0 +1,59 @@
+{
+  "type": "correction",
+  "title": "CORRECTION-REKEY-01 — trust-anchor rotation 2026-10-24 (argus-lab-2026q4 → argus-lab-2026q4r2): originals preserved, original signatures verifiable, rotation recorded in-chain",
+  "subject": {
+    "record": "registry trust anchor (keys/)",
+    "repo": "igor-vii/Argus-Agent-Test-Lab",
+    "trigger": "external audit of public materials (2026-11-13/14, ARG-01): the 2026-10-24 key rotation was recorded only in a commit message (65e6149d), violating the registry's own key-rotation policy ('new key gets a new key_id and a chain-linked amendment')"
+  },
+  "amends": {
+    "record_id": "argus-finding-0000",
+    "seq": "0000",
+    "label": "CORRECTION-REKEY-01"
+  },
+  "run_ts": "2026-11-14",
+  "changes": [
+    {
+      "item": "Signing key (trust anchor)",
+      "from": "argus-lab-2026q4 — private key lost in a lab environment reset on 2026-10-24 (private key never committed, never exposed; public key SHA-256 0c69ada603cc753d31531e8b64910cf6edf1cf6de5a159bf7369141495e36072)",
+      "to": "argus-lab-2026q4r2 — all records #0000–#0021 are signed under it; the old public key is restored to keys/argus-lab-2026q4.pub.json",
+      "rationale": "Rotation was forced by private-key loss, not by compromise. Restoring the old public key keeps the original signatures verifiable without git archaeology; the verifier now resolves each record's key by signer_key_id (fail-closed)."
+    },
+    {
+      "item": "Records #0000 and #0001 (re-signing scope)",
+      "from": "originally signed under argus-lab-2026q4; originals preserved verbatim at attestations/evidence/rekey-2026-10-24/*.pre-rekey.json (SHA-256 pinned in evidence below)",
+      "to": "re-signed under argus-lab-2026q4r2 with content preserved — the only content difference across the whole re-sign is the structurally forced prev_record_hash rebind in #0001 (old chain head da9ce991a7d63032199a443630b848465e8042a42722a43117f91274c60a49bc); re-sign commit 65e6149d",
+      "rationale": "Verified 2026-11-14 with the repo's own primitives (canonical/verifyPayload under loadPublicKeyById('argus-lab-2026q4')): both original signatures are VALID under the restored public key, and #0000's content is byte-identical pre/post re-sign. The old chain is reconstructible end-to-end from the preserved files."
+    },
+    {
+      "item": "Policy",
+      "from": "key-rotation policy required a chain-linked amendment; the 2026-10-24 rotation lived only in a commit message",
+      "to": "rotation recorded in-chain by this correction; attestations/README.md now states the lost-key procedure explicitly (publish old public key, re-sign with content preserved, chain-linked correction with the old key's SHA-256 pinned)",
+      "rationale": "The event most in need of a seal was itself unsigned — the audit's point. This record is the fix."
+    }
+  ],
+  "status": {
+    "state": "applied",
+    "applied_to": "tools/registry (multi-key verifier), keys/argus-lab-2026q4.pub.json restored, attestations/evidence/rekey-2026-10-24/ preserved, attestations/README.md lost-key procedure added",
+    "applied_on": "2026-11-14",
+    "sealed_dossier_text_changed": false
+  },
+  "notes": "External audit (2026-11-13/14) flagged ARG-01: the 2026-10-24 trust-anchor rotation was the registry event most needing a seal, yet was itself only a commit message. Nothing is rewritten: sealed record JSONs stay untouched (immutability rule); this correction records the custody event. Scope of re-signing was exactly #0000–#0001 (the only records that existed pre-rotation); #0002 onwards were born under r2. Human-readable mirror: site/public/dossiers/registry.md after the next build-index.",
+  "evidence": [
+    {
+      "kind": "file",
+      "path": "attestations/keys/argus-lab-2026q4.pub.json",
+      "sha256": "0c69ada603cc753d31531e8b64910cf6edf1cf6de5a159bf7369141495e36072"
+    },
+    {
+      "kind": "file",
+      "path": "attestations/evidence/rekey-2026-10-24/0000-x402-reference-client-signs-any-server-declared-402-amount-o.finding.pre-rekey.json",
+      "sha256": "b65397bd3ae4065bdcb160a05741408b6c76cc1367545e0defadd72cfce83d7c"
+    },
+    {
+      "kind": "file",
+      "path": "attestations/evidence/rekey-2026-10-24/0001-block-d-live-run-s10-s11-against-amw-paypal-agent-demo.seal.pre-rekey.json",
+      "sha256": "61d15e8c83e52288177cfbb0163ef0aa8559d1dac67c0d4b36450a04ee2e9e05"
+    }
+  ]
+}
