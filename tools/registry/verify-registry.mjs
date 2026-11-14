@@ -2,10 +2,31 @@
 // Exit 0 = registry intact. Any red flag -> non-zero exit.
 import path from 'node:path';
 import {
-  REPO_ROOT, canonical, sha256Hex, fileSha256, loadPublicKey, verifyPayload, listRecords,
+  REPO_ROOT, canonical, sha256Hex, fileSha256, loadPublicKeyById, verifyPayload, listRecords,
 } from './lib.mjs';
 
-const pub = loadPublicKey();
+// ARG-01/ARG-02 (external audit 2026-11): resolve each record's key by its
+// signer_key_id instead of one hard-coded key, so pre/post-rotation records
+// verify under their actual signing key. Unknown key id -> verification fails
+// (fail closed).
+const keyCache = new Map();
+function keyFor(record, problems) {
+  const id = record.signer_key_id;
+  if (!id) {
+    problems.push('missing signer_key_id');
+    return null;
+  }
+  if (!keyCache.has(id)) {
+    try {
+      keyCache.set(id, loadPublicKeyById(id));
+    } catch (err) {
+      problems.push(`key unavailable for signer_key_id=${id}: ${err.message}`);
+      keyCache.set(id, null);
+    }
+  }
+  return keyCache.get(id);
+}
+
 const entries = listRecords();
 if (entries.length === 0) {
   console.error('registry is empty');
@@ -18,7 +39,8 @@ let failures = 0;
 for (const { file, record } of entries) {
   const problems = [];
   const { signature, ...payload } = record;
-  if (!verifyPayload(payload, signature, pub)) problems.push('signature INVALID');
+  const pub = keyFor(record, problems);
+  if (pub && !verifyPayload(payload, signature, pub)) problems.push(`signature INVALID (key=${record.signer_key_id})`);
   const wantPrev = prev ? sha256Hex(canonical(prev)) : null;
   if ((record.prev_record_hash ?? null) !== wantPrev) {
     problems.push(`chain broken: expected prev=${wantPrev ? wantPrev.slice(0, 12) + '...' : 'null'}`);

@@ -7,11 +7,33 @@ import path from 'node:path';
 export const REPO_ROOT = path.resolve(new URL('../../', import.meta.url).pathname);
 export const REGISTRY_DIR = path.join(REPO_ROOT, 'attestations');
 export const RECORDS_DIR = path.join(REGISTRY_DIR, 'records');
-export const PUBKEY_PATH = path.join(REGISTRY_DIR, 'keys', 'argus-lab-2026q4r2.pub.json');
+// Current signing key id (what new records are signed with).
+export const CURRENT_KEY_ID = 'argus-lab-2026q4r2';
+export const PUBKEY_PATH = registryKeyPath(CURRENT_KEY_ID);
 // The private key NEVER lives in this repository (see attestations/README.md).
 // Default location is the lab sandbox; override with ARGUS_PRIVKEY_PATH to sign
 // from any machine that holds the key.
 export const PRIVKEY_PATH = process.env.ARGUS_PRIVKEY_PATH || '/home/z/my-project/keys/argus-lab-2026q4r2.priv.json';
+
+// ARG-01/ARG-02 (external audit 2026-11): the verifier previously hard-coded a
+// single public key while every record carries signer_key_id. Key files live at
+// keys/<signer_key_id>.pub.json; the id is validated so a crafted record can
+// never make the verifier read outside keys/.
+export function registryKeyPath(keyId) {
+  const id = String(keyId ?? '');
+  if (!/^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$/.test(id)) {
+    throw new Error(`invalid signer_key_id: ${JSON.stringify(keyId)}`);
+  }
+  return path.join(REGISTRY_DIR, 'keys', `${id}.pub.json`);
+}
+
+// Load a registry public key by signer_key_id. Fails closed when the key file
+// is missing (a record signed under an unlisted key must NOT verify).
+export function loadPublicKeyById(keyId) {
+  const keyPath = registryKeyPath(keyId);
+  const jwk = JSON.parse(fs.readFileSync(keyPath, 'utf8'));
+  return crypto.createPublicKey({ key: jwk.public_jwk, format: 'jwk' });
+}
 
 // Deterministic JSON: recursively sorted object keys, no whitespace. Two
 // implementations of `canonical()` on any machine must produce byte-identical
