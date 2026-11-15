@@ -2,15 +2,15 @@
   "generated_at": "2026-11-12T21:08:17.266Z",
   "verify": {
     "command": "node tools/registry/verify-registry.mjs",
-    "records": 22,
-    "chain_head": "47acb4ef32bab1df"
+    "records": 23,
+    "chain_head": "0a12c0335cd94c70"
   },
   "correction": {
-    "seq": "0017",
-    "record_id": "argus-correction-0017",
-    "date": "2026-11-08",
-    "title": "CORRECTION-0012-01 — seal #0012 fixture label erratum: probe_start.control_under_test stale template default; build/install receipt added",
-    "amends": "argus-seal-0012"
+    "seq": "0022",
+    "record_id": "argus-correction-0022",
+    "date": "2026-11-15",
+    "title": "CORRECTION-REKEY-01 — trust-anchor rotation 2026-10-24 (argus-lab-2026q4 → argus-lab-2026q4r2): originals preserved, original signatures verifiable, rotation recorded in-chain",
+    "amends": "argus-finding-0000"
   },
   "record": {
     "seq": "0021",
@@ -21,7 +21,7 @@
     "title": "Nano cross-process idempotency battery @ agent-passport-gateway 99888e8 — pre-registered R1/R2a/R2b/R3/R4 + invariant (PR #14)",
     "subject": "agent-passport-system/agent-passport-gateway @ 99888e8f143eb0c281ccd62759750038c1a1aa9e",
     "prev_record_hash": "07a5412b93e3bd459da03584786f52085c2915c78a89c42f80151094ba36ce2d",
-    "chain_head": "47acb4ef32bab1df",
+    "chain_head": "0a12c0335cd94c70",
     "scenarios": [
       {
         "id": "r1-1",

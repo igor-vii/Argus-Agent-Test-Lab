@@ -1078,5 +1078,28 @@
         "href": "https://github.com/igor-vii/Argus-Agent-Test-Lab/blob/main/attestations/records/0021-nano-cross-process-idempotency-battery-agent-passport-gatewa.seal.json"
       }
     ]
+  },
+  {
+    "seq": "0022",
+    "date": "2026-11-15",
+    "type": "correction",
+    "title": "CORRECTION-REKEY-01 — trust-anchor rotation 2026-10-24 (argus-lab-2026q4 → argus-lab-2026q4r2): originals preserved, original signatures verifiable, rotation recorded in-chain",
+    "subject": "igor-vii/Argus-Agent-Test-Lab",
+    "summary": "External audit (2026-11-13/14) flagged ARG-01: the 2026-10-24 trust-anchor rotation was the registry event most needing a seal, yet was itself only a commit message. Nothing is rewritten: sealed record JSONs stay untouched (immutability rule); this correction records the custody event. Scope of re-signing was exactly #0000–#0001 (the only records that existed pre-rotation); #0002 onwards were born under r2. Human-readable mirror: site/public/dossiers/registry.md after the next build-index.",
+    "verdicts": [
+      {
+        "id": "correction status",
+        "verdict": "applied",
+        "tone": "info"
+      }
+    ],
+    "findings": [],
+    "evidence": 3,
+    "links": [
+      {
+        "label": "record #0022",
+        "href": "https://github.com/igor-vii/Argus-Agent-Test-Lab/blob/main/attestations/records/0022-correction-rekey-01-trust-anchor-rotation-2026-10-24-argus-l.correction.json"
+      }
+    ]
   }
 ]
