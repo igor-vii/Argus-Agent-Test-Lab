@@ -522,7 +522,7 @@ function Footer() {
             <FooterLink href={REPO_URL} external>{t.footer.links.verifyChain}</FooterLink>
             <FooterLink href="/terms#consent">{t.footer.links.consent}</FooterLink>
             <FooterLink href="https://sealkeeper.run" external>{t.footer.links.listingSealkeeper}</FooterLink>
-            <FooterLink href="https://glama.ai" external>{t.footer.links.listingGlama}</FooterLink>
+            <FooterLink href="https://registry.modelcontextprotocol.io" external>{t.footer.links.listingMcpRegistry}</FooterLink>
             <li className="pt-1 font-mono text-[11px] text-al-muted">{t.footer.links.infra}</li>
           </FooterCol>
           <FooterCol title={t.footer.cols.legal}>
