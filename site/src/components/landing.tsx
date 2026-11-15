@@ -618,6 +618,24 @@ function Footer() {
                 />
               </a>
             </p>
+            <p className="mt-3">
+              {/* Glama score badge — tool definition grade A + live health dot (admin/badge, 2026-11-15) */}
+              <a
+                href="https://glama.ai/mcp/connectors/io.github.igor-vii/argus-console"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Argus Console — AI Agent Test Lab MCP connector – tool definition quality and endpoint health on Glama"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  alt="Argus Console — AI Agent Test Lab MCP connector – tool definition quality and endpoint health on Glama"
+                  width={110}
+                  height={20}
+                  className="h-6 w-auto"
+                  src="https://glama.ai/mcp/connectors/io.github.igor-vii/argus-console/badges/score.svg"
+                />
+              </a>
+            </p>
           </div>
         </div>
       </div>
