@@ -1,0 +1,34 @@
+name: 'Argus battery'
+description: >-
+  Runs the Argus x402 battery against this commit and records the verdict as
+  a check run. Conclusions follow docs/ci/result-contract-v0.md (PASS →
+  success, UNKNOWN → neutral, FAIL → failure, contract violations →
+  action_required) and docs/ci/api-contract-v0.md (insufficient balance /
+  bad key / rig failure → action_required with a human-readable annotation).
+  The step exits 0 for PASS and UNKNOWN so the job stays green while the
+  check carries the signal.
+
+inputs:
+  api-key:
+    description: 'Argus console api-key — pass ${{ secrets.ARGUS_API_KEY }}, never inline'
+    required: true
+  battery-id:
+    description: 'Battery to run'
+    required: false
+    default: 'x402-core'
+  console-url:
+    description: 'Argus console base URL'
+    required: false
+    default: 'https://console.argus-lab.tech'
+
+runs:
+  using: composite
+  steps:
+    - id: argus
+      shell: bash
+      env:
+        INPUT_API_KEY: ${{ inputs.api-key }}
+        INPUT_BATTERY_ID: ${{ inputs.battery-id }}
+        INPUT_CONSOLE_URL: ${{ inputs.console-url }}
+        GITHUB_TOKEN: ${{ github.token }}
+      run: node "$GITHUB_ACTION_PATH/run.mjs"
