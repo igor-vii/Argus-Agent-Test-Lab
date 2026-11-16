@@ -23,6 +23,11 @@ private product repo; this document is the interface it must satisfy).
 | 0 | aggregate verdict PASS |
 | 1 | aggregate verdict FAIL |
 | 2 | aggregate verdict UNKNOWN (no FAIL, at least one UNKNOWN/HOLD) |
+| 3 | result object violates this contract (schema/consistency failure; maps to failure) |
+
+Exit codes are **step-level signals only**. Check conclusions (green/yellow/
+red) are a different layer and MUST be set via the Checks API — see the
+mapping section below.
 
 ## Result JSON (`argus.result.v0`)
 
@@ -67,6 +72,15 @@ unknown strings as UNKNOWN (fail-closed reading).
   idempotent, so "rerun until green" is impossible. Variance across commits is
   intentional (it measures agent drift, not engine noise). Ad-hoc console
   simulation uses a fresh random seed per run and reports it.
+- Determinism is an **engine obligation**, not a property of the contract.
+  The engine MUST derive **all** simulation randomness from the reported
+  seed — scenario selection, variant sampling, payload jitter, simulated
+  timing, iteration order. Any entropy source outside the seed (unsanitized
+  `Math.random`, wall-clock durations, hash-map traversal order, unseeded
+  library RNGs) breaks idempotency. Re-running an identical commit (same
+  seed) MUST yield **byte-identical `scenarios[]`** — verdicts, findings and
+  order; only `run` timestamps may differ. CI consumers are entitled to
+  assert this on a duplicate run.
 - Simulation results are **never citable as evidence**: registry records,
   seals and attestation tooling accept real (`mode: "live"`) runs only. The
   `mode` field exists so every artifact self-identifies without context.
@@ -76,11 +90,23 @@ unknown strings as UNKNOWN (fail-closed reading).
 
 ## GitHub Action mapping (consumer side, implemented later)
 
-| verdict | check conclusion |
-| --- | --- |
-| PASS | success (green) |
-| UNKNOWN | neutral (yellow) + annotation |
-| FAIL | failure (red) + annotations per FAIL scenario |
+Exit codes and check conclusions are different layers. An Actions step can
+only end green (0) or red (non-zero) — there is no neutral exit code. The
+neutral conclusion for UNKNOWN is therefore NOT expressible as an exit code:
+
+| verdict | step exit | check conclusion (via Checks API) |
+| --- | --- | --- |
+| PASS | 0 | `success` (green) |
+| UNKNOWN | 0 | `neutral` (yellow) + annotation |
+| FAIL | 1 | `failure` (red) + annotations per FAIL scenario |
+| invalid (exit 3) | 1 | `failure` (red) + "invalid result object" annotation |
+
+The Action MUST create its check run through the **Checks API** with the
+conclusion above (`conclusion: "neutral"` for UNKNOWN); the workflow step
+exits 0 for PASS and UNKNOWN so the job itself does not fail — the signal
+lives in the check conclusion, not in the step result. Naive mappings are
+prohibited: UNKNOWN → red via a non-zero exit (false merge blocking) or
+UNKNOWN → green with no check run (signal lost).
 
 `advisory` entries become annotations only. Enforcement rollout: two–four
 weeks of advisory-only (yellow) with a `simulated verdict` note in the PR
