@@ -53,3 +53,10 @@ green verdict. The lab sells runs, not verdicts.
   chain-signed, not just a commit message.
 - Roadmap: periodically anchor the chain head on-chain (the lab's own EVM
   adapters) so the log survives even a rewritten git history.
+
+## External audit follow-up (2026-11-15)
+
+Second-pass audit results and prose clarifications (ARG-12 / A2 / #0020 runner
+naming) are recorded in [ERRATA.md](./ERRATA.md). Nothing in `records/`,
+`keys/` or `evidence/` was modified; the chain head after these doc commits is
+unchanged. Reproduce: `node tools/registry/audit-followup-2026-11-15.mjs`.
