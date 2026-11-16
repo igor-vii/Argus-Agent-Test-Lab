@@ -116,6 +116,81 @@ cleanly with a well-behaved counterparty — or its payment layer stalls even
 against a perfectly honest opponent. A green unit-test bench never shows that:
 tests pass, the payflow dies in battle.
 
+## Run the battery in your CI (GitHub Action)
+
+The `Argus battery` GitHub Action runs the canonical battery against the
+commit your job checked out and reports the verdict (PASS / FAIL / UNKNOWN)
+as a check run on the pull request. Issue an api-key in **Argus Console →
+Settings → API keys**, store it as the `ARGUS_API_KEY` repository secret,
+then add a workflow:
+
+```yaml
+name: argus-battery
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  argus:
+    runs-on: ubuntu-latest
+    permissions:
+      checks: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: igor-vii/argus-action@v1
+        with:
+          api-key: ${{ secrets.ARGUS_API_KEY }}
+```
+
+Inputs: `api-key` (required), `battery-id` (default `x402-core`), `console-url`
+(default `https://console.argus-lab.tech`). Every run is a real engine flight
+and debits one credit from the account behind the key (debit-before-run,
+[`docs/ci/api-contract-v0.md`](docs/ci/api-contract-v0.md)): rerunning the same
+commit + battery replays for free — a rerun of a failed job never
+double-charges — and a rig that cannot take the run (unavailable engine,
+unknown battery, bad key) answers `503`/`400`/`401` **before any debit**.
+Billing edge cases (overdraft floor, `INFRA_FAILED` retries) are specified in
+the same contract.
+
+### Trigger strategies
+
+The quick start above is the cheapest useful shape — only pull requests are
+measured. Common alternatives:
+
+**Merge-gate + main** — every commit that lands on `main` is re-measured too
+(drift protection for the branch you ship):
+
+```yaml
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+```
+
+**Weekly drift detection** — PR gate plus a scheduled run against the latest
+`main`:
+
+```yaml
+on:
+  schedule:
+    - cron: "0 9 * * 1" # Mondays at 9:00 UTC
+  pull_request:
+    branches: [main]
+```
+
+**Conditional (skip feature-branch pushes without removing the trigger):**
+
+```yaml
+jobs:
+  argus:
+    if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    # ...
+```
+
 ## What is sealed here
 
 Records in `attestations/records/` are Ed25519-signed and hash-chained

@@ -116,8 +116,9 @@ ledger itself stays private.
   and additionally here: `402`/`401`/`5xx`/invalid result →
   `action_required` with a human-readable annotation. The workflow step
   exits non-zero for everything except PASS/UNKNOWN.
-- Reference implementation: `action/` in this repository —
-  `uses: igor-vii/Argus-Agent-Test-Lab/action@v1`.
+- Reference implementation: `action/` in this repository; the distributed
+  Action lives at `igor-vii/argus-action` (tags `v1.0.0` / `v1`) —
+  `uses: igor-vii/argus-action@v1`.
 
 ## Producer obligations (backend, private repo)
 
