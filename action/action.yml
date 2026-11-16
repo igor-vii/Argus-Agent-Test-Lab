@@ -1,12 +1,12 @@
 name: 'Argus battery'
+# Marketplace metadata: description must stay under 125 characters.
+# Full conclusion mapping (PASS → success, UNKNOWN → neutral, FAIL →
+# failure, billing/rig/contract violations → action_required) and exit
+# codes live in README.md and in docs/ci/result-contract-v0.md +
+# docs/ci/api-contract-v0.md of the lab repo.
 description: >-
   Runs the Argus x402 battery against this commit and records the verdict as
-  a check run. Conclusions follow docs/ci/result-contract-v0.md (PASS →
-  success, UNKNOWN → neutral, FAIL → failure, contract violations →
-  action_required) and docs/ci/api-contract-v0.md (insufficient balance /
-  bad key / rig failure → action_required with a human-readable annotation).
-  The step exits 0 for PASS and UNKNOWN so the job stays green while the
-  check carries the signal.
+  a check run.
 
 inputs:
   api-key:
@@ -32,3 +32,7 @@ runs:
         INPUT_CONSOLE_URL: ${{ inputs.console-url }}
         GITHUB_TOKEN: ${{ github.token }}
       run: node "$GITHUB_ACTION_PATH/run.mjs"
+
+branding:
+  icon: 'shield'
+  color: 'blue'
