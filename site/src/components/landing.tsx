@@ -504,6 +504,27 @@ function EngageSection() {
 
 /* ----------------------------------- footer ----------------------------------- */
 
+/* Lifto badge — inlined official SVG (liftoapp.com/badges/featured-light.svg, ТЗ 2026-11-11).
+   Inlined instead of hotlinked: the third-party asset was unreachable from some client
+   networks, hiding the badge. Inline markup renders everywhere; the link still points
+   at the Lifto product page. */
+function LiftoBadge() {
+  return (
+    <svg width={200} height={54} viewBox="0 0 200 54" fill="none" aria-hidden="true" className="h-10 w-auto">
+      <rect x="0.5" y="0.5" width="199" height="53" rx="12" fill="#FFFFFF" stroke="#E15A2B" strokeWidth="1.5" />
+      <circle cx="28" cy="27" r="16" fill="#E15A2B" />
+      <g transform="translate(16, 15)">
+        <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5" stroke="#FFFFFF" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+        <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09" stroke="#FFFFFF" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+        <path d="M9 12a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.4 22.4 0 0 1-4 2z" stroke="#FFFFFF" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+        <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 .05 5 .05" stroke="#FFFFFF" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+      </g>
+      <text x="54" y="21" fill="#71717A" fontFamily="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" fontSize="9" fontWeight="bold" letterSpacing="1">FEATURED ON</text>
+      <text x="54" y="41" fill="#09090B" fontFamily="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" fontSize="20" fontWeight="800">Lifto</text>
+    </svg>
+  );
+}
+
 function FooterCol({ title, children }: { title: string; children: ReactNode }) {
   return (
     <div>
@@ -548,24 +569,6 @@ function Footer() {
             <FooterLink href="/terms#consent">{t.footer.links.consent}</FooterLink>
             <FooterLink href="https://sealkeeper.run" external>{t.footer.links.listingSealkeeper}</FooterLink>
             <FooterLink href="https://registry.modelcontextprotocol.io" external>{t.footer.links.listingMcpRegistry}</FooterLink>
-            <li className="pt-2">
-              {/* Glama score badge — tool definition grade A + live health dot (admin/badge, 2026-11-15); native 20px */}
-              <a
-                href="https://glama.ai/mcp/connectors/io.github.igor-vii/argus-console"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Argus Console — AI Agent Test Lab MCP connector – tool definition quality and endpoint health on Glama"
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  alt="Argus Console — AI Agent Test Lab MCP connector – tool definition quality and endpoint health on Glama"
-                  width={110}
-                  height={20}
-                  className="h-5 w-auto"
-                  src="https://glama.ai/mcp/connectors/io.github.igor-vii/argus-console/badges/score.svg"
-                />
-              </a>
-            </li>
             <FooterLink href="https://glama.ai/mcp/connectors/io.github.igor-vii/argus-console" external>{t.footer.links.listingGlama}</FooterLink>
             <li className="pt-1 font-mono text-[11px] text-al-muted">{t.footer.links.infra}</li>
           </FooterCol>
@@ -626,7 +629,8 @@ function Footer() {
                 console.argus-lab.tech
               </a>
             </p>
-            <p className="mt-3">
+            {/* badges row: Product Hunt · Lifto · Glama — one line, Glama to the right (ТЗ 2026-11-16) */}
+            <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-3">
               <a
                 href="https://www.producthunt.com/products/argus-agent-test-lab?embed=true&utm_source=badge-featured&utm_medium=badge&utm_campaign=badge-argus-agent-test-lab"
                 target="_blank"
@@ -642,25 +646,31 @@ function Footer() {
                   src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1305684&theme=dark&t=1793898820604"
                 />
               </a>
-            </p>
-            <p className="mt-3">
-              {/* Lifto badge — light variant for the dark-only landing (ТЗ 2026-11-11) */}
               <a
                 href="https://liftoapp.com/product/argus-agent-test-lab"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Featured on Lifto"
               >
+                <LiftoBadge />
+              </a>
+              {/* Glama score badge — tool definition grade A + live health dot; native 20px */}
+              <a
+                href="https://glama.ai/mcp/connectors/io.github.igor-vii/argus-console"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Argus Console — AI Agent Test Lab MCP connector – tool definition quality and endpoint health on Glama"
+              >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  alt="Featured on Lifto"
-                  width={200}
-                  height={54}
-                  className="h-10 w-auto"
-                  src="https://liftoapp.com/badges/featured-light.svg"
+                  alt="Argus Console — AI Agent Test Lab MCP connector – tool definition quality and endpoint health on Glama"
+                  width={110}
+                  height={20}
+                  className="h-5 w-auto"
+                  src="https://glama.ai/mcp/connectors/io.github.igor-vii/argus-console/badges/score.svg"
                 />
               </a>
-            </p>
+            </div>
           </div>
         </div>
       </div>

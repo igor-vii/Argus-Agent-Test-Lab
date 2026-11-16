@@ -81,6 +81,13 @@ unknown strings as UNKNOWN (fail-closed reading).
   seed) MUST yield **byte-identical `scenarios[]`** — verdicts, findings and
   order; only `run` timestamps may differ. CI consumers are entitled to
   assert this on a duplicate run.
+- The idempotency assert is defined over a **projection**, not the whole
+  file. Comparing hashes of `argus-result.json` produces false negatives on
+  any `run` timestamp. Idempotency holds when two runs with the same seed
+  yield identical objects over the projection
+  `{ seed, battery.id, scenarios[], summary, verdict }` — excluding every
+  `*_ts` / `generated_at` field. The duplicate-run integration test compares
+  canonical JSON of this projection, nothing else.
 - Simulation results are **never citable as evidence**: registry records,
   seals and attestation tooling accept real (`mode: "live"`) runs only. The
   `mode` field exists so every artifact self-identifies without context.
@@ -99,7 +106,15 @@ neutral conclusion for UNKNOWN is therefore NOT expressible as an exit code:
 | PASS | 0 | `success` (green) |
 | UNKNOWN | 0 | `neutral` (yellow) + annotation |
 | FAIL | 1 | `failure` (red) + annotations per FAIL scenario |
-| invalid (exit 3) | 1 | `failure` (red) + "invalid result object" annotation |
+| invalid (exit 3) | 1 | `action_required` + "invalid result object" annotation |
+
+Exit 3 MUST NOT map to `failure`: a red check means **the agent failed the
+battery**, and a broken tool or contract violation is a different semantic —
+the rig itself needs attention. Mapping exit 3 to `failure` teaches teams to
+ignore red checks ("Argus broke itself again") and erodes trust in the gate;
+`action_required` exists for exactly this case. The workflow step still
+exits non-zero on 3 so the pipeline does not pretend everything is fine —
+but the conclusion recorded on the check run is `action_required`.
 
 The Action MUST create its check run through the **Checks API** with the
 conclusion above (`conclusion: "neutral"` for UNKNOWN); the workflow step
