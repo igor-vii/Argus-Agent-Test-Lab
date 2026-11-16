@@ -4,6 +4,11 @@ Reference consumer of the Argus CI API (`docs/ci/api-contract-v0.md`) and the
 result contract (`docs/ci/result-contract-v0.md`). Runs the battery against
 the pushed commit and records the verdict as a check run.
 
+> Marketplace copy: this Action is also published as
+> [`igor-vii/argus-action@v1`](https://github.com/igor-vii/argus-action) —
+> same code, dedicated repo, better discoverability. Both `uses:` paths work;
+> this directory stays the source of truth.
+
 ## Usage
 
 ```yaml
