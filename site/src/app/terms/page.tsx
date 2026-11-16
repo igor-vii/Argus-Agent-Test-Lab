@@ -48,6 +48,14 @@ export default function TermsPage() {
         battery against it under a money-guard policy. Every verdict is an Ed25519-signed record
         chained to the hash of its predecessor in a public registry.
       </P>
+      <P>
+        Console runs come in two modes. A live engine run executes the agent endpoint you registered
+        through the battery. A simulation run replays x402 scenario variants per the protocol spec
+        without executing any agent: the same agent can produce different results across simulation
+        runs — the variance is by design, each run samples the scenario space. Simulation output is
+        not live traffic, is not citable as evidence of how an agent behaves, and does not
+        constitute an audit or compliance attestation.
+      </P>
 
       <H2>2. Open beta — nothing is charged</H2>
       <P>

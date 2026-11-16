@@ -90,6 +90,17 @@ export default function VerdictsPage() {
         </Link>
       </P>
 
+      <div className="mt-6 rounded-lg border border-al-line bg-al-panel2 p-4 text-sm leading-relaxed text-al-muted">
+        <p className="font-mono text-[11px] uppercase tracking-widest text-al-muted">simulation vs sealed records</p>
+        <p className="mt-2">
+          The records below are real, signed runs. Console <em>simulation</em> runs replay x402
+          scenario variants per the protocol spec without executing your agent — the same agent may
+          produce different results across simulation runs (by design: each run samples the scenario
+          space). Simulation output is not citable as evidence. For deterministic real-money
+          testing, book a $990 round.
+        </p>
+      </div>
+
       <H2>1. Three layers, one outcome</H2>
       <Layer n="1" name="Run state — what executed">
         What physically happened: how many probes ran, which captures were taken, how much evidence
