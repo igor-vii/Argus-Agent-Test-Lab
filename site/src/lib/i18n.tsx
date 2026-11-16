@@ -102,6 +102,26 @@ const en = {
       "No vendor operates our stands; no engagement buys a verdict.",
     ],
   },
+  founding: {
+    kicker: "beta sunset",
+    title: "Founding-price lock",
+    text: "When the beta window closes, Starter lands at $29/month — and for every beta account that migrates before the sunset, that rate is locked forever. The founding price is the beta rate, not a discount that burns after year one. No card is needed until checkout switches on.",
+    points: [
+      {
+        title: "Founding price — $29/month, forever",
+        text: "Migrate to Starter before the sunset date and keep the beta rate as long as the account lives. After the sunset, new accounts start at standard pricing.",
+      },
+      {
+        title: "Unused runs become credits",
+        text: "Leftover beta runs convert 1:1 into Starter credits at migration. Nothing you did not use evaporates.",
+      },
+      {
+        title: "History survives the sunset",
+        text: "Run history stays readable for 90 days after the sunset (read-only), then archived. Migrating keeps it live.",
+      },
+    ],
+    cta: "Migrate to Starter — console",
+  },
   announce: {
     text: "Open beta — free until the beta window closes: checkout is switched off, no card, nothing to pay. Real-engine allowance: 3 welcome + 30 beta-pack runs per account; simulation stand 25 runs / 24 h. Simulation replays x402 scenario variants per the protocol spec without executing your agent: the same agent can produce different results across runs — by design, each run samples the scenario space. For deterministic real-money testing, book a $990 round. Every engine run starts with the canonical payment gate: fail it and the run is refunded (net 0) — you learn for free whether your payment layer stalls even against a well-behaved counterparty.",
   },
@@ -226,6 +246,26 @@ const ru: Dict = {
       "Ответы вендора получают равное место рядом с каждой опубликованной находкой.",
       "Наши стенды не управляются вендорами; заказ не покупает вердикт.",
     ],
+  },
+  founding: {
+    kicker: "закат беты",
+    title: "Founding-цена",
+    text: "Когда бета-окно закроется, Starter выйдет по $29/мес — и для каждого аккаунта, мигрировавшего до заката, эта ставка фиксируется навсегда. Founding-цена — это бета-ставка, а не скидка, которая сгорит через год. Карту привязывать не нужно, пока checkout выключен.",
+    points: [
+      {
+        title: "Founding-цена — $29/мес навсегда",
+        text: "Мигрируйте на Starter до даты заката — бета-ставка остаётся с аккаунтом, пока он жив. После заката новые аккаунты стартуют по стандартному прайсу.",
+      },
+      {
+        title: "Неиспользованные прогоны — в кредиты",
+        text: "Оставшиеся бета-прогоны конвертируются 1:1 в кредиты Starter при миграции. Ничего неиспользованного не сгорает.",
+      },
+      {
+        title: "История переживает закат",
+        text: "История прогонов читаема 90 дней после заката (read-only), затем архивируется. Миграция сохраняет её в живом доступе.",
+      },
+    ],
+    cta: "Мигрировать на Starter — консоль",
   },
   announce: {
     text: "Открытая бета — бесплатно, пока бета-окно не закроют: checkout выключен, карты нет, платить нечем. На аккаунте: 3 приветственных + 30 бета-пак прогонов реального движка; симулятор — 25 прогонов / 24 ч. Симуляция проигрывает варианты x402-сценариев по спецификации протокола и не запускает вашего агента: один и тот же агент может давать разные результаты от прогона к прогону — так задумано, каждый прогон сэмплирует пространство сценариев. Для детерминированной проверки с реальными деньгами — раунд за $990. Каждый прогон движка начинается с канонического платёжного гейта: не прошёл — прогон возвращается (net 0), бесплатно узнаёшь, хандрит ли платёжный слой даже с порядочным контрагентом.",

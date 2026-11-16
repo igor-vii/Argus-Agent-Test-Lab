@@ -397,6 +397,31 @@ function CasesSection() {
   );
 }
 
+function FoundingSection() {
+  const { t } = useLang();
+  return (
+    <section id="founding" className="border-t border-al-line" aria-label="Founding-price lock">
+      <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
+        <SectionHeading kicker={t.founding.kicker} title={t.founding.title} text={t.founding.text} />
+        <div className="mt-8 grid gap-4 md:grid-cols-3">
+          {t.founding.points.map((p) => (
+            <div key={p.title} className="rounded-lg border border-al-line bg-al-panel p-4">
+              <h3 className="font-mono text-sm font-semibold tracking-wide text-al-text">{p.title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-al-muted">{p.text}</p>
+            </div>
+          ))}
+        </div>
+        <a
+          href={CONSOLE_URL}
+          className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-al-text underline decoration-al-line underline-offset-4 transition-colors hover:decoration-al-text"
+        >
+          {t.founding.cta} <ExternalLink className="h-3 w-3" aria-hidden />
+        </a>
+      </div>
+    </section>
+  );
+}
+
 /* ------------------------------------ B2B ------------------------------------ */
 
 function EngageSection() {
@@ -711,6 +736,7 @@ function LandingShell({ latest }: { latest: ReactNode }) {
         <RegistrySection latest={latest} />
         <MethodSection />
         <CasesSection />
+        <FoundingSection />
         <EngageSection />
       </main>
       <Footer />
