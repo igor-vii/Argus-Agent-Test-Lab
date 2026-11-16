@@ -72,7 +72,7 @@ try {
   });
   body = await res.json().catch(() => null);
 } catch (e) {
-  record('action_required', 'Argus: API unreachable — rig failure', `POST ${base}/api/v1/runs failed: ${e.message}. No run was debited (api-contract-v0: refund-on-rig-failure).`, [ann('notice', `Argus API unreachable: ${e.message}`)], 1);
+  record('action_required', 'Argus: API unreachable — rig failure', `POST ${base}/api/v1/runs failed: ${e.message}. The run is not consumed — charge once, free retry (api-contract-v0): the prepaid idempotency key re-flies at zero cost.`, [ann('notice', `Argus API unreachable: ${e.message}`)], 1);
 }
 
 if (res.status === 402) {
@@ -86,7 +86,7 @@ if (res.status === 401) {
   record('action_required', 'Argus: invalid or revoked api-key', 'Issue a key in Console → Settings → API keys and update the ARGUS_API_KEY secret.', [ann('notice', '401 from /api/v1/runs')], 1);
 }
 if (res.status !== 201 && res.status !== 409) {
-  record('action_required', `Argus: API returned HTTP ${res.status}`, 'Rig-side problem; no result exists. No debit on rig failure per api-contract-v0.', [ann('notice', `HTTP ${res.status} from /api/v1/runs`)], 1);
+  record('action_required', `Argus: API returned HTTP ${res.status}`, 'Rig-side problem; no result exists. Charge once, free retry per api-contract-v0 — the same commit+battery retries at zero cost.', [ann('notice', `HTTP ${res.status} from /api/v1/runs`)], 1);
 }
 
 // Light consumer-side validation (producer already ran the full validator).

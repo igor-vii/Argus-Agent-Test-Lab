@@ -58,23 +58,42 @@ console (Settings → API keys); users store them as GitHub Actions secrets
     re-debit.** This is what makes Action restarts (timeout, network)
     free of charge.
   - `402` — `{ "error": "insufficient_balance", "balance": <int>,
-    "topup_url": "https://console.argus-lab.tech/billing" }`. The check
-    run records `action_required` with the top-up link in the annotation;
-    the user pays, runs are credited, the next run works.
+    "topup_url": "https://console.argus-lab.tech/billing" }`. A refused
+    attempt persists nothing (no anchor row, no ledger noise); the user
+    pays, runs are credited, the next run works. The check run records
+    `action_required` with the top-up link in the annotation.
   - `401` — unknown or revoked key. Conclusion `action_required`
     ("issue an api-key in Console → Settings → API keys").
-  - `5xx` / network failure — rig failure. Conclusion `action_required`,
-    **no debit**.
+  - `5xx` / network failure — rig failure. Conclusion `action_required`.
+    Charge once, free retry: the debit stays (the engine flight was
+    bought), the run is recorded `INFRA_FAILED`, and the same
+    `idempotency_key` re-flies at zero cost — see Retry semantics below.
 
 ## Debit semantics (atomicity)
 
-Debit happens **before** the run, inside a single server-side transaction
-(key → account → balance row lock → decrement → ledger entry → run
-record). An automatic refund reverses the debit when the **rig** fails
-(engine crash, 5xx, timeout before a result exists). A `FAIL` verdict is
+Debit happens **before** the run; the anchor run row and the debit commit
+in a **single server-side transaction**, serialized per account by a
+Postgres advisory lock (key → account → lock → anchor row → decrement →
+ledger entry). There is **no refund**: charge once, free retry — a rig
+failure (engine crash, 5xx, timeout before a result exists) keeps the
+debit and releases the prepaid key for a free retry. A `FAIL` verdict is
 NOT a rig failure — the battery ran, the agent lost, the verdict is the
-product: no refund. Balance may go to the overdraft floor `-3` per the
-decision above. Idempotent replays never touch the ledger.
+product: the debit stays. Balance may go to the overdraft floor `-3` per
+the decision above, and the floor is enforced race-free (the balance
+check and the decrement share one transaction per account — two
+concurrent requests at the floor cannot both pass and both decrement).
+Idempotent replays never touch the ledger.
+
+### Retry semantics (INFRA_FAILED)
+
+When the rig fails (`INFRA_FAILED`), the run is not consumed:
+
+- The original charge remains (balance already decremented).
+- The `idempotency_key` stays bound to the run and is retryable.
+- A retry with the same key does NOT decrement balance again.
+- Net effect: 1 credit per logical run, regardless of infra retries.
+
+This prevents double-charging for transient infrastructure failures.
 
 The engine-side duplicate-run integration test (result contract, projection
 assert) re-runs with the same seed **without a second debit**: the test
@@ -103,8 +122,9 @@ ledger itself stays private.
 ## Producer obligations (backend, private repo)
 
 Implement the two endpoints above; run `result-view.mjs` as the producer
-gate; keep the ledger transactional (debit-before-run + rig-failure
-refund + idempotent replay); expose key issuance/rotation, balance and
+gate; keep the ledger transactional (debit-before-run, atomic with the
+anchor row and serialized per account + charge-once-free-retry on rig
+failure + idempotent replay); expose key issuance/rotation, balance and
 debit history in the console. Billing model itself does not change:
 "paid → credited" remains crypto-to-wallet.
 
@@ -126,13 +146,15 @@ command emitting `argus.result.v0`) and backend-side
 - **Idempotency scope**: per-account (`unique (userId, idempotencyKey)`).
   The same commit+battery from a DIFFERENT account is a different paid
   run. Replay semantics: prior `COMPLETED` → `409` + stored result, no
-  re-debit; prior `INFRA_FAILED` → reset in place, re-debit, re-run (a
-  rig failure never permanently consumes the key); prior in-flight →
-  `409 run_in_progress`.
+  re-debit; prior `INFRA_FAILED` → reset in place and re-run **without a
+  second debit** (the key is prepaid — retry semantics above); prior
+  in-flight → `409 run_in_progress`, except a run stuck in-flight over
+  10 minutes (crashed invocation, lost engine flight) which counts as
+  `INFRA_FAILED` and retries free.
 - **Execution model v0**: synchronous in-process engine — the console
   host needs `ARGUS_ENGINE_DIR`; worker-mode deployments answer `503`
   (async run polling is post-v0). The rig budget is 300 s; exceeding it
-  is a rig failure (refund + `503`).
+  is a rig failure (`503`, debit stays, retry free).
 - **Overdraft rule, precise**: a run is allowed while the PRE-debit
   balance is ≥ −2; below that → `402`. Bucket debits journal as
   `refType "RUN"` (identical to console runs), overdraft debits as
