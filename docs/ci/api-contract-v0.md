@@ -107,3 +107,45 @@ gate; keep the ledger transactional (debit-before-run + rig-failure
 refund + idempotent replay); expose key issuance/rotation, balance and
 debit history in the console. Billing model itself does not change:
 "paid → credited" remains crypto-to-wallet.
+
+## Implementation notes (v0 as built, 2026-11-16)
+
+Implemented engine-side (`Argus-Agent-Test-Lab-product`, the `battery`
+command emitting `argus.result.v0`) and backend-side
+(`argus-console`, `/api/v1/*`). Decisions fixed during implementation:
+
+- **Battery ids**: `x402-core` (9 engine scenarios — S1–S3, S5–S8, S10–S11;
+  wallet-requiring S9 and the silent S4 stay lab-side, mirroring the
+  console's ENGINE policy), `client-standard` / `client-engine` (the
+  console ENGINE mirror: canonical S8 + S10/S11). Unknown ids → 400.
+- **Agent**: the CI battery is a seeded simulation against the mock target
+  and never touches a real endpoint, so the request body carries no agent.
+  Each account owns one synthetic verified SUT (`ci-simulation`,
+  `mock://ci`) that anchors the run row; runs surface in the console Runs
+  tab under that name.
+- **Idempotency scope**: per-account (`unique (userId, idempotencyKey)`).
+  The same commit+battery from a DIFFERENT account is a different paid
+  run. Replay semantics: prior `COMPLETED` → `409` + stored result, no
+  re-debit; prior `INFRA_FAILED` → reset in place, re-debit, re-run (a
+  rig failure never permanently consumes the key); prior in-flight →
+  `409 run_in_progress`.
+- **Execution model v0**: synchronous in-process engine — the console
+  host needs `ARGUS_ENGINE_DIR`; worker-mode deployments answer `503`
+  (async run polling is post-v0). The rig budget is 300 s; exceeding it
+  is a rig failure (refund + `503`).
+- **Overdraft rule, precise**: a run is allowed while the PRE-debit
+  balance is ≥ −2; below that → `402`. Bucket debits journal as
+  `refType "RUN"` (identical to console runs), overdraft debits as
+  `refType "CI"` — balance = active bucket quota + CI ledger delta.
+- **Producer gate**: the backend validates every result before `201` with
+  the result-view rules ported server-side (`resultContract.ts`); the
+  engine additionally runs the vendored canonical validator in its own
+  integration tests. The evidence file-hash byte-check is skipped for CI
+  because evidence sidecars are ephemeral runner artifacts.
+- **`topup_url`**: the console Billing anchor (`/#billing`). The check
+  conclusion for `402`/`401`/`5xx`/invalid is `action_required` — the
+  agent was not measured, so it must not read as a red agent failure.
+- **Determinism, verified end-to-end**: the same commit+battery reproduced
+  the same seed and the same verdict set across server restarts with
+  fresh databases; the engine's duplicate-run integration test asserts
+  the projection equality through the canonical validator.
