@@ -1,0 +1,292 @@
+{
+  "session": "l_race_two_buyers",
+  "matrix": "server-side race: two independent buyers, one route (negative control)",
+  "doc_refs": [
+    "D-01"
+  ],
+  "expectation": "two SEPARATE buyer processes with distinct throwaway keys pay the same route concurrently: both deliver independently (server-side owner fencing does not exist and must not be invented); 2 verifies, 2 settles, no cross-talk",
+  "config": {
+    "facilitator": {},
+    "server": {},
+    "client": {},
+    "clients": 2,
+    "runs": null
+  },
+  "verdict": "PASS",
+  "observed": {
+    "client_summaries": [
+      {
+        "probe": "x402-lens server-side battery — honest lab buyer perimeter",
+        "url": "http://127.0.0.1:5040/weather",
+        "method": "GET",
+        "slots": 1,
+        "replay_mode": false,
+        "signer_call_count": 1,
+        "per_slot": [
+          {
+            "slot": 1,
+            "started_at": "2026-11-17T12:54:52.677Z",
+            "finished_at": "2026-11-17T12:54:52.788Z",
+            "http": 200,
+            "receipt": {
+              "success": true,
+              "payer": "0x857b06519E91e3A54538791bDAbd0E22373e36b66",
+              "transaction": "0x1111111111111111111111111111111111111111111111111111111111111111",
+              "network": "eip155:84532"
+            },
+            "cors": {
+              "expose": null,
+              "allow_headers": null,
+              "allow_origin": null,
+              "payment_required_present": false
+            }
+          }
+        ],
+        "started_at": "2026-11-17T12:54:52.624Z",
+        "finished_at": "2026-11-17T12:54:52.788Z",
+        "distinction": "signed authorization captured by the SUT path; on-chain transfer NOT established (lab-facilitator settlement)"
+      },
+      {
+        "probe": "x402-lens server-side battery — honest lab buyer perimeter",
+        "url": "http://127.0.0.1:5040/weather",
+        "method": "GET",
+        "slots": 1,
+        "replay_mode": false,
+        "signer_call_count": 1,
+        "per_slot": [
+          {
+            "slot": 1,
+            "started_at": "2026-11-17T12:54:52.782Z",
+            "finished_at": "2026-11-17T12:54:52.878Z",
+            "http": 200,
+            "receipt": {
+              "success": true,
+              "payer": "0x857b06519E91e3A54538791bDAbd0E22373e36b66",
+              "transaction": "0x1111111111111111111111111111111111111111111111111111111111111111",
+              "network": "eip155:84532"
+            },
+            "cors": {
+              "expose": null,
+              "allow_headers": null,
+              "allow_origin": null,
+              "payment_required_present": false
+            }
+          }
+        ],
+        "started_at": "2026-11-17T12:54:52.709Z",
+        "finished_at": "2026-11-17T12:54:52.878Z",
+        "distinction": "signed authorization captured by the SUT path; on-chain transfer NOT established (lab-facilitator settlement)"
+      }
+    ],
+    "signer_counts_by_run": [
+      1,
+      1
+    ],
+    "slot_http": [
+      200,
+      200
+    ],
+    "receipts": [
+      {
+        "success": true,
+        "payer": "0x857b06519E91e3A54538791bDAbd0E22373e36b66",
+        "transaction": "0x1111111111111111111111111111111111111111111111111111111111111111",
+        "network": "eip155:84532"
+      },
+      {
+        "success": true,
+        "payer": "0x857b06519E91e3A54538791bDAbd0E22373e36b66",
+        "transaction": "0x1111111111111111111111111111111111111111111111111111111111111111",
+        "network": "eip155:84532"
+      }
+    ],
+    "slot_errors": [],
+    "signer_call_count": 2,
+    "quote_accepts_count": 1,
+    "server_events": [
+      {
+        "ts": "2026-11-17T12:54:52.711Z",
+        "type": "payment.required",
+        "requestId": "ea9add03-fc05-4f0c-b112-4d96d439a7da",
+        "route": "GET /weather",
+        "scheme": "exact",
+        "network": "eip155:84532",
+        "amount": "1000",
+        "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+        "payTo": "0x209693Bc6afc0C5328bA36FaF03C514EF312287C",
+        "offers": 1,
+        "durationMs": 2,
+        "findings": []
+      },
+      {
+        "ts": "2026-11-17T12:54:52.767Z",
+        "requestId": "534aab8b-a475-40f1-bf99-4f3580404ab1",
+        "route": "GET /weather",
+        "scheme": "exact",
+        "network": "eip155:84532",
+        "amount": "1000",
+        "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+        "payTo": "0x209693Bc6afc0C5328bA36FaF03C514EF312287C",
+        "buyer": "0x857b06519E91e3A54538791bDAbd0E22373e36b66",
+        "durationMs": 7,
+        "type": "payment.verified"
+      },
+      {
+        "ts": "2026-11-17T12:54:52.786Z",
+        "requestId": "534aab8b-a475-40f1-bf99-4f3580404ab1",
+        "route": "GET /weather",
+        "scheme": "exact",
+        "network": "eip155:84532",
+        "amount": "1000",
+        "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+        "payTo": "0x209693Bc6afc0C5328bA36FaF03C514EF312287C",
+        "buyer": "0x857b06519E91e3A54538791bDAbd0E22373e36b66",
+        "durationMs": 26,
+        "type": "payment.settled",
+        "txHash": "0x1111111111111111111111111111111111111111111111111111111111111111",
+        "phase": "after-handler",
+        "findings": []
+      },
+      {
+        "ts": "2026-11-17T12:54:52.824Z",
+        "type": "payment.required",
+        "requestId": "a1d8e17a-db03-4054-924f-2e6cb9764d49",
+        "route": "GET /weather",
+        "scheme": "exact",
+        "network": "eip155:84532",
+        "amount": "1000",
+        "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+        "payTo": "0x209693Bc6afc0C5328bA36FaF03C514EF312287C",
+        "offers": 1,
+        "durationMs": 0,
+        "findings": []
+      },
+      {
+        "ts": "2026-11-17T12:54:52.874Z",
+        "requestId": "ba6d19d0-9c47-40d7-9e33-bffb55906659",
+        "route": "GET /weather",
+        "scheme": "exact",
+        "network": "eip155:84532",
+        "amount": "1000",
+        "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+        "payTo": "0x209693Bc6afc0C5328bA36FaF03C514EF312287C",
+        "buyer": "0x857b06519E91e3A54538791bDAbd0E22373e36b66",
+        "durationMs": 2,
+        "type": "payment.verified"
+      },
+      {
+        "ts": "2026-11-17T12:54:52.876Z",
+        "requestId": "ba6d19d0-9c47-40d7-9e33-bffb55906659",
+        "route": "GET /weather",
+        "scheme": "exact",
+        "network": "eip155:84532",
+        "amount": "1000",
+        "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+        "payTo": "0x209693Bc6afc0C5328bA36FaF03C514EF312287C",
+        "buyer": "0x857b06519E91e3A54538791bDAbd0E22373e36b66",
+        "durationMs": 4,
+        "type": "payment.settled",
+        "txHash": "0x1111111111111111111111111111111111111111111111111111111111111111",
+        "phase": "after-handler",
+        "findings": []
+      }
+    ],
+    "server_event_types": [
+      "payment.required",
+      "payment.verified",
+      "payment.settled",
+      "payment.required",
+      "payment.verified",
+      "payment.settled"
+    ],
+    "handler_entries": [
+      {
+        "at": "2026-11-17T12:54:52.768Z",
+        "type": "handler_call",
+        "route": "GET /weather"
+      },
+      {
+        "at": "2026-11-17T12:54:52.874Z",
+        "type": "handler_call",
+        "route": "GET /weather"
+      }
+    ],
+    "handler_counts": {
+      "/weather": 2
+    },
+    "facilitator_calls": [
+      {
+        "at": "2026-11-17T12:54:52.195Z",
+        "type": "facilitator_call",
+        "path": "supported",
+        "auth_present": true
+      },
+      {
+        "at": "2026-11-17T12:54:52.765Z",
+        "type": "facilitator_call",
+        "path": "verify",
+        "auth_present": true,
+        "nonce_short": "0x3abc5ade…221c(len66)",
+        "honest_decision": null,
+        "verify_result": {
+          "isValid": true,
+          "invalidReason": null
+        }
+      },
+      {
+        "at": "2026-11-17T12:54:52.781Z",
+        "type": "facilitator_call",
+        "path": "settle",
+        "auth_present": true,
+        "settle_result": {
+          "success": true,
+          "errorReason": null
+        }
+      },
+      {
+        "at": "2026-11-17T12:54:52.873Z",
+        "type": "facilitator_call",
+        "path": "verify",
+        "auth_present": true,
+        "nonce_short": "0x18faa582…450c(len66)",
+        "honest_decision": null,
+        "verify_result": {
+          "isValid": true,
+          "invalidReason": null
+        }
+      },
+      {
+        "at": "2026-11-17T12:54:52.876Z",
+        "type": "facilitator_call",
+        "path": "settle",
+        "auth_present": true,
+        "settle_result": {
+          "success": true,
+          "errorReason": null
+        }
+      }
+    ],
+    "facilitator_counts": {
+      "supported": 1,
+      "verify": 2,
+      "settle": 2,
+      "auth_rejected": 0
+    },
+    "battery_obs": null,
+    "server_alive_after": true,
+    "client_summaries_lean": [
+      {
+        "slots": [
+          200
+        ],
+        "signer_call_count": 1
+      },
+      {
+        "slots": [
+          200
+        ],
+        "signer_call_count": 1
+      }
+    ]
+  }
+}

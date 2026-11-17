@@ -1,0 +1,44 @@
+{
+  "probe": "x402-lens server-side battery — honest lab buyer perimeter",
+  "url": "http://127.0.0.1:5041/weather",
+  "method": "GET",
+  "slots": 2,
+  "replay_mode": true,
+  "signer_call_count": 1,
+  "per_slot": [
+    {
+      "slot": 1,
+      "started_at": "2026-11-17T12:54:53.830Z",
+      "finished_at": "2026-11-17T12:54:53.902Z",
+      "http": 200,
+      "receipt": {
+        "success": true,
+        "payer": "0x857b06519E91e3A54538791bDAbd0E22373e36b66",
+        "transaction": "0x1111111111111111111111111111111111111111111111111111111111111111",
+        "network": "eip155:84532"
+      },
+      "cors": {
+        "expose": null,
+        "allow_headers": null,
+        "allow_origin": null,
+        "payment_required_present": false
+      }
+    },
+    {
+      "slot": 2,
+      "started_at": "2026-11-17T12:54:53.902Z",
+      "finished_at": "2026-11-17T12:54:53.916Z",
+      "http": 402,
+      "receipt": null,
+      "cors": {
+        "expose": null,
+        "allow_headers": null,
+        "allow_origin": null,
+        "payment_required_present": true
+      }
+    }
+  ],
+  "started_at": "2026-11-17T12:54:53.797Z",
+  "finished_at": "2026-11-17T12:54:53.916Z",
+  "distinction": "signed authorization captured by the SUT path; on-chain transfer NOT established (lab-facilitator settlement)"
+}

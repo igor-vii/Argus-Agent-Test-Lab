@@ -1,0 +1,92 @@
+{
+  "session": "l_config_refusals",
+  "matrix": "config surface: documented refusals + one valid control",
+  "doc_refs": [
+    "D-02",
+    "D-03",
+    "D-04",
+    "D-16",
+    "D-18"
+  ],
+  "expectation": "documented refusal surface: missing_config/v1_shorthand/upto_flow/exact_flow/mixed_payto_string/flat_headers/unknown_namespace all refused with the documented specifics; multi_network_ok resolves (control). A missing refusal where one is documented would be the anomaly",
+  "config": {
+    "probe": "/home/z/my-project/work/Argus-Agent-Test-Lab/sut-x402-lens/argus-battery/config_probe.mjs",
+    "cwd": "/home/z/my-project/work/Argus-Agent-Test-Lab/sut-x402-lens"
+  },
+  "verdict": "PASS",
+  "observed": {
+    "results": [
+      {
+        "scenario": "missing_config",
+        "threw": true,
+        "name": "ConfigError",
+        "field": "facilitatorUrl",
+        "message": "facilitatorUrl is required. Set X402_FACILITATOR_URL (e.g. https://x402.org/facilitator for Base Sepolia and Solana devnet) — x402-lens never defaults it.",
+        "expectThrew": true,
+        "messageIncludes": null,
+        "scenario_ok": true
+      },
+      {
+        "scenario": "v1_shorthand",
+        "threw": true,
+        "name": "ConfigError",
+        "field": "network",
+        "message": "network \"base-sepolia\" is not a CAIP-2 identifier. Use \"eip155:84532\" instead.",
+        "expectThrew": true,
+        "messageIncludes": "eip155:84532",
+        "scenario_ok": true
+      },
+      {
+        "scenario": "upto_flow",
+        "threw": true,
+        "name": "ConfigError",
+        "field": "routes",
+        "message": "Route \"GET /generate\" uses scheme \"upto\" and also sets paymentFlow \"upfront\". The flow is fixed by the scheme for upto — remove paymentFlow, or use scheme \"exact\" if you need to choose.",
+        "expectThrew": true,
+        "messageIncludes": "GET /generate",
+        "scenario_ok": true
+      },
+      {
+        "scenario": "exact_flow",
+        "threw": true,
+        "name": "ConfigError",
+        "field": "routes",
+        "message": "Route \"GET /weather\" sets uptoFlow but uses scheme \"exact\". uptoFlow only applies to \"upto\"; use paymentFlow for exact.",
+        "expectThrew": true,
+        "messageIncludes": null,
+        "scenario_ok": true
+      },
+      {
+        "scenario": "mixed_payto_string",
+        "threw": true,
+        "name": "ConfigError",
+        "field": "payTo",
+        "message": "payTo \"0x209693Bc6afc0C5328bA36FaF03C514EF312287C\" is not a base58 Solana public key, which Solana devnet (solana:EtWTRABZaYq6iMfeYKouRu166VU2xqa1) requires. An EVM address cannot receive on Solana — use payTo: { \"solana:EtWTRABZaYq6iMfeYKouRu166VU2xqa1\": \"…\" } to give each network its own address.",
+        "expectThrew": true,
+        "messageIncludes": null,
+        "scenario_ok": true
+      },
+      {
+        "scenario": "unknown_namespace",
+        "threw": true,
+        "name": "Error",
+        "field": "",
+        "message": "[x402-lens] No scheme for namespace \"cosmos\". This package registers exact (and upto) schemes for eip155 and solana. For any other network, keep the returned server instance and call server.register(network, scheme) yourself.",
+        "expectThrew": true,
+        "messageIncludes": "cosmos",
+        "scenario_ok": true
+      },
+      {
+        "scenario": "multi_network_ok",
+        "threw": false,
+        "name": "",
+        "field": "",
+        "message": "",
+        "expectThrew": false,
+        "messageIncludes": null,
+        "scenario_ok": true
+      }
+    ],
+    "client_summaries_lean": []
+  }
+}

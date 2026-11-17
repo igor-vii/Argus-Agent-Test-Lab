@@ -1,0 +1,72 @@
+{
+  "session": "l_wire_readonly",
+  "matrix": "observer read-only: wire form untouched",
+  "doc_refs": [
+    "D-10"
+  ],
+  "expectation": "documented (D-10): the observer only reads — the challenge header stays canonical (no lens-specific keys anywhere), the mirrored body equals the decoded header, accepts[0] carries only standard fields",
+  "config": {
+    "facilitator": {},
+    "server": {}
+  },
+  "verdict": "PASS",
+  "observed": {
+    "client_summaries": [],
+    "signer_counts_by_run": [],
+    "slot_http": [],
+    "receipts": [],
+    "slot_errors": [],
+    "signer_call_count": 0,
+    "quote_accepts_count": null,
+    "server_events": [
+      {
+        "ts": "2026-11-17T12:55:01.113Z",
+        "type": "payment.required",
+        "requestId": "0e0ee60d-8e1a-4e44-914e-36d9dba1d7bd",
+        "route": "GET /weather",
+        "scheme": "exact",
+        "network": "eip155:84532",
+        "amount": "1000",
+        "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+        "payTo": "0x209693Bc6afc0C5328bA36FaF03C514EF312287C",
+        "offers": 1,
+        "durationMs": 2,
+        "findings": []
+      }
+    ],
+    "server_event_types": [
+      "payment.required"
+    ],
+    "handler_entries": [],
+    "handler_counts": {},
+    "facilitator_calls": [
+      {
+        "at": "2026-11-17T12:55:01.063Z",
+        "type": "facilitator_call",
+        "path": "supported",
+        "auth_present": true
+      }
+    ],
+    "facilitator_counts": {
+      "supported": 1,
+      "verify": 0,
+      "settle": 0,
+      "auth_rejected": 0
+    },
+    "battery_obs": {
+      "header_present": true,
+      "mirror_equal": true,
+      "no_lens_keys": true,
+      "accept_keys_standard": true,
+      "top_level_keys": [
+        "accepts",
+        "error",
+        "resource",
+        "x402Version"
+      ],
+      "x402_version": 2
+    },
+    "server_alive_after": true,
+    "client_summaries_lean": []
+  }
+}

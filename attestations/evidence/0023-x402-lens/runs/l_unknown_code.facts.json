@@ -1,0 +1,153 @@
+{
+  "session": "l_unknown_code",
+  "matrix": "unknown facilitator code",
+  "doc_refs": [
+    "D-13"
+  ],
+  "expectation": "documented contract (D-13): an unrecognised invalidReason is never swallowed — payment.failed carries the raw code and the findings name it",
+  "config": {
+    "facilitator": {
+      "FAC_VERIFY_RESULT": "{\"isValid\":false,\"invalidReason\":\"facilitator_zeta_unknown_code\",\"payer\":\"0x857b06519E91e3A54538791bDAbd0E22373e36b66\"}"
+    },
+    "server": {},
+    "client": {},
+    "clients": 1,
+    "runs": null
+  },
+  "verdict": "PASS",
+  "observed": {
+    "client_summaries": [
+      {
+        "probe": "x402-lens server-side battery — honest lab buyer perimeter",
+        "url": "http://127.0.0.1:5038/weather",
+        "method": "GET",
+        "slots": 1,
+        "replay_mode": false,
+        "signer_call_count": 1,
+        "per_slot": [
+          {
+            "slot": 1,
+            "started_at": "2026-11-17T12:54:50.457Z",
+            "finished_at": "2026-11-17T12:54:50.527Z",
+            "http": 402,
+            "receipt": null,
+            "cors": {
+              "expose": null,
+              "allow_headers": null,
+              "allow_origin": null,
+              "payment_required_present": true
+            }
+          }
+        ],
+        "started_at": "2026-11-17T12:54:50.431Z",
+        "finished_at": "2026-11-17T12:54:50.528Z",
+        "distinction": "signed authorization captured by the SUT path; on-chain transfer NOT established (lab-facilitator settlement)"
+      }
+    ],
+    "signer_counts_by_run": [
+      1
+    ],
+    "slot_http": [
+      402
+    ],
+    "receipts": [],
+    "slot_errors": [],
+    "signer_call_count": 1,
+    "quote_accepts_count": 1,
+    "server_events": [
+      {
+        "ts": "2026-11-17T12:54:50.486Z",
+        "type": "payment.required",
+        "requestId": "0e187dc1-43b1-4164-8705-f4bf9795e693",
+        "route": "GET /weather",
+        "scheme": "exact",
+        "network": "eip155:84532",
+        "amount": "1000",
+        "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+        "payTo": "0x209693Bc6afc0C5328bA36FaF03C514EF312287C",
+        "offers": 1,
+        "durationMs": 2,
+        "findings": []
+      },
+      {
+        "ts": "2026-11-17T12:54:50.510Z",
+        "requestId": "4c60054d-dd0f-4e2b-90a5-28cfd3de6276",
+        "route": "GET /weather",
+        "scheme": "exact",
+        "network": "eip155:84532",
+        "amount": "1000",
+        "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+        "payTo": "0x209693Bc6afc0C5328bA36FaF03C514EF312287C",
+        "durationMs": 7,
+        "type": "payment.failed",
+        "reason": "facilitator_zeta_unknown_code",
+        "findings": [
+          {
+            "severity": "warn",
+            "code": "signature_mismatch",
+            "field": "verify.invalidReason",
+            "problem": "Verification failed with \"facilitator_zeta_unknown_code\".",
+            "fix": "Check the facilitator's error-code reference for this code; if it is unmapped here, report it so the rule can be added."
+          }
+        ]
+      },
+      {
+        "ts": "2026-11-17T12:54:50.511Z",
+        "type": "payment.required",
+        "requestId": "4c60054d-dd0f-4e2b-90a5-28cfd3de6276",
+        "route": "GET /weather",
+        "scheme": "exact",
+        "network": "eip155:84532",
+        "amount": "1000",
+        "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+        "payTo": "0x209693Bc6afc0C5328bA36FaF03C514EF312287C",
+        "offers": 1,
+        "durationMs": 8,
+        "findings": []
+      }
+    ],
+    "server_event_types": [
+      "payment.required",
+      "payment.failed",
+      "payment.required"
+    ],
+    "handler_entries": [],
+    "handler_counts": {},
+    "facilitator_calls": [
+      {
+        "at": "2026-11-17T12:54:50.134Z",
+        "type": "facilitator_call",
+        "path": "supported",
+        "auth_present": true
+      },
+      {
+        "at": "2026-11-17T12:54:50.508Z",
+        "type": "facilitator_call",
+        "path": "verify",
+        "auth_present": true,
+        "nonce_short": "0xb13d861d…ebc9(len66)",
+        "honest_decision": null,
+        "verify_result": {
+          "isValid": false,
+          "invalidReason": "facilitator_zeta_unknown_code"
+        }
+      }
+    ],
+    "facilitator_counts": {
+      "supported": 1,
+      "verify": 1,
+      "settle": 0,
+      "auth_rejected": 0
+    },
+    "battery_obs": null,
+    "server_alive_after": true,
+    "client_summaries_lean": [
+      {
+        "slots": [
+          402
+        ],
+        "signer_call_count": 1
+      }
+    ]
+  }
+}

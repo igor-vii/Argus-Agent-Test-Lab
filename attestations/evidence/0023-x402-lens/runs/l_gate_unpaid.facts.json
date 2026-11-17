@@ -1,0 +1,74 @@
+{
+  "session": "l_gate_unpaid",
+  "matrix": "canonical gate: unpaid challenge",
+  "doc_refs": [
+    "D-09",
+    "D-10"
+  ],
+  "expectation": "unpaid GET /weather -> 402; PAYMENT-REQUIRED header with v2 fields (x402Version 2, accepts[0] exact on eip155:84532, atomic amount, payTo, 40-hex asset); challenge mirrored into the body (D-09); payment.required event emitted; handler untouched; unprotected /health passes with no payment header",
+  "config": {
+    "facilitator": {},
+    "server": {}
+  },
+  "verdict": "PASS",
+  "observed": {
+    "client_summaries": [],
+    "signer_counts_by_run": [],
+    "slot_http": [],
+    "receipts": [],
+    "slot_errors": [],
+    "signer_call_count": 0,
+    "quote_accepts_count": null,
+    "server_events": [
+      {
+        "ts": "2026-11-17T12:55:00.470Z",
+        "type": "payment.required",
+        "requestId": "537e60ac-7b96-4cee-aa00-98e5ec995b7b",
+        "route": "GET /weather",
+        "scheme": "exact",
+        "network": "eip155:84532",
+        "amount": "1000",
+        "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+        "payTo": "0x209693Bc6afc0C5328bA36FaF03C514EF312287C",
+        "offers": 1,
+        "durationMs": 2,
+        "findings": []
+      }
+    ],
+    "server_event_types": [
+      "payment.required"
+    ],
+    "handler_entries": [],
+    "handler_counts": {},
+    "facilitator_calls": [
+      {
+        "at": "2026-11-17T12:55:00.436Z",
+        "type": "facilitator_call",
+        "path": "supported",
+        "auth_present": true
+      }
+    ],
+    "facilitator_counts": {
+      "supported": 1,
+      "verify": 0,
+      "settle": 0,
+      "auth_rejected": 0
+    },
+    "battery_obs": {
+      "unpaid_status": 402,
+      "header_present": true,
+      "x402_version": 2,
+      "accept_scheme": "exact",
+      "accept_network": "eip155:84532",
+      "accept_amount_atomic": true,
+      "accept_payto": "0x209693Bc6afc0C5328bA36FaF03C514EF312287C",
+      "accept_asset_40hex": true,
+      "body_has_x402_version": true,
+      "body_has_accepts": true,
+      "health_status": 200,
+      "health_payment_header": false
+    },
+    "server_alive_after": true,
+    "client_summaries_lean": []
+  }
+}

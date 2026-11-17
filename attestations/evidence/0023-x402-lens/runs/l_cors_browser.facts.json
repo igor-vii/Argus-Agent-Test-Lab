@@ -1,0 +1,77 @@
+{
+  "session": "l_cors_browser",
+  "matrix": "browser buyers: cors off (default) / on / merge with app CORS",
+  "doc_refs": [
+    "D-08"
+  ],
+  "expectation": "documented (D-08): default exposes NO payment headers (an app with its own CORS layer owns this — DOCUMENTED, not a bug); cors:true exposes PAYMENT-REQUIRED/PAYMENT-RESPONSE and allows PAYMENT-SIGNATURE+Content-Type; with a pre-existing app CORS header the lens MERGES (X-Custom-Header kept)",
+  "config": {
+    "variants": [
+      "default",
+      "cors_on",
+      "cors_merge"
+    ]
+  },
+  "verdict": "PASS",
+  "observed": {
+    "client_summaries": [],
+    "signer_counts_by_run": [],
+    "slot_http": [],
+    "receipts": [],
+    "slot_errors": [],
+    "signer_call_count": 0,
+    "quote_accepts_count": null,
+    "server_events": [],
+    "server_event_types": [],
+    "handler_entries": [],
+    "handler_counts": {},
+    "facilitator_calls": [
+      {
+        "at": "2026-11-17T12:55:01.770Z",
+        "type": "facilitator_call",
+        "path": "supported",
+        "auth_present": true
+      },
+      {
+        "at": "2026-11-17T12:55:02.337Z",
+        "type": "facilitator_call",
+        "path": "supported",
+        "auth_present": true
+      },
+      {
+        "at": "2026-11-17T12:55:02.815Z",
+        "type": "facilitator_call",
+        "path": "supported",
+        "auth_present": true
+      }
+    ],
+    "facilitator_counts": {
+      "supported": 3,
+      "verify": 0,
+      "settle": 0,
+      "auth_rejected": 0
+    },
+    "battery_obs": [
+      {
+        "status": 402,
+        "expose": null,
+        "allow_headers": null,
+        "allow_origin": null
+      },
+      {
+        "status": 402,
+        "expose": "PAYMENT-REQUIRED, PAYMENT-RESPONSE",
+        "allow_headers": "Content-Type, PAYMENT-SIGNATURE",
+        "allow_origin": null
+      },
+      {
+        "status": 402,
+        "expose": "X-Custom-Header, PAYMENT-REQUIRED, PAYMENT-RESPONSE",
+        "allow_headers": "Content-Type, PAYMENT-SIGNATURE",
+        "allow_origin": null
+      }
+    ],
+    "server_alive_after": true,
+    "client_summaries_lean": []
+  }
+}

@@ -1,0 +1,80 @@
+{
+  "session": "l_undecodable_payload",
+  "matrix": "garbage payment header",
+  "doc_refs": [
+    "D-12"
+  ],
+  "expectation": "PAYMENT-SIGNATURE that is not base64 -> 402, handler untouched, no crash: the server still serves a fresh challenge and /health afterwards",
+  "config": {
+    "facilitator": {},
+    "server": {}
+  },
+  "verdict": "PASS",
+  "observed": {
+    "client_summaries": [],
+    "signer_counts_by_run": [],
+    "slot_http": [],
+    "receipts": [],
+    "slot_errors": [],
+    "signer_call_count": 0,
+    "quote_accepts_count": null,
+    "server_events": [
+      {
+        "ts": "2026-11-17T12:54:44.175Z",
+        "type": "payment.required",
+        "requestId": "3371c6b2-0045-46ab-8aa2-08d6bb24655c",
+        "route": "GET /weather",
+        "scheme": "exact",
+        "network": "eip155:84532",
+        "amount": "1000",
+        "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+        "payTo": "0x209693Bc6afc0C5328bA36FaF03C514EF312287C",
+        "offers": 1,
+        "durationMs": 3,
+        "findings": []
+      },
+      {
+        "ts": "2026-11-17T12:54:44.177Z",
+        "type": "payment.required",
+        "requestId": "79bd800c-4eac-4b6b-b7e7-b243df465c0a",
+        "route": "GET /weather",
+        "scheme": "exact",
+        "network": "eip155:84532",
+        "amount": "1000",
+        "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+        "payTo": "0x209693Bc6afc0C5328bA36FaF03C514EF312287C",
+        "offers": 1,
+        "durationMs": 0,
+        "findings": []
+      }
+    ],
+    "server_event_types": [
+      "payment.required",
+      "payment.required"
+    ],
+    "handler_entries": [],
+    "handler_counts": {},
+    "facilitator_calls": [
+      {
+        "at": "2026-11-17T12:54:44.112Z",
+        "type": "facilitator_call",
+        "path": "supported",
+        "auth_present": true
+      }
+    ],
+    "facilitator_counts": {
+      "supported": 1,
+      "verify": 0,
+      "settle": 0,
+      "auth_rejected": 0
+    },
+    "battery_obs": {
+      "garbage_status": 402,
+      "challenge_status": 402,
+      "challenge_header_present": true,
+      "health_status": 200
+    },
+    "server_alive_after": true,
+    "client_summaries_lean": []
+  }
+}

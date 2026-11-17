@@ -1,0 +1,131 @@
+{
+  "session": "l_facilitator_timeout",
+  "matrix": "chaos: verify hangs beyond facilitator timeout",
+  "doc_refs": [
+    "D-12"
+  ],
+  "expectation": "chaos contract with X402_FACILITATOR_TIMEOUT_MS=1000 vs 3000ms hang: facilitator.error event, no delivery, process survives",
+  "config": {
+    "facilitator": {
+      "FAC_VERIFY_DELAY_MS": 3000
+    },
+    "server": {
+      "LENS_FACILITATOR_TIMEOUT_MS": 1000
+    },
+    "client": {},
+    "clients": 1,
+    "runs": null
+  },
+  "verdict": "PASS",
+  "observed": {
+    "client_summaries": [
+      {
+        "probe": "x402-lens server-side battery — honest lab buyer perimeter",
+        "url": "http://127.0.0.1:5037/weather",
+        "method": "GET",
+        "slots": 1,
+        "replay_mode": false,
+        "signer_call_count": 1,
+        "per_slot": [
+          {
+            "slot": 1,
+            "started_at": "2026-11-17T12:54:48.453Z",
+            "finished_at": "2026-11-17T12:54:49.507Z",
+            "http": 502,
+            "receipt": null,
+            "cors": {
+              "expose": null,
+              "allow_headers": null,
+              "allow_origin": null,
+              "payment_required_present": false
+            }
+          }
+        ],
+        "started_at": "2026-11-17T12:54:48.426Z",
+        "finished_at": "2026-11-17T12:54:49.508Z",
+        "distinction": "signed authorization captured by the SUT path; on-chain transfer NOT established (lab-facilitator settlement)"
+      }
+    ],
+    "signer_counts_by_run": [
+      1
+    ],
+    "slot_http": [
+      502
+    ],
+    "receipts": [],
+    "slot_errors": [],
+    "signer_call_count": 1,
+    "quote_accepts_count": 1,
+    "server_events": [
+      {
+        "ts": "2026-11-17T12:54:48.483Z",
+        "type": "payment.required",
+        "requestId": "d9a4e2a1-26d6-4a7f-ba22-02614dd1ac15",
+        "route": "GET /weather",
+        "scheme": "exact",
+        "network": "eip155:84532",
+        "amount": "1000",
+        "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+        "payTo": "0x209693Bc6afc0C5328bA36FaF03C514EF312287C",
+        "offers": 1,
+        "durationMs": 2,
+        "findings": []
+      },
+      {
+        "ts": "2026-11-17T12:54:49.505Z",
+        "requestId": "bd7fd710-95bb-43b0-bed8-8d6389f62028",
+        "route": "GET /weather",
+        "scheme": "exact",
+        "network": "eip155:84532",
+        "amount": "1000",
+        "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+        "payTo": "0x209693Bc6afc0C5328bA36FaF03C514EF312287C",
+        "durationMs": 1004,
+        "type": "facilitator.error",
+        "message": "Facilitator verify request timed out after 1000ms"
+      }
+    ],
+    "server_event_types": [
+      "payment.required",
+      "facilitator.error"
+    ],
+    "handler_entries": [],
+    "handler_counts": {},
+    "facilitator_calls": [
+      {
+        "at": "2026-11-17T12:54:48.114Z",
+        "type": "facilitator_call",
+        "path": "supported",
+        "auth_present": true
+      },
+      {
+        "at": "2026-11-17T12:54:48.506Z",
+        "type": "facilitator_call",
+        "path": "verify",
+        "auth_present": true,
+        "nonce_short": "0xd76832d2…395f(len66)",
+        "honest_decision": null,
+        "verify_result": {
+          "isValid": true,
+          "invalidReason": null
+        }
+      }
+    ],
+    "facilitator_counts": {
+      "supported": 1,
+      "verify": 1,
+      "settle": 0,
+      "auth_rejected": 0
+    },
+    "battery_obs": null,
+    "server_alive_after": true,
+    "client_summaries_lean": [
+      {
+        "slots": [
+          502
+        ],
+        "signer_call_count": 1
+      }
+    ]
+  }
+}

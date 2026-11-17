@@ -1,0 +1,204 @@
+{
+  "session": "l_cli_inspect_doctor",
+  "matrix": "shipped CLI against the live SUT",
+  "doc_refs": [
+    "D-08",
+    "D-20"
+  ],
+  "expectation": "documented (D-20/D-08): inspect --json against the live SUT — default server (cors off) reports the browser-readiness issue and exits 1 (the documented CORS report, conformance empty); cors-on server exits 0; doctor --json against the lab facilitator exits 0 (network listed for v2)",
+  "config": {
+    "cli": "/home/z/my-project/work/Argus-Agent-Test-Lab/sut-x402-lens/packages/cli/dist/index.js",
+    "variants": [
+      "default",
+      "cors_on"
+    ]
+  },
+  "verdict": "PASS",
+  "observed": {
+    "client_summaries": [],
+    "signer_counts_by_run": [],
+    "slot_http": [],
+    "receipts": [],
+    "slot_errors": [],
+    "signer_call_count": 0,
+    "quote_accepts_count": null,
+    "server_events": [
+      {
+        "ts": "2026-11-17T12:55:06.473Z",
+        "type": "payment.required",
+        "requestId": "300217c8-3973-4d83-bfff-a278c3c4610b",
+        "route": "GET /weather",
+        "scheme": "exact",
+        "network": "eip155:84532",
+        "amount": "1000",
+        "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+        "payTo": "0x209693Bc6afc0C5328bA36FaF03C514EF312287C",
+        "offers": 1,
+        "durationMs": 2,
+        "findings": []
+      }
+    ],
+    "server_event_types": [
+      "payment.required"
+    ],
+    "handler_entries": [],
+    "handler_counts": {},
+    "facilitator_calls": [
+      {
+        "at": "2026-11-17T12:55:06.258Z",
+        "type": "facilitator_call",
+        "path": "supported",
+        "auth_present": true
+      },
+      {
+        "at": "2026-11-17T12:55:06.931Z",
+        "type": "facilitator_call",
+        "path": "supported",
+        "auth_present": true
+      },
+      {
+        "at": "2026-11-17T12:55:07.273Z",
+        "type": "facilitator_call",
+        "path": "supported",
+        "auth_present": true
+      }
+    ],
+    "facilitator_counts": {
+      "supported": 3,
+      "verify": 0,
+      "settle": 0,
+      "auth_rejected": 0
+    },
+    "battery_obs": {
+      "inspects": [
+        {
+          "tag": "default",
+          "json": {
+            "status": 402,
+            "headerPresent": true,
+            "decodedFromBody": false,
+            "paymentRequired": {
+              "x402Version": 2,
+              "error": "Payment required",
+              "resource": {
+                "url": "http://127.0.0.1:5051/weather",
+                "description": "",
+                "mimeType": ""
+              },
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:84532",
+                  "amount": "1000",
+                  "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                  "payTo": "0x209693Bc6afc0C5328bA36FaF03C514EF312287C",
+                  "maxTimeoutSeconds": 60,
+                  "extra": {
+                    "name": "USDC",
+                    "version": "2"
+                  }
+                }
+              ]
+            },
+            "conformance": [],
+            "cors": {
+              "exposesPaymentRequired": false,
+              "exposesPaymentResponse": false,
+              "allowsPaymentSignature": false,
+              "issues": [
+                {
+                  "field": "Access-Control-Expose-Headers",
+                  "problem": "Missing PAYMENT-REQUIRED, PAYMENT-RESPONSE. A cross-origin buyer cannot read them, so it never learns the price."
+                },
+                {
+                  "field": "Access-Control-Allow-Headers",
+                  "problem": "Missing PAYMENT-SIGNATURE. The browser strips the retry header and the payment is silently not made. Add Content-Type alongside it when requests carry a body."
+                }
+              ]
+            },
+            "exitCode": 1
+          },
+          "rc": 1
+        },
+        {
+          "tag": "cors_on",
+          "json": {
+            "status": 402,
+            "headerPresent": true,
+            "decodedFromBody": false,
+            "paymentRequired": {
+              "x402Version": 2,
+              "error": "Payment required",
+              "resource": {
+                "url": "http://127.0.0.1:5051/weather",
+                "description": "",
+                "mimeType": ""
+              },
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:84532",
+                  "amount": "1000",
+                  "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                  "payTo": "0x209693Bc6afc0C5328bA36FaF03C514EF312287C",
+                  "maxTimeoutSeconds": 60,
+                  "extra": {
+                    "name": "USDC",
+                    "version": "2"
+                  }
+                }
+              ]
+            },
+            "conformance": [],
+            "cors": {
+              "exposesPaymentRequired": true,
+              "exposesPaymentResponse": true,
+              "allowsPaymentSignature": true,
+              "issues": []
+            },
+            "exitCode": 0
+          },
+          "rc": 0
+        }
+      ],
+      "doctor": {
+        "checks": [
+          {
+            "name": "config",
+            "ok": true,
+            "detail": "Probing with facilitator and network overrides. Full configuration (payTo, routes) was not loaded, so it was not checked."
+          },
+          {
+            "name": "network format",
+            "ok": true,
+            "detail": "Base Sepolia (eip155:84532)"
+          },
+          {
+            "name": "facilitator reachable",
+            "ok": true,
+            "detail": "http://127.0.0.1:4951/supported responded with 1 kind(s)."
+          },
+          {
+            "name": "network supported",
+            "ok": true,
+            "detail": "eip155:84532 is available for scheme(s): exact."
+          },
+          {
+            "name": "exact scheme",
+            "ok": true,
+            "detail": "The facilitator supports the exact scheme on this network."
+          },
+          {
+            "name": "known network",
+            "ok": true,
+            "detail": "Base Sepolia (eip155:84532) — widely deployed, safe for production."
+          }
+        ],
+        "exitCode": 0
+      },
+      "doctor_rc": 0
+    },
+    "server_alive_after": true,
+    "client_summaries_lean": []
+  }
+}

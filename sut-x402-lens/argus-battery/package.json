@@ -1,0 +1,19 @@
+{
+  "name": "argus-battery-lens",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Argus battery equipment for SUT x402-lens (lab client + mock facilitator + server harness). The SUT itself lives one directory up (npm workspace).",
+  "type": "module",
+  "scripts": {
+    "battery": "node battery-lens-a10.mjs"
+  },
+  "dependencies": {
+    "@x402/core": "2.31.0",
+    "@x402/evm": "2.31.0",
+    "@x402/fetch": "2.31.0",
+    "viem": "^2.48.11"
+  },
+  "allowScripts": {
+    "esbuild@0.28.2": true
+  }
+}

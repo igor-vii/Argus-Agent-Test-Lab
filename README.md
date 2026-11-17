@@ -23,6 +23,13 @@ node tools/registry/verify-registry.mjs
 Verification uses only the Node.js standard library — no `npm install`, no
 network access, no trust in this README.
 
+**Latest public verification — first third-party SUT run end-to-end:**
+**0023-x402-lens (Rozenberg888) — 18 PASS / 3 DOCUMENTED / 0 FAIL · 0.2.0** —
+the full battery with the candidate's own documentation pre-registered as
+verdict semantics ([run report](sut-x402-lens/RUN-REPORT.md),
+[evidence](attestations/evidence/0023-x402-lens/README.md),
+[doc-registry](sut-x402-lens/doc-registry.md)).
+
 ## Connect Argus to your coding agent (MCP)
 
 The hosted Argus Console speaks MCP (Model Context Protocol) over Streamable
@@ -237,6 +244,7 @@ docs/block-b/        sealed fixtures and evidence (S-BS series, records 0003+)
 docs/inngest-battery/  sealed evidence + repro harness (record 0005)
 docs/t1-mcp-tool-idempotency/  sealed external verification (record 0009)
 sut-x402-pr3920/     sealed SUT evidence, x402 PR #3920 cycles (records 0008, 0012)
+sut-x402-lens/       SUT stand: doc-registry, RUN-REPORT, reusable server-side battery kit (record 0023 draft)
 src/tests/blockb/SBS19_BlockRunNano.test.ts   sealed evidence (record 0006)
 .github/             CI: verify registry → OG cover → IndexNow → Vercel deploy
 ```

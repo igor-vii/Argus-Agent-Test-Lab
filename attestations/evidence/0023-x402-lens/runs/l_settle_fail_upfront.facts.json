@@ -1,0 +1,147 @@
+{
+  "session": "l_settle_fail_upfront",
+  "matrix": "money-fault: settle fails, upfront flow",
+  "doc_refs": [
+    "D-06"
+  ],
+  "expectation": "documented guarantee (D-06): with upfront and a failing settle the handler is NEVER called; 402 to the buyer; payment.settle_failed event present",
+  "config": {
+    "facilitator": {
+      "FAC_SETTLE_RESULT": "{\"success\":false,\"errorReason\":\"insufficient_funds\",\"transaction\":\"\",\"network\":\"eip155:84532\",\"payer\":\"0x857b06519E91e3A54538791bDAbd0E22373e36b66\"}"
+    },
+    "server": {
+      "LENS_ROUTES": "[{\"route\":\"GET /generate\",\"price\":\"$0.05\",\"paymentFlow\":\"upfront\"}]"
+    },
+    "client": {
+      "ENDPOINT_PATH": "/generate"
+    },
+    "clients": 1,
+    "runs": null
+  },
+  "verdict": "PASS",
+  "observed": {
+    "client_summaries": [
+      {
+        "probe": "x402-lens server-side battery — honest lab buyer perimeter",
+        "url": "http://127.0.0.1:5035/generate",
+        "method": "GET",
+        "slots": 1,
+        "replay_mode": false,
+        "signer_call_count": 1,
+        "per_slot": [
+          {
+            "slot": 1,
+            "started_at": "2026-11-17T12:54:46.194Z",
+            "finished_at": "2026-11-17T12:54:46.279Z",
+            "http": 402,
+            "receipt": {
+              "success": false,
+              "errorReason": "insufficient_funds",
+              "payer": "0x857b06519E91e3A54538791bDAbd0E22373e36b66",
+              "transaction": "",
+              "network": "eip155:84532"
+            },
+            "cors": {
+              "expose": null,
+              "allow_headers": null,
+              "allow_origin": null,
+              "payment_required_present": false
+            }
+          }
+        ],
+        "started_at": "2026-11-17T12:54:46.161Z",
+        "finished_at": "2026-11-17T12:54:46.279Z",
+        "distinction": "signed authorization captured by the SUT path; on-chain transfer NOT established (lab-facilitator settlement)"
+      }
+    ],
+    "signer_counts_by_run": [
+      1
+    ],
+    "slot_http": [
+      402
+    ],
+    "receipts": [
+      {
+        "success": false,
+        "errorReason": "insufficient_funds",
+        "payer": "0x857b06519E91e3A54538791bDAbd0E22373e36b66",
+        "transaction": "",
+        "network": "eip155:84532"
+      }
+    ],
+    "slot_errors": [],
+    "signer_call_count": 1,
+    "quote_accepts_count": 1,
+    "server_events": [
+      {
+        "ts": "2026-11-17T12:54:46.225Z",
+        "type": "payment.required",
+        "requestId": "15dd2f3f-904b-431a-b8cb-91be4de08142",
+        "route": "GET /generate",
+        "scheme": "exact",
+        "network": "eip155:84532",
+        "amount": "50000",
+        "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+        "payTo": "0x209693Bc6afc0C5328bA36FaF03C514EF312287C",
+        "offers": 1,
+        "durationMs": 3,
+        "findings": []
+      },
+      {
+        "ts": "2026-11-17T12:54:46.259Z",
+        "requestId": "f49ed8fc-8f86-4a66-98cf-6a03ff76d9ec",
+        "route": "GET /generate",
+        "scheme": "exact",
+        "network": "eip155:84532",
+        "amount": "50000",
+        "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+        "payTo": "0x209693Bc6afc0C5328bA36FaF03C514EF312287C",
+        "durationMs": 13,
+        "type": "payment.settle_failed",
+        "reason": "insufficient_funds",
+        "phase": "before-handler",
+        "findings": []
+      }
+    ],
+    "server_event_types": [
+      "payment.required",
+      "payment.settle_failed"
+    ],
+    "handler_entries": [],
+    "handler_counts": {},
+    "facilitator_calls": [
+      {
+        "at": "2026-11-17T12:54:45.822Z",
+        "type": "facilitator_call",
+        "path": "supported",
+        "auth_present": true
+      },
+      {
+        "at": "2026-11-17T12:54:46.253Z",
+        "type": "facilitator_call",
+        "path": "settle",
+        "auth_present": true,
+        "settle_result": {
+          "success": false,
+          "errorReason": "insufficient_funds"
+        }
+      }
+    ],
+    "facilitator_counts": {
+      "supported": 1,
+      "verify": 0,
+      "settle": 1,
+      "auth_rejected": 0
+    },
+    "battery_obs": null,
+    "server_alive_after": true,
+    "client_summaries_lean": [
+      {
+        "slots": [
+          402
+        ],
+        "signer_call_count": 1
+      }
+    ]
+  }
+}

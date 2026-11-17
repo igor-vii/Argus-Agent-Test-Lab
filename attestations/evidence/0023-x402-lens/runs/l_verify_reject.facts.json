@@ -1,0 +1,153 @@
+{
+  "session": "l_verify_reject",
+  "matrix": "verify rejects (money-fault: invalid payment)",
+  "doc_refs": [
+    "D-14"
+  ],
+  "expectation": "facilitator verify isValid:false invalidReason invalid_exact_evm_payload_signature -> no delivery (handler untouched), 402-class slot outcome, payment.failed carries the raw reason code and a signature_mismatch finding",
+  "config": {
+    "facilitator": {
+      "FAC_VERIFY_RESULT": "{\"isValid\":false,\"invalidReason\":\"invalid_exact_evm_payload_signature\",\"payer\":\"0x857b06519E91e3A54538791bDAbd0E22373e36b66\"}"
+    },
+    "server": {},
+    "client": {},
+    "clients": 1,
+    "runs": null
+  },
+  "verdict": "PASS",
+  "observed": {
+    "client_summaries": [
+      {
+        "probe": "x402-lens server-side battery — honest lab buyer perimeter",
+        "url": "http://127.0.0.1:5032/weather",
+        "method": "GET",
+        "slots": 1,
+        "replay_mode": false,
+        "signer_call_count": 1,
+        "per_slot": [
+          {
+            "slot": 1,
+            "started_at": "2026-11-17T12:54:43.408Z",
+            "finished_at": "2026-11-17T12:54:43.491Z",
+            "http": 402,
+            "receipt": null,
+            "cors": {
+              "expose": null,
+              "allow_headers": null,
+              "allow_origin": null,
+              "payment_required_present": true
+            }
+          }
+        ],
+        "started_at": "2026-11-17T12:54:43.378Z",
+        "finished_at": "2026-11-17T12:54:43.492Z",
+        "distinction": "signed authorization captured by the SUT path; on-chain transfer NOT established (lab-facilitator settlement)"
+      }
+    ],
+    "signer_counts_by_run": [
+      1
+    ],
+    "slot_http": [
+      402
+    ],
+    "receipts": [],
+    "slot_errors": [],
+    "signer_call_count": 1,
+    "quote_accepts_count": 1,
+    "server_events": [
+      {
+        "ts": "2026-11-17T12:54:43.440Z",
+        "type": "payment.required",
+        "requestId": "349f4fb0-7df6-4f83-a03f-4cb0499cb48d",
+        "route": "GET /weather",
+        "scheme": "exact",
+        "network": "eip155:84532",
+        "amount": "1000",
+        "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+        "payTo": "0x209693Bc6afc0C5328bA36FaF03C514EF312287C",
+        "offers": 1,
+        "durationMs": 2,
+        "findings": []
+      },
+      {
+        "ts": "2026-11-17T12:54:43.474Z",
+        "requestId": "d38fb412-258d-46aa-b084-3cc8ff3b6526",
+        "route": "GET /weather",
+        "scheme": "exact",
+        "network": "eip155:84532",
+        "amount": "1000",
+        "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+        "payTo": "0x209693Bc6afc0C5328bA36FaF03C514EF312287C",
+        "durationMs": 10,
+        "type": "payment.failed",
+        "reason": "invalid_exact_evm_payload_signature",
+        "findings": [
+          {
+            "severity": "error",
+            "code": "signature_mismatch",
+            "field": "payment.payload.signature",
+            "problem": "The signature does not recover to the payer address.",
+            "fix": "Rebuild the EIP-712 domain from extra.name (\"USDC\"), extra.version (\"2\"), the chain id of Base Sepolia (eip155:84532), and verifyingContract = 0x036CbD53842c5426634e7929541eC2318f3dCF7e. Then sign with the same account as authorization.from."
+          }
+        ]
+      },
+      {
+        "ts": "2026-11-17T12:54:43.474Z",
+        "type": "payment.required",
+        "requestId": "d38fb412-258d-46aa-b084-3cc8ff3b6526",
+        "route": "GET /weather",
+        "scheme": "exact",
+        "network": "eip155:84532",
+        "amount": "1000",
+        "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+        "payTo": "0x209693Bc6afc0C5328bA36FaF03C514EF312287C",
+        "offers": 1,
+        "durationMs": 10,
+        "findings": []
+      }
+    ],
+    "server_event_types": [
+      "payment.required",
+      "payment.failed",
+      "payment.required"
+    ],
+    "handler_entries": [],
+    "handler_counts": {},
+    "facilitator_calls": [
+      {
+        "at": "2026-11-17T12:54:43.049Z",
+        "type": "facilitator_call",
+        "path": "supported",
+        "auth_present": true
+      },
+      {
+        "at": "2026-11-17T12:54:43.469Z",
+        "type": "facilitator_call",
+        "path": "verify",
+        "auth_present": true,
+        "nonce_short": "0xb87087c7…cead(len66)",
+        "honest_decision": null,
+        "verify_result": {
+          "isValid": false,
+          "invalidReason": "invalid_exact_evm_payload_signature"
+        }
+      }
+    ],
+    "facilitator_counts": {
+      "supported": 1,
+      "verify": 1,
+      "settle": 0,
+      "auth_rejected": 0
+    },
+    "battery_obs": null,
+    "server_alive_after": true,
+    "client_summaries_lean": [
+      {
+        "slots": [
+          402
+        ],
+        "signer_call_count": 1
+      }
+    ]
+  }
+}

@@ -1,0 +1,178 @@
+{
+  "session": "l_facilitator_bearer",
+  "matrix": "facilitator auth: Bearer token forwarding",
+  "doc_refs": [
+    "D-17"
+  ],
+  "expectation": "documented (D-17): X402_FACILITATOR_TOKEN rides as Authorization: Bearer on supported+verify+settle; the token-requiring facilitator accepts the flow end-to-end (payment completes)",
+  "config": {
+    "facilitator": {
+      "FAC_REQUIRE_BEARER": "argus-lens-bearer-token"
+    },
+    "server": {
+      "LENS_FACILITATOR_TOKEN": "argus-lens-bearer-token"
+    },
+    "client": {},
+    "clients": 1,
+    "runs": null
+  },
+  "verdict": "PASS",
+  "observed": {
+    "client_summaries": [
+      {
+        "probe": "x402-lens server-side battery — honest lab buyer perimeter",
+        "url": "http://127.0.0.1:5045/weather",
+        "method": "GET",
+        "slots": 1,
+        "replay_mode": false,
+        "signer_call_count": 1,
+        "per_slot": [
+          {
+            "slot": 1,
+            "started_at": "2026-11-17T12:54:58.719Z",
+            "finished_at": "2026-11-17T12:54:58.790Z",
+            "http": 200,
+            "receipt": {
+              "success": true,
+              "payer": "0x857b06519E91e3A54538791bDAbd0E22373e36b66",
+              "transaction": "0x1111111111111111111111111111111111111111111111111111111111111111",
+              "network": "eip155:84532"
+            },
+            "cors": {
+              "expose": null,
+              "allow_headers": null,
+              "allow_origin": null,
+              "payment_required_present": false
+            }
+          }
+        ],
+        "started_at": "2026-11-17T12:54:58.692Z",
+        "finished_at": "2026-11-17T12:54:58.791Z",
+        "distinction": "signed authorization captured by the SUT path; on-chain transfer NOT established (lab-facilitator settlement)"
+      }
+    ],
+    "signer_counts_by_run": [
+      1
+    ],
+    "slot_http": [
+      200
+    ],
+    "receipts": [
+      {
+        "success": true,
+        "payer": "0x857b06519E91e3A54538791bDAbd0E22373e36b66",
+        "transaction": "0x1111111111111111111111111111111111111111111111111111111111111111",
+        "network": "eip155:84532"
+      }
+    ],
+    "slot_errors": [],
+    "signer_call_count": 1,
+    "quote_accepts_count": 1,
+    "server_events": [
+      {
+        "ts": "2026-11-17T12:54:58.750Z",
+        "type": "payment.required",
+        "requestId": "af28fbd9-58db-480e-a43d-bdd93594d598",
+        "route": "GET /weather",
+        "scheme": "exact",
+        "network": "eip155:84532",
+        "amount": "1000",
+        "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+        "payTo": "0x209693Bc6afc0C5328bA36FaF03C514EF312287C",
+        "offers": 1,
+        "durationMs": 2,
+        "findings": []
+      },
+      {
+        "ts": "2026-11-17T12:54:58.777Z",
+        "requestId": "3c805bc8-87f8-4ccf-b6ca-bf05272d5344",
+        "route": "GET /weather",
+        "scheme": "exact",
+        "network": "eip155:84532",
+        "amount": "1000",
+        "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+        "payTo": "0x209693Bc6afc0C5328bA36FaF03C514EF312287C",
+        "buyer": "0x857b06519E91e3A54538791bDAbd0E22373e36b66",
+        "durationMs": 8,
+        "type": "payment.verified"
+      },
+      {
+        "ts": "2026-11-17T12:54:58.789Z",
+        "requestId": "3c805bc8-87f8-4ccf-b6ca-bf05272d5344",
+        "route": "GET /weather",
+        "scheme": "exact",
+        "network": "eip155:84532",
+        "amount": "1000",
+        "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+        "payTo": "0x209693Bc6afc0C5328bA36FaF03C514EF312287C",
+        "buyer": "0x857b06519E91e3A54538791bDAbd0E22373e36b66",
+        "durationMs": 20,
+        "type": "payment.settled",
+        "txHash": "0x1111111111111111111111111111111111111111111111111111111111111111",
+        "phase": "after-handler",
+        "findings": []
+      }
+    ],
+    "server_event_types": [
+      "payment.required",
+      "payment.verified",
+      "payment.settled"
+    ],
+    "handler_entries": [
+      {
+        "at": "2026-11-17T12:54:58.778Z",
+        "type": "handler_call",
+        "route": "GET /weather"
+      }
+    ],
+    "handler_counts": {
+      "/weather": 1
+    },
+    "facilitator_calls": [
+      {
+        "at": "2026-11-17T12:54:58.358Z",
+        "type": "facilitator_call",
+        "path": "supported",
+        "auth_present": true
+      },
+      {
+        "at": "2026-11-17T12:54:58.775Z",
+        "type": "facilitator_call",
+        "path": "verify",
+        "auth_present": true,
+        "nonce_short": "0xad77154f…b5ae(len66)",
+        "honest_decision": null,
+        "verify_result": {
+          "isValid": true,
+          "invalidReason": null
+        }
+      },
+      {
+        "at": "2026-11-17T12:54:58.786Z",
+        "type": "facilitator_call",
+        "path": "settle",
+        "auth_present": true,
+        "settle_result": {
+          "success": true,
+          "errorReason": null
+        }
+      }
+    ],
+    "facilitator_counts": {
+      "supported": 1,
+      "verify": 1,
+      "settle": 1,
+      "auth_rejected": 0
+    },
+    "battery_obs": null,
+    "server_alive_after": true,
+    "client_summaries_lean": [
+      {
+        "slots": [
+          200
+        ],
+        "signer_call_count": 1
+      }
+    ]
+  }
+}

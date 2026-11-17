@@ -1,0 +1,82 @@
+{
+  "session": "l_facilitator_flat_headers",
+  "matrix": "facilitator auth: flat headers object (documented per-path shape)",
+  "doc_refs": [
+    "D-17"
+  ],
+  "expectation": "documented (D-17): the SDK requires the per-path facilitatorHeaders shape and rejects a flat object — fails closed: no delivery, no facilitator verify/settle contact, process survives. Observed manifestation recorded verbatim (the rejection surfaces at request time)",
+  "config": {
+    "facilitator": {
+      "FAC_REQUIRE_BEARER": "argus-lens-bearer-token"
+    },
+    "server": {
+      "LENS_FACILITATOR_TOKEN": "argus-lens-bearer-token",
+      "LENS_FACILITATOR_HEADERS_FLAT": "1"
+    },
+    "client": {},
+    "clients": 1,
+    "runs": null
+  },
+  "verdict": "DOCUMENTED",
+  "observed": {
+    "client_summaries": [
+      {
+        "probe": "x402-lens server-side battery — honest lab buyer perimeter",
+        "url": "http://127.0.0.1:5046/weather",
+        "method": "GET",
+        "slots": 1,
+        "replay_mode": false,
+        "signer_call_count": 0,
+        "per_slot": [
+          {
+            "slot": 1,
+            "started_at": "2026-11-17T12:54:59.795Z",
+            "finished_at": "2026-11-17T12:54:59.827Z",
+            "http": 500,
+            "receipt": null,
+            "cors": {
+              "expose": null,
+              "allow_headers": null,
+              "allow_origin": null,
+              "payment_required_present": false
+            }
+          }
+        ],
+        "started_at": "2026-11-17T12:54:59.757Z",
+        "finished_at": "2026-11-17T12:54:59.827Z",
+        "distinction": "signed authorization captured by the SUT path; on-chain transfer NOT established (lab-facilitator settlement)"
+      }
+    ],
+    "signer_counts_by_run": [
+      0
+    ],
+    "slot_http": [
+      500
+    ],
+    "receipts": [],
+    "slot_errors": [],
+    "signer_call_count": 0,
+    "quote_accepts_count": null,
+    "server_events": [],
+    "server_event_types": [],
+    "handler_entries": [],
+    "handler_counts": {},
+    "facilitator_calls": [],
+    "facilitator_counts": {
+      "supported": 0,
+      "verify": 0,
+      "settle": 0,
+      "auth_rejected": 0
+    },
+    "battery_obs": null,
+    "server_alive_after": true,
+    "client_summaries_lean": [
+      {
+        "slots": [
+          500
+        ],
+        "signer_call_count": 0
+      }
+    ]
+  }
+}
