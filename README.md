@@ -127,9 +127,13 @@ tests pass, the payflow dies in battle.
 
 The `Argus battery` GitHub Action runs the canonical battery against the
 commit your job checked out and reports the verdict (PASS / FAIL / UNKNOWN)
-as a check run on the pull request. Issue an api-key in **Argus Console →
-Settings → API keys**, store it as the `ARGUS_API_KEY` repository secret,
-then add a workflow:
+as a check run on the pull request. The Action is listed on the GitHub
+Marketplace: [Argus battery](https://github.com/marketplace/actions/argus-battery)
+— same code lives in the mirror repo
+[`igor-vii/argus-action`](https://github.com/igor-vii/argus-action) and in
+[`action/`](action/) here (both `uses:` paths work). Issue an api-key in
+**Argus Console → Settings → API keys**, store it as the `ARGUS_API_KEY`
+repository secret, then add a workflow:
 
 ```yaml
 name: argus-battery
