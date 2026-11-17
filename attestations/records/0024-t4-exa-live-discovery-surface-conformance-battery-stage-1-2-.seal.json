@@ -1,0 +1,79 @@
+{
+  "seq": "0024",
+  "record_id": "argus-seal-0024",
+  "issued_at": "2026-11-17T19:17:02.237Z",
+  "signer_key_id": "argus-lab-2026q4r2",
+  "prev_record_hash": "24b06d629c8cc04468c7f0941cac19d5b7ce866c8cabd3d0096e9a92208af176",
+  "type": "seal",
+  "title": "T4-EXA live discovery-surface conformance battery — stage 1/2, discovery surface ONLY, deep settle-semantics battery NOT covered (reserved for authorized Stage 2) — wallet-less probes vs documented x402 v2 contract: 6/6 PASS, zero deviations; OBSERVED: gateway EURC accepts, acceptId=legacy, float64 breakdown artifact",
+  "subject": {
+    "repo": "live SUT: api.exa.ai (Exa /search, /contents x402 v2 payment gate) — first live public-endpoint probe battery (T4 chain), complements the offline T3 battery chain v2 (#0014-#0016)",
+    "pin": "live endpoint — no code pin; contract source: exa.ai/docs/integrations/payments/x402/quickstart (retrieved 2026-11-15/16); challenge wire contents pinned verbatim in the evidence file",
+    "chain": "T4 live probe chain — standalone public harness; no product-layer dependency, evidence fully public (unlike #0014-#0016 per boundary #0013). SCOPE: stage 1 of 2 — this record covers ONLY the wallet-less discovery surface (402 challenge shape + documented error contract); the deep settlement-semantics battery (settle-loss retry, settle idempotency, payTo/amount binding, Gateway flow) is explicitly OUT OF SCOPE of this record and reserved for the authorized Stage 2 run. The seal must be read as PARTIAL by design — it does not claim the Exa x402 surface is fully tested.",
+    "method": "Black-box live probes against the DOCUMENTED wallet-less discovery surface that Exa's own docs advertise as public and free ('Probe pricing without a wallet by sending unauthenticated requests', documented code samples included). Rate-limit compliant with Exa's published limits (5 unpaid discovery requests / 60s per IP): <= 1 request per 22s pacing, 10s lead-in, 4 requests total in the run (max 3 unpaid discovery requests in any 60s window). Honest identification User-Agent (argus-lab-t4-exa-discovery/1.0). No wallet, no funded account, no valid payment signature constructed, nothing transacted — mainnet amounts and payTo addresses observed but untouched. One malformed-signature probe (header value 'AAAA') to confirm the documented error contract only. Difference from T3 doctrine (offline-by-default) is deliberate and bounded: the live surface here is vendor-sanctioned by its own documentation; no fault injection, no adversarial payloads, no settlement attempts.",
+    "battery_run": "2026-11-15T19:45:46Z — 2026-11-15T19:46:53Z (4 probes, P1..P4)"
+  },
+  "scenarios": [
+    {
+      "id": "P1",
+      "name": "search-baseline",
+      "verdict": "PASS",
+      "checks": "POST /search without key or payment header -> 402 + challenge delivered BOTH via PAYMENT-REQUIRED header (base64) and body JSON, header and body accepts[] byte-consistent; x402Version=2; Base accept: scheme exact, network eip155:8453, amount \"7000\" ($0.007 auto base), asset 0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913 (USDC), maxTimeoutSeconds 60 — matches documented pricing table. Solana accept present with facilitator-provided extra.feePayer and transactionVersions [0,1] as documented. Gateway accepts present (extra.verifyingContract 0x77777777dcc4d5a8b6e418fd04d8997ef11000ee, minValiditySeconds 604800, maxTimeoutSeconds 604900) matching the documented ~7-day Circle Gateway entries.",
+      "findings": []
+    },
+    {
+      "id": "P2",
+      "name": "search-clamp-contract",
+      "verdict": "PASS",
+      "checks": "numResults=15 -> amount identical to P1 (\"7000\", clamp_delta=0), no warning field, status 402 unchanged — documented 'silently clamped to 10 results and pricing is based on 10 results' contract holds exactly; no silent overcharge, no error divergence.",
+      "findings": []
+    },
+    {
+      "id": "P3",
+      "name": "contents-baseline",
+      "verdict": "PASS",
+      "checks": "POST /contents with one URL, no key -> 402 + challenge, amount \"1000\" ($0.001, text defaults on, 1 page) — matches documented /contents pricing; challenge shape identical to /search (header + body, consistent).",
+      "findings": []
+    },
+    {
+      "id": "P4",
+      "name": "malformed-signature-contract",
+      "verdict": "PASS",
+      "checks": "Unparseable PAYMENT-SIGNATURE ('AAAA') -> 400 {\"error\":\"Invalid x402 payment signature\",\"tag\":\"X402_INVALID_SIGNATURE\"} — matches the documented error table (malformed/unparseable signature -> 400 X402_INVALID_SIGNATURE, distinct from 402 X402_VERIFICATION_FAILED); no stack trace, no header leakage in error body.",
+      "findings": []
+    }
+  ],
+  "run_ts": "2026-11-15T19:45:46Z",
+  "self_run": true,
+  "findings_summary": [
+    {
+      "id": "O-EXA-1",
+      "severity": "info",
+      "title": "OBSERVED: Gateway accepts advertise EURC alongside USDC (Base EURC 0x60a3e35cc302bfa44cb288bc5a4f316fdb1adb42, World Chain EURC 0x1c60ba0a0ed1019e8eb035e6daf4155a5ce2380b, both in extra.assets with authorizationVersions) — the docs table states 'All entries use 6-decimal USDC'; EURC is a live, undocumented extension. No security impact; a validator that whitelists assets per docs table would simply decline EURC accepts."
+    },
+    {
+      "id": "O-EXA-2",
+      "severity": "info",
+      "title": "OBSERVED: the standard Base accept carries acceptId \"legacy\" while Gateway/Solana entries get named acceptIds (base-usdc-gateway, worldchain-usdc-gateway, solana-usdc-mainnet) — vendor-labelled signal that the per-request onchain transfer path is the legacy path and batched Gateway settlement is the strategic one. Challenge duplication in the response body (requestId/error/tag envelope) is undocumented but internally consistent."
+    },
+    {
+      "id": "O-EXA-3",
+      "severity": "info",
+      "title": "OBSERVED: float64 artifact 0.006999999999999999 in extra.breakdown.search / extra.totalUsd inside the payment challenge — the binding amount field remains the string \"7000\" so no signing impact; noted as validator hygiene (never re-derive amounts from float fields)."
+    }
+  ],
+  "notes": "Scope visibility: this seal covers a PARTIAL battery (stage 1 of 2), deliberately — only the wallet-less discovery surface; the deep settle-semantics battery is the subject of the coordination outreach and is NOT part of this record. This record seals a live conformance battery only: every documented behavior of the wallet-less discovery surface was confirmed live, zero deviations, zero vulnerabilities claimed. OBSERVED items are informational, not findings of fault. Reproducibility: live-surface values (payTo receivers, requestId, challenge bytes) rotate by design; conformance assertions are about contract shape, not byte identity — re-run via the committed harness (t4-exa-probe.py, stdlib-only, no dependencies). payTo receivers observed during the run window (pinned verbatim in evidence): Base standard 0x6d6E695b09861467c7d462f5AAF31cF3540B9192, Gateway Base/World 0xB98eF29eb2be19Ae646A8FC0248255B90A332dbC, Solana 12Ec2cJmfR1C9uwejzxcuMhUgEC7wDrLgm1wBvvR5w9E — stable across P1/P2 within the window. Rate-limit discipline is part of the sealed state (see subject.method); the 2 ad-hoc connectivity probes immediately before the run were also within published limits. Disclosure posture: coordination-ready; this record is safe for public announcement and is intended as the sealed track-record attachment for an outreach proposal to Exa. Relation to T3 freeze (#0014): the T3 disclosure freeze expired >= 2026-11-05 per its own terms; this record predates/postdates no T3 commitments and carries no freeze of its own. No affiliation with Exa or Coinbase; api.exa.ai was probed from the lab sandbox with an honest identifying User-Agent. A seal attests run validity and findings completeness — not bug-freeness.",
+  "evidence": [
+    {
+      "kind": "file",
+      "path": "attestations/evidence/0024-exa-discovery/t4-exa-probes.json",
+      "sha256": "8aeb220d211b2ad84cfd9032335cde687dffdd03142920afc90cf138c5b1b788"
+    },
+    {
+      "kind": "file",
+      "path": "attestations/evidence/0024-exa-discovery/t4-exa-probe.py",
+      "sha256": "4205fe7e3f36cf4646a8283929265c3b71543911b1c929aba8b69219aae08888"
+    }
+  ],
+  "signature": "/XBmowTW7iyB/EC7E4sBxl7pcY0shjAdFHJd3n43d0U2A8tgXG9PV5/x6F+27EAQKW+zzrIeDdUQHJ2mh0XBDw=="
+}
