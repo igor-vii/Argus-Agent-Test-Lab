@@ -1101,5 +1101,198 @@
         "href": "https://github.com/igor-vii/Argus-Agent-Test-Lab/blob/main/attestations/records/0022-correction-rekey-01-trust-anchor-rotation-2026-10-24-argus-l.correction.json"
       }
     ]
+  },
+  {
+    "seq": "0023",
+    "date": "2026-11-17",
+    "type": "seal",
+    "title": "x402-lens @ 1a99549 — full server-side battery with documented-behavior carve-outs: 18 PASS / 3 DOCUMENTED / 0 FAIL across 21 sealed sessions (+1 unsealed harness preflight); Layer 1 (SUT's own suite, verbatim) 352/352; canonical gate green, replay double-delivery closed, chaos contract holds; first third-party SUT verified end-to-end",
+    "subject": "github.com/Rozenberg888/x402-lens",
+    "summary": "First third-party SUT verified end-to-end by the lab, and the first battery where the candidate's own documentation is part of the verdict semantics: doc-registry.md (D-01…D-21) was frozen before the run and is sha256-pinned in the fixture (provenance.doc_registry); DOCUMENTED verdicts carry the registry ID. Layer 1 = the SUT's own suite run verbatim before the battery (npm test, no network): 352 passed (352) across 22 passed, exit 0 — its report log is lab-local. Evidence discipline: established = HTTP responses at the SUT boundary, the SUT's own event stream, the handler ledger, the facilitator call ledger; NOT established = an on-chain transfer (settlement mocked; per-session throwaway unfunded wallets); redaction = no private keys, no signatures, payment nonces shortened, facilitator token is a session-local dummy. Absolute paths in the fixture (battery OUT_DIR, kit pins, npm-ls dump) follow the sealed convention of records 0008/0012/0018/0019. Evidence export: attestations/evidence/0023-x402-lens/ (43 files, manifest.sha256 verified, secret-scanned). This record is prepared as a draft; offline signature per tools/registry/offline-sign.mjs on the signing machine (seq 0023; prev_record_hash is resolved at offline-signing time against the current chain head — the chain re-keyed under correction-0022, so the pre-rekey head 069e2e05… no longer applies). Out of scope (boundary, not verdicts): on-chain settlement of the mocked payments, post-sign reconciliation (#4094 class), deep Solana transaction-level findings (D-19 — honest gap by design). Attribution: executed per the Argus Agent Test Lab battery series, server-side topology (candidate replaces the S-BS-06 stand; the lab owns the facilitator and the buyer). Any reuse or derivative MUST retain this banner.",
+    "verdicts": [
+      {
+        "id": "l_gate_valid",
+        "verdict": "PASS",
+        "tone": "pass"
+      },
+      {
+        "id": "l_verify_reject",
+        "verdict": "PASS",
+        "tone": "pass"
+      },
+      {
+        "id": "l_undecodable_payload",
+        "verdict": "PASS",
+        "tone": "pass"
+      },
+      {
+        "id": "l_settle_fail_auth",
+        "verdict": "DOCUMENTED",
+        "tone": "info"
+      },
+      {
+        "id": "l_settle_fail_upfront",
+        "verdict": "PASS",
+        "tone": "pass"
+      },
+      {
+        "id": "l_facilitator_500",
+        "verdict": "PASS",
+        "tone": "pass"
+      },
+      {
+        "id": "l_facilitator_timeout",
+        "verdict": "PASS",
+        "tone": "pass"
+      },
+      {
+        "id": "l_unknown_code",
+        "verdict": "PASS",
+        "tone": "pass"
+      },
+      {
+        "id": "l_settle_pending",
+        "verdict": "DOCUMENTED",
+        "tone": "info"
+      },
+      {
+        "id": "l_race_two_buyers",
+        "verdict": "PASS",
+        "tone": "pass"
+      },
+      {
+        "id": "l_replay_same_payload",
+        "verdict": "PASS",
+        "tone": "pass"
+      },
+      {
+        "id": "l_grant_paths",
+        "verdict": "PASS",
+        "tone": "pass"
+      },
+      {
+        "id": "l_sink_throws",
+        "verdict": "PASS",
+        "tone": "pass"
+      },
+      {
+        "id": "l_multinetwork",
+        "verdict": "PASS",
+        "tone": "pass"
+      },
+      {
+        "id": "l_facilitator_bearer",
+        "verdict": "PASS",
+        "tone": "pass"
+      },
+      {
+        "id": "l_facilitator_flat_headers",
+        "verdict": "DOCUMENTED",
+        "tone": "info"
+      },
+      {
+        "id": "l_gate_unpaid",
+        "verdict": "PASS",
+        "tone": "pass"
+      },
+      {
+        "id": "l_wire_readonly",
+        "verdict": "PASS",
+        "tone": "pass"
+      },
+      {
+        "id": "l_cors_browser",
+        "verdict": "PASS",
+        "tone": "pass"
+      },
+      {
+        "id": "l_config_refusals",
+        "verdict": "PASS",
+        "tone": "pass"
+      },
+      {
+        "id": "l_cli_inspect_doctor",
+        "verdict": "PASS",
+        "tone": "pass"
+      }
+    ],
+    "findings": [
+      {
+        "id": "x402-lens-result",
+        "severity": "info",
+        "text": "Result: the shipped @x402-lens/express middleware satisfies the whole lab battery with ZERO defects — 18 PASS / 3 DOCUMENTED / 0 FAIL across 21 sealed sessions. Canonical gate green end-to-end (402 → pay → verify → settle → deliver with the full event stream); no delivery without a valid payment in any fault session (undecodable payload, verify rejection, facilitator 500/timeout); upfront flow: failing settle never calls the handler (documented guarantee holds); authorization-flow settle failure matches the documented trade-off AND still emits payment.settle_failed; identical PAYMENT-SIGNATURE resubmission is refused at the second verify (honest facilitator, duplicate_payment_nonce) — exactly one delivery, zero new signer calls; grant bypass is never silent (access.granted/access.denied always emitted); a throwing sink never breaks a payment; the wire form is untouched (observer read-only); config surface refuses exactly the documented shapes and accepts the valid multi-network control; shipped CLI gates healthy against the live SUT. Verdicts are claims about the CANDIDATE (with its documented carve-outs) vs the lab battery, not about the x402 protocol or the @x402 SDK baseline."
+      },
+      {
+        "id": "x402-lens-observations",
+        "severity": "low",
+        "text": "Observations (nuances, NOT defects; both fail closed): (1) runtime payment.settle_failed events carry the facilitator reason verbatim but findings: [] — the SDK settle error does not expose the structured settle response under the keys the lens's settleFromError reads (settleResponse/result/body), so settlement_pending / settlement_failed findings render only via `x402-lens explain --settle` (engine rule checkSettlementVerdict is correct; the CLI snapshot test pins it). Non-terminal semantics (reason carried, reconcile-not-retry advice, no delivery claim) hold at runtime. (2) a flat facilitatorHeaders object is rejected by the SDK exactly as documented (D-17) — no facilitator contact, no delivery, process survives — but the rejection surfaces as HTTP 500 on the first payment request rather than a config-time refusal; the lens SOURCE comment promises early validation ('validated once here rather than surfacing as a failed payment later') while the README makes no such promise. Cosmetic robustness gap."
+      },
+      {
+        "id": "x402-lens-methodology",
+        "severity": "info",
+        "text": "Methodology note (honesty discipline): the first full battery run produced 11 non-PASS sessions; a per-session fact review attributed ALL of them to lab equipment, not to the candidate — 8 matcher bugs (empty handler dict compared as !== 0), 1 replay-capture race in the lab client (replay slots started before the slot-1 header capture), 1 mislocated expectation (flat facilitatorHeaders is rejected by the SDK at request time, not at config resolution — the probe was moved to an honest HTTP session), 1 unaccounted documented CLI behavior (inspect exits 1 with the CORS readiness report on a cors-off server). Matchers/harness fixed, sessions re-run clean: 21/21. Raw first-run ledgers stay lab-local (not committed); the second-run fixture and per-session facts are the sealed evidence."
+      }
+    ],
+    "evidence": 12,
+    "links": [
+      {
+        "label": "record #0023",
+        "href": "https://github.com/igor-vii/Argus-Agent-Test-Lab/blob/main/attestations/records/0023-x402-lens-1a99549-full-server-side-battery-with-documented-b.seal.json"
+      }
+    ]
+  },
+  {
+    "seq": "0024",
+    "date": "2026-11-17",
+    "type": "seal",
+    "title": "T4-EXA live discovery-surface conformance battery — stage 1/2, discovery surface ONLY, deep settle-semantics battery NOT covered (reserved for authorized Stage 2) — wallet-less probes vs documented x402 v2 contract: 6/6 PASS, zero deviations; OBSERVED: gateway EURC accepts, acceptId=legacy, float64 breakdown artifact",
+    "subject": "live SUT: api.exa.ai (Exa /search, /contents x402 v2 payment gate) — first live public-endpoint probe battery (T4 chain), complements the offline T3 battery chain v2 (#0014-#0016)",
+    "summary": "Scope visibility: this seal covers a PARTIAL battery (stage 1 of 2), deliberately — only the wallet-less discovery surface; the deep settle-semantics battery is the subject of the coordination outreach and is NOT part of this record. This record seals a live conformance battery only: every documented behavior of the wallet-less discovery surface was confirmed live, zero deviations, zero vulnerabilities claimed. OBSERVED items are informational, not findings of fault. Reproducibility: live-surface values (payTo receivers, requestId, challenge bytes) rotate by design; conformance assertions are about contract shape, not byte identity — re-run via the committed harness (t4-exa-probe.py, stdlib-only, no dependencies). payTo receivers observed during the run window (pinned verbatim in evidence): Base standard 0x6d6E695b09861467c7d462f5AAF31cF3540B9192, Gateway Base/World 0xB98eF29eb2be19Ae646A8FC0248255B90A332dbC, Solana 12Ec2cJmfR1C9uwejzxcuMhUgEC7wDrLgm1wBvvR5w9E — stable across P1/P2 within the window. Rate-limit discipline is part of the sealed state (see subject.method); the 2 ad-hoc connectivity probes immediately before the run were also within published limits. Disclosure posture: coordination-ready; this record is safe for public announcement and is intended as the sealed track-record attachment for an outreach proposal to Exa. Relation to T3 freeze (#0014): the T3 disclosure freeze expired >= 2026-11-05 per its own terms; this record predates/postdates no T3 commitments and carries no freeze of its own. No affiliation with Exa or Coinbase; api.exa.ai was probed from the lab sandbox with an honest identifying User-Agent. A seal attests run validity and findings completeness — not bug-freeness.",
+    "verdicts": [
+      {
+        "id": "P1",
+        "verdict": "PASS",
+        "tone": "pass"
+      },
+      {
+        "id": "P2",
+        "verdict": "PASS",
+        "tone": "pass"
+      },
+      {
+        "id": "P3",
+        "verdict": "PASS",
+        "tone": "pass"
+      },
+      {
+        "id": "P4",
+        "verdict": "PASS",
+        "tone": "pass"
+      }
+    ],
+    "findings": [
+      {
+        "id": "O-EXA-1",
+        "severity": "info",
+        "text": "OBSERVED: Gateway accepts advertise EURC alongside USDC (Base EURC 0x60a3e35cc302bfa44cb288bc5a4f316fdb1adb42, World Chain EURC 0x1c60ba0a0ed1019e8eb035e6daf4155a5ce2380b, both in extra.assets with authorizationVersions) — the docs table states 'All entries use 6-decimal USDC'; EURC is a live, undocumented extension. No security impact; a validator that whitelists assets per docs table would simply decline EURC accepts."
+      },
+      {
+        "id": "O-EXA-2",
+        "severity": "info",
+        "text": "OBSERVED: the standard Base accept carries acceptId \"legacy\" while Gateway/Solana entries get named acceptIds (base-usdc-gateway, worldchain-usdc-gateway, solana-usdc-mainnet) — vendor-labelled signal that the per-request onchain transfer path is the legacy path and batched Gateway settlement is the strategic one. Challenge duplication in the response body (requestId/error/tag envelope) is undocumented but internally consistent."
+      },
+      {
+        "id": "O-EXA-3",
+        "severity": "info",
+        "text": "OBSERVED: float64 artifact 0.006999999999999999 in extra.breakdown.search / extra.totalUsd inside the payment challenge — the binding amount field remains the string \"7000\" so no signing impact; noted as validator hygiene (never re-derive amounts from float fields)."
+      }
+    ],
+    "evidence": 2,
+    "links": [
+      {
+        "label": "record #0024",
+        "href": "https://github.com/igor-vii/Argus-Agent-Test-Lab/blob/main/attestations/records/0024-t4-exa-live-discovery-surface-conformance-battery-stage-1-2-.seal.json"
+      }
+    ]
   }
 ]

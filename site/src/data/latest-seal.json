@@ -1,9 +1,9 @@
 {
-  "generated_at": "2026-11-12T21:08:17.266Z",
+  "generated_at": "2026-11-17T19:17:02.237Z",
   "verify": {
     "command": "node tools/registry/verify-registry.mjs",
-    "records": 23,
-    "chain_head": "0a12c0335cd94c70"
+    "records": 25,
+    "chain_head": "e5807aab6a6ac5e6"
   },
   "correction": {
     "seq": "0022",
@@ -13,113 +13,48 @@
     "amends": "argus-finding-0000"
   },
   "record": {
-    "seq": "0021",
-    "record_id": "argus-seal-0021",
+    "seq": "0024",
+    "record_id": "argus-seal-0024",
     "type": "seal",
-    "issued_at": "2026-11-12T21:08:17.266Z",
-    "date": "2026-11-12",
-    "title": "Nano cross-process idempotency battery @ agent-passport-gateway 99888e8 — pre-registered R1/R2a/R2b/R3/R4 + invariant (PR #14)",
-    "subject": "agent-passport-system/agent-passport-gateway @ 99888e8f143eb0c281ccd62759750038c1a1aa9e",
-    "prev_record_hash": "07a5412b93e3bd459da03584786f52085c2915c78a89c42f80151094ba36ce2d",
-    "chain_head": "0a12c0335cd94c70",
+    "issued_at": "2026-11-17T19:17:02.237Z",
+    "date": "2026-11-17",
+    "title": "T4-EXA live discovery-surface conformance battery — stage 1/2, discovery surface ONLY, deep settle-semantics battery NOT covered (reserved for authorized Stage 2) — wallet-less probes vs documented x402 v2 contract: 6/6 PASS, zero deviations; OBSERVED: gateway EURC accepts, acceptId=legacy, float64 breakdown artifact",
+    "subject": "live SUT: api.exa.ai (Exa /search, /contents x402 v2 payment gate) — first live public-endpoint probe battery (T4 chain), complements the offline T3 battery chain v2 (#0014-#0016)",
+    "prev_record_hash": "24b06d629c8cc04468c7f0941cac19d5b7ce866c8cabd3d0096e9a92208af176",
+    "chain_head": "e5807aab6a6ac5e6",
     "scenarios": [
       {
-        "id": "r1-1",
+        "id": "P1",
         "verdict": "PASS",
         "tone": "pass"
       },
       {
-        "id": "r1-2",
+        "id": "P2",
         "verdict": "PASS",
         "tone": "pass"
       },
       {
-        "id": "r1-3",
+        "id": "P3",
         "verdict": "PASS",
         "tone": "pass"
       },
       {
-        "id": "r2a-1",
-        "verdict": "PASS",
-        "tone": "pass"
-      },
-      {
-        "id": "r2a-2",
-        "verdict": "PASS",
-        "tone": "pass"
-      },
-      {
-        "id": "r2b-1",
-        "verdict": "PASS",
-        "tone": "pass"
-      },
-      {
-        "id": "r2b-2",
-        "verdict": "PASS",
-        "tone": "pass"
-      },
-      {
-        "id": "r2b-3",
-        "verdict": "PASS",
-        "tone": "pass"
-      },
-      {
-        "id": "r3-1",
-        "verdict": "PASS",
-        "tone": "pass"
-      },
-      {
-        "id": "r3-2",
-        "verdict": "PASS",
-        "tone": "pass"
-      },
-      {
-        "id": "r3-3",
-        "verdict": "PASS",
-        "tone": "pass"
-      },
-      {
-        "id": "r4-1",
-        "verdict": "PASS",
-        "tone": "pass"
-      },
-      {
-        "id": "invariant",
+        "id": "P4",
         "verdict": "PASS",
         "tone": "pass"
       }
     ],
     "counts": {
-      "pass": 13
+      "pass": 4
     },
     "evidence": [
       {
-        "path": "attestations/evidence/0021-nano-cross-process-battery/layer1-gate.md",
-        "sha256": "1ee3b6128522371d492134093778bb025be56e234a6a6a7c85e97c097502afc3"
+        "path": "attestations/evidence/0024-exa-discovery/t4-exa-probes.json",
+        "sha256": "8aeb220d211b2ad84cfd9032335cde687dffdd03142920afc90cf138c5b1b788"
       },
       {
-        "path": "attestations/evidence/0021-nano-cross-process-battery/layer1-log.jsonl",
-        "sha256": "fd2dd2cb59805f8aa2b2301dadfcc93399ac1c873bf967c5c88104abe8652c47"
-      },
-      {
-        "path": "attestations/evidence/0021-nano-cross-process-battery/verdicts.jsonl",
-        "sha256": "fba7db45aea476a37e2c36321eaa410c30d3a74353603763ccbca4863067cd76"
-      },
-      {
-        "path": "attestations/evidence/0021-nano-cross-process-battery/verdicts.md",
-        "sha256": "9baa4938fbaaa06f77d7cbec7b1f08b092a5d55e52b4576aeb58b8ccb9c0bc43"
-      },
-      {
-        "path": "sut-nano-cross-process-battery/worker.ts",
-        "sha256": "c388018c1657e709aafa7d5f0ccbbccb7f22d93a1800a3213f1267ab02ecf6e5"
-      },
-      {
-        "path": "sut-nano-cross-process-battery/run-battery.mjs",
-        "sha256": "0897ff60f75fff556c09a0e6d61192f0dbd38f2fdb8b4c788654d9e54fb97a63"
-      },
-      {
-        "path": "attestations/evidence/0021-nano-cross-process-battery/export-hashes.json",
-        "sha256": "4139d216334c4575f54a44db5cdcfd7f3aaaabbf2c4522387132c5c3dd64ae93"
+        "path": "attestations/evidence/0024-exa-discovery/t4-exa-probe.py",
+        "sha256": "4205fe7e3f36cf4646a8283929265c3b71543911b1c929aba8b69219aae08888"
       }
     ]
   }
