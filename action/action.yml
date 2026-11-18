@@ -1,7 +1,7 @@
 name: 'Argus battery'
 # Marketplace metadata: description must stay under 125 characters.
-# Full conclusion mapping (PASS → success, UNKNOWN → neutral, FAIL →
-# failure, billing/rig/contract violations → action_required) and exit
+# Full conclusion mapping (PASS -> success, UNKNOWN -> neutral, FAIL ->
+# failure, billing/rig/contract violations -> action_required) and exit
 # codes live in README.md and in docs/ci/result-contract-v0.md +
 # docs/ci/api-contract-v0.md of the lab repo.
 description: >-
@@ -10,7 +10,7 @@ description: >-
 
 inputs:
   api-key:
-    description: 'Argus console api-key — pass ${{ secrets.ARGUS_API_KEY }}, never inline'
+    description: 'Argus console api-key - pass secrets.ARGUS_API_KEY (workflow secret), never inline'
     required: true
   battery-id:
     description: 'Battery to run'
