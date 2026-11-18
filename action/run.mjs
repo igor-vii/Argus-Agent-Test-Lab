@@ -59,8 +59,8 @@ async function record(conclusion, title, summary, annotations, exitCode) {
   process.exit(exitCode);
 }
 
-if (!key) record('action_required', 'Argus: api-key missing', 'Set the api-key input to ${{ secrets.ARGUS_API_KEY }}. Issue a key in Console → Settings → API keys.', [ann('notice', 'api-key input is empty')], 1);
-if (!/^[0-9a-f]{40}$/.test(commit)) record('action_required', 'Argus: bad runner environment', `GITHUB_SHA is "${commit}", expected a 40-hex commit sha.`, [], 1);
+if (!key) await record('action_required', 'Argus: api-key missing', 'Set the api-key input to ${{ secrets.ARGUS_API_KEY }}. Issue a key in Console → Settings → API keys.', [ann('notice', 'api-key input is empty')], 1);
+if (!/^[0-9a-f]{40}$/.test(commit)) await record('action_required', 'Argus: bad runner environment', `GITHUB_SHA is "${commit}", expected a 40-hex commit sha.`, [], 1);
 
 const idem = sha256(`argus.idem.v1:${commit}:${battery}`);
 let res, body;
@@ -72,21 +72,21 @@ try {
   });
   body = await res.json().catch(() => null);
 } catch (e) {
-  record('action_required', 'Argus: API unreachable — rig failure', `POST ${base}/api/v1/runs failed: ${e.message}. The run is not consumed — charge once, free retry (api-contract-v0): the prepaid idempotency key re-flies at zero cost.`, [ann('notice', `Argus API unreachable: ${e.message}`)], 1);
+  await record('action_required', 'Argus: API unreachable — rig failure', `POST ${base}/api/v1/runs failed: ${e.message}. The run is not consumed — charge once, free retry (api-contract-v0): the prepaid idempotency key re-flies at zero cost.`, [ann('notice', `Argus API unreachable: ${e.message}`)], 1);
 }
 
 if (res.status === 402) {
   const topup = (body && body.topup_url) || 'https://console.argus-lab.tech/billing';
   const balance = body && typeof body.balance === 'number' ? body.balance : 'below floor';
-  record('action_required', `Argus: insufficient balance (${balance} runs)`,
+  await record('action_required', `Argus: insufficient balance (${balance} runs)`,
     `The battery did not run. Top up at ${topup} — crypto-paid, credited instantly; re-run the workflow afterwards. Advisory credit (3 runs) is exhausted.`,
     [ann('notice', `insufficient_balance — top up: ${topup}`)], 1);
 }
 if (res.status === 401) {
-  record('action_required', 'Argus: invalid or revoked api-key', 'Issue a key in Console → Settings → API keys and update the ARGUS_API_KEY secret.', [ann('notice', '401 from /api/v1/runs')], 1);
+  await record('action_required', 'Argus: invalid or revoked api-key', 'Issue a key in Console → Settings → API keys and update the ARGUS_API_KEY secret.', [ann('notice', '401 from /api/v1/runs')], 1);
 }
 if (res.status !== 201 && res.status !== 409) {
-  record('action_required', `Argus: API returned HTTP ${res.status}`, 'Rig-side problem; no result exists. Charge once, free retry per api-contract-v0 — the same commit+battery retries at zero cost.', [ann('notice', `HTTP ${res.status} from /api/v1/runs`)], 1);
+  await record('action_required', `Argus: API returned HTTP ${res.status}`, 'Rig-side problem; no result exists. Charge once, free retry per api-contract-v0 — the same commit+battery retries at zero cost.', [ann('notice', `HTTP ${res.status} from /api/v1/runs`)], 1);
 }
 
 // Light consumer-side validation (producer already ran the full validator).
@@ -96,7 +96,7 @@ const valid = body
   && Array.isArray(body.scenarios)
   && body.scenarios.length > 0;
 if (!valid) {
-  record('action_required', 'Argus: invalid result object', 'Response is not a contract-valid argus.result.v0 — the rig needs attention (action_required, not failure: the agent was not measured).', [ann('notice', 'result failed consumer-side contract check')], 1);
+  await record('action_required', 'Argus: invalid result object', 'Response is not a contract-valid argus.result.v0 — the rig needs attention (action_required, not failure: the agent was not measured).', [ann('notice', 'result failed consumer-side contract check')], 1);
 }
 
 writeFileSync('argus-result.json', JSON.stringify(body, null, 2) + '\n');
@@ -117,6 +117,6 @@ const summary = [
   'Full object: argus-result.json (artifact of this run).',
 ].filter(Boolean).join(' ');
 
-if (body.verdict === 'PASS') record('success', `Argus: PASS (${n}/${n})`, summary, annotations, 0);
-if (body.verdict === 'UNKNOWN') record('neutral', `Argus: UNKNOWN (${body.summary?.fail ?? 0} fail, ${body.summary?.unknown ?? '?'} unknown of ${n})`, summary, annotations, 0);
-record('failure', `Argus: FAIL (${body.summary?.fail ?? '?'} of ${n} failed)`, summary, annotations, 1);
+if (body.verdict === 'PASS') await record('success', `Argus: PASS (${n}/${n})`, summary, annotations, 0);
+if (body.verdict === 'UNKNOWN') await record('neutral', `Argus: UNKNOWN (${body.summary?.fail ?? 0} fail, ${body.summary?.unknown ?? '?'} unknown of ${n})`, summary, annotations, 0);
+await record('failure', `Argus: FAIL (${body.summary?.fail ?? '?'} of ${n} failed)`, summary, annotations, 1);
