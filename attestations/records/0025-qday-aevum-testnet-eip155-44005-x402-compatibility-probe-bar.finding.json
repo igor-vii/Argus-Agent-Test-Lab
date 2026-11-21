@@ -1,0 +1,36 @@
+{
+  "seq": "0025",
+  "record_id": "argus-finding-0025",
+  "issued_at": "2026-11-21T03:58:39.210Z",
+  "signer_key_id": "argus-lab-probe-2026q4",
+  "prev_record_hash": "e5807aab6a6ac5e6fd54c62c6eb8042bcd5688c50f3e8f09dd5c8be786145eb6",
+  "type": "finding",
+  "severity": "info",
+  "title": "QDay Aevum testnet (eip155:44005) x402 compatibility probe: bare x402-v2 exact/EIP-3009 client+server handshake verified on tUSD8 semantics; QDay facilitator accepts the wire format (verify 200 isValid=false invalidReason=merchant_not_alive); on-chain settle blocked by faucet gates (Turnstile/email/Discord); PQC (ML-DSA-65) not in testnet yet",
+  "subject": {
+    "repo": "qday-io/aevum-starter-kit",
+    "component": "QDay Aevum testnet",
+    "version": "cdk-erigon/2.0-qday-v2.61.19-validium, x402 v2, tUSD8 FiatTokenV2",
+    "stack": "RPC rpc-test.qday.info (eth_chainId=0xabe5, gasPrice 1 gwei); tUSD8 0x456569838f1d43009A91ebA4263147Afd7233483 6 decimals EIP-3009 (EIP-712 domain name=tUSD8 version=2); facilitator signet.qday.info /supported: x402Version 2, exact + qday:erc4337 (EntryPoint 0xC6bd4359A158B6E99A86BEEF5c17AC7D83e43366, paymaster 0x912d16cA83a1A14f0f236cE06A669f8982d6e036, kernel-v3.1); signer 0xC2147AFC03AD7E92E4eA1f05e64f49bCad77D532"
+  },
+  "summary": "Independent probe 2026-11-20 (~17:41-17:59 UTC, sandbox, no funds moved, /settle never called). (1) RPC verified from this environment: eth_chainId 0xabe5 (=44005), web3_clientVersion cdk-erigon/2.0-qday-v2.61.19-validium, block height ~3.68M, gasPrice exactly 1 gwei; UA filter: python-urllib default UA gets HTTP 403, curl UA passes (integration gotcha). (2) tUSD8 on-chain: name/symbol tUSD8, decimals 6, EIP-3009 FiatTokenV2-style. (3) Local bare x402-v2 server+client (stdlib http.server + eth-account 0.14.0): 402 PAYMENT-REQUIRED challenge (v2 wire: accepts[].amount, maxTimeoutSeconds, extra{name:tUSD8,version:2}) -> client signs Authorization EIP-712 -> server recovers signer and enforces to==payTo, value==price, validity window, nonce freshness -> 200 PAYMENT-RESPONSE (server verify 5.7 ms). Negative probes rejected: 100x overcharge (value_matches_price=false) — server-side price binding blocks the overcharge vector of registry #0000; wrong recipient (to_is_payTo=false). (4) QDay facilitator POST /verify with spec body {x402Version, paymentPayload, paymentRequirements} returning HTTP 200 {\"isValid\":false,\"invalidReason\":\"merchant_not_alive\"} on attempt 2 (attempt 1, flat payload, gave 400 invalid_format) — wire format ACCEPTED, next gate is merchant liveness/registration, signature checks not the blocker. (5) Funding blocked: gas faucet gated by Cloudflare Turnstile, tUSD8 claim gated by email+code (HTTP 401 on unauthenticated status probe), Discord faucet needs a Discord account — on-chain settle NOT executed; burner key stays unfunded. (6) PQC: ECDSA only in testnet; PQ precompiles are address(0) stubs, ML-DSA-65 hybrid declared 'in progress' (Phase 2) per qday wiki; off-chain qday-pqc-sdk (Go, liboqs) exists. Verdict: our stack is wire-compatible with QDay x402 v2 up to funding + merchant registration; demo for DoraHacks needs manual faucet step.",
+  "run_ts": "2026-11-20T17:59:07Z",
+  "status": {
+    "state": "verified_local",
+    "note": "burner wallet unfunded by design; facilitator /settle intentionally not called; records signed with probe-session key argus-lab-probe-2026q4 (operator priv key not present in sandbox)",
+    "as_of": "2026-11-20"
+  },
+  "evidence": [
+    {
+      "kind": "file",
+      "path": "attestations/evidence/0025-qday-x402-probe/probe_result.json",
+      "sha256": "b51ef4ab010c8766604e5d1901c66978ce0a277348aad2afa4916449a4f3694b"
+    },
+    {
+      "kind": "file",
+      "path": "attestations/evidence/0025-qday-x402-probe/x402_handshake_evidence.json",
+      "sha256": "08c40cab843c0144c4437eb129f11b48a21c930ec0024adab86f90b85c4280f1"
+    }
+  ],
+  "signature": "RsV0oaUtgB4oJWCxcZ5yEIJvUyTEmMuTjRuc4t8kikikY86YfaI7kdadQFpzVZ7OgdRgFXN2bQ8OZxZRSeKCBA=="
+}

@@ -1,0 +1,11 @@
+{
+  "key_id": "argus-lab-probe-2026q4",
+  "algorithm": "Ed25519",
+  "created_at": "2026-11-21T03:58:21.445Z",
+  "note": "Public key of the probe-session signer (records 0023/0024, mini-TZ №3/№4, sandbox run 2026-11-20).",
+  "public_jwk": {
+    "kty": "OKP",
+    "crv": "Ed25519",
+    "x": "yRKiArXCxMUhm_or1ISjsRMUaTMMmIW3TTlE5oiZIZY"
+  }
+}

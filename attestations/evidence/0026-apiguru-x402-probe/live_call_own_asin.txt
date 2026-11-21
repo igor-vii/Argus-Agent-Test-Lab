@@ -1,0 +1,16 @@
+HTTP/2 404 
+server: nginx/1.18.0 (Ubuntu)
+date: Fri, 20 Nov 2026 17:59:42 GMT
+content-type: application/json
+content-length: 174
+vary: Origin
+x-price-next-call: $0.003
+x-free-probes-remaining: 2
+x-request-id: b675d905-2c2d-47ff-ae71-739204a3a4ba
+
+{"success":false,"error":"ASIN not found on this marketplace domain","request_id":"b675d905-2c2d-47ff-ae71-739204a3a4ba","price_next_call":"$0.003","free_calls_remaining":2}
+
+===CURL_TIMING===
+time_total=1.728826s
+http_code=404
+size=174bytes

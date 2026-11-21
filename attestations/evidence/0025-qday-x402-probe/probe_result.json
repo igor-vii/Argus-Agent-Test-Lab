@@ -1,0 +1,48 @@
+{
+ "eth_chainId": "0xabe5",
+ "web3_clientVersion": "cdk-erigon/2.0-qday-v2.61.19-validium-696f273f49d2af1995c062a5a94b91c3b38089cc/linux-amd64/go1.21.5",
+ "eth_blockNumber": "0x382bd2",
+ "eth_gasPrice": "0x3b9aca00",
+ "wallet": "0x60f7593386228C0f90012796DCC5c1eA5A9D436A",
+ "tusd8_name": "tUSD8",
+ "tusd8_symbol": "tUSD8",
+ "tusd8_decimals": 6,
+ "tusd8_balance_wei_atomic": 0,
+ "eip3009_authorizationState_selector": "0xb7b4f61f",
+ "eip3009_transferWithAuthorization_selector": "0x94718853",
+ "facilitator_supported": {
+  "kinds": [
+   {
+    "x402Version": 2,
+    "scheme": "exact",
+    "network": "eip155:44005"
+   },
+   {
+    "x402Version": 2,
+    "scheme": "qday:erc4337",
+    "network": "eip155:44005",
+    "extra": {
+     "entryPoint": "0xC6bd4359A158B6E99A86BEEF5c17AC7D83e43366",
+     "policy": "0xB34BD5D0A6D3e0558BBF19589736929fe679B1dB",
+     "paymaster": "0x912d16cA83a1A14f0f236cE06A669f8982d6e036",
+     "signer": "0x6A6F069E2a08c2468e7724Ab3250CdBFBA14D4FF",
+     "accountKind": "kernel-v3.1",
+     "userOp": {
+      "verificationGasLimit": "520000",
+      "callGasLimit": "150000",
+      "preVerificationGas": "60000",
+      "paymasterVerificationGasLimit": "100000",
+      "paymasterPostOpGasLimit": "150000"
+     }
+    }
+   }
+  ],
+  "extensions": [],
+  "signers": {
+   "eip155:*": [
+    "0xC2147AFC03AD7E92E4eA1f05e64f49bCad77D532"
+   ]
+  }
+ },
+ "faucet_status": "HTTP 401: {\"error\":\"Sign in with your Trellis email to continue\"}"
+}

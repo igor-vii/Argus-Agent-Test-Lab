@@ -1,0 +1,130 @@
+{
+ "steps": [
+  {
+   "step": "client_get_402",
+   "detail": {
+    "status": 402,
+    "header_present": true,
+    "accepts_network": "eip155:44005"
+   },
+   "ts": "17:59:06"
+  },
+  {
+   "step": "client_sign",
+   "detail": {
+    "value": "10000",
+    "validBefore": "1795197846",
+    "nonce": "0x8faf6f29e1\u2026"
+   },
+   "ts": "17:59:06",
+   "ms": 6.6
+  },
+  {
+   "step": "server_verify",
+   "detail": {
+    "ok": true,
+    "checks": {
+     "signer_matches_from": true,
+     "to_is_payTo": true,
+     "value_matches_price": true,
+     "window_valid": true,
+     "nonce_fresh": true
+    },
+    "recovered": "0x60f7593386228C0f90012796DCC5c1eA5A9D436A",
+    "declared_from": "0x60f7593386228C0f90012796DCC5c1eA5A9D436A"
+   },
+   "ts": "17:59:06",
+   "ms": 5.7
+  },
+  {
+   "step": "client_pay_get_200",
+   "detail": {
+    "status": 200,
+    "payment_response": {
+     "success": true,
+     "error": null,
+     "transaction": null,
+     "network": "eip155:44005",
+     "payer": "0x60f7593386228C0f90012796DCC5c1eA5A9D436A",
+     "settlement_note": "on-chain settle skipped in probe: burner unfunded (faucet gated by Turnstile/email), signature verified off-chain"
+    },
+    "body": "{\"resource\": \"QDay-probe-ok\", \"paid\": \"10000 tUSD8 (authorized, not settled)\"}"
+   },
+   "ts": "17:59:06",
+   "ms": 6.7
+  },
+  {
+   "step": "server_verify",
+   "detail": {
+    "ok": false,
+    "checks": {
+     "signer_matches_from": true,
+     "to_is_payTo": true,
+     "value_matches_price": false,
+     "window_valid": true,
+     "nonce_fresh": true
+    },
+    "recovered": "0x60f7593386228C0f90012796DCC5c1eA5A9D436A",
+    "declared_from": "0x60f7593386228C0f90012796DCC5c1eA5A9D436A"
+   },
+   "ts": "17:59:06",
+   "ms": 5.9
+  },
+  {
+   "step": "negative_overcharge",
+   "detail": {
+    "status": 402,
+    "body": "{\"error\": \"verification failed\", \"checks\": {\"signer_matches_from\": true, \"to_is_payTo\": true, \"value_matches_price\": false, \"window_valid\": true, \"nonce_fresh\": true}}"
+   },
+   "ts": "17:59:06",
+   "ms": 12.5
+  },
+  {
+   "step": "server_verify",
+   "detail": {
+    "ok": false,
+    "checks": {
+     "signer_matches_from": true,
+     "to_is_payTo": false,
+     "value_matches_price": true,
+     "window_valid": true,
+     "nonce_fresh": true
+    },
+    "recovered": "0x60f7593386228C0f90012796DCC5c1eA5A9D436A",
+    "declared_from": "0x60f7593386228C0f90012796DCC5c1eA5A9D436A"
+   },
+   "ts": "17:59:06",
+   "ms": 5.8
+  },
+  {
+   "step": "negative_wrong_recipient",
+   "detail": {
+    "status": 402,
+    "body": "{\"error\": \"verification failed\", \"checks\": {\"signer_matches_from\": true, \"to_is_payTo\": false, \"value_matches_price\": true, \"window_valid\": true, \"nonce_fresh\": true}}"
+   },
+   "ts": "17:59:06",
+   "ms": 12.2
+  },
+  {
+   "step": "facilitator_verify",
+   "detail": {
+    "http": 200,
+    "body": "{\"isValid\":false,\"invalidReason\":\"merchant_not_alive\"}"
+   },
+   "ts": "17:59:07",
+   "ms": 182.0
+  }
+ ],
+ "meta": {
+  "chain_id": 44005,
+  "asset": "0x456569838f1d43009A91ebA4263147Afd7233483",
+  "price_atomic": "10000",
+  "payto": "0x7fA9C98a1b0C79Bdbd31c4998E9Fd0d5DCB1c9F4",
+  "client_addr": "0x60f7593386228C0f90012796DCC5c1eA5A9D436A",
+  "facilitator_verify": {
+   "http": 200,
+   "body": "{\"isValid\":false,\"invalidReason\":\"merchant_not_alive\"}"
+  },
+  "wallet_note": "burner testnet-only key NOT included in evidence"
+ }
+}
