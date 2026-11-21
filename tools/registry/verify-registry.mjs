@@ -2,13 +2,16 @@
 // Exit 0 = registry intact. Any red flag -> non-zero exit.
 import path from 'node:path';
 import {
-  REPO_ROOT, canonical, sha256Hex, fileSha256, loadPublicKeyById, verifyPayload, listRecords,
+  REPO_ROOT, canonical, sha256Hex, fileSha256, loadOperatorKeyById, verifyPayload, listRecords,
 } from './lib.mjs';
 
 // ARG-01/ARG-02 (external audit 2026-11): resolve each record's key by its
 // signer_key_id instead of one hard-coded key, so pre/post-rotation records
 // verify under their actual signing key. Unknown key id -> verification fails
 // (fail closed).
+// ARG-03 (operator canon, 2026-11-21): the key must additionally be on the
+// operator allowlist in lib.mjs (OPERATOR_KEY_IDS) — a session/probe key
+// dropped into keys/ cannot self-promote into the operator trust root.
 const keyCache = new Map();
 function keyFor(record, problems) {
   const id = record.signer_key_id;
@@ -18,9 +21,9 @@ function keyFor(record, problems) {
   }
   if (!keyCache.has(id)) {
     try {
-      keyCache.set(id, loadPublicKeyById(id));
+      keyCache.set(id, loadOperatorKeyById(id));
     } catch (err) {
-      problems.push(`key unavailable for signer_key_id=${id}: ${err.message}`);
+      problems.push(`operator key unavailable for signer_key_id=${id}: ${err.message}`);
       keyCache.set(id, null);
     }
   }

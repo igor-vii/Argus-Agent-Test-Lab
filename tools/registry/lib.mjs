@@ -35,6 +35,25 @@ export function loadPublicKeyById(keyId) {
   return crypto.createPublicKey({ key: jwk.public_jwk, format: 'jwk' });
 }
 
+// ARG-03 (operator canon, 2026-11-21): the main registry is operator-signed —
+// only keys on this explicit allowlist may sign main records. A session/probe
+// key dropped into keys/ by automation cannot self-promote into the operator
+// trust root (the 2026-11-21 incident: probe-signed records #0025-#0027 landed
+// on the site). Changing the list is a deliberate, reviewable commit — never
+// an automation side effect. (An "operator": true flag inside pub files was
+// rejected as the mechanism: record #0022 hash-pins the 2026q4 pub file as
+// rotation evidence, so trust-root files must stay byte-frozen.) Agent-session
+// keys live under attestations/agent/keys/ and are accepted only by
+// `verify-registry.mjs --registry=agent`, never by main mode.
+export const OPERATOR_KEY_IDS = new Set(['argus-lab-2026q4', 'argus-lab-2026q4r2']);
+
+export function loadOperatorKeyById(keyId) {
+  if (!OPERATOR_KEY_IDS.has(String(keyId))) {
+    throw new Error(`key "${keyId}" is not on the operator allowlist — not a main-registry signer`);
+  }
+  return loadPublicKeyById(keyId);
+}
+
 // Deterministic JSON: recursively sorted object keys, no whitespace. Two
 // implementations of `canonical()` on any machine must produce byte-identical
 // output for the same logical object — this is what signatures and chain

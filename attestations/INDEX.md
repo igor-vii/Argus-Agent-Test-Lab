@@ -1,16 +1,13 @@
 # Argus registry — INDEX (generated; do not edit)
 
 Records are signed and hash-chained. Verify: `node tools/registry/verify-registry.mjs`.
-Chain head: `029a859c0e0c490e...`
+Chain head: `e5807aab6a6ac5e6...`
 
-## Findings (4) — third-party issues we disclosed; statuses are live.
+## Findings (1) — third-party issues we disclosed; statuses are live.
 
 | Seq | ID | Subject | Title | Status | Issued |
 |---|---|---|---|---|---|
 | #0000 | `argus-finding-0000` | @x402/fetch 2.28.0 | x402 reference client signs any server-declared 402 amount (overcharge vector) | open — no maintainer response as of 2026-10-24 | 2026-10-23 |
-| #0025 | `argus-finding-0025` | QDay Aevum testnet cdk-erigon/2.0-qday-v2.61.19-validium, x402 v2, tUSD8 FiatTokenV2 | QDay Aevum testnet (eip155:44005) x402 compatibility probe: bare x402-v2 exact/EIP-3009 client+server handshake verified on tUSD8 semantics; QDay facilitator accepts the wire format (verify 200 isValid=false invalidReason=merchant_not_alive); on-chain settle blocked by faucet gates (Turnstile/email/Discord); PQC (ML-DSA-65) not in testnet yet | verified_local — burner wallet unfunded by design; facilitator /settle intentionally not called; records signed with probe-session key argus-lab-probe-2026q4 (operator priv key not present in sandbox) | 2026-11-21 |
-| #0026 | `argus-finding-0026` | agent.apiguru.app keyless agent gateway OpenAPI 1.1.69 | apiguru-app/amazon-scraper-v2 live x402 surface probe: sample 200 without consuming a free probe; live own-ASIN 404 consumes one probe (3 to 2, 'billed 404' semantics confirmed); x402 v2 exact/EIP-3009 USDC (Base + 3 networks), payTo 0x766B…1422, facilitator unnamed; paid settle NOT executed (no funded wallet) | verified_local — 2 live calls made (1 sample 200 + 1 live 404); free probes remaining on record: 2; no paid call, no wallet provided | 2026-11-21 |
-| #0027 | `argus-finding-0027` | scorptech.it.com/api/x402/mcp/lite (ScorpTech x402 Lite 1.2.0, stateless Streamable HTTP, no Mcp-Session-Id)  | scorptech-x402-mcp (Kholley43) x402 v2 over MCP transport passport: challenge delivered as MCP isError result (HTTP 200) instead of HTTP 402; accepts exact/Base USDC v2 ($0.001) + exact/Solana (feePayer=facilitator); payment gate precedes argument validation; signed unfunded submit rejected by facilitator verify (invalid_exact_evm_insufficient_balance) with fresh challenge re-issued; no settle, no charge | verified_local — 0 settled paid calls (burner 0x60f7593386228C0f90012796DCC5c1eA5A9D436A unfunded: Base native 0, USDC 0, checked via mainnet.base.org + base.publicnode.com); 1 signed submit attempt -> facilitator verify reject invalid_exact_evm_insufficient_balance; negatives: invalid args -> challenge (gate before validation), unknown tool -> -32602 free; settle tx hash: none (nothing settled); paid-settle receipt format (PAYMENT-RESPONSE) not observable without funds | 2026-11-21 |
 
 ## Seals (20) — attestations of runs; final at issuance, findings attached.
 
