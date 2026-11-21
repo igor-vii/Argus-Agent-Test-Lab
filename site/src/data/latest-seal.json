@@ -2,8 +2,8 @@
   "generated_at": "2026-11-17T19:17:02.237Z",
   "verify": {
     "command": "node tools/registry/verify-registry.mjs",
-    "records": 25,
-    "chain_head": "e5807aab6a6ac5e6"
+    "records": 27,
+    "chain_head": "7c85800eb7b44a29"
   },
   "correction": {
     "seq": "0022",
@@ -21,7 +21,7 @@
     "title": "T4-EXA live discovery-surface conformance battery — stage 1/2, discovery surface ONLY, deep settle-semantics battery NOT covered (reserved for authorized Stage 2) — wallet-less probes vs documented x402 v2 contract: 6/6 PASS, zero deviations; OBSERVED: gateway EURC accepts, acceptId=legacy, float64 breakdown artifact",
     "subject": "live SUT: api.exa.ai (Exa /search, /contents x402 v2 payment gate) — first live public-endpoint probe battery (T4 chain), complements the offline T3 battery chain v2 (#0014-#0016)",
     "prev_record_hash": "24b06d629c8cc04468c7f0941cac19d5b7ce866c8cabd3d0096e9a92208af176",
-    "chain_head": "e5807aab6a6ac5e6",
+    "chain_head": "7c85800eb7b44a29",
     "scenarios": [
       {
         "id": "P1",
