@@ -1328,5 +1328,22 @@
         "href": "https://github.com/igor-vii/Argus-Agent-Test-Lab/blob/main/attestations/records/0026-apiguru-app-amazon-scraper-v2-live-x402-surface-probe-sample.finding.json"
       }
     ]
+  },
+  {
+    "seq": "0027",
+    "date": "2026-11-21",
+    "type": "finding",
+    "title": "scorptech-x402-mcp (Kholley43) x402 v2 over MCP transport passport: challenge delivered as MCP isError result (HTTP 200) instead of HTTP 402; accepts exact/Base USDC v2 ($0.001) + exact/Solana (feePayer=facilitator); payment gate precedes argument validation; signed unfunded submit rejected by facilitator verify (invalid_exact_evm_insufficient_balance) with fresh challenge re-issued; no settle, no charge",
+    "subject": "Kholley43/scorptech-x402-mcp",
+    "summary": "",
+    "verdicts": [],
+    "findings": [],
+    "evidence": 20,
+    "links": [
+      {
+        "label": "record #0027",
+        "href": "https://github.com/igor-vii/Argus-Agent-Test-Lab/blob/main/attestations/records/0027-scorptech-x402-mcp-kholley43-x402-v2-over-mcp-transport-pass.finding.json"
+      }
+    ]
   }
 ]
