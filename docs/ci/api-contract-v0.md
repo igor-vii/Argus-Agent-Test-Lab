@@ -6,8 +6,11 @@ document defines **who is allowed to run a battery and who pays**; the result
 contract defines **what the run returns**. The backend is the sole owner of
 accounts, keys and balances; the Action is a thin client.
 
-Status: **contract, backend implementation pending** (the backend is the
-private product repo; this document is the interface it must satisfy).
+Status: **implemented — the console is live** (v0 shipped as a superset, now
+tracked as v0.1; dogfood-verified end-to-end). The canonical,
+implementation-current document lives in the action repo:
+[`igor-vii/argus-action` → `docs/api-contract.md`](https://github.com/igor-vii/argus-action/blob/main/docs/api-contract.md).
+This file stays frozen as the v0 interface description.
 
 ## Decisions (fixed for v0)
 
