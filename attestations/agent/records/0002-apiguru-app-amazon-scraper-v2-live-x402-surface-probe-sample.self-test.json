@@ -1,0 +1,48 @@
+{
+  "seq": "0002",
+  "record_id": "argus-agent-self-0002",
+  "issued_at": "2026-11-21T09:09:43.748Z",
+  "signer_key_id": "argus-agent-session-20261121-migration",
+  "prev_record_hash": "368dffe71d23a2fca84265e2c3574c08f5fd56b70a0ba7b0d6169c67b979a2f6",
+  "main_head_at_issuance": "e5807aab6a6ac5e6fd54c62c6eb8042bcd5688c50f3e8f09dd5c8be786145eb6",
+  "type": "self-test",
+  "severity": "info",
+  "title": "apiguru-app/amazon-scraper-v2 live x402 surface probe: sample 200 without consuming a free probe; live own-ASIN 404 consumes one probe (3 to 2, 'billed 404' semantics confirmed); x402 v2 exact/EIP-3009 USDC (Base + 3 networks), payTo 0x766B…1422, facilitator unnamed; paid settle NOT executed (no funded wallet)",
+  "subject": {
+    "repo": "apiguru-app/amazon-scraper-v2",
+    "component": "agent.apiguru.app keyless agent gateway",
+    "version": "OpenAPI 1.1.69",
+    "stack": "x402 v2, scheme exact (EIP-3009), USDC native: Base eip155:8453 0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913 (also eip155:137, eip155:42161, eip155:43114), PAYMENT-SIGNATURE header (v1 X-PAYMENT accepted), payTo 0x766B4cc27333955BBb163a61e2B85aFa6e491422 (agent.apiguru.app/.well-known/x402)"
+  },
+  "summary": "Independent probe 2026-11-20 (~17:37-17:59 UTC). Two live HTTP calls total, within the pre-set 1-2 free-call budget; no paid call. (1) Demo endpoint with docs ASIN B09DJLW458 -> HTTP 200 from a shared sample copy: free_calls_remaining stayed 3, free_call_used=false, x-price-next-call $0.003, 38757 bytes, request_id 65347b57-f378-4af9-be43-ed5b109c6848 — the canonical docs ASIN never touches the payment path. (2) Live call with own ASIN B08N5WRWNW -> HTTP 404 'ASIN not found on this marketplace domain', 1.73 s, 174 bytes, request_id b675d905-2c2d-47ff-ae71-739204a3a4ba, X-Free-Probes-Remaining 3->2: a miss is 'billed' for keyless clients exactly as llms-full.txt states. (3) Documented payment path (llms.txt / llms-full.txt / .well-known/x402 / dash.apiguru.app/openapi.json): 3 free calls per client per 24h, then 402 with PAYMENT-REQUIRED header (base64 accepts, scheme exact), client signs EIP-3009 authorization and retries with PAYMENT-SIGNATURE; gateway settles on-chain only after a billable answer; X-Payment-Status: not-settled and no charge when the failure is theirs; no gas needed (facilitator submits the transfer); one call costs at most $0.05; gateway answers 504 deadline_exceeded itself after 55 s (not billed). Facilitator identity NOT named anywhere (0 matches in openapi.json). (4) Price discrepancy: README says 'about a cent a call', actual documented/live price $0.003 per /v2/product-details call. (5) Paid call NOT executed: sandbox has no funded Base wallet (needs ~$0.003 USDC; gas not needed) — settle timing and PAYMENT-RESPONSE tx hash therefore not observed; the live 402 challenge body (real accepts with per-network assets) also not observed since free probes were not exhausted on purpose. Verdict: suitable as a demo target only AFTER one funded call by the operator; key path and spend controls are ready.",
+  "run_ts": "2026-11-20T17:59:42Z",
+  "status": {
+    "state": "verified_local",
+    "note": "migrated from revoked main-registry finding #0026 (argus-finding-0026: probe-signed by argus-lab-probe-2026q4, revoked 2026-11-21 commit 606be94e); 2 live calls made (1 sample 200 + 1 live 404); free probes remaining on record: 2; no paid call, no wallet provided",
+    "as_of": "2026-11-20"
+  },
+  "evidence": [
+    {
+      "kind": "file",
+      "path": "attestations/evidence/0026-apiguru-x402-probe/live_call_own_asin.txt",
+      "sha256": "63df0c894032026f7ab209d4c9bf9d1352f5c9196d347a95efdb5ed353cee68c"
+    }
+  ],
+  "class": "agent-self-test",
+  "self_run": true,
+  "spend": {
+    "currency": "USD",
+    "spent": "0.00",
+    "cap": "0.00",
+    "note": "two live calls inside the free-call budget (3 -> 2 probes); paid path not executed — no funded Base wallet"
+  },
+  "revokes_main_finding": {
+    "seq": "0026",
+    "record_id": "argus-finding-0026",
+    "signer_key_id": "argus-lab-probe-2026q4",
+    "revoked_at": "2026-11-21",
+    "revoked_commit": "606be94e",
+    "reason": "main-registry canon requires operator signature; the finding was signed by a sandbox probe-session key; evidence and reports kept as raw material"
+  },
+  "signature": "Xz+OyLBj8wigvoDNGaJ+kYd0nCFFGcAXWbjYxvQ56bBwa3ce37DX12AFStZI/za5/khP9is+okIN8n0sU/ntBQ=="
+}

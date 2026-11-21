@@ -60,6 +60,9 @@ jobs:
           }
           grep -oE "registry intact.*" /tmp/verify-out.txt >> "$GITHUB_STEP_SUMMARY"
 
+      - name: Verify agent self-test registry (agent-session signatures + main-chain anchor)
+        run: node tools/registry/verify-registry.mjs --registry=agent
+
       - name: Regenerate site data from verified registry (cover, latest-seal card, seals catalog)
         run: |
           cd site

@@ -98,13 +98,13 @@ export function verifyPayload(payload, signatureB64, publicKey) {
   );
 }
 
-export function listRecords() {
-  if (!fs.existsSync(RECORDS_DIR)) return [];
-  return fs.readdirSync(RECORDS_DIR)
+function listRecordsFrom(dir) {
+  if (!fs.existsSync(dir)) return [];
+  return fs.readdirSync(dir)
     .filter((f) => f.endsWith('.json'))
     .map((f) => ({
       file: f,
-      record: JSON.parse(fs.readFileSync(path.join(RECORDS_DIR, f), 'utf8')),
+      record: JSON.parse(fs.readFileSync(path.join(dir, f), 'utf8')),
     }))
     .sort((a, b) => {
       // Order by numeric seq, NOT by filename: the zero-padded 4-digit prefix
@@ -116,6 +116,48 @@ export function listRecords() {
       if (Number.isFinite(na) && Number.isFinite(nb) && na !== nb) return na - nb;
       return a.file.localeCompare(b.file); // fallback: same seq (must not happen)
     });
+}
+
+export function listRecords() {
+  return listRecordsFrom(RECORDS_DIR);
+}
+
+// Agent self-test registry (Variant A, 2026-11-21): self-reported records of
+// autonomous probe runs, signed by per-session agent keys. Same chain and
+// canonicalization primitives as the main registry, but a separate trust
+// root: NOT operator-signed, never merged into records/, accepted only by
+// `verify-registry.mjs --registry=agent`. Every agent record pins
+// main_head_at_issuance = SHA-256 of the main-registry head at signing time,
+// which anchors it into the operator timeline without merging the chains.
+export const AGENT_DIR = path.join(REGISTRY_DIR, 'agent');
+export const AGENT_RECORDS_DIR = path.join(AGENT_DIR, 'records');
+export const AGENT_KEYS_DIR = path.join(AGENT_DIR, 'keys');
+
+export function listAgentRecords() {
+  return listRecordsFrom(AGENT_RECORDS_DIR);
+}
+
+export function agentKeyPath(keyId) {
+  const id = String(keyId ?? '');
+  if (!/^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$/.test(id)) {
+    throw new Error(`invalid agent signer_key_id: ${JSON.stringify(keyId)}`);
+  }
+  return path.join(AGENT_KEYS_DIR, `${id}.pub.json`);
+}
+
+// Load an agent-session public key. Fails closed unless the pub file is
+// explicitly class "agent-session" and does NOT claim operator status — the
+// two trust roots (operator / agent-session) cannot absorb each other.
+export function loadAgentKeyById(keyId) {
+  const keyPath = agentKeyPath(keyId);
+  const doc = JSON.parse(fs.readFileSync(keyPath, 'utf8'));
+  if (doc.class !== 'agent-session') {
+    throw new Error(`key "${keyId}" is not an agent-session key (class != "agent-session") in ${keyPath}`);
+  }
+  if (doc.operator === true) {
+    throw new Error(`agent-session key "${keyId}" must not claim operator status`);
+  }
+  return crypto.createPublicKey({ key: doc.public_jwk, format: 'jwk' });
 }
 
 export function slugify(title) {

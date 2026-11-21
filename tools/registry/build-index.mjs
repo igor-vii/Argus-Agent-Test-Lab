@@ -1,8 +1,39 @@
 // Regenerates attestations/INDEX.md and attestations/INDEX.json from records/.
 // Never hand-edit the INDEX — run: node tools/registry/build-index.mjs
+// --registry=agent rebuilds the agent self-test index (attestations/agent/)
+// instead of the main one.
 import fs from 'node:fs';
 import path from 'node:path';
-import { canonical, sha256Hex, REGISTRY_DIR, listRecords } from './lib.mjs';
+import { canonical, sha256Hex, REGISTRY_DIR, listRecords, listAgentRecords, AGENT_DIR } from './lib.mjs';
+
+if (process.argv.includes('--registry=agent')) {
+  const records = listAgentRecords().map((e) => e.record);
+  const head = records.length ? sha256Hex(canonical(records[records.length - 1])).slice(0, 16) + '...' : null;
+  fs.mkdirSync(AGENT_DIR, { recursive: true });
+  fs.writeFileSync(
+    path.join(AGENT_DIR, 'INDEX.json'),
+    JSON.stringify({ registry: 'argus-agent-test-lab/agent', chain_head: head, records }, null, 2) + '\n'
+  );
+  const row = (r) => `| #${r.seq} | \`${r.record_id}\` | ${[r.subject?.repo, r.subject?.component].filter(Boolean).join(' · ')} | ${r.title} | ${r.spend ? `${r.spend.currency} ${r.spend.spent}${r.spend.cap ? ' / cap ' + r.spend.cap : ''}` : '?'} | ${(r.issued_at ?? '').slice(0, 10)} |`;
+  const md = `# Argus agent self-test registry — INDEX (generated; do not edit)
+
+Self-reported records of autonomous agent runs, signed by per-session agent
+keys — **not** operator-signed. Verify: \`node tools/registry/verify-registry.mjs --registry=agent\`.
+Chain head: \`${head}\`
+
+## Self-tests (${records.length})
+
+| Seq | ID | Subject | Title | Spend | Issued |
+|---|---|---|---|---|---|
+${records.map(row).join('\n') || '| — | — | — | none yet | — | — |'}
+
+These records are raw material. Promotion into the operator-signed main
+registry happens only via operator review and an operator-signed record.
+`;
+  fs.writeFileSync(path.join(AGENT_DIR, 'INDEX.md'), md);
+  console.log(`agent INDEX.md / INDEX.json rebuilt: ${records.length} self-test records`);
+  process.exit(0);
+}
 
 const entries = listRecords();
 const records = entries.map((e) => e.record);
