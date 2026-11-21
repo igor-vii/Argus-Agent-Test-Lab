@@ -1,0 +1,340 @@
+{
+  "generatedAt": "2026-11-19T17:57:07.737Z",
+  "baseline": {
+    "repo": "Argus-Agent-Test-Lab",
+    "headCommit": "b66fecd"
+  },
+  "target": {
+    "url": "https://api.sitecheck-api.workers.dev/api/audit?url=https%3A%2F%2Fexample.com",
+    "discoveryUrl": "https://api.sitecheck-api.workers.dev/.well-known/x402"
+  },
+  "request": {
+    "method": "GET (via connectionConfig.options.method)",
+    "url": "https://api.sitecheck-api.workers.dev/api/audit?url=https%3A%2F%2Fexample.com",
+    "paymentHeaderSent": false
+  },
+  "observedExchange": {
+    "id": "x402-exch_1795111027145_2zdnpot",
+    "status": "payment_required",
+    "statusCode": 402,
+    "error": null,
+    "paymentRequired": {
+      "x402Version": 2,
+      "scheme": "exact",
+      "network": "eip155:8453",
+      "amount": "20000",
+      "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+      "payTo": "0xb8491F953e6860D3b5840b73c60883Ff099ceAfA",
+      "maxTimeoutSeconds": 300
+    }
+  },
+  "argusClassification": "reachable + x402 payment-required (observed, parsed, NOT paid by design)",
+  "evidenceRecords": {
+    "engine": [
+      {
+        "id": "ev_0",
+        "source": "engine",
+        "type": "payment_required_no_resolver",
+        "data": {
+          "actionType": "request_resource",
+          "paymentRequired": {
+            "raw": "eyJ4NDAyVmVyc2lvbiI6MiwiZXJyb3IiOiJQYXltZW50IHJlcXVpcmVkIiwicmVzb3VyY2UiOnsidXJsIjoiaHR0cHM6Ly9hcGkuc2l0ZWNoZWNrLWFwaS53b3JrZXJzLmRldi9hcGkvYXVkaXQ/dXJsPWh0dHBzJTNBJTJGJTJGZXhhbXBsZS5jb20iLCJkZXNjcmlwdGlvbiI6IldlYnNpdGUgYXVkaXQgaW4gb25lIGNhbGw6IFdDQUcgMi4yIGFjY2Vzc2liaWxpdHkgaXNzdWVzIChFdXJvcGVhbiBBY2Nlc3NpYmlsaXR5IEFjdCkgd2l0aCBmaXhlcyBhbmQgYSBzY29yZSwgU0VPIGJhc2ljcywgc2VjdXJpdHkgaGVhZGVycyBhbmQgdGVjaCBzdGFjay4iLCJtaW1lVHlwZSI6ImFwcGxpY2F0aW9uL2pzb24iLCJzZXJ2aWNlTmFtZSI6IlNpdGVDaGVjayIsInRhZ3MiOlsiYWNjZXNzaWJpbGl0eSIsIndjYWciLCJzZW8iLCJhdWRpdCIsIndlYnNpdGUiXX0sImFjY2VwdHMiOlt7InNjaGVtZSI6ImV4YWN0IiwibmV0d29yayI6ImVpcDE1NTo4NDUzIiwiYW1vdW50IjoiMjAwMDAiLCJhc3NldCI6IjB4ODMzNTg5ZkNENmVEYjZFMDhmNGM3QzMyRDRmNzFiNTRiZEEwMjkxMyIsInBheVRvIjoiMHhiODQ5MUY5NTNlNjg2MEQzYjU4NDBiNzNjNjA4ODNGZjA5OWNlQWZBIiwibWF4VGltZW91dFNlY29uZHMiOjMwMCwiZXh0cmEiOnsibmFtZSI6IlVTRCBDb2luIiwidmVyc2lvbiI6IjIifX0seyJzY2hlbWUiOiJleGFjdCIsIm5ldHdvcmsiOiJzb2xhbmE6NWV5a3Q0VXNGdjhQOE5KZFRSRXBZMXZ6cUtxWkt2ZHAiLCJhbW91bnQiOiIyMDAwMCIsImFzc2V0IjoiRVBqRldkZDVBdWZxU1NxZU0ycU4xeHp5YmFwQzhHNHdFR0drWnd5VER0MXYiLCJwYXlUbyI6Iko4dm5tQng0cFMxWDdVVUJUZnoxeVdCS2l3NjlEajJ5UkdSSERhWEJSZGhSIiwibWF4VGltZW91dFNlY29uZHMiOjMwMCwiZXh0cmEiOnsiZmVlUGF5ZXIiOiJCRU5yTG9VYm5keG9OTVVTNUpYQXBHTXROeWtMakZYWGl4TXRwRHdEUjlTUCJ9fSx7InNjaGVtZSI6ImV4YWN0IiwibmV0d29yayI6ImVpcDE1NTo1MDQyIiwiYW1vdW50IjoiMjAwMDAiLCJhc3NldCI6IjB4MzYwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMCIsInBheVRvIjoiMHhiODQ5MUY5NTNlNjg2MEQzYjU4NDBiNzNjNjA4ODNGZjA5OWNlQWZBIiwibWF4VGltZW91dFNlY29uZHMiOjMwMCwiZXh0cmEiOnsibmFtZSI6IlVTREMiLCJ2ZXJzaW9uIjoiMiJ9fSx7InNjaGVtZSI6ImV4YWN0IiwibmV0d29yayI6ImVpcDE1NToxMzciLCJhbW91bnQiOiIyMDAwMCIsImFzc2V0IjoiMHgzYzQ5OWM1NDJjRUY1RTM4MTFlMTE5MmNlNzBkOGNDMDNkNWMzMzU5IiwicGF5VG8iOiIweGI4NDkxRjk1M2U2ODYwRDNiNTg0MGI3M2M2MDg4M0ZmMDk5Y2VBZkEiLCJtYXhUaW1lb3V0U2Vjb25kcyI6MzAwLCJleHRyYSI6eyJuYW1lIjoiVVNEIENvaW4iLCJ2ZXJzaW9uIjoiMiJ9fSx7InNjaGVtZSI6ImV4YWN0IiwibmV0d29yayI6ImVpcDE1NTo0MjE2MSIsImFtb3VudCI6IjIwMDAwIiwiYXNzZXQiOiIweGFmODhkMDY1ZTc3YzhjQzIyMzkzMjdDNUVEYjNBNDMyMjY4ZTU4MzEiLCJwYXlUbyI6IjB4Yjg0OTFGOTUzZTY4NjBEM2I1ODQwYjczYzYwODgzRmYwOTljZUFmQSIsIm1heFRpbWVvdXRTZWNvbmRzIjozMDAsImV4dHJhIjp7Im5hbWUiOiJVU0QgQ29pbiIsInZlcnNpb24iOiIyIn19LHsic2NoZW1lIjoiZXhhY3QiLCJuZXR3b3JrIjoiZWlwMTU1OjE0MyIsImFtb3VudCI6IjIwMDAwIiwiYXNzZXQiOiIweDc1NDcwNEJjMDU5RjhDNjcwMTJmRWQ2OUJDOEEzMjdhNWFhZmI2MDMiLCJwYXlUbyI6IjB4Yjg0OTFGOTUzZTY4NjBEM2I1ODQwYjczYzYwODgzRmYwOTljZUFmQSIsIm1heFRpbWVvdXRTZWNvbmRzIjozMDAsImV4dHJhIjp7Im5hbWUiOiJVU0RDIiwidmVyc2lvbiI6IjIifX0seyJzY2hlbWUiOiJleGFjdCIsIm5ldHdvcmsiOiJlaXAxNTU6NDgwIiwiYW1vdW50IjoiMjAwMDAiLCJhc3NldCI6IjB4NzlBMDI0ODJBODgwYkNFM0YxM2UwOURhOTcwZEMzNGRiNENEMjRkMSIsInBheVRvIjoiMHhiODQ5MUY5NTNlNjg2MEQzYjU4NDBiNzNjNjA4ODNGZjA5OWNlQWZBIiwibWF4VGltZW91dFNlY29uZHMiOjMwMCwiZXh0cmEiOnsibmFtZSI6IlVTREMiLCJ2ZXJzaW9uIjoiMiJ9fSx7InNjaGVtZSI6ImV4YWN0IiwibmV0d29yayI6ImVpcDE1NToxMCIsImFtb3VudCI6IjIwMDAwIiwiYXNzZXQiOiIweDBiMkM2MzljNTMzODEzZjRBYTlENzgzN0NBZjYyNjUzZDA5N0ZmODUiLCJwYXlUbyI6IjB4Yjg0OTFGOTUzZTY4NjBEM2I1ODQwYjczYzYwODgzRmYwOTljZUFmQSIsIm1heFRpbWVvdXRTZWNvbmRzIjozMDAsImV4dHJhIjp7Im5hbWUiOiJVU0QgQ29pbiIsInZlcnNpb24iOiIyIn19LHsic2NoZW1lIjoiZXhhY3QiLCJuZXR3b3JrIjoiZWlwMTU1OjQzMTE0IiwiYW1vdW50IjoiMjAwMDAiLCJhc3NldCI6IjB4Qjk3RUY5RWY4NzM0QzcxOTA0RDgwMDJGOGI2QmM2NkRkOWM0OGE2RSIsInBheVRvIjoiMHhiODQ5MUY5NTNlNjg2MEQzYjU4NDBiNzNjNjA4ODNGZjA5OWNlQWZBIiwibWF4VGltZW91dFNlY29uZHMiOjMwMCwiZXh0cmEiOnsibmFtZSI6IlVTRCBDb2luIiwidmVyc2lvbiI6IjIifX0seyJzY2hlbWUiOiJleGFjdCIsIm5ldHdvcmsiOiJlaXAxNTU6NDIyMjAiLCJhbW91bnQiOiIyMDAwMCIsImFzc2V0IjoiMHhjZWJBOTMwMGYyYjk0ODcxMGQyNjUzZEQ3QjA3ZjMzQThCMzIxMThDIiwicGF5VG8iOiIweGI4NDkxRjk1M2U2ODYwRDNiNTg0MGI3M2M2MDg4M0ZmMDk5Y2VBZkEiLCJtYXhUaW1lb3V0U2Vjb25kcyI6MzAwLCJleHRyYSI6eyJuYW1lIjoiVVNEQyIsInZlcnNpb24iOiIyIn19LHsic2NoZW1lIjoiZXhhY3QiLCJuZXR3b3JrIjoic3RlbGxhcjpwdWJuZXQiLCJhbW91bnQiOiIyMDAwMDAiLCJhc3NldCI6IkNDVzY3VFNaVjNTU1MySFhNQlE1SkZHQ0tKTlhLWk03VVFVV1VaUFVUSFhTVFpMRU83U0pNSTc1IiwicGF5VG8iOiJHQklYMk03SE5MMkcyVllVNUtaNDQ2T1NONTVaV0hTM1dCRVVQNEpUTFM2UjM0VlhJR1RET0FGSSIsIm1heFRpbWVvdXRTZWNvbmRzIjozMDAsImV4dHJhIjp7ImFyZUZlZXNTcG9uc29yZWQiOnRydWV9fSx7InNjaGVtZSI6ImV4YWN0IiwibmV0d29yayI6InhycGw6MCIsImFtb3VudCI6IjAuMDIiLCJhc3NldCI6IjUyNEM1NTUzNDQwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAiLCJwYXlUbyI6InJEeE5aQ0RmTHhVemVNV0dHd3NZM3NqUVQ4ZW9aQ2Y4VUoiLCJtYXhUaW1lb3V0U2Vjb25kcyI6MzAwLCJleHRyYSI6eyJpc3N1ZXIiOiJyTXhDS2JFRHdxcjc2UXVoZVNVTWRFR2Y0Qjl4SjhtNURlIiwiaW52b2ljZUlkIjoiZjVjMWQ5MGQtMzIyMS00ZTUyLWIwNWYtOGRlM2EyZGY2Nzc1Iiwic291cmNlVGFnIjo4MDQ2ODE0NjgsImFyZUZlZXNTcG9uc29yZWQiOmZhbHNlfX0seyJzY2hlbWUiOiJleGFjdCIsIm5ldHdvcmsiOiJ4cnBsOjAiLCJhbW91bnQiOiIyMDU5MSIsImFzc2V0IjoiWFJQIiwicGF5VG8iOiJyRHhOWkNEZkx4VXplTVdHR3dzWTNzalFUOGVvWkNmOFVKIiwibWF4VGltZW91dFNlY29uZHMiOjMwMCwiZXh0cmEiOnsiaW52b2ljZUlkIjoiZWJlODk2NzEtOGU5My00ZGUzLTg1YjYtMzBiNzc1YWU3YzdhIiwic291cmNlVGFnIjo4MDQ2ODE0NjgsImFyZUZlZXNTcG9uc29yZWQiOmZhbHNlfX1dLCJleHRlbnNpb25zIjp7ImJhemFhciI6eyJpbmZvIjp7ImlucHV0Ijp7InR5cGUiOiJodHRwIiwicXVlcnlQYXJhbXMiOnsidXJsIjoiZXhhbXBsZS5jb20ifSwibWV0aG9kIjoiR0VUIn0sIm91dHB1dCI6eyJ0eXBlIjoianNvbiIsImV4YW1wbGUiOnsidXJsIjoiaHR0cHM6Ly9leGFtcGxlLmNvbS8iLCJhY2Nlc3NpYmlsaXR5Ijp7InNjb3JlIjo4NSwiaXNzdWVzIjpbeyJzZXZlcml0eSI6ImNyaXRpY2FsIiwicnVsZSI6ImltYWdlLWFsdCIsIndjYWciOiIxLjEuMSIsImNvdW50IjozLCJmaXgiOiJBZGQgYWx0IHRleHQifV19LCJzZW8iOnsidGl0bGUiOiJFeGFtcGxlIn0sInNlY3VyaXR5Ijp7ImhzdHMiOnRydWV9LCJ0ZWNoIjpbIlNob3BpZnkiXX19fSwic2NoZW1hIjp7IiRzY2hlbWEiOiJodHRwczovL2pzb24tc2NoZW1hLm9yZy9kcmFmdC8yMDIwLTEyL3NjaGVtYSIsInR5cGUiOiJvYmplY3QiLCJwcm9wZXJ0aWVzIjp7ImlucHV0Ijp7InR5cGUiOiJvYmplY3QiLCJwcm9wZXJ0aWVzIjp7InR5cGUiOnsidHlwZSI6InN0cmluZyIsImNvbnN0IjoiaHR0cCJ9LCJtZXRob2QiOnsidHlwZSI6InN0cmluZyIsImVudW0iOlsiR0VUIl19LCJxdWVyeVBhcmFtcyI6eyJ0eXBlIjoib2JqZWN0IiwicHJvcGVydGllcyI6eyJ1cmwiOnsidHlwZSI6InN0cmluZyIsImRlc2NyaXB0aW9uIjoiV2Vic2l0ZSBVUkwgb3IgZG9tYWluLCBlLmcuIGV4YW1wbGUuY29tIn19LCJyZXF1aXJlZCI6WyJ1cmwiXX19LCJyZXF1aXJlZCI6WyJ0eXBlIiwibWV0aG9kIl0sImFkZGl0aW9uYWxQcm9wZXJ0aWVzIjpmYWxzZX0sIm91dHB1dCI6eyJ0eXBlIjoib2JqZWN0IiwicHJvcGVydGllcyI6eyJ0eXBlIjp7InR5cGUiOiJzdHJpbmcifSwiZXhhbXBsZSI6eyJ0eXBlIjoib2JqZWN0In19LCJyZXF1aXJlZCI6WyJ0eXBlIl19fSwicmVxdWlyZWQiOlsiaW5wdXQiXX19fX0=",
+            "parsed": {
+              "x402Version": 2,
+              "error": "Payment required",
+              "resource": {
+                "url": "https://api.sitecheck-api.workers.dev/api/audit?url=https%3A%2F%2Fexample.com",
+                "description": "Website audit in one call: WCAG 2.2 accessibility issues (European Accessibility Act) with fixes and a score, SEO basics, security headers and tech stack.",
+                "mimeType": "application/json",
+                "serviceName": "SiteCheck",
+                "tags": [
+                  "accessibility",
+                  "wcag",
+                  "seo",
+                  "audit",
+                  "website"
+                ]
+              },
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "eip155:8453",
+                  "amount": "20000",
+                  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "payTo": "0xb8491F953e6860D3b5840b73c60883Ff099ceAfA",
+                  "maxTimeoutSeconds": 300,
+                  "extra": {
+                    "name": "USD Coin",
+                    "version": "2"
+                  }
+                },
+                {
+                  "scheme": "exact",
+                  "network": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
+                  "amount": "20000",
+                  "asset": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+                  "payTo": "J8vnmBx4pS1X7UUBTfz1yWBKiw69Dj2yRGRHDaXBRdhR",
+                  "maxTimeoutSeconds": 300,
+                  "extra": {
+                    "feePayer": "BENrLoUbndxoNMUS5JXApGMtNykLjFXXixMtpDwDR9SP"
+                  }
+                },
+                {
+                  "scheme": "exact",
+                  "network": "eip155:5042",
+                  "amount": "20000",
+                  "asset": "0x3600000000000000000000000000000000000000",
+                  "payTo": "0xb8491F953e6860D3b5840b73c60883Ff099ceAfA",
+                  "maxTimeoutSeconds": 300,
+                  "extra": {
+                    "name": "USDC",
+                    "version": "2"
+                  }
+                },
+                {
+                  "scheme": "exact",
+                  "network": "eip155:137",
+                  "amount": "20000",
+                  "asset": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+                  "payTo": "0xb8491F953e6860D3b5840b73c60883Ff099ceAfA",
+                  "maxTimeoutSeconds": 300,
+                  "extra": {
+                    "name": "USD Coin",
+                    "version": "2"
+                  }
+                },
+                {
+                  "scheme": "exact",
+                  "network": "eip155:42161",
+                  "amount": "20000",
+                  "asset": "0xaf88d065e77c8cC2239327C5EDb3A432268e5831",
+                  "payTo": "0xb8491F953e6860D3b5840b73c60883Ff099ceAfA",
+                  "maxTimeoutSeconds": 300,
+                  "extra": {
+                    "name": "USD Coin",
+                    "version": "2"
+                  }
+                },
+                {
+                  "scheme": "exact",
+                  "network": "eip155:143",
+                  "amount": "20000",
+                  "asset": "0x754704Bc059F8C67012fEd69BC8A327a5aafb603",
+                  "payTo": "0xb8491F953e6860D3b5840b73c60883Ff099ceAfA",
+                  "maxTimeoutSeconds": 300,
+                  "extra": {
+                    "name": "USDC",
+                    "version": "2"
+                  }
+                },
+                {
+                  "scheme": "exact",
+                  "network": "eip155:480",
+                  "amount": "20000",
+                  "asset": "0x79A02482A880bCE3F13e09Da970dC34db4CD24d1",
+                  "payTo": "0xb8491F953e6860D3b5840b73c60883Ff099ceAfA",
+                  "maxTimeoutSeconds": 300,
+                  "extra": {
+                    "name": "USDC",
+                    "version": "2"
+                  }
+                },
+                {
+                  "scheme": "exact",
+                  "network": "eip155:10",
+                  "amount": "20000",
+                  "asset": "0x0b2C639c533813f4Aa9D7837CAf62653d097Ff85",
+                  "payTo": "0xb8491F953e6860D3b5840b73c60883Ff099ceAfA",
+                  "maxTimeoutSeconds": 300,
+                  "extra": {
+                    "name": "USD Coin",
+                    "version": "2"
+                  }
+                },
+                {
+                  "scheme": "exact",
+                  "network": "eip155:43114",
+                  "amount": "20000",
+                  "asset": "0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E",
+                  "payTo": "0xb8491F953e6860D3b5840b73c60883Ff099ceAfA",
+                  "maxTimeoutSeconds": 300,
+                  "extra": {
+                    "name": "USD Coin",
+                    "version": "2"
+                  }
+                },
+                {
+                  "scheme": "exact",
+                  "network": "eip155:42220",
+                  "amount": "20000",
+                  "asset": "0xcebA9300f2b948710d2653dD7B07f33A8B32118C",
+                  "payTo": "0xb8491F953e6860D3b5840b73c60883Ff099ceAfA",
+                  "maxTimeoutSeconds": 300,
+                  "extra": {
+                    "name": "USDC",
+                    "version": "2"
+                  }
+                },
+                {
+                  "scheme": "exact",
+                  "network": "stellar:pubnet",
+                  "amount": "200000",
+                  "asset": "CCW67TSZV3SSS2HXMBQ5JFGCKJNXKZM7UQUWUZPUTHXSTZLEO7SJMI75",
+                  "payTo": "GBIX2M7HNL2G2VYU5KZ446OSN55ZWHS3WBEUP4JTLS6R34VXIGTDOAFI",
+                  "maxTimeoutSeconds": 300,
+                  "extra": {
+                    "areFeesSponsored": true
+                  }
+                },
+                {
+                  "scheme": "exact",
+                  "network": "xrpl:0",
+                  "amount": "0.02",
+                  "asset": "524C555344000000000000000000000000000000",
+                  "payTo": "rDxNZCDfLxUzeMWGGwsY3sjQT8eoZCf8UJ",
+                  "maxTimeoutSeconds": 300,
+                  "extra": {
+                    "issuer": "rMxCKbEDwqr76QuheSUMdEGf4B9xJ8m5De",
+                    "invoiceId": "f5c1d90d-3221-4e52-b05f-8de3a2df6775",
+                    "sourceTag": 804681468,
+                    "areFeesSponsored": false
+                  }
+                },
+                {
+                  "scheme": "exact",
+                  "network": "xrpl:0",
+                  "amount": "20591",
+                  "asset": "XRP",
+                  "payTo": "rDxNZCDfLxUzeMWGGwsY3sjQT8eoZCf8UJ",
+                  "maxTimeoutSeconds": 300,
+                  "extra": {
+                    "invoiceId": "ebe89671-8e93-4de3-85b6-30b775ae7c7a",
+                    "sourceTag": 804681468,
+                    "areFeesSponsored": false
+                  }
+                }
+              ],
+              "extensions": {
+                "bazaar": {
+                  "info": {
+                    "input": {
+                      "type": "http",
+                      "queryParams": {
+                        "url": "example.com"
+                      },
+                      "method": "GET"
+                    },
+                    "output": {
+                      "type": "json",
+                      "example": {
+                        "url": "https://example.com/",
+                        "accessibility": {
+                          "score": 85,
+                          "issues": [
+                            {
+                              "severity": "critical",
+                              "rule": "image-alt",
+                              "wcag": "1.1.1",
+                              "count": 3,
+                              "fix": "Add alt text"
+                            }
+                          ]
+                        },
+                        "seo": {
+                          "title": "Example"
+                        },
+                        "security": {
+                          "hsts": true
+                        },
+                        "tech": [
+                          "Shopify"
+                        ]
+                      }
+                    }
+                  },
+                  "schema": {
+                    "$schema": "https://json-schema.org/draft/2020-12/schema",
+                    "type": "object",
+                    "properties": {
+                      "input": {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "const": "http"
+                          },
+                          "method": {
+                            "type": "string",
+                            "enum": [
+                              "GET"
+                            ]
+                          },
+                          "queryParams": {
+                            "type": "object",
+                            "properties": {
+                              "url": {
+                                "type": "string",
+                                "description": "Website URL or domain, e.g. example.com"
+                              }
+                            },
+                            "required": [
+                              "url"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "method"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "output": {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string"
+                          },
+                          "example": {
+                            "type": "object"
+                          }
+                        },
+                        "required": [
+                          "type"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "input"
+                    ]
+                  }
+                }
+              }
+            },
+            "scheme": "exact",
+            "network": "eip155:8453",
+            "amount": "20000",
+            "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+            "payTo": "0xb8491F953e6860D3b5840b73c60883Ff099ceAfA",
+            "maxTimeoutSeconds": 300
+          }
+        },
+        "timestamp": 1795111027736,
+        "runId": "run_1795111027144_mm02tywtt"
+      }
+    ],
+    "adapterTransport": []
+  },
+  "verdict": {
+    "status": "PASS",
+    "reasons": [],
+    "details": [
+      {
+        "assertionId": "assert_sitecheck_observed_and_classified",
+        "verdict": {
+          "status": "PASS"
+        }
+      }
+    ]
+  },
+  "semantics": "Real external target invoked over its public HTTP/x402 surface only. Payment requirement observed and classified; no payment attempted, no success fabricated, UNKNOWN/TIMEOUT never upgraded. PASS means \"externally visible behavior correctly observed\", not \"transaction succeeded\"."
+}

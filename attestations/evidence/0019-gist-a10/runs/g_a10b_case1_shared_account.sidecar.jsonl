@@ -1,0 +1,3 @@
+{"at":"2026-11-10T18:10:42.488Z","type":"sidecar_start","root":"/tmp/gist-a10-state-MEJQ7T","port":4716,"gist":"e319a833e1be184a0df16ec69f474b72@df69c25fac01f68f6b71981e57b71699c12fd1b2"}
+{"at":"2026-11-10T18:10:46.160Z","type":"sidecar_reserve","account":"account-slot-a","purchase_id":"purchase-1","decision":"reserved","key_digest":"d4da3f2f460c2532ea8e1e9f26bf6cf47c561b5227e515d58ab3b652755e9a6e","intent_digest":"723957b3632c064c6c3ccea694b26febd93147942630f16f43b924977c904d1e"}
+{"at":"2026-11-10T18:10:46.161Z","type":"sidecar_reserve","account":"account-slot-a","purchase_id":"purchase-1","decision":"held","key_digest":"d4da3f2f460c2532ea8e1e9f26bf6cf47c561b5227e515d58ab3b652755e9a6e","intent_digest":"723957b3632c064c6c3ccea694b26febd93147942630f16f43b924977c904d1e"}
