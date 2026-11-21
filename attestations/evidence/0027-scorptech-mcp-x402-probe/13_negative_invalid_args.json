@@ -1,0 +1,223 @@
+{
+  "request": {
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "call_tool",
+      "arguments": {
+        "name": "url_parse",
+        "arguments": {
+          "url": 12345
+        }
+      }
+    }
+  },
+  "http_status": 200,
+  "headers": {
+    "Content-Type": "application/json; charset=utf-8"
+  },
+  "elapsed_s": 0.708044,
+  "body_bytes": 7763,
+  "json": {
+    "jsonrpc": "2.0",
+    "id": 1,
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "{\"x402Version\":2,\"error\":\"Payment required\",\"resource\":{\"url\":\"https://scorptech.it.com/api/x402/mcp/lite\",\"description\":\"Parse, normalize and clean URLs offline: scheme, credentials (redacted), host type, port, path segments, decoded query parameters and fragment; registrable domain / subdomain / public suffix; IDN to punycode and back; RFC 3986 normalization (case, default ports, dot segments, percent-encoding) plus optional removal of known click-tracking parameters (utm_*, gclid, fbclid, msclkid, _hsenc, mc_eid...), query sorting and fragment stripping; flags URL shorteners. Up to 50 URLs.\",\"mimeType\":\"application/json\",\"serviceName\":\"ScorpTech Recon\",\"tags\":[\"url\",\"seo\",\"developer-tools\",\"domain\",\"tracking\"]},\"accepts\":[{\"scheme\":\"exact\",\"network\":\"eip155:8453\",\"amount\":\"1000\",\"asset\":\"0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913\",\"payTo\":\"0xBC72c556166A3d3317c673DDB21Fb088C10088A0\",\"maxTimeoutSeconds\":300,\"extra\":{\"name\":\"USD Coin\",\"version\":\"2\"}},{\"scheme\":\"exact\",\"network\":\"solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp\",\"amount\":\"1000\",\"asset\":\"EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v\",\"payTo\":\"CRygpSHMuZAMHZSCm2Z2H3DDYMZBKUSvcsme1hsgebbD\",\"maxTimeoutSeconds\":300,\"extra\":{\"feePayer\":\"CjNFTjvBhbJJd2B5ePPMHRLx1ELZpa8dwQgGL727eKww\"}}],\"extensions\":{\"bazaar\":{\"info\":{\"input\":{\"type\":\"mcp\",\"toolName\":\"url_parse\",\"description\":\"Parse, normalize and clean URLs offline: scheme, credentials (redacted), host type, port, path segments, decoded query parameters and fragment; registrable domain / subdomain / public suffix; IDN to punycode and back; RFC 3986 normalization (case, default ports, dot segments, percent-encoding) plus optional removal of known click-tracking parameters (utm_*, gclid, fbclid, msclkid, _hsenc, mc_eid...), query sorting and fragment stripping; flags URL shorteners. Up to 50 URLs.\",\"transport\":\"streamable-http\",\"inputSchema\":{\"type\":\"object\",\"properties\":{\"url\":{\"type\":\"string\",\"maxLength\":4000},\"urls\":{\"type\":\"array\",\"items\":{\"type\":\"string\",\"maxLength\":4000},\"maxItems\":50,\"description\":\"Several URLs (JSON array)\"},\"stripTracking\":{\"type\":\"boolean\",\"default\":true,\"description\":\"Remove known tracking parameters from the normalized URL\"},\"sortQuery\":{\"type\":\"boolean\",\"default\":false},\"dropFragment\":{\"type\":\"boolean\",\"default\":false}}},\"example\":{\"url\":\"HTTPS://Shop.Example.co.uk:443/a/./b/../c%7e?utm_source=x&id=7&fbclid=abc&id=8#top\",\"stripTracking\":true}},\"output\":{\"type\":\"json\",\"example\":{\"input\":\"HTTPS://Shop.Example.co.uk:443/a/./b/../c%7e?utm_source=x&id=7&fbclid=abc&id=8#top\",\"valid\":true,\"scheme\":\"https\",\"host\":\"shop.example.co.uk\",\"hostUnicode\":\"shop.example.co.uk\",\"hostType\":\"domain\",\"port\":443,\"effectivePort\":443,\"registrableDomain\":\"example.co.uk\",\"publicSuffix\":\"co.uk\",\"subdomain\":\"shop\",\"isShortener\":false,\"path\":\"/a/./b/../c%7e\",\"pathSegments\":[\"a\",\"c~\"],\"query\":[{\"key\":\"utm_source\",\"value\":\"x\"},{\"key\":\"id\",\"value\":\"7\"},{\"key\":\"fbclid\",\"value\":\"abc\"}],\"trackingParams\":[\"utm_source\",\"fbclid\"],\"fragment\":\"top\",\"normalized\":\"https://shop.example.co.uk/a/c~?id=7&id=8#top\",\"changed\":true}}},\"schema\":{\"$schema\":\"https://json-schema.org/draft/2020-12/schema\",\"type\":\"object\",\"properties\":{\"input\":{\"type\":\"object\",\"properties\":{\"type\":{\"type\":\"string\",\"const\":\"mcp\"},\"toolName\":{\"type\":\"string\"},\"description\":{\"type\":\"string\"},\"transport\":{\"type\":\"string\",\"enum\":[\"streamable-http\",\"sse\"]},\"inputSchema\":{\"type\":\"object\"},\"example\":{\"type\":\"object\"}},\"required\":[\"type\",\"toolName\",\"inputSchema\"],\"additionalProperties\":false},\"output\":{\"type\":\"object\",\"properties\":{\"type\":{\"type\":\"string\"},\"example\":{}},\"required\":[\"type\"]}},\"required\":[\"input\"]}}}}"
+        }
+      ],
+      "structuredContent": {
+        "x402Version": 2,
+        "error": "Payment required",
+        "resource": {
+          "url": "https://scorptech.it.com/api/x402/mcp/lite",
+          "description": "Parse, normalize and clean URLs offline: scheme, credentials (redacted), host type, port, path segments, decoded query parameters and fragment; registrable domain / subdomain / public suffix; IDN to punycode and back; RFC 3986 normalization (case, default ports, dot segments, percent-encoding) plus optional removal of known click-tracking parameters (utm_*, gclid, fbclid, msclkid, _hsenc, mc_eid...), query sorting and fragment stripping; flags URL shorteners. Up to 50 URLs.",
+          "mimeType": "application/json",
+          "serviceName": "ScorpTech Recon",
+          "tags": [
+            "url",
+            "seo",
+            "developer-tools",
+            "domain",
+            "tracking"
+          ]
+        },
+        "accepts": [
+          {
+            "scheme": "exact",
+            "network": "eip155:8453",
+            "amount": "1000",
+            "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+            "payTo": "0xBC72c556166A3d3317c673DDB21Fb088C10088A0",
+            "maxTimeoutSeconds": 300,
+            "extra": {
+              "name": "USD Coin",
+              "version": "2"
+            }
+          },
+          {
+            "scheme": "exact",
+            "network": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
+            "amount": "1000",
+            "asset": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+            "payTo": "CRygpSHMuZAMHZSCm2Z2H3DDYMZBKUSvcsme1hsgebbD",
+            "maxTimeoutSeconds": 300,
+            "extra": {
+              "feePayer": "CjNFTjvBhbJJd2B5ePPMHRLx1ELZpa8dwQgGL727eKww"
+            }
+          }
+        ],
+        "extensions": {
+          "bazaar": {
+            "info": {
+              "input": {
+                "type": "mcp",
+                "toolName": "url_parse",
+                "description": "Parse, normalize and clean URLs offline: scheme, credentials (redacted), host type, port, path segments, decoded query parameters and fragment; registrable domain / subdomain / public suffix; IDN to punycode and back; RFC 3986 normalization (case, default ports, dot segments, percent-encoding) plus optional removal of known click-tracking parameters (utm_*, gclid, fbclid, msclkid, _hsenc, mc_eid...), query sorting and fragment stripping; flags URL shorteners. Up to 50 URLs.",
+                "transport": "streamable-http",
+                "inputSchema": {
+                  "type": "object",
+                  "properties": {
+                    "url": {
+                      "type": "string",
+                      "maxLength": 4000
+                    },
+                    "urls": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "maxLength": 4000
+                      },
+                      "maxItems": 50,
+                      "description": "Several URLs (JSON array)"
+                    },
+                    "stripTracking": {
+                      "type": "boolean",
+                      "default": true,
+                      "description": "Remove known tracking parameters from the normalized URL"
+                    },
+                    "sortQuery": {
+                      "type": "boolean",
+                      "default": false
+                    },
+                    "dropFragment": {
+                      "type": "boolean",
+                      "default": false
+                    }
+                  }
+                },
+                "example": {
+                  "url": "HTTPS://Shop.Example.co.uk:443/a/./b/../c%7e?utm_source=x&id=7&fbclid=abc&id=8#top",
+                  "stripTracking": true
+                }
+              },
+              "output": {
+                "type": "json",
+                "example": {
+                  "input": "HTTPS://Shop.Example.co.uk:443/a/./b/../c%7e?utm_source=x&id=7&fbclid=abc&id=8#top",
+                  "valid": true,
+                  "scheme": "https",
+                  "host": "shop.example.co.uk",
+                  "hostUnicode": "shop.example.co.uk",
+                  "hostType": "domain",
+                  "port": 443,
+                  "effectivePort": 443,
+                  "registrableDomain": "example.co.uk",
+                  "publicSuffix": "co.uk",
+                  "subdomain": "shop",
+                  "isShortener": false,
+                  "path": "/a/./b/../c%7e",
+                  "pathSegments": [
+                    "a",
+                    "c~"
+                  ],
+                  "query": [
+                    {
+                      "key": "utm_source",
+                      "value": "x"
+                    },
+                    {
+                      "key": "id",
+                      "value": "7"
+                    },
+                    {
+                      "key": "fbclid",
+                      "value": "abc"
+                    }
+                  ],
+                  "trackingParams": [
+                    "utm_source",
+                    "fbclid"
+                  ],
+                  "fragment": "top",
+                  "normalized": "https://shop.example.co.uk/a/c~?id=7&id=8#top",
+                  "changed": true
+                }
+              }
+            },
+            "schema": {
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "type": "object",
+              "properties": {
+                "input": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "mcp"
+                    },
+                    "toolName": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "transport": {
+                      "type": "string",
+                      "enum": [
+                        "streamable-http",
+                        "sse"
+                      ]
+                    },
+                    "inputSchema": {
+                      "type": "object"
+                    },
+                    "example": {
+                      "type": "object"
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "toolName",
+                    "inputSchema"
+                  ],
+                  "additionalProperties": false
+                },
+                "output": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string"
+                    },
+                    "example": {}
+                  },
+                  "required": [
+                    "type"
+                  ]
+                }
+              },
+              "required": [
+                "input"
+              ]
+            }
+          }
+        }
+      },
+      "isError": true
+    }
+  },
+  "body_head": null
+}

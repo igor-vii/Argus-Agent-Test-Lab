@@ -1,0 +1,119 @@
+{
+  "type": "finding",
+  "severity": "info",
+  "title": "scorptech-x402-mcp (Kholley43) x402 v2 over MCP transport passport: challenge delivered as MCP isError result (HTTP 200) instead of HTTP 402; accepts exact/Base USDC v2 ($0.001) + exact/Solana (feePayer=facilitator); payment gate precedes argument validation; signed unfunded submit rejected by facilitator verify (invalid_exact_evm_insufficient_balance) with fresh challenge re-issued; no settle, no charge",
+  "subject": {
+    "repo": "Kholley43/scorptech-x402-mcp",
+    "component": "scorptech.it.com/api/x402/mcp/lite (ScorpTech x402 Lite 1.2.0, stateless Streamable HTTP, no Mcp-Session-Id)",
+    "stack": "x402 v2 over MCP: payment submitted in params._meta['x402/payment']; challenge JSON embedded in MCP isError result text. accepts: exact/eip155:8453 USDC 0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913 -> payTo 0xBC72c556166A3d3317c673DDB21Fb088C10088A0 (EIP-712 domain name 'USD Coin' version '2', EIP-3009 TransferWithAuthorization, maxTimeoutSeconds 300); exact/solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp USDC EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v -> payTo CRygpSHMuZAMHZSCm2Z2H3DDYMZBKUSvcsme1hsgebbD with extra.feePayer CjNFTjvBhbJJd2B5ePPMHRLx1ELZpa8dwQgGL727eKww (facilitator pays fees). Facilitator per README: PayAI (facilitator.payai.network). Catalog: 1020 tools, all price-declared $0.001-$0.05 (806 x $0.001), tools/list free"
+  },
+  "summary": "Independent probe 2026-11-21 (~03:44-04:05 UTC). Zero settled paid calls (sandbox burner unfunded: Base mainnet native 0, USDC 0), budget regulation <=$0.01 kept at $0.00. Findings. (1) Transport passport: initialize -> protocolVersion 2025-06-18 accepted, stateless (no Mcp-Session-Id header); tools/list free on lite (search_tools + call_tool) and full endpoint (1020 tools in one 1.79MB page, no cursor); full catalog snapshot + docs-all snapshot in evidence. (2) Challenge semantics: calling a paid tool without payment returns MCP result isError=true whose text is the x402 v2 PaymentRequired JSON (x402Version 2, error 'Payment required', resource.url = the MCP endpoint itself, extensions.bazaar with toolName/inputSchema discovery metadata, accepts[] with the two network options) — HTTP status stays 200; the plain-HTTPS path documented in the README uses HTTP 402 + PAYMENT-REQUIRED header instead. (3) Gate order: payment gate precedes argument validation — call_tool(url_parse, {url:12345}) and call_tool(cusip_validate, {cusip:'!!!not-a-cusip!!!'}) both return the same PaymentRequired challenge instead of a validation error, so an agent cannot learn its arguments are wrong without paying; unknown tool name returns RPC -32602 'Unknown tool' for free (MCP layer validates tool existence before the gate). (4) Signed submit: x402 v2 payload {x402Version, resource, accepted, payload:{authorization, signature}} built from the challenge (EIP-3009 TransferWithAuthorization, value=1000, validAfter/validBefore from maxTimeoutSeconds 300, nonce random) signed with a burner EOA over the challenge-supplied domain (USD Coin v2, chainId 8453, verifyingContract USDC) and submitted in params._meta['x402/payment'] -> server forwarded to the facilitator: verify returned invalid_exact_evm_insufficient_balance in 1.04s — the signature was VALID (not invalid_signature), the failure is the balance check, i.e. the payload shape and EIP-712 domain are correct end-to-end; the failed verify response carries the full fresh challenge (same accepts, new terms) so the client can retry after funding. No settle transaction, no charge; burner balance 0/0 before and after (evidence 21). (5) 'If the tool fails, you're not charged': pre-payment failures are free by construction (no payment token in the request); the post-payment refund/settle-on-failure path requires a funded wallet and is UNVERIFIED in this run — the observable equivalent is that no settle ever occurred without a valid payment (facilitator balance-gates before settle).",
+  "run_ts": "2026-11-21T04:05:00Z",
+  "status": {
+    "state": "verified_local",
+    "note": "0 settled paid calls (burner 0x60f7593386228C0f90012796DCC5c1eA5A9D436A unfunded: Base native 0, USDC 0, checked via mainnet.base.org + base.publicnode.com); 1 signed submit attempt -> facilitator verify reject invalid_exact_evm_insufficient_balance; negatives: invalid args -> challenge (gate before validation), unknown tool -> -32602 free; settle tx hash: none (nothing settled); paid-settle receipt format (PAYMENT-RESPONSE) not observable without funds",
+    "as_of": "2026-11-21"
+  },
+  "evidence": [
+    {
+      "kind": "file",
+      "path": "attestations/evidence/0027-scorptech-mcp-x402-probe/01_initialize.json",
+      "sha256": null
+    },
+    {
+      "kind": "file",
+      "path": "attestations/evidence/0027-scorptech-mcp-x402-probe/02_initialized_notification.json",
+      "sha256": null
+    },
+    {
+      "kind": "file",
+      "path": "attestations/evidence/0027-scorptech-mcp-x402-probe/03_tools_list_lite.json",
+      "sha256": null
+    },
+    {
+      "kind": "file",
+      "path": "attestations/evidence/0027-scorptech-mcp-x402-probe/04_tools_list_full_p1.json",
+      "sha256": null
+    },
+    {
+      "kind": "file",
+      "path": "attestations/evidence/0027-scorptech-mcp-x402-probe/05_tools_list_full_stats.json",
+      "sha256": null
+    },
+    {
+      "kind": "file",
+      "path": "attestations/evidence/0027-scorptech-mcp-x402-probe/06_health.json",
+      "sha256": null
+    },
+    {
+      "kind": "file",
+      "path": "attestations/evidence/0027-scorptech-mcp-x402-probe/07_docs_all.json",
+      "sha256": null
+    },
+    {
+      "kind": "file",
+      "path": "attestations/evidence/0027-scorptech-mcp-x402-probe/10_search_1_ping.json",
+      "sha256": null
+    },
+    {
+      "kind": "file",
+      "path": "attestations/evidence/0027-scorptech-mcp-x402-probe/10_search_2_url_parse.json",
+      "sha256": null
+    },
+    {
+      "kind": "file",
+      "path": "attestations/evidence/0027-scorptech-mcp-x402-probe/10_search_3_cusip.json",
+      "sha256": null
+    },
+    {
+      "kind": "file",
+      "path": "attestations/evidence/0027-scorptech-mcp-x402-probe/10_search_4_solana_token.json",
+      "sha256": null
+    },
+    {
+      "kind": "file",
+      "path": "attestations/evidence/0027-scorptech-mcp-x402-probe/11_chosen_tool_schemas.json",
+      "sha256": null
+    },
+    {
+      "kind": "file",
+      "path": "attestations/evidence/0027-scorptech-mcp-x402-probe/12_payment_required_1_ping.json",
+      "sha256": null
+    },
+    {
+      "kind": "file",
+      "path": "attestations/evidence/0027-scorptech-mcp-x402-probe/12_payment_required_2_url_parse.json",
+      "sha256": null
+    },
+    {
+      "kind": "file",
+      "path": "attestations/evidence/0027-scorptech-mcp-x402-probe/12_payment_required_3_cusip_validate.json",
+      "sha256": null
+    },
+    {
+      "kind": "file",
+      "path": "attestations/evidence/0027-scorptech-mcp-x402-probe/13_negative_invalid_args.json",
+      "sha256": null
+    },
+    {
+      "kind": "file",
+      "path": "attestations/evidence/0027-scorptech-mcp-x402-probe/14_negative_invalid_cusip.json",
+      "sha256": null
+    },
+    {
+      "kind": "file",
+      "path": "attestations/evidence/0027-scorptech-mcp-x402-probe/15_negative_unknown_tool.json",
+      "sha256": null
+    },
+    {
+      "kind": "file",
+      "path": "attestations/evidence/0027-scorptech-mcp-x402-probe/20_signed_submit_unfunded.json",
+      "sha256": null
+    },
+    {
+      "kind": "file",
+      "path": "attestations/evidence/0027-scorptech-mcp-x402-probe/21_balance_after.json",
+      "sha256": null
+    }
+  ]
+}

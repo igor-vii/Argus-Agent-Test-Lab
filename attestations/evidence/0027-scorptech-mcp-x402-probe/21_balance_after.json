@@ -1,0 +1,9 @@
+{
+  "url": "https://base.publicnode.com",
+  "after_signed_submit_and_negatives": true,
+  "native_eth_wei": 0,
+  "usdc_raw": 0,
+  "native_eth": 0.0,
+  "usdc": 0.0,
+  "note": "burner 0x60f759...436A before AND after: signed submit rejected by facilitator (invalid_exact_evm_insufficient_balance); no settle, no charge; balance unchanged 0/0"
+}

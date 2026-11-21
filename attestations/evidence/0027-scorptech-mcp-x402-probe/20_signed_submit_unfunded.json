@@ -1,0 +1,219 @@
+{
+  "url": "https://scorptech.it.com/api/x402/mcp/lite",
+  "request": {
+    "method": "tools/call",
+    "params": {
+      "name": "call_tool",
+      "arguments": {
+        "name": "ping",
+        "arguments": {
+          "echo": "argus-a10-probe"
+        }
+      },
+      "_meta": {
+        "x402/payment": {
+          "x402Version": 2,
+          "resource": {
+            "url": "https://scorptech.it.com/api/x402/mcp/lite",
+            "description": "Paid x402 test route for agents and client developers: the cheapest way to prove your x402 client signs a Solana USDC payment and the facilitator settles it before you call anything expensive. Returns pong, server time, your optional echo string and the payment terms; the settlement transaction comes back in the PAYMENT-RESPONSE header.",
+            "mimeType": "application/json",
+            "serviceName": "ScorpTech Recon",
+            "tags": [
+              "x402",
+              "agent-payments",
+              "ping",
+              "test",
+              "health"
+            ]
+          },
+          "accepted": {
+            "scheme": "exact",
+            "network": "eip155:8453",
+            "amount": "1000",
+            "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+            "payTo": "0xBC72c556166A3d3317c673DDB21Fb088C10088A0",
+            "maxTimeoutSeconds": 300,
+            "extra": {
+              "name": "USD Coin",
+              "version": "2"
+            }
+          },
+          "payload": {
+            "authorization": {
+              "from": "0x60f7593386228C0f90012796DCC5c1eA5A9D436A",
+              "to": "0xBC72c556166A3d3317c673DDB21Fb088C10088A0",
+              "value": "1000",
+              "validAfter": "1795237475",
+              "validBefore": "1795237835",
+              "nonce": "0x0e7f343ede83e9d6a3a95b1a611920ac7e64e5cc4fbba494810be956157ab16e"
+            },
+            "signature": "0x07828380f24918049412a9...REDACTED_FULL_SIG_IN_EVIDENCE"
+          }
+        }
+      }
+    },
+    "note": "payment payload logged without full signature; authorization fields intact"
+  },
+  "http_status": 200,
+  "headers": {
+    "Content-Type": "application/json; charset=utf-8"
+  },
+  "elapsed_s": 1.041982,
+  "body_bytes": 6177,
+  "response": "{\"jsonrpc\":\"2.0\",\"id\":1,\"result\":{\"content\":[{\"type\":\"text\",\"text\":\"{\\\"x402Version\\\":2,\\\"error\\\":\\\"invalid_exact_evm_insufficient_balance\\\",\\\"resource\\\":{\\\"url\\\":\\\"https://scorptech.it.com/api/x402/mcp/lite\\\",\\\"description\\\":\\\"Paid x402 test route for agents and client developers: the cheapest way to prove your x402 client signs a Solana USDC payment and the facilitator settles it before you call anything expensive. Returns pong, server time, your optional echo string and the payment terms; the settlement transaction comes back in the PAYMENT-RESPONSE header.\\\",\\\"mimeType\\\":\\\"application/json\\\",\\\"serviceName\\\":\\\"ScorpTech Recon\\\",\\\"tags\\\":[\\\"x402\\\",\\\"agent-payments\\\",\\\"ping\\\",\\\"test\\\",\\\"health\\\"]},\\\"accepts\\\":[{\\\"scheme\\\":\\\"exact\\\",\\\"network\\\":\\\"eip155:8453\\\",\\\"amount\\\":\\\"1000\\\",\\\"asset\\\":\\\"0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913\\\",\\\"payTo\\\":\\\"0xBC72c556166A3d3317c673DDB21Fb088C10088A0\\\",\\\"maxTimeoutSeconds\\\":300,\\\"extra\\\":{\\\"name\\\":\\\"USD Coin\\\",\\\"version\\\":\\\"2\\\"}},{\\\"scheme\\\":\\\"exact\\\",\\\"network\\\":\\\"solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp\\\",\\\"amount\\\":\\\"1000\\\",\\\"asset\\\":\\\"EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v\\\",\\\"payTo\\\":\\\"CRygpSHMuZAMHZSCm2Z2H3DDYMZBKUSvcsme1hsgebbD\\\",\\\"maxTimeoutSeconds\\\":300,\\\"extra\\\":{\\\"feePayer\\\":\\\"CjNFTjvBhbJJd2B5ePPMHRLx1ELZpa8dwQgGL727eKww\\\"}}],\\\"extensions\\\":{\\\"bazaar\\\":{\\\"info\\\":{\\\"input\\\":{\\\"type\\\":\\\"mcp\\\",\\\"toolName\\\":\\\"ping\\\",\\\"description\\\":\\\"Paid x402 test route for agents and client developers: the cheapest way to prove your x402 client signs a Solana USDC payment and the facilitator settles it before you call anything expensive. Returns pong, server time, your optional echo string and the payment terms; the settlement transaction comes back in the PAYMENT-RESPONSE header.\\\",\\\"transport\\\":\\\"streamable-http\\\",\\\"inputSchema\\\":{\\\"type\\\":\\\"object\\\",\\\"properties\\\":{\\\"echo\\\":{\\\"type\\\":\\\"string\\\",\\\"maxLength\\\":200,\\\"description\\\":\\\"Optional text echoed back (max 200 bytes)\\\"}}},\\\"example\\\":{\\\"echo\\\":\\\"hello from my agent\\\"}},\\\"output\\\":{\\\"type\\\":\\\"json\\\",\\\"example\\\":{\\\"pong\\\":true,\\\"echo\\\":\\\"hello from my agent\\\",\\\"serverTime\\\":\\\"2026-10-23T02:47:50.234Z\\\",\\\"unix\\\":1792723670,\\\"requestId\\\":\\\"58ebf23906f8c165\\\",\\\"payment\\\":{\\\"price\\\":\\\"$0.001\\\",\\\"amountAtomic\\\":\\\"1000\\\",\\\"asset\\\":\\\"USDC\\\",\\\"network\\\":\\\"solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp\\\",\\\"payTo\\\":\\\"Gzn6fbrn11cd61iH4mgQvtmf4PHmeMCRn8msU4hjpty8\\\",\\\"scheme\\\":\\\"exact\\\",\\\"x402Version\\\":2},\\\"note\\\":\\\"Your payment was verified before this handler ran; it is settled only because this response succeeded. Decode the PAYMENT-RESPONSE header for the transaction.\\\"}}},\\\"schema\\\":{\\\"$schema\\\":\\\"https://json-schema.org/draft/2020-12/schema\\\",\\\"type\\\":\\\"object\\\",\\\"properties\\\":{\\\"input\\\":{\\\"type\\\":\\\"object\\\",\\\"properties\\\":{\\\"type\\\":{\\\"type\\\":\\\"string\\\",\\\"const\\\":\\\"mcp\\\"},\\\"toolName\\\":{\\\"type\\\":\\\"string\\\"},\\\"description\\\":{\\\"type\\\":\\\"string\\\"},\\\"transport\\\":{\\\"type\\\":\\\"string\\\",\\\"enum\\\":[\\\"streamable-http\\\",\\\"sse\\\"]},\\\"inputSchema\\\":{\\\"type\\\":\\\"object\\\"},\\\"example\\\":{\\\"type\\\":\\\"object\\\"}},\\\"required\\\":[\\\"type\\\",\\\"toolName\\\",\\\"inputSchema\\\"],\\\"additionalProperties\\\":false},\\\"output\\\":{\\\"type\\\":\\\"object\\\",\\\"properties\\\":{\\\"type\\\":{\\\"type\\\":\\\"string\\\"},\\\"example\\\":{}},\\\"required\\\":[\\\"type\\\"]}},\\\"required\\\":[\\\"input\\\"]}}}}\"}],\"structuredContent\":{\"x402Version\":2,\"error\":\"invalid_exact_evm_insufficient_balance\",\"resource\":{\"url\":\"https://scorptech.it.com/api/x402/mcp/lite\",\"description\":\"Paid x402 test route for agents and client developers: the cheapest way to prove your x402 client signs a Solana USDC payment and the facilitator settles it before you call anything expensive. Returns pong, server time, your optional echo string and the payment terms; the settlement transaction comes back in the PAYMENT-RESPONSE header.\",\"mimeType\":\"application/json\",\"serviceName\":\"ScorpTech Recon\",\"tags\":[\"x402\",\"agent-payments\",\"ping\",\"test\",\"health\"]},\"accepts\":[{\"scheme\":\"exact\",\"network\":\"eip155:8453\",\"amount\":\"1000\",\"asset\":\"0x833589fCD6eDb6E08f4c7C32D4f71b54bdA0291",
+  "json": {
+    "jsonrpc": "2.0",
+    "id": 1,
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "{\"x402Version\":2,\"error\":\"invalid_exact_evm_insufficient_balance\",\"resource\":{\"url\":\"https://scorptech.it.com/api/x402/mcp/lite\",\"description\":\"Paid x402 test route for agents and client developers: the cheapest way to prove your x402 client signs a Solana USDC payment and the facilitator settles it before you call anything expensive. Returns pong, server time, your optional echo string and the payment terms; the settlement transaction comes back in the PAYMENT-RESPONSE header.\",\"mimeType\":\"application/json\",\"serviceName\":\"ScorpTech Recon\",\"tags\":[\"x402\",\"agent-payments\",\"ping\",\"test\",\"health\"]},\"accepts\":[{\"scheme\":\"exact\",\"network\":\"eip155:8453\",\"amount\":\"1000\",\"asset\":\"0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913\",\"payTo\":\"0xBC72c556166A3d3317c673DDB21Fb088C10088A0\",\"maxTimeoutSeconds\":300,\"extra\":{\"name\":\"USD Coin\",\"version\":\"2\"}},{\"scheme\":\"exact\",\"network\":\"solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp\",\"amount\":\"1000\",\"asset\":\"EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v\",\"payTo\":\"CRygpSHMuZAMHZSCm2Z2H3DDYMZBKUSvcsme1hsgebbD\",\"maxTimeoutSeconds\":300,\"extra\":{\"feePayer\":\"CjNFTjvBhbJJd2B5ePPMHRLx1ELZpa8dwQgGL727eKww\"}}],\"extensions\":{\"bazaar\":{\"info\":{\"input\":{\"type\":\"mcp\",\"toolName\":\"ping\",\"description\":\"Paid x402 test route for agents and client developers: the cheapest way to prove your x402 client signs a Solana USDC payment and the facilitator settles it before you call anything expensive. Returns pong, server time, your optional echo string and the payment terms; the settlement transaction comes back in the PAYMENT-RESPONSE header.\",\"transport\":\"streamable-http\",\"inputSchema\":{\"type\":\"object\",\"properties\":{\"echo\":{\"type\":\"string\",\"maxLength\":200,\"description\":\"Optional text echoed back (max 200 bytes)\"}}},\"example\":{\"echo\":\"hello from my agent\"}},\"output\":{\"type\":\"json\",\"example\":{\"pong\":true,\"echo\":\"hello from my agent\",\"serverTime\":\"2026-10-23T02:47:50.234Z\",\"unix\":1792723670,\"requestId\":\"58ebf23906f8c165\",\"payment\":{\"price\":\"$0.001\",\"amountAtomic\":\"1000\",\"asset\":\"USDC\",\"network\":\"solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp\",\"payTo\":\"Gzn6fbrn11cd61iH4mgQvtmf4PHmeMCRn8msU4hjpty8\",\"scheme\":\"exact\",\"x402Version\":2},\"note\":\"Your payment was verified before this handler ran; it is settled only because this response succeeded. Decode the PAYMENT-RESPONSE header for the transaction.\"}}},\"schema\":{\"$schema\":\"https://json-schema.org/draft/2020-12/schema\",\"type\":\"object\",\"properties\":{\"input\":{\"type\":\"object\",\"properties\":{\"type\":{\"type\":\"string\",\"const\":\"mcp\"},\"toolName\":{\"type\":\"string\"},\"description\":{\"type\":\"string\"},\"transport\":{\"type\":\"string\",\"enum\":[\"streamable-http\",\"sse\"]},\"inputSchema\":{\"type\":\"object\"},\"example\":{\"type\":\"object\"}},\"required\":[\"type\",\"toolName\",\"inputSchema\"],\"additionalProperties\":false},\"output\":{\"type\":\"object\",\"properties\":{\"type\":{\"type\":\"string\"},\"example\":{}},\"required\":[\"type\"]}},\"required\":[\"input\"]}}}}"
+        }
+      ],
+      "structuredContent": {
+        "x402Version": 2,
+        "error": "invalid_exact_evm_insufficient_balance",
+        "resource": {
+          "url": "https://scorptech.it.com/api/x402/mcp/lite",
+          "description": "Paid x402 test route for agents and client developers: the cheapest way to prove your x402 client signs a Solana USDC payment and the facilitator settles it before you call anything expensive. Returns pong, server time, your optional echo string and the payment terms; the settlement transaction comes back in the PAYMENT-RESPONSE header.",
+          "mimeType": "application/json",
+          "serviceName": "ScorpTech Recon",
+          "tags": [
+            "x402",
+            "agent-payments",
+            "ping",
+            "test",
+            "health"
+          ]
+        },
+        "accepts": [
+          {
+            "scheme": "exact",
+            "network": "eip155:8453",
+            "amount": "1000",
+            "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+            "payTo": "0xBC72c556166A3d3317c673DDB21Fb088C10088A0",
+            "maxTimeoutSeconds": 300,
+            "extra": {
+              "name": "USD Coin",
+              "version": "2"
+            }
+          },
+          {
+            "scheme": "exact",
+            "network": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
+            "amount": "1000",
+            "asset": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+            "payTo": "CRygpSHMuZAMHZSCm2Z2H3DDYMZBKUSvcsme1hsgebbD",
+            "maxTimeoutSeconds": 300,
+            "extra": {
+              "feePayer": "CjNFTjvBhbJJd2B5ePPMHRLx1ELZpa8dwQgGL727eKww"
+            }
+          }
+        ],
+        "extensions": {
+          "bazaar": {
+            "info": {
+              "input": {
+                "type": "mcp",
+                "toolName": "ping",
+                "description": "Paid x402 test route for agents and client developers: the cheapest way to prove your x402 client signs a Solana USDC payment and the facilitator settles it before you call anything expensive. Returns pong, server time, your optional echo string and the payment terms; the settlement transaction comes back in the PAYMENT-RESPONSE header.",
+                "transport": "streamable-http",
+                "inputSchema": {
+                  "type": "object",
+                  "properties": {
+                    "echo": {
+                      "type": "string",
+                      "maxLength": 200,
+                      "description": "Optional text echoed back (max 200 bytes)"
+                    }
+                  }
+                },
+                "example": {
+                  "echo": "hello from my agent"
+                }
+              },
+              "output": {
+                "type": "json",
+                "example": {
+                  "pong": true,
+                  "echo": "hello from my agent",
+                  "serverTime": "2026-10-23T02:47:50.234Z",
+                  "unix": 1792723670,
+                  "requestId": "58ebf23906f8c165",
+                  "payment": {
+                    "price": "$0.001",
+                    "amountAtomic": "1000",
+                    "asset": "USDC",
+                    "network": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
+                    "payTo": "Gzn6fbrn11cd61iH4mgQvtmf4PHmeMCRn8msU4hjpty8",
+                    "scheme": "exact",
+                    "x402Version": 2
+                  },
+                  "note": "Your payment was verified before this handler ran; it is settled only because this response succeeded. Decode the PAYMENT-RESPONSE header for the transaction."
+                }
+              }
+            },
+            "schema": {
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "type": "object",
+              "properties": {
+                "input": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "mcp"
+                    },
+                    "toolName": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "transport": {
+                      "type": "string",
+                      "enum": [
+                        "streamable-http",
+                        "sse"
+                      ]
+                    },
+                    "inputSchema": {
+                      "type": "object"
+                    },
+                    "example": {
+                      "type": "object"
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "toolName",
+                    "inputSchema"
+                  ],
+                  "additionalProperties": false
+                },
+                "output": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string"
+                    },
+                    "example": {}
+                  },
+                  "required": [
+                    "type"
+                  ]
+                }
+              },
+              "required": [
+                "input"
+              ]
+            }
+          }
+        }
+      },
+      "isError": true
+    }
+  }
+}

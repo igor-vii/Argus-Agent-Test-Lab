@@ -1,0 +1,88 @@
+{
+  "request": {
+    "jsonrpc": "2.0",
+    "id": 2,
+    "method": "tools/call",
+    "params": {
+      "name": "search_tools",
+      "arguments": {
+        "query": "url parse",
+        "group": "dev"
+      }
+    }
+  },
+  "http_status": 200,
+  "headers": {
+    "Content-Type": "application/json; charset=utf-8"
+  },
+  "elapsed_s": 0.835271,
+  "body_bytes": 2890,
+  "json": {
+    "jsonrpc": "2.0",
+    "id": 2,
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "{\"query\":\"url parse\",\"group\":\"dev\",\"total\":1,\"tools\":[{\"name\":\"ics_parse\",\"price\":\"$0.003\",\"group\":\"dev\",\"description\":\"Parse an iCalendar (.ics) feed from a URL (SSRF-safe; Google / Outlook / Apple calendar exports) or inline text into JSON: calendar name and zone, events with start / end in any IANA zone, all-day flag, location, organizer, attendee count, status and recurrence rule in English. Give a from / to window to expand recurring events (RRULE, EXDATE, RDATE, RECURRENCE-ID overrides) into concrete occurrences. Windows time-zone names are mapped to IANA.\",\"inputSchema\":{\"type\":\"object\",\"properties\":{\"url\":{\"type\":\"string\",\"maxLength\":2000,\"description\":\"URL of an .ics feed (or use ics)\"},\"ics\":{\"type\":\"string\",\"maxLength\":3000000,\"description\":\"iCalendar text\"},\"from\":{\"type\":\"string\",\"maxLength\":40,\"description\":\"Window start (expands recurring events); ISO 8601\"},\"to\":{\"type\":\"string\",\"maxLength\":40,\"description\":\"Window end (default from + 30 days)\"},\"tz\":{\"type\":\"string\",\"maxLength\":64,\"description\":\"Output IANA zone (default the calendar's zone or UTC)\"},\"limit\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":1000,\"default\":100},\"descriptions\":{\"type\":\"boolean\",\"default\":false,\"description\":\"Include event descriptions (truncated)\"}}}}],\"howToCall\":\"call_tool {\\\"name\\\": \\\"<tool>\\\", \\\"arguments\\\": {...}}\"}"
+        }
+      ],
+      "structuredContent": {
+        "query": "url parse",
+        "group": "dev",
+        "total": 1,
+        "tools": [
+          {
+            "name": "ics_parse",
+            "price": "$0.003",
+            "group": "dev",
+            "description": "Parse an iCalendar (.ics) feed from a URL (SSRF-safe; Google / Outlook / Apple calendar exports) or inline text into JSON: calendar name and zone, events with start / end in any IANA zone, all-day flag, location, organizer, attendee count, status and recurrence rule in English. Give a from / to window to expand recurring events (RRULE, EXDATE, RDATE, RECURRENCE-ID overrides) into concrete occurrences. Windows time-zone names are mapped to IANA.",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "url": {
+                  "type": "string",
+                  "maxLength": 2000,
+                  "description": "URL of an .ics feed (or use ics)"
+                },
+                "ics": {
+                  "type": "string",
+                  "maxLength": 3000000,
+                  "description": "iCalendar text"
+                },
+                "from": {
+                  "type": "string",
+                  "maxLength": 40,
+                  "description": "Window start (expands recurring events); ISO 8601"
+                },
+                "to": {
+                  "type": "string",
+                  "maxLength": 40,
+                  "description": "Window end (default from + 30 days)"
+                },
+                "tz": {
+                  "type": "string",
+                  "maxLength": 64,
+                  "description": "Output IANA zone (default the calendar's zone or UTC)"
+                },
+                "limit": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 1000,
+                  "default": 100
+                },
+                "descriptions": {
+                  "type": "boolean",
+                  "default": false,
+                  "description": "Include event descriptions (truncated)"
+                }
+              }
+            }
+          }
+        ],
+        "howToCall": "call_tool {\"name\": \"<tool>\", \"arguments\": {...}}"
+      }
+    }
+  },
+  "body_head": null
+}

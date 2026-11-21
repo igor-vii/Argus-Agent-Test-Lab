@@ -1,0 +1,16 @@
+{
+  "url": "https://scorptech.it.com/api/x402/health",
+  "http_status": 200,
+  "elapsed_s": 0.674679,
+  "body_bytes": 266,
+  "json": {
+    "status": "ok",
+    "uptimeSec": 2588557,
+    "network": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
+    "payToConfigured": true,
+    "payTo": "CRygpSHMuZAMHZSCm2Z2H3DDYMZBKUSvcsme1hsgebbD",
+    "dedicatedPayToActive": true,
+    "facilitator": "https://facilitator.payai.network",
+    "runtime": "php 8.2.35"
+  }
+}

@@ -1,0 +1,323 @@
+{
+  "request": {
+    "jsonrpc": "2.0",
+    "id": 4,
+    "method": "tools/call",
+    "params": {
+      "name": "search_tools",
+      "arguments": {
+        "query": "solana token",
+        "group": "crypto"
+      }
+    }
+  },
+  "http_status": 200,
+  "headers": {
+    "Content-Type": "application/json; charset=utf-8"
+  },
+  "elapsed_s": 0.837921,
+  "body_bytes": 18408,
+  "json": {
+    "jsonrpc": "2.0",
+    "id": 4,
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "{\"query\":\"solana token\",\"group\":\"crypto\",\"total\":10,\"tools\":[{\"name\":\"solana_token_safety\",\"price\":\"$0.02\",\"group\":\"crypto\",\"description\":\"Use this when an agent or user is about to buy or swap into a Solana token and needs a rug / honeypot check first (for EVM tokens use evm_token_safety). Pre-buy safety check for any Solana token (SPL or Token-2022) with a 0-100 risk score, flags and plain-English verdict. Live on-chain + public data: mint and freeze authority, supply/decimals, Token-2022 extensions (transfer fee, permanent delegate, transfer hook, non-transferable, default-frozen, pausable), top-10 holder concentration (pools excluded), DEX liquidity/pools and LP lock (DexScreener, RugCheck), a real Jupiter sell-route quote (basic honeypot test), token age and RugCheck risks.\",\"inputSchema\":{\"type\":\"object\",\"properties\":{\"mint\":{\"type\":\"string\",\"description\":\"Solana token mint address (base58)\"}},\"required\":[\"mint\"]}},{\"name\":\"sol_token_meta\",\"price\":\"$0.005\",\"group\":\"crypto\",\"description\":\"Solana SPL / Token-2022 mint metadata: decimals, total supply, mint & freeze authority, Token-2022 extensions, and name/symbol/uri from on-chain metadata (Token-2022 or Metaplex), with Jupiter token list fallback. Read-only.\",\"inputSchema\":{\"type\":\"object\",\"properties\":{\"mint\":{\"type\":\"string\",\"description\":\"SPL token mint address (base58)\"},\"include_market\":{\"type\":\"boolean\",\"description\":\"Add Jupiter token-list data (verified flag, tags, holder count, usd price); default false\"}},\"required\":[\"mint\"]}},{\"name\":\"sol_token_risk\",\"price\":\"$0.01\",\"group\":\"crypto\",\"description\":\"Heuristic risk screen for a Solana token mint: mint/freeze authority, Token-2022 extensions (permanent delegate, transfer hook/fee, default-frozen, pausable...), metadata mutability, holder concentration, DEX liquidity and pair age (DexScreener), Jupiter verification. Returns a 0-100 score with itemised flags. Read-only; not a security guarantee.\",\"inputSchema\":{\"type\":\"object\",\"properties\":{\"mint\":{\"type\":\"string\",\"description\":\"SPL / Token-2022 mint address (base58)\"},\"include_holders\":{\"type\":\"boolean\",\"description\":\"Fetch top holders (getTokenLargestAccounts) for concentration analysis; default true\"}},\"required\":[\"mint\"]}},{\"name\":\"token_price\",\"price\":\"$0.005\",\"group\":\"crypto\",\"description\":\"Use this when you need the current USD price of one or more crypto tokens. Live USD price, 24h % change, confidence and source timestamp for up to 10 tokens per call: tickers (BTC, ETH, SOL, PEPE), CoinGecko ids (bitcoin) or chain:address on eth, base, arbitrum, optimism, polygon, bsc and solana (base:0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913). Batch, cached ~60 s, one fast call. Unknown ids come back as found:false instead of failing the batch.\",\"inputSchema\":{\"type\":\"object\",\"properties\":{\"ids\":{\"type\":\"string\",\"description\":\"up to 10 comma-separated tickers, CoinGecko ids (or coingecko:<id>) or chain:address (eth|base|arbitrum|optimism|polygon|bsc|solana). Aliases: id, symbols, tokens\"}},\"required\":[\"ids\"]}},{\"name\":\"sol_account\",\"price\":\"$0.003\",\"group\":\"crypto\",\"description\":\"Inspect any Solana account: exists or not, SOL balance (lamports), owner program with a readable name, executable flag, data size, rent-exempt minimum and status, and a classification (wallet, token account, mint, program, program data, stake, vote, lookup table, other) with the parsed fields (token amount/mint/owner, mint supply/decimals/authorities, stake delegation...). Public Solana RPC, read-only.\",\"inputSchema\":{\"type\":\"object\",\"properties\":{\"address\":{\"type\":\"string\",\"description\":\"Solana account address (base58)\"}},\"required\":[\"address\"]}},{\"name\":\"sol_balance\",\"price\":\"$0.005\",\"group\":\"crypto\",\"description\":\"SOL and SPL token balances (classic SPL Token + Token-2022) for a Solana wallet address, via public Solana RPC. Read-only.\",\"inputSchema\":{\"type\":\"object\",\"properties\":{\"address\":{\"type\":\"string\",\"description\":\"Solana wallet address (base58, 32 bytes)\"},\"include_zero\":{\"type\":\"boolean\",\"description\":\"Include token accounts with a zero balance; default false\"},\"include_token2022\":{\"type\":\"boolean\",\"description\":\"Also query Token-2022 program accounts; default true\"},\"limit\":{\"type\":\"integer\",\"description\":\"Max token rows returned (largest UI balance first); default 100\",\"minimum\":1,\"maximum\":500}},\"required\":[\"address\"]}},{\"name\":\"sol_pda\",\"price\":\"$0.002\",\"group\":\"crypto\",\"description\":\"Derive Solana program-derived addresses offline: findProgramAddress (canonical bump search) for any program and typed seeds (utf8, base58 pubkey, hex, u8/u16/u32/u64 little- or big-endian), or the associated token account (ATA) of an owner + mint for SPL Token or Token-2022. Same algorithm as @solana/web3.js (sha256 + ed25519 off-curve check). Useful to locate token accounts, Anchor PDAs and vaults without an RPC.\",\"inputSchema\":{\"type\":\"object\",\"properties\":{\"preset\":{\"type\":\"string\",\"enum\":[\"custom\",\"ata\"],\"default\":\"custom\",\"description\":\"ata = associated token account of owner + mint; custom = programId + seeds\"},\"programId\":{\"type\":\"string\",\"maxLength\":64,\"description\":\"custom: program id (base58)\"},\"seeds\":{\"type\":\"array\",\"maxItems\":15,\"items\":{\"type\":\"string\",\"maxLength\":200},\"description\":\"custom: seeds as \\\"utf8:vault\\\", \\\"pubkey:<base58>\\\", \\\"hex:0a0b\\\", \\\"u8:1\\\", \\\"u64:42\\\", \\\"u32be:7\\\" (no prefix: a 32-byte base58 string is a pubkey, else utf8); JSON array if a seed contains commas\"},\"bump\":{\"type\":\"integer\",\"minimum\":0,\"maximum\":255,\"description\":\"custom: use this bump (createProgramAddress) instead of searching\"},\"owner\":{\"type\":\"string\",\"maxLength\":64,\"description\":\"ata: wallet that owns the token account\"},\"mint\":{\"type\":\"string\",\"maxLength\":64,\"description\":\"ata: token mint\"},\"tokenProgram\":{\"type\":\"string\",\"enum\":[\"token\",\"token2022\"],\"default\":\"token\",\"description\":\"ata: SPL Token (default) or Token-2022\"}}}},{\"name\":\"sol_signatures\",\"price\":\"$0.005\",\"group\":\"crypto\",\"description\":\"Recent transaction signatures that touched a Solana address (wallet, token account, mint or program), newest first, via getSignaturesForAddress: signature, slot, block time and age, success or error, memo and confirmation status, plus a summary (failed count, time span, rough tx/hour). Paginate with before=. Public Solana RPC, read-only.\",\"inputSchema\":{\"type\":\"object\",\"properties\":{\"address\":{\"type\":\"string\",\"description\":\"Solana address (base58)\"},\"limit\":{\"type\":\"integer\",\"default\":20,\"minimum\":1,\"maximum\":100,\"description\":\"Signatures to return (1-100)\"},\"before\":{\"type\":\"string\",\"maxLength\":100,\"description\":\"Start searching backwards from this signature (pagination)\"}},\"required\":[\"address\"]}},{\"name\":\"wallet_portfolio\",\"price\":\"$0.015\",\"group\":\"crypto\",\"description\":\"Use this when you need to know what a wallet holds and what it is worth. One address in, portfolio out: for a 0x address, native coin plus ~70 curated major tokens (stablecoins, WETH/WBTC/cbBTC, LSTs, top DeFi and meme tokens) across Ethereum, Base, Arbitrum, OP Mainnet, Polygon and BNB Chain in parallel; for a Solana address, SOL plus every SPL / Token-2022 balance. USD value per holding, per-chain totals and a grand total (DefiLlama prices), sorted by value. Spam-free on EVM; a failing chain is reported in sources, never fails the call.\",\"inputSchema\":{\"type\":\"object\",\"properties\":{\"address\":{\"type\":\"string\",\"description\":\"EVM address (0x...) or Solana wallet address (base58)\"},\"chains\":{\"type\":\"string\",\"description\":\"EVM only: comma-separated subset of eth,base,arbitrum,optimism,polygon,bsc (default all 6)\"},\"min_usd\":{\"type\":\"number\",\"description\":\"hide holdings worth less than this (default 0.01)\"}},\"required\":[\"address\"]}},{\"name\":\"wallet_risk_basic\",\"price\":\"$0.02\",\"group\":\"crypto\",\"description\":\"Basic heuristic risk screen for a Solana or EVM (Ethereum/Base/Arbitrum) wallet: activity & age, bundled OFAC-SDN / mixer list matches for the address and recent counterparties, and (EVM) live token-approval exposure (unlimited allowances, approvals to EOAs or flagged spenders). Read-only; heuristic only, not a compliance determination or security guarantee.\",\"inputSchema\":{\"type\":\"object\",\"properties\":{\"address\":{\"type\":\"string\",\"description\":\"Solana base58 address or 0x EVM address (family auto-detected)\"},\"chain\":{\"type\":\"string\",\"description\":\"EVM chain (ignored for Solana); default \\\"eth\\\"\",\"enum\":[\"eth\",\"base\",\"arbitrum\"]},\"deep\":{\"type\":\"boolean\",\"description\":\"More history: Solana pages up to 5000 signatures and inspects 15 recent txs; EVM finds first outgoing tx block (~25 extra RPC calls); default false\"},\"lookback_blocks\":{\"type\":\"integer\",\"description\":\"EVM log-scan window (capped per chain by what the keyless RPC allows)\",\"minimum\":100,\"maximum\":100000}},\"required\":[\"address\"]}}],\"howToCall\":\"call_tool {\\\"name\\\": \\\"<tool>\\\", \\\"arguments\\\": {...}}\"}"
+        }
+      ],
+      "structuredContent": {
+        "query": "solana token",
+        "group": "crypto",
+        "total": 10,
+        "tools": [
+          {
+            "name": "solana_token_safety",
+            "price": "$0.02",
+            "group": "crypto",
+            "description": "Use this when an agent or user is about to buy or swap into a Solana token and needs a rug / honeypot check first (for EVM tokens use evm_token_safety). Pre-buy safety check for any Solana token (SPL or Token-2022) with a 0-100 risk score, flags and plain-English verdict. Live on-chain + public data: mint and freeze authority, supply/decimals, Token-2022 extensions (transfer fee, permanent delegate, transfer hook, non-transferable, default-frozen, pausable), top-10 holder concentration (pools excluded), DEX liquidity/pools and LP lock (DexScreener, RugCheck), a real Jupiter sell-route quote (basic honeypot test), token age and RugCheck risks.",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "mint": {
+                  "type": "string",
+                  "description": "Solana token mint address (base58)"
+                }
+              },
+              "required": [
+                "mint"
+              ]
+            }
+          },
+          {
+            "name": "sol_token_meta",
+            "price": "$0.005",
+            "group": "crypto",
+            "description": "Solana SPL / Token-2022 mint metadata: decimals, total supply, mint & freeze authority, Token-2022 extensions, and name/symbol/uri from on-chain metadata (Token-2022 or Metaplex), with Jupiter token list fallback. Read-only.",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "mint": {
+                  "type": "string",
+                  "description": "SPL token mint address (base58)"
+                },
+                "include_market": {
+                  "type": "boolean",
+                  "description": "Add Jupiter token-list data (verified flag, tags, holder count, usd price); default false"
+                }
+              },
+              "required": [
+                "mint"
+              ]
+            }
+          },
+          {
+            "name": "sol_token_risk",
+            "price": "$0.01",
+            "group": "crypto",
+            "description": "Heuristic risk screen for a Solana token mint: mint/freeze authority, Token-2022 extensions (permanent delegate, transfer hook/fee, default-frozen, pausable...), metadata mutability, holder concentration, DEX liquidity and pair age (DexScreener), Jupiter verification. Returns a 0-100 score with itemised flags. Read-only; not a security guarantee.",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "mint": {
+                  "type": "string",
+                  "description": "SPL / Token-2022 mint address (base58)"
+                },
+                "include_holders": {
+                  "type": "boolean",
+                  "description": "Fetch top holders (getTokenLargestAccounts) for concentration analysis; default true"
+                }
+              },
+              "required": [
+                "mint"
+              ]
+            }
+          },
+          {
+            "name": "token_price",
+            "price": "$0.005",
+            "group": "crypto",
+            "description": "Use this when you need the current USD price of one or more crypto tokens. Live USD price, 24h % change, confidence and source timestamp for up to 10 tokens per call: tickers (BTC, ETH, SOL, PEPE), CoinGecko ids (bitcoin) or chain:address on eth, base, arbitrum, optimism, polygon, bsc and solana (base:0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913). Batch, cached ~60 s, one fast call. Unknown ids come back as found:false instead of failing the batch.",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "ids": {
+                  "type": "string",
+                  "description": "up to 10 comma-separated tickers, CoinGecko ids (or coingecko:<id>) or chain:address (eth|base|arbitrum|optimism|polygon|bsc|solana). Aliases: id, symbols, tokens"
+                }
+              },
+              "required": [
+                "ids"
+              ]
+            }
+          },
+          {
+            "name": "sol_account",
+            "price": "$0.003",
+            "group": "crypto",
+            "description": "Inspect any Solana account: exists or not, SOL balance (lamports), owner program with a readable name, executable flag, data size, rent-exempt minimum and status, and a classification (wallet, token account, mint, program, program data, stake, vote, lookup table, other) with the parsed fields (token amount/mint/owner, mint supply/decimals/authorities, stake delegation...). Public Solana RPC, read-only.",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "address": {
+                  "type": "string",
+                  "description": "Solana account address (base58)"
+                }
+              },
+              "required": [
+                "address"
+              ]
+            }
+          },
+          {
+            "name": "sol_balance",
+            "price": "$0.005",
+            "group": "crypto",
+            "description": "SOL and SPL token balances (classic SPL Token + Token-2022) for a Solana wallet address, via public Solana RPC. Read-only.",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "address": {
+                  "type": "string",
+                  "description": "Solana wallet address (base58, 32 bytes)"
+                },
+                "include_zero": {
+                  "type": "boolean",
+                  "description": "Include token accounts with a zero balance; default false"
+                },
+                "include_token2022": {
+                  "type": "boolean",
+                  "description": "Also query Token-2022 program accounts; default true"
+                },
+                "limit": {
+                  "type": "integer",
+                  "description": "Max token rows returned (largest UI balance first); default 100",
+                  "minimum": 1,
+                  "maximum": 500
+                }
+              },
+              "required": [
+                "address"
+              ]
+            }
+          },
+          {
+            "name": "sol_pda",
+            "price": "$0.002",
+            "group": "crypto",
+            "description": "Derive Solana program-derived addresses offline: findProgramAddress (canonical bump search) for any program and typed seeds (utf8, base58 pubkey, hex, u8/u16/u32/u64 little- or big-endian), or the associated token account (ATA) of an owner + mint for SPL Token or Token-2022. Same algorithm as @solana/web3.js (sha256 + ed25519 off-curve check). Useful to locate token accounts, Anchor PDAs and vaults without an RPC.",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "preset": {
+                  "type": "string",
+                  "enum": [
+                    "custom",
+                    "ata"
+                  ],
+                  "default": "custom",
+                  "description": "ata = associated token account of owner + mint; custom = programId + seeds"
+                },
+                "programId": {
+                  "type": "string",
+                  "maxLength": 64,
+                  "description": "custom: program id (base58)"
+                },
+                "seeds": {
+                  "type": "array",
+                  "maxItems": 15,
+                  "items": {
+                    "type": "string",
+                    "maxLength": 200
+                  },
+                  "description": "custom: seeds as \"utf8:vault\", \"pubkey:<base58>\", \"hex:0a0b\", \"u8:1\", \"u64:42\", \"u32be:7\" (no prefix: a 32-byte base58 string is a pubkey, else utf8); JSON array if a seed contains commas"
+                },
+                "bump": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 255,
+                  "description": "custom: use this bump (createProgramAddress) instead of searching"
+                },
+                "owner": {
+                  "type": "string",
+                  "maxLength": 64,
+                  "description": "ata: wallet that owns the token account"
+                },
+                "mint": {
+                  "type": "string",
+                  "maxLength": 64,
+                  "description": "ata: token mint"
+                },
+                "tokenProgram": {
+                  "type": "string",
+                  "enum": [
+                    "token",
+                    "token2022"
+                  ],
+                  "default": "token",
+                  "description": "ata: SPL Token (default) or Token-2022"
+                }
+              }
+            }
+          },
+          {
+            "name": "sol_signatures",
+            "price": "$0.005",
+            "group": "crypto",
+            "description": "Recent transaction signatures that touched a Solana address (wallet, token account, mint or program), newest first, via getSignaturesForAddress: signature, slot, block time and age, success or error, memo and confirmation status, plus a summary (failed count, time span, rough tx/hour). Paginate with before=. Public Solana RPC, read-only.",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "address": {
+                  "type": "string",
+                  "description": "Solana address (base58)"
+                },
+                "limit": {
+                  "type": "integer",
+                  "default": 20,
+                  "minimum": 1,
+                  "maximum": 100,
+                  "description": "Signatures to return (1-100)"
+                },
+                "before": {
+                  "type": "string",
+                  "maxLength": 100,
+                  "description": "Start searching backwards from this signature (pagination)"
+                }
+              },
+              "required": [
+                "address"
+              ]
+            }
+          },
+          {
+            "name": "wallet_portfolio",
+            "price": "$0.015",
+            "group": "crypto",
+            "description": "Use this when you need to know what a wallet holds and what it is worth. One address in, portfolio out: for a 0x address, native coin plus ~70 curated major tokens (stablecoins, WETH/WBTC/cbBTC, LSTs, top DeFi and meme tokens) across Ethereum, Base, Arbitrum, OP Mainnet, Polygon and BNB Chain in parallel; for a Solana address, SOL plus every SPL / Token-2022 balance. USD value per holding, per-chain totals and a grand total (DefiLlama prices), sorted by value. Spam-free on EVM; a failing chain is reported in sources, never fails the call.",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "address": {
+                  "type": "string",
+                  "description": "EVM address (0x...) or Solana wallet address (base58)"
+                },
+                "chains": {
+                  "type": "string",
+                  "description": "EVM only: comma-separated subset of eth,base,arbitrum,optimism,polygon,bsc (default all 6)"
+                },
+                "min_usd": {
+                  "type": "number",
+                  "description": "hide holdings worth less than this (default 0.01)"
+                }
+              },
+              "required": [
+                "address"
+              ]
+            }
+          },
+          {
+            "name": "wallet_risk_basic",
+            "price": "$0.02",
+            "group": "crypto",
+            "description": "Basic heuristic risk screen for a Solana or EVM (Ethereum/Base/Arbitrum) wallet: activity & age, bundled OFAC-SDN / mixer list matches for the address and recent counterparties, and (EVM) live token-approval exposure (unlimited allowances, approvals to EOAs or flagged spenders). Read-only; heuristic only, not a compliance determination or security guarantee.",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "address": {
+                  "type": "string",
+                  "description": "Solana base58 address or 0x EVM address (family auto-detected)"
+                },
+                "chain": {
+                  "type": "string",
+                  "description": "EVM chain (ignored for Solana); default \"eth\"",
+                  "enum": [
+                    "eth",
+                    "base",
+                    "arbitrum"
+                  ]
+                },
+                "deep": {
+                  "type": "boolean",
+                  "description": "More history: Solana pages up to 5000 signatures and inspects 15 recent txs; EVM finds first outgoing tx block (~25 extra RPC calls); default false"
+                },
+                "lookback_blocks": {
+                  "type": "integer",
+                  "description": "EVM log-scan window (capped per chain by what the keyless RPC allows)",
+                  "minimum": 100,
+                  "maximum": 100000
+                }
+              },
+              "required": [
+                "address"
+              ]
+            }
+          }
+        ],
+        "howToCall": "call_tool {\"name\": \"<tool>\", \"arguments\": {...}}"
+      }
+    }
+  },
+  "body_head": null
+}

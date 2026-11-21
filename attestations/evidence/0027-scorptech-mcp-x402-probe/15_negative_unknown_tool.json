@@ -1,0 +1,29 @@
+{
+  "request": {
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "call_tool",
+      "arguments": {
+        "name": "no_such_tool_argus_probe_xyz",
+        "arguments": {}
+      }
+    }
+  },
+  "http_status": 200,
+  "headers": {
+    "Content-Type": "application/json; charset=utf-8"
+  },
+  "elapsed_s": 0.740674,
+  "body_bytes": 103,
+  "json": {
+    "jsonrpc": "2.0",
+    "id": 1,
+    "error": {
+      "code": -32602,
+      "message": "Unknown tool: no_such_tool_argus_probe_xyz"
+    }
+  },
+  "body_head": null
+}

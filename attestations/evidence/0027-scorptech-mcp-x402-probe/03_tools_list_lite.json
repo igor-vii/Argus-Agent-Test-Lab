@@ -1,0 +1,92 @@
+{
+  "url": "https://scorptech.it.com/api/x402/mcp/lite",
+  "request": {
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/list",
+    "params": {}
+  },
+  "http_status": 200,
+  "headers": {
+    "Content-Type": "application/json; charset=utf-8"
+  },
+  "content_type": "application/json; charset=utf-8",
+  "elapsed_s": 0.697862,
+  "body_bytes": 1427,
+  "json": {
+    "jsonrpc": "2.0",
+    "id": 1,
+    "result": {
+      "tools": [
+        {
+          "name": "search_tools",
+          "title": "Search tools",
+          "description": "Free. Search the 1020 ScorpTech x402 tools by keyword (and optional group: crypto, sec, security, web, dev, audit, featured, other). Returns matching tool names, prices, descriptions and input schemas. Then run one with call_tool.",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "query": {
+                "type": "string",
+                "description": "Keywords, e.g. \"dns\", \"sec filings\", \"solana wallet\""
+              },
+              "group": {
+                "type": "string",
+                "enum": [
+                  "crypto",
+                  "sec",
+                  "security",
+                  "web",
+                  "dev",
+                  "audit",
+                  "featured",
+                  "other"
+                ]
+              },
+              "limit": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 50,
+                "default": 10
+              }
+            }
+          },
+          "annotations": {
+            "title": "Search tools",
+            "readOnlyHint": true,
+            "destructiveHint": false,
+            "idempotentHint": true,
+            "openWorldHint": true
+          }
+        },
+        {
+          "name": "call_tool",
+          "title": "Call a tool (x402 paid)",
+          "description": "Run any ScorpTech tool by name with its arguments. Costs that tool's price in USDC (x402, Base or Solana); unpaid calls return the x402 PaymentRequired object; retry with params._meta[\"x402/payment\"]. Charged only on success.",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Tool name from search_tools"
+              },
+              "arguments": {
+                "type": "object",
+                "description": "Arguments matching that tool's inputSchema"
+              }
+            },
+            "required": [
+              "name"
+            ]
+          },
+          "annotations": {
+            "title": "Call a tool",
+            "readOnlyHint": true,
+            "destructiveHint": false,
+            "idempotentHint": true,
+            "openWorldHint": true
+          }
+        }
+      ]
+    }
+  }
+}

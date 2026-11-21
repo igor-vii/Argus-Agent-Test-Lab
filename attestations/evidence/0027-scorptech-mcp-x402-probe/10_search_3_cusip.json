@@ -1,0 +1,106 @@
+{
+  "request": {
+    "jsonrpc": "2.0",
+    "id": 3,
+    "method": "tools/call",
+    "params": {
+      "name": "search_tools",
+      "arguments": {
+        "query": "cusip"
+      }
+    }
+  },
+  "http_status": 200,
+  "headers": {
+    "Content-Type": "application/json; charset=utf-8"
+  },
+  "elapsed_s": 0.704832,
+  "body_bytes": 4728,
+  "json": {
+    "jsonrpc": "2.0",
+    "id": 3,
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "{\"query\":\"cusip\",\"group\":null,\"total\":3,\"tools\":[{\"name\":\"cusip_validate\",\"price\":\"$0.001\",\"group\":\"other\",\"description\":\"CUSIP check digit. Nine characters from digits, letters, and * @ #. Spaces are ignored and hyphens are not. From the left, values are weighted 1, 2, 1, 2 and the digits of those products sum to the check digit. A CUSIP made only of letters and digits is also returned as a US ISIN. This does not look the issuer up.\",\"inputSchema\":{\"type\":\"object\",\"properties\":{\"value\":{\"type\":\"string\",\"maxLength\":40}},\"required\":[\"value\"]}},{\"name\":\"fund_holdings\",\"price\":\"$0.01\",\"group\":\"sec\",\"description\":\"Mutual fund / ETF portfolio from its latest public SEC Form N-PORT: top holdings by value (name, CUSIP, ISIN, LEI, shares, USD value, % of net assets, asset and issuer category, country, maturity/coupon for debt), asset-class / country / issuer / currency mix, top-10 concentration, net assets and monthly returns per share class. Look up by fund ticker (VOO, QQQ, BND), series id or class id.\",\"inputSchema\":{\"type\":\"object\",\"properties\":{\"fund\":{\"type\":\"string\",\"description\":\"Mutual fund or ETF ticker, SEC series id (S000002839) or class id (C000092055). Aliases: ticker, series\"},\"limit\":{\"type\":\"integer\",\"description\":\"Top holdings to return by absolute USD value (1-100, default 25)\"}},\"required\":[\"fund\"]}},{\"name\":\"sec_13f\",\"price\":\"$0.02\",\"group\":\"sec\",\"description\":\"Institutional holdings from a fund manager's latest SEC 13F-HR: the information table parsed from EDGAR, aggregated by CUSIP (issuer, class, shares, USD value, portfolio weight, put/call, voting authority), with filing period, totals, amendment and recent-filing links. Look up by manager name or CIK, or pin a specific accession.\",\"inputSchema\":{\"type\":\"object\",\"properties\":{\"fund\":{\"type\":\"string\",\"description\":\"Investment manager name or CIK (e.g. Berkshire Hathaway, 1067983). Aliases: cik, manager\"},\"limit\":{\"type\":\"integer\",\"description\":\"Top holdings to return by value (1-500, default 25)\"},\"accession\":{\"type\":\"string\",\"description\":\"Specific 13F-HR accession number (e.g. 0001193125-26-352200); default = latest original 13F-HR\"}},\"required\":[\"fund\"]}}],\"howToCall\":\"call_tool {\\\"name\\\": \\\"<tool>\\\", \\\"arguments\\\": {...}}\"}"
+        }
+      ],
+      "structuredContent": {
+        "query": "cusip",
+        "group": null,
+        "total": 3,
+        "tools": [
+          {
+            "name": "cusip_validate",
+            "price": "$0.001",
+            "group": "other",
+            "description": "CUSIP check digit. Nine characters from digits, letters, and * @ #. Spaces are ignored and hyphens are not. From the left, values are weighted 1, 2, 1, 2 and the digits of those products sum to the check digit. A CUSIP made only of letters and digits is also returned as a US ISIN. This does not look the issuer up.",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string",
+                  "maxLength": 40
+                }
+              },
+              "required": [
+                "value"
+              ]
+            }
+          },
+          {
+            "name": "fund_holdings",
+            "price": "$0.01",
+            "group": "sec",
+            "description": "Mutual fund / ETF portfolio from its latest public SEC Form N-PORT: top holdings by value (name, CUSIP, ISIN, LEI, shares, USD value, % of net assets, asset and issuer category, country, maturity/coupon for debt), asset-class / country / issuer / currency mix, top-10 concentration, net assets and monthly returns per share class. Look up by fund ticker (VOO, QQQ, BND), series id or class id.",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "fund": {
+                  "type": "string",
+                  "description": "Mutual fund or ETF ticker, SEC series id (S000002839) or class id (C000092055). Aliases: ticker, series"
+                },
+                "limit": {
+                  "type": "integer",
+                  "description": "Top holdings to return by absolute USD value (1-100, default 25)"
+                }
+              },
+              "required": [
+                "fund"
+              ]
+            }
+          },
+          {
+            "name": "sec_13f",
+            "price": "$0.02",
+            "group": "sec",
+            "description": "Institutional holdings from a fund manager's latest SEC 13F-HR: the information table parsed from EDGAR, aggregated by CUSIP (issuer, class, shares, USD value, portfolio weight, put/call, voting authority), with filing period, totals, amendment and recent-filing links. Look up by manager name or CIK, or pin a specific accession.",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "fund": {
+                  "type": "string",
+                  "description": "Investment manager name or CIK (e.g. Berkshire Hathaway, 1067983). Aliases: cik, manager"
+                },
+                "limit": {
+                  "type": "integer",
+                  "description": "Top holdings to return by value (1-500, default 25)"
+                },
+                "accession": {
+                  "type": "string",
+                  "description": "Specific 13F-HR accession number (e.g. 0001193125-26-352200); default = latest original 13F-HR"
+                }
+              },
+              "required": [
+                "fund"
+              ]
+            }
+          }
+        ],
+        "howToCall": "call_tool {\"name\": \"<tool>\", \"arguments\": {...}}"
+      }
+    }
+  },
+  "body_head": null
+}

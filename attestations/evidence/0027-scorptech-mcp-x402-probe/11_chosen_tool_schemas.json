@@ -1,0 +1,70 @@
+{
+  "ping": {
+    "title": "Ping",
+    "price_line": " $0.001 USDC per successful call (x402, Base or Solana). Same tool over HTTPS: GET https://scorptech.it.com/api/x402/v1/",
+    "description_head": "Paid x402 test route for agents and client developers: the cheapest way to prove your x402 client signs a Solana USDC payment and the facilitator settles it before you call anything expensive. Returns pong, server time, your optional echo string and the payment terms; the settlement transaction come",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "echo": {
+          "type": "string",
+          "maxLength": 200,
+          "description": "Optional text echoed back (max 200 bytes)"
+        }
+      }
+    }
+  },
+  "url_parse": {
+    "title": "Url Parse",
+    "price_line": " $0.001 USDC per successful call (x402, Base or Solana). Same tool over HTTPS: GET https://scorptech.it.com/api/x402/v1/",
+    "description_head": "Parse, normalize and clean URLs offline: scheme, credentials (redacted), host type, port, path segments, decoded query parameters and fragment; registrable domain / subdomain / public suffix; IDN to punycode and back; RFC 3986 normalization (case, default ports, dot segments, percent-encoding) plus ",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string",
+          "maxLength": 4000
+        },
+        "urls": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 4000
+          },
+          "maxItems": 50,
+          "description": "Several URLs (JSON array)"
+        },
+        "stripTracking": {
+          "type": "boolean",
+          "default": true,
+          "description": "Remove known tracking parameters from the normalized URL"
+        },
+        "sortQuery": {
+          "type": "boolean",
+          "default": false
+        },
+        "dropFragment": {
+          "type": "boolean",
+          "default": false
+        }
+      }
+    }
+  },
+  "cusip_validate": {
+    "title": "Cusip Validate",
+    "price_line": " $0.001 USDC per successful call (x402, Base or Solana). Same tool over HTTPS: GET https://scorptech.it.com/api/x402/v1/",
+    "description_head": "CUSIP check digit. Nine characters from digits, letters, and * @ #. Spaces are ignored and hyphens are not. From the left, values are weighted 1, 2, 1, 2 and the digits of those products sum to the check digit. A CUSIP made only of letters and digits is also returned as a US ISIN. This does not look",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "string",
+          "maxLength": 40
+        }
+      },
+      "required": [
+        "value"
+      ]
+    }
+  }
+}

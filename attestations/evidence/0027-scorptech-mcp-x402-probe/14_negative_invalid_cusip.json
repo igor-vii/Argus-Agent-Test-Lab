@@ -1,0 +1,172 @@
+{
+  "request": {
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "call_tool",
+      "arguments": {
+        "name": "cusip_validate",
+        "arguments": {
+          "cusip": "!!!not-a-cusip!!!"
+        }
+      }
+    }
+  },
+  "http_status": 200,
+  "headers": {
+    "Content-Type": "application/json; charset=utf-8"
+  },
+  "elapsed_s": 0.685037,
+  "body_bytes": 5193,
+  "json": {
+    "jsonrpc": "2.0",
+    "id": 1,
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "{\"x402Version\":2,\"error\":\"Payment required\",\"resource\":{\"url\":\"https://scorptech.it.com/api/x402/mcp/lite\",\"description\":\"CUSIP check digit. Nine characters from digits, letters, and * @ #. Spaces are ignored and hyphens are not. From the left, values are weighted 1, 2, 1, 2 and the digits of those products sum to the check digit. A CUSIP made only of letters and digits is also returned as a US ISIN. This does not look the issuer up.\",\"mimeType\":\"application/json\",\"serviceName\":\"ScorpTech Recon\",\"tags\":[\"identifier\",\"cusip\",\"securities\",\"checksum\"]},\"accepts\":[{\"scheme\":\"exact\",\"network\":\"eip155:8453\",\"amount\":\"1000\",\"asset\":\"0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913\",\"payTo\":\"0xBC72c556166A3d3317c673DDB21Fb088C10088A0\",\"maxTimeoutSeconds\":300,\"extra\":{\"name\":\"USD Coin\",\"version\":\"2\"}},{\"scheme\":\"exact\",\"network\":\"solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp\",\"amount\":\"1000\",\"asset\":\"EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v\",\"payTo\":\"CRygpSHMuZAMHZSCm2Z2H3DDYMZBKUSvcsme1hsgebbD\",\"maxTimeoutSeconds\":300,\"extra\":{\"feePayer\":\"CjNFTjvBhbJJd2B5ePPMHRLx1ELZpa8dwQgGL727eKww\"}}],\"extensions\":{\"bazaar\":{\"info\":{\"input\":{\"type\":\"mcp\",\"toolName\":\"cusip_validate\",\"description\":\"CUSIP check digit. Nine characters from digits, letters, and * @ #. Spaces are ignored and hyphens are not. From the left, values are weighted 1, 2, 1, 2 and the digits of those products sum to the check digit. A CUSIP made only of letters and digits is also returned as a US ISIN. This does not look the issuer up.\",\"transport\":\"streamable-http\",\"inputSchema\":{\"type\":\"object\",\"properties\":{\"value\":{\"type\":\"string\",\"maxLength\":40}},\"required\":[\"value\"]},\"example\":{\"value\":\"DUS0421C5\"}},\"output\":{\"type\":\"json\",\"example\":{\"valid\":true,\"compact\":\"DUS0421C5\",\"kind\":\"CUSIP\",\"reason\":null,\"check\":\"5\",\"issuer\":\"DUS042\",\"issue\":\"1C\",\"isin\":\"USDUS0421C55\"}}},\"schema\":{\"$schema\":\"https://json-schema.org/draft/2020-12/schema\",\"type\":\"object\",\"properties\":{\"input\":{\"type\":\"object\",\"properties\":{\"type\":{\"type\":\"string\",\"const\":\"mcp\"},\"toolName\":{\"type\":\"string\"},\"description\":{\"type\":\"string\"},\"transport\":{\"type\":\"string\",\"enum\":[\"streamable-http\",\"sse\"]},\"inputSchema\":{\"type\":\"object\"},\"example\":{\"type\":\"object\"}},\"required\":[\"type\",\"toolName\",\"inputSchema\"],\"additionalProperties\":false},\"output\":{\"type\":\"object\",\"properties\":{\"type\":{\"type\":\"string\"},\"example\":{}},\"required\":[\"type\"]}},\"required\":[\"input\"]}}}}"
+        }
+      ],
+      "structuredContent": {
+        "x402Version": 2,
+        "error": "Payment required",
+        "resource": {
+          "url": "https://scorptech.it.com/api/x402/mcp/lite",
+          "description": "CUSIP check digit. Nine characters from digits, letters, and * @ #. Spaces are ignored and hyphens are not. From the left, values are weighted 1, 2, 1, 2 and the digits of those products sum to the check digit. A CUSIP made only of letters and digits is also returned as a US ISIN. This does not look the issuer up.",
+          "mimeType": "application/json",
+          "serviceName": "ScorpTech Recon",
+          "tags": [
+            "identifier",
+            "cusip",
+            "securities",
+            "checksum"
+          ]
+        },
+        "accepts": [
+          {
+            "scheme": "exact",
+            "network": "eip155:8453",
+            "amount": "1000",
+            "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+            "payTo": "0xBC72c556166A3d3317c673DDB21Fb088C10088A0",
+            "maxTimeoutSeconds": 300,
+            "extra": {
+              "name": "USD Coin",
+              "version": "2"
+            }
+          },
+          {
+            "scheme": "exact",
+            "network": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
+            "amount": "1000",
+            "asset": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+            "payTo": "CRygpSHMuZAMHZSCm2Z2H3DDYMZBKUSvcsme1hsgebbD",
+            "maxTimeoutSeconds": 300,
+            "extra": {
+              "feePayer": "CjNFTjvBhbJJd2B5ePPMHRLx1ELZpa8dwQgGL727eKww"
+            }
+          }
+        ],
+        "extensions": {
+          "bazaar": {
+            "info": {
+              "input": {
+                "type": "mcp",
+                "toolName": "cusip_validate",
+                "description": "CUSIP check digit. Nine characters from digits, letters, and * @ #. Spaces are ignored and hyphens are not. From the left, values are weighted 1, 2, 1, 2 and the digits of those products sum to the check digit. A CUSIP made only of letters and digits is also returned as a US ISIN. This does not look the issuer up.",
+                "transport": "streamable-http",
+                "inputSchema": {
+                  "type": "object",
+                  "properties": {
+                    "value": {
+                      "type": "string",
+                      "maxLength": 40
+                    }
+                  },
+                  "required": [
+                    "value"
+                  ]
+                },
+                "example": {
+                  "value": "DUS0421C5"
+                }
+              },
+              "output": {
+                "type": "json",
+                "example": {
+                  "valid": true,
+                  "compact": "DUS0421C5",
+                  "kind": "CUSIP",
+                  "reason": null,
+                  "check": "5",
+                  "issuer": "DUS042",
+                  "issue": "1C",
+                  "isin": "USDUS0421C55"
+                }
+              }
+            },
+            "schema": {
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "type": "object",
+              "properties": {
+                "input": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "mcp"
+                    },
+                    "toolName": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "transport": {
+                      "type": "string",
+                      "enum": [
+                        "streamable-http",
+                        "sse"
+                      ]
+                    },
+                    "inputSchema": {
+                      "type": "object"
+                    },
+                    "example": {
+                      "type": "object"
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "toolName",
+                    "inputSchema"
+                  ],
+                  "additionalProperties": false
+                },
+                "output": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string"
+                    },
+                    "example": {}
+                  },
+                  "required": [
+                    "type"
+                  ]
+                }
+              },
+              "required": [
+                "input"
+              ]
+            }
+          }
+        }
+      },
+      "isError": true
+    }
+  },
+  "body_head": null
+}

@@ -1,0 +1,426 @@
+{
+  "request": {
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "search_tools",
+      "arguments": {
+        "query": "ping"
+      }
+    }
+  },
+  "http_status": 200,
+  "headers": {
+    "Content-Type": "application/json; charset=utf-8"
+  },
+  "elapsed_s": 0.84875,
+  "body_bytes": 20112,
+  "json": {
+    "jsonrpc": "2.0",
+    "id": 1,
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "{\"query\":\"ping\",\"group\":null,\"total\":23,\"tools\":[{\"name\":\"ping\",\"price\":\"$0.001\",\"group\":\"crypto\",\"description\":\"Paid x402 test route for agents and client developers: the cheapest way to prove your x402 client signs a Solana USDC payment and the facilitator settles it before you call anything expensive. Returns pong, server time, your optional echo string and the payment terms; the settlement transaction comes back in the PAYMENT-RESPONSE header.\",\"inputSchema\":{\"type\":\"object\",\"properties\":{\"echo\":{\"type\":\"string\",\"maxLength\":200,\"description\":\"Optional text echoed back (max 200 bytes)\"}}}},{\"name\":\"barcode_generate\",\"price\":\"$0.002\",\"group\":\"dev\",\"description\":\"Generate a 1D barcode as SVG (plus base64 data URI and the raw module pattern): Code 128 (any ASCII, automatic A / B / C subset switching for the shortest symbol), GS1-128 shipping / logistics labels from \\\"(01)…(17)…(10)…\\\" application identifiers (FNC1 separators, SSCC / GTIN check digits verified), EAN-13, EAN-8, UPC-A and ITF-14 (check digit computed when omitted, verified when given) and Code 39 (optional mod-43 check). Options: module width, bar height, quiet zone, human-readable text, colours. For product labels, shipping cartons, inventory and tickets.\",\"inputSchema\":{\"type\":\"object\",\"properties\":{\"data\":{\"type\":\"string\",\"maxLength\":80,\"description\":\"Content to encode (digits for EAN / UPC / ITF)\"},\"type\":{\"type\":\"string\",\"enum\":[\"code128\",\"gs1-128\",\"ean13\",\"ean8\",\"upca\",\"code39\",\"itf14\"],\"default\":\"code128\"},\"scale\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":10,\"default\":2,\"description\":\"Pixels per module\"},\"height\":{\"type\":\"integer\",\"minimum\":10,\"maximum\":400,\"default\":80,\"description\":\"Bar height (px)\"},\"quiet\":{\"type\":\"integer\",\"minimum\":0,\"maximum\":40,\"default\":10,\"description\":\"Quiet zone each side (modules)\"},\"text\":{\"type\":\"boolean\",\"default\":true,\"description\":\"Print the human-readable text under the bars\"},\"checksum\":{\"type\":\"boolean\",\"default\":false,\"description\":\"Code 39: append the mod-43 check character\"},\"fg\":{\"type\":\"string\",\"maxLength\":7,\"default\":\"#000000\"},\"bg\":{\"type\":\"string\",\"maxLength\":7,\"default\":\"#ffffff\"}},\"required\":[\"data\"]}},{\"name\":\"biunitary_sigma\",\"price\":\"$0.001\",\"group\":\"other\",\"description\":\"The sum of the bi-unitary divisors of n. For a prime power p^e the exponents run from 0 through e, skipping the middle one when e is even. 6 gives 12, 16 gives 27, 36 gives 50, and 48 gives 108. n runs from 1 to 1000000.\",\"inputSchema\":{\"type\":\"object\",\"properties\":{\"n\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":1000000}},\"required\":[\"n\"]}},{\"name\":\"contact_extract\",\"price\":\"$0.02\",\"group\":\"security\",\"description\":\"Extract public business contact details from a website: email addresses (mailto, visible text incl. [at]/[dot] obfuscation, Cloudflare-protected, JSON-LD) tagged role/personal and same-domain, phone numbers (tel: links, JSON-LD, text), social profiles (LinkedIn, X/Twitter, Facebook, Instagram, YouTube, GitHub, TikTok, Mastodon, ...; share links ignored), JSON-LD organization name/address and contact-form URLs. Follows up to 3 same-site contact/impressum/about pages. SSRF-safe fetching; respect GDPR/CAN-SPAM when using results.\",\"inputSchema\":{\"type\":\"object\",\"properties\":{\"url\":{\"type\":\"string\",\"description\":\"Website URL or bare domain (http/https; ports 80, 443, 8080, 8443)\"},\"crawl\":{\"type\":\"boolean\",\"description\":\"Also fetch likely contact/impressum/about pages on the same host (default true)\"},\"max_pages\":{\"type\":\"integer\",\"description\":\"Total pages to fetch including the first, 1-4 (default 3)\"}},\"required\":[\"url\"]}},{\"name\":\"container_check\",\"price\":\"$0.001\",\"group\":\"other\",\"description\":\"ISO 6346 container check digit. Four letters (the fourth is U, J, Z or R), six serial digits and a check digit. Letter values skip every multiple of 11, then each value is multiplied by 2 to the power of its position. The total mod 11 mod 10 is the check digit. Spaces are ignored. This does not look the owner up at BIC.\",\"inputSchema\":{\"type\":\"object\",\"properties\":{\"value\":{\"type\":\"string\",\"maxLength\":20}},\"required\":[\"value\"]}},{\"name\":\"csv_to_sql\",\"price\":\"$0.003\",\"group\":\"dev\",\"description\":\"Turn CSV/TSV into SQL: CREATE TABLE with inferred column types (integer/bigint, numeric, boolean, date, timestamp, varchar/text, NOT NULL where never empty, optional primary key) and batched INSERT statements with correct quoting and escaping for PostgreSQL, MySQL, SQLite or SQL Server. Up to 20,000 rows. POST JSON body {csv, table, dialect}.\",\"inputSchema\":{\"type\":\"object\",\"properties\":{\"csv\":{\"type\":\"string\",\"maxLength\":250000},\"table\":{\"type\":\"string\",\"maxLength\":64,\"pattern\":\"^[A-Za-z_][A-Za-z0-9_]*$\",\"default\":\"data\"},\"dialect\":{\"type\":\"string\",\"enum\":[\"postgres\",\"mysql\",\"sqlite\",\"mssql\"],\"default\":\"postgres\"},\"delimiter\":{\"type\":\"string\",\"enum\":[\",\",\";\",\"tab\",\"|\"]},\"header\":{\"type\":\"boolean\",\"default\":true},\"primaryKey\":{\"type\":\"string\",\"maxLength\":64,\"description\":\"Column to declare as PRIMARY KEY\"},\"batchSize\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":1000,\"default\":100,\"description\":\"Rows per INSERT statement\"},\"createTable\":{\"type\":\"boolean\",\"default\":true}},\"required\":[\"csv\"]}},{\"name\":\"currency_format\",\"price\":\"$0.001\",\"group\":\"sec\",\"description\":\"Money formatting and math with CLDR data (ICU 78 / CLDR 48, matches Intl.NumberFormat): format an amount for any of 60 locales and 154 active ISO 4217 currencies (symbol, narrow symbol or code; standard or accounting negatives; Indian lakh grouping, Swiss apostrophes, RTL marks), round with 9 modes or cash rounding (CHF 0.05), parse a formatted string such as \\\"1.234,56 €\\\" or \\\"(US$1,234.50)\\\" back to an exact amount and currency, split an amount by ratios without losing a cent (largest remainder) and look up currency or country info (digits, symbols, cash rounding, countries). Exact decimal arithmetic, no floats.\",\"inputSchema\":{\"type\":\"object\",\"properties\":{\"mode\":{\"type\":\"string\",\"enum\":[\"format\",\"parse\",\"allocate\",\"info\"],\"default\":\"format\"},\"amount\":{\"type\":\"string\",\"maxLength\":60,\"description\":\"Decimal amount, e.g. 1234.5 or -0.005 (format / allocate)\"},\"currency\":{\"type\":\"string\",\"maxLength\":3,\"description\":\"ISO 4217 code (default: the locale's country currency)\"},\"country\":{\"type\":\"string\",\"maxLength\":2,\"description\":\"ISO 3166 country: use its currency (info: list it)\"},\"locale\":{\"type\":\"string\",\"maxLength\":35,\"default\":\"en-US\",\"description\":\"en-US, de-DE, fr-CH, ja-JP, hi-IN ... or just a language\"},\"display\":{\"type\":\"string\",\"enum\":[\"symbol\",\"narrow\",\"code\",\"none\"],\"default\":\"symbol\"},\"sign\":{\"type\":\"string\",\"enum\":[\"standard\",\"accounting\"],\"default\":\"standard\"},\"digits\":{\"type\":\"integer\",\"minimum\":0,\"maximum\":8,\"description\":\"Override the currency's fraction digits\"},\"rounding\":{\"type\":\"string\",\"enum\":[\"halfExpand\",\"halfEven\",\"halfTrunc\",\"halfCeil\",\"halfFloor\",\"ceil\",\"floor\",\"expand\",\"trunc\"],\"default\":\"halfExpand\"},\"cash\":{\"type\":\"boolean\",\"default\":false,\"description\":\"Use cash rounding (CHF/CAD 0.05, DKK 0.50)\"},\"text\":{\"type\":\"string\",\"maxLength\":200,\"description\":\"parse: the formatted money string\"},\"ratios\":{\"type\":\"array\",\"maxItems\":1000,\"description\":\"allocate: weights, e.g. 1,1,1 or 50,30,20\"}}}},{\"name\":\"eui64\",\"price\":\"$0.001\",\"group\":\"security\",\"description\":\"Modified EUI-64 from RFC 4291. A 48-bit MAC is expanded by flipping the U/L bit and inserting FF-FE in the middle. A 64-bit value with FF-FE in the middle is folded back to the MAC. Any other 64-bit value is returned as-is with mac null. The bits, local and multicast fields describe the 64-bit result. Flipping the bit makes a universal MAC look local in the interface id.\",\"inputSchema\":{\"type\":\"object\",\"properties\":{\"value\":{\"type\":\"string\",\"maxLength\":40}},\"required\":[\"value\"]}},{\"name\":\"feed_discover\",\"price\":\"$0.005\",\"group\":\"sec\",\"description\":\"Find a website's RSS/Atom/JSON feeds and read the latest items: parses <link rel=\\\"alternate\\\"> tags, likely feed links and (if none) probes common feed paths, then parses the feed (RSS 2.0, RSS 1.0/RDF, Atom 1.0, JSON Feed) into clean JSON items with title, link, published date (ISO), author, summary, categories and enclosure. Also accepts a feed URL directly. SSRF-safe fetches.\",\"inputSchema\":{\"type\":\"object\",\"properties\":{\"url\":{\"type\":\"string\",\"description\":\"Site URL or feed URL (http/https, public hosts only)\"},\"items\":{\"type\":\"integer\",\"description\":\"Latest items to return 0-50 (default 10; 0 = discovery only)\"},\"probe\":{\"type\":\"boolean\",\"description\":\"Probe common feed paths when the page declares none (default true)\"}},\"required\":[\"url\"]}},{\"name\":\"github_trending\",\"price\":\"$0.01\",\"group\":\"dev\",\"description\":\"Trending new GitHub repositories: repos created in the last day, week or month ranked by stars (GitHub REST search API), filterable by language, topic and minimum stars. Returns full name, URL, description, language, topics, stars, forks, open issues, licence, created/pushed dates, owner type and a stars-per-day velocity. Cached 30 minutes. Uses the public API (not HTML scraping).\",\"inputSchema\":{\"type\":\"object\",\"properties\":{\"since\":{\"type\":\"string\",\"description\":\"daily, weekly (default) or monthly window for repo creation date\"},\"language\":{\"type\":\"string\",\"description\":\"GitHub language name, e.g. python, typescript, rust\"},\"topic\":{\"type\":\"string\",\"description\":\"GitHub topic, e.g. llm, mcp, agents\"},\"min_stars\":{\"type\":\"integer\",\"description\":\"Minimum stars (default 0)\"},\"limit\":{\"type\":\"integer\",\"description\":\"Repos to return 1-30 (default 10)\"}}}}],\"howToCall\":\"call_tool {\\\"name\\\": \\\"<tool>\\\", \\\"arguments\\\": {...}}\"}"
+        }
+      ],
+      "structuredContent": {
+        "query": "ping",
+        "group": null,
+        "total": 23,
+        "tools": [
+          {
+            "name": "ping",
+            "price": "$0.001",
+            "group": "crypto",
+            "description": "Paid x402 test route for agents and client developers: the cheapest way to prove your x402 client signs a Solana USDC payment and the facilitator settles it before you call anything expensive. Returns pong, server time, your optional echo string and the payment terms; the settlement transaction comes back in the PAYMENT-RESPONSE header.",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "echo": {
+                  "type": "string",
+                  "maxLength": 200,
+                  "description": "Optional text echoed back (max 200 bytes)"
+                }
+              }
+            }
+          },
+          {
+            "name": "barcode_generate",
+            "price": "$0.002",
+            "group": "dev",
+            "description": "Generate a 1D barcode as SVG (plus base64 data URI and the raw module pattern): Code 128 (any ASCII, automatic A / B / C subset switching for the shortest symbol), GS1-128 shipping / logistics labels from \"(01)…(17)…(10)…\" application identifiers (FNC1 separators, SSCC / GTIN check digits verified), EAN-13, EAN-8, UPC-A and ITF-14 (check digit computed when omitted, verified when given) and Code 39 (optional mod-43 check). Options: module width, bar height, quiet zone, human-readable text, colours. For product labels, shipping cartons, inventory and tickets.",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "string",
+                  "maxLength": 80,
+                  "description": "Content to encode (digits for EAN / UPC / ITF)"
+                },
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "code128",
+                    "gs1-128",
+                    "ean13",
+                    "ean8",
+                    "upca",
+                    "code39",
+                    "itf14"
+                  ],
+                  "default": "code128"
+                },
+                "scale": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 10,
+                  "default": 2,
+                  "description": "Pixels per module"
+                },
+                "height": {
+                  "type": "integer",
+                  "minimum": 10,
+                  "maximum": 400,
+                  "default": 80,
+                  "description": "Bar height (px)"
+                },
+                "quiet": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 40,
+                  "default": 10,
+                  "description": "Quiet zone each side (modules)"
+                },
+                "text": {
+                  "type": "boolean",
+                  "default": true,
+                  "description": "Print the human-readable text under the bars"
+                },
+                "checksum": {
+                  "type": "boolean",
+                  "default": false,
+                  "description": "Code 39: append the mod-43 check character"
+                },
+                "fg": {
+                  "type": "string",
+                  "maxLength": 7,
+                  "default": "#000000"
+                },
+                "bg": {
+                  "type": "string",
+                  "maxLength": 7,
+                  "default": "#ffffff"
+                }
+              },
+              "required": [
+                "data"
+              ]
+            }
+          },
+          {
+            "name": "biunitary_sigma",
+            "price": "$0.001",
+            "group": "other",
+            "description": "The sum of the bi-unitary divisors of n. For a prime power p^e the exponents run from 0 through e, skipping the middle one when e is even. 6 gives 12, 16 gives 27, 36 gives 50, and 48 gives 108. n runs from 1 to 1000000.",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "n": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 1000000
+                }
+              },
+              "required": [
+                "n"
+              ]
+            }
+          },
+          {
+            "name": "contact_extract",
+            "price": "$0.02",
+            "group": "security",
+            "description": "Extract public business contact details from a website: email addresses (mailto, visible text incl. [at]/[dot] obfuscation, Cloudflare-protected, JSON-LD) tagged role/personal and same-domain, phone numbers (tel: links, JSON-LD, text), social profiles (LinkedIn, X/Twitter, Facebook, Instagram, YouTube, GitHub, TikTok, Mastodon, ...; share links ignored), JSON-LD organization name/address and contact-form URLs. Follows up to 3 same-site contact/impressum/about pages. SSRF-safe fetching; respect GDPR/CAN-SPAM when using results.",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "url": {
+                  "type": "string",
+                  "description": "Website URL or bare domain (http/https; ports 80, 443, 8080, 8443)"
+                },
+                "crawl": {
+                  "type": "boolean",
+                  "description": "Also fetch likely contact/impressum/about pages on the same host (default true)"
+                },
+                "max_pages": {
+                  "type": "integer",
+                  "description": "Total pages to fetch including the first, 1-4 (default 3)"
+                }
+              },
+              "required": [
+                "url"
+              ]
+            }
+          },
+          {
+            "name": "container_check",
+            "price": "$0.001",
+            "group": "other",
+            "description": "ISO 6346 container check digit. Four letters (the fourth is U, J, Z or R), six serial digits and a check digit. Letter values skip every multiple of 11, then each value is multiplied by 2 to the power of its position. The total mod 11 mod 10 is the check digit. Spaces are ignored. This does not look the owner up at BIC.",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string",
+                  "maxLength": 20
+                }
+              },
+              "required": [
+                "value"
+              ]
+            }
+          },
+          {
+            "name": "csv_to_sql",
+            "price": "$0.003",
+            "group": "dev",
+            "description": "Turn CSV/TSV into SQL: CREATE TABLE with inferred column types (integer/bigint, numeric, boolean, date, timestamp, varchar/text, NOT NULL where never empty, optional primary key) and batched INSERT statements with correct quoting and escaping for PostgreSQL, MySQL, SQLite or SQL Server. Up to 20,000 rows. POST JSON body {csv, table, dialect}.",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "csv": {
+                  "type": "string",
+                  "maxLength": 250000
+                },
+                "table": {
+                  "type": "string",
+                  "maxLength": 64,
+                  "pattern": "^[A-Za-z_][A-Za-z0-9_]*$",
+                  "default": "data"
+                },
+                "dialect": {
+                  "type": "string",
+                  "enum": [
+                    "postgres",
+                    "mysql",
+                    "sqlite",
+                    "mssql"
+                  ],
+                  "default": "postgres"
+                },
+                "delimiter": {
+                  "type": "string",
+                  "enum": [
+                    ",",
+                    ";",
+                    "tab",
+                    "|"
+                  ]
+                },
+                "header": {
+                  "type": "boolean",
+                  "default": true
+                },
+                "primaryKey": {
+                  "type": "string",
+                  "maxLength": 64,
+                  "description": "Column to declare as PRIMARY KEY"
+                },
+                "batchSize": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 1000,
+                  "default": 100,
+                  "description": "Rows per INSERT statement"
+                },
+                "createTable": {
+                  "type": "boolean",
+                  "default": true
+                }
+              },
+              "required": [
+                "csv"
+              ]
+            }
+          },
+          {
+            "name": "currency_format",
+            "price": "$0.001",
+            "group": "sec",
+            "description": "Money formatting and math with CLDR data (ICU 78 / CLDR 48, matches Intl.NumberFormat): format an amount for any of 60 locales and 154 active ISO 4217 currencies (symbol, narrow symbol or code; standard or accounting negatives; Indian lakh grouping, Swiss apostrophes, RTL marks), round with 9 modes or cash rounding (CHF 0.05), parse a formatted string such as \"1.234,56 €\" or \"(US$1,234.50)\" back to an exact amount and currency, split an amount by ratios without losing a cent (largest remainder) and look up currency or country info (digits, symbols, cash rounding, countries). Exact decimal arithmetic, no floats.",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "mode": {
+                  "type": "string",
+                  "enum": [
+                    "format",
+                    "parse",
+                    "allocate",
+                    "info"
+                  ],
+                  "default": "format"
+                },
+                "amount": {
+                  "type": "string",
+                  "maxLength": 60,
+                  "description": "Decimal amount, e.g. 1234.5 or -0.005 (format / allocate)"
+                },
+                "currency": {
+                  "type": "string",
+                  "maxLength": 3,
+                  "description": "ISO 4217 code (default: the locale's country currency)"
+                },
+                "country": {
+                  "type": "string",
+                  "maxLength": 2,
+                  "description": "ISO 3166 country: use its currency (info: list it)"
+                },
+                "locale": {
+                  "type": "string",
+                  "maxLength": 35,
+                  "default": "en-US",
+                  "description": "en-US, de-DE, fr-CH, ja-JP, hi-IN ... or just a language"
+                },
+                "display": {
+                  "type": "string",
+                  "enum": [
+                    "symbol",
+                    "narrow",
+                    "code",
+                    "none"
+                  ],
+                  "default": "symbol"
+                },
+                "sign": {
+                  "type": "string",
+                  "enum": [
+                    "standard",
+                    "accounting"
+                  ],
+                  "default": "standard"
+                },
+                "digits": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 8,
+                  "description": "Override the currency's fraction digits"
+                },
+                "rounding": {
+                  "type": "string",
+                  "enum": [
+                    "halfExpand",
+                    "halfEven",
+                    "halfTrunc",
+                    "halfCeil",
+                    "halfFloor",
+                    "ceil",
+                    "floor",
+                    "expand",
+                    "trunc"
+                  ],
+                  "default": "halfExpand"
+                },
+                "cash": {
+                  "type": "boolean",
+                  "default": false,
+                  "description": "Use cash rounding (CHF/CAD 0.05, DKK 0.50)"
+                },
+                "text": {
+                  "type": "string",
+                  "maxLength": 200,
+                  "description": "parse: the formatted money string"
+                },
+                "ratios": {
+                  "type": "array",
+                  "maxItems": 1000,
+                  "description": "allocate: weights, e.g. 1,1,1 or 50,30,20"
+                }
+              }
+            }
+          },
+          {
+            "name": "eui64",
+            "price": "$0.001",
+            "group": "security",
+            "description": "Modified EUI-64 from RFC 4291. A 48-bit MAC is expanded by flipping the U/L bit and inserting FF-FE in the middle. A 64-bit value with FF-FE in the middle is folded back to the MAC. Any other 64-bit value is returned as-is with mac null. The bits, local and multicast fields describe the 64-bit result. Flipping the bit makes a universal MAC look local in the interface id.",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string",
+                  "maxLength": 40
+                }
+              },
+              "required": [
+                "value"
+              ]
+            }
+          },
+          {
+            "name": "feed_discover",
+            "price": "$0.005",
+            "group": "sec",
+            "description": "Find a website's RSS/Atom/JSON feeds and read the latest items: parses <link rel=\"alternate\"> tags, likely feed links and (if none) probes common feed paths, then parses the feed (RSS 2.0, RSS 1.0/RDF, Atom 1.0, JSON Feed) into clean JSON items with title, link, published date (ISO), author, summary, categories and enclosure. Also accepts a feed URL directly. SSRF-safe fetches.",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "url": {
+                  "type": "string",
+                  "description": "Site URL or feed URL (http/https, public hosts only)"
+                },
+                "items": {
+                  "type": "integer",
+                  "description": "Latest items to return 0-50 (default 10; 0 = discovery only)"
+                },
+                "probe": {
+                  "type": "boolean",
+                  "description": "Probe common feed paths when the page declares none (default true)"
+                }
+              },
+              "required": [
+                "url"
+              ]
+            }
+          },
+          {
+            "name": "github_trending",
+            "price": "$0.01",
+            "group": "dev",
+            "description": "Trending new GitHub repositories: repos created in the last day, week or month ranked by stars (GitHub REST search API), filterable by language, topic and minimum stars. Returns full name, URL, description, language, topics, stars, forks, open issues, licence, created/pushed dates, owner type and a stars-per-day velocity. Cached 30 minutes. Uses the public API (not HTML scraping).",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "since": {
+                  "type": "string",
+                  "description": "daily, weekly (default) or monthly window for repo creation date"
+                },
+                "language": {
+                  "type": "string",
+                  "description": "GitHub language name, e.g. python, typescript, rust"
+                },
+                "topic": {
+                  "type": "string",
+                  "description": "GitHub topic, e.g. llm, mcp, agents"
+                },
+                "min_stars": {
+                  "type": "integer",
+                  "description": "Minimum stars (default 0)"
+                },
+                "limit": {
+                  "type": "integer",
+                  "description": "Repos to return 1-30 (default 10)"
+                }
+              }
+            }
+          }
+        ],
+        "howToCall": "call_tool {\"name\": \"<tool>\", \"arguments\": {...}}"
+      }
+    }
+  },
+  "body_head": null
+}
