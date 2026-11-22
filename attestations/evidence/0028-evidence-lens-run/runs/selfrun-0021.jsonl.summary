@@ -1,0 +1,20 @@
+{
+  "leg": "A",
+  "title": "self-run: frozen classification vs sealed attempt rows of #0021 (argus-seal-0021)",
+  "sealed_rows": 13,
+  "sealed_pass_rows": 12,
+  "derived_classes": {
+    "delivery-retry": 4,
+    "separate-purchase": 8
+  },
+  "divergences": 0,
+  "procedure": "draft 0028 self_run.procedure",
+  "verdict": "reproduced — no divergence",
+  "input_pins": [
+    {
+      "file": "attestations/evidence/0021-nano-cross-process-battery/verdicts.jsonl",
+      "ok": true,
+      "sha256": "fba7db45aea476a37e2c36321eaa410c30d3a74353603763ccbca4863067cd76"
+    }
+  ]
+}

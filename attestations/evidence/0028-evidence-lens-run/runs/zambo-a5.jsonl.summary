@@ -1,0 +1,21 @@
+{
+  "leg": "C",
+  "title": "second external dataset: Zambo A5 production receipt — C4 production record (dataset[1])",
+  "dataset_pin_sha256": "e99785076197788e90b7cc720a8cef7db7e8a07cee8631923f6d806fa6ee50c3",
+  "submission_records_in_set": 1,
+  "tuple_fields_found": 0,
+  "commitment_recomputed_ok": true,
+  "derived_classes": {
+    "absent": 1
+  },
+  "divergences": 0,
+  "registered_expectation": "absent on the C4 classification (draft datasets[1].note)",
+  "verdict": "matches registered expectation — absent",
+  "input_pins": [
+    {
+      "file": "attestations/evidence/0028-zambo-a5-lost-response/runs/a5-receipt-verify-2e9ebf1f.json",
+      "ok": true,
+      "sha256": "e99785076197788e90b7cc720a8cef7db7e8a07cee8631923f6d806fa6ee50c3"
+    }
+  ]
+}

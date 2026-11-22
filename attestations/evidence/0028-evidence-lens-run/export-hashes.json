@@ -1,0 +1,55 @@
+{
+  "run": "0028-evidence-lens-run",
+  "freeze_commit": "2991a080c7a637f578e0837411aa5dc38c4eed19",
+  "prereg_sha256_frozen": "aa4f92d31ee46e4d7287a618bfe827b69542429ea9132a3069631e9031d0d949",
+  "checker_sha256": "b7452f4516ba8173d90653f89c94630f60880884b9312f561167d565a91d1b38",
+  "window_utc": {
+    "start": "2026-11-22T18:50:41Z",
+    "end": "2026-11-22T18:50:41Z"
+  },
+  "legs": {
+    "A_selfrun_0021": {
+      "verdict": "reproduced — no divergence",
+      "derived_classes": {
+        "delivery-retry": 4,
+        "separate-purchase": 8
+      },
+      "sealed_rows": 13,
+      "divergences": 0
+    },
+    "B_raen_before": {
+      "verdict": "matches registered expectation — absent x6",
+      "derived_classes": {
+        "absent": 6
+      },
+      "adjacent_pairs_recomputed": 6,
+      "divergences": 0
+    },
+    "C_zambo_a5": {
+      "verdict": "matches registered expectation — absent",
+      "derived_classes": {
+        "absent": 1
+      },
+      "submission_records_in_set": 1,
+      "divergences": 0
+    }
+  },
+  "total_divergences": 0,
+  "input_pins": [
+    {
+      "file": "attestations/evidence/0021-nano-cross-process-battery/verdicts.jsonl",
+      "ok": true,
+      "sha256": "fba7db45aea476a37e2c36321eaa410c30d3a74353603763ccbca4863067cd76"
+    },
+    {
+      "file": "attestations/evidence/0028-raen-ledger-before/runs/ledger-capture-20261122T181240Z.json",
+      "ok": true,
+      "sha256": "9c001fd731468d6cd6dcda7cf879b2ffdc908acfb23643a5c38e3517555f60d5"
+    },
+    {
+      "file": "attestations/evidence/0028-zambo-a5-lost-response/runs/a5-receipt-verify-2e9ebf1f.json",
+      "ok": true,
+      "sha256": "e99785076197788e90b7cc720a8cef7db7e8a07cee8631923f6d806fa6ee50c3"
+    }
+  ]
+}

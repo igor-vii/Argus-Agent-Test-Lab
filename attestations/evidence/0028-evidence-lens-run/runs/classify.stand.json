@@ -1,0 +1,29 @@
+{
+  "run": "0028-evidence-lens-run",
+  "platform": {
+    "kind": "sandbox-stand",
+    "note": "RUNBOOK 1.2 — stand raised per run; records-only checker, no engine, no live SUT"
+  },
+  "checker": {
+    "path": "sut-x402-evidence-lens/classify.mjs",
+    "note": "digest recorded in run.json at manifest build time"
+  },
+  "repo_head": "2991a080c7a637f578e0837411aa5dc38c4eed19",
+  "runtime": {
+    "node": "v24.22.3"
+  },
+  "legs": [
+    "A selfrun-0021",
+    "B raen-before",
+    "C zambo-a5"
+  ],
+  "frozen_prereg": {
+    "file": "tools/registry/drafts/0028-x402-evidence-lens.seal.draft.json",
+    "note": "pins and rules fixed at the freeze commit; classification derived at run time"
+  },
+  "window": {
+    "start_utc": "2026-11-22T18:50:41Z",
+    "end_utc": "2026-11-22T18:50:41Z"
+  },
+  "exitCode": 0
+}

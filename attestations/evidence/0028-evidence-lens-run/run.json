@@ -1,0 +1,44 @@
+{
+  "record_id": "0028",
+  "prereg": {
+    "id": "tools/registry/drafts/0028-x402-evidence-lens.seal.draft.json",
+    "sha256": "aa4f92d31ee46e4d7287a618bfe827b69542429ea9132a3069631e9031d0d949",
+    "freeze_commit": "2991a080c7a637f578e0837411aa5dc38c4eed19",
+    "note": "sha256 of the draft as frozen at the freeze commit (pre-run bytes); the prereg rules did not change after the freeze"
+  },
+  "platform": {
+    "kind": "sandbox-stand",
+    "engine": {
+      "name": "argus records-only evidence-lens checker",
+      "version_or_digest": "b7452f4516ba8173d90653f89c94630f60880884b9312f561167d565a91d1b38"
+    },
+    "scenarios": {
+      "source": "tools/registry/drafts/0028-x402-evidence-lens.seal.draft.json prereg (unit: attempt; case matrix C1-C4; pass rule: records-only classification)",
+      "digest": "aa4f92d31ee46e4d7287a618bfe827b69542429ea9132a3069631e9031d0d949"
+    },
+    "sut": {
+      "target": "frozen records: argus-seal-0021 sealed evidence + datasets raen-ledger-before, zambo-a5-lost-response (no live SUT)",
+      "commit_or_version": "2991a080c7a637f578e0837411aa5dc38c4eed19"
+    }
+  },
+  "host": {
+    "class": "sandbox",
+    "os": "Debian GNU/Linux 13 (trixie)",
+    "runtime": {
+      "node": "v24.22.3",
+      "python": "3.12.16"
+    },
+    "tz": "UTC"
+  },
+  "window": {
+    "start_utc": "2026-11-22T18:50:41Z",
+    "end_utc": "2026-11-22T18:50:41Z"
+  },
+  "runs": [
+    {
+      "argv": "node sut-x402-evidence-lens/classify.mjs --out attestations/evidence/0028-evidence-lens-run/runs --head 2991a080c7a637f578e0837411aa5dc38c4eed19",
+      "exit": 0,
+      "log": "runs/classify.console.log"
+    }
+  ]
+}

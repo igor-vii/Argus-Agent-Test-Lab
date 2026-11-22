@@ -1,0 +1,20 @@
+{
+  "leg": "B",
+  "title": "first external dataset: RAEN settlement ledger before request-id change (dataset[0])",
+  "dataset_pin_sha256": "9c001fd731468d6cd6dcda7cf879b2ffdc908acfb23643a5c38e3517555f60d5",
+  "rows_in_dataset": 64,
+  "adjacent_pairs_recomputed": 6,
+  "derived_classes": {
+    "absent": 6
+  },
+  "divergences": 0,
+  "registered_expectation": "absent on every adjacent near-duplicate pair (draft datasets[0].note)",
+  "verdict": "matches registered expectation — absent x6",
+  "input_pins": [
+    {
+      "file": "attestations/evidence/0028-raen-ledger-before/runs/ledger-capture-20261122T181240Z.json",
+      "ok": true,
+      "sha256": "9c001fd731468d6cd6dcda7cf879b2ffdc908acfb23643a5c38e3517555f60d5"
+    }
+  ]
+}
