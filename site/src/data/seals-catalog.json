@@ -1351,7 +1351,7 @@
     "date": "2026-11-22",
     "type": "seal",
     "title": "x402 evidence lens — frozen classification procedure; first external datasets: RAEN before-fix capture and Zambo A5 production receipt",
-    "subject": "",
+    "subject": "RAEN settlement ledger (before request-id change) + Zambo A5 lost-response production receipt (x402#4198)",
     "summary": "Two conditions accepted in x402-foundation/x402#4198 (2026-11-22, zambodotdev): (1) the pass condition is the classification itself, unsortable rows report absent, not a pass by operator account; (2) attempt-shaped rows - the attempt is the row unit of this pre-registration. Case C4 wording follows the records-only formulation confirmed in-thread on 2026-11-22. Second dataset registered before the run: the C4 production record posted by zambodotdev in x402-foundation/x402#4198 on 2026-11-22T17:10Z (zambo.dev/run/2e9ebf1f-5743-48de-a34b-5b3584c4c102, verification API captured byte-exact; commitment recomputed at capture). The record binds one journal entry inside hash-covered canonical bytes but carries no payment attempt tuple, so the registered expectation is absent on the C4 classification; the classification is derived at run time. First classification run (run_ts): sandbox-stand, freeze commit 2991a080c7a637f578e0837411aa5dc38c4eed19; leg A self-run reproduces the sealed verdicts of #0021 with zero divergences; leg B derives absent on all six adjacent pairs of the RAEN before-fix capture (matches the registered expectation); leg C derives absent on the C4 question for the Zambo A5 production record (matches the registered expectation); total divergences 0. Run pack: attestations/evidence/0028-evidence-lens-run/.",
     "verdicts": [],
     "findings": [],

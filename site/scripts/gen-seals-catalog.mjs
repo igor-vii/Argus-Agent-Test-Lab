@@ -108,7 +108,13 @@ for (const f of files) {
     date: String(rec.issued_at ?? "").slice(0, 10),
     type: rec.type, // "seal" | "finding" | "correction"
     title: rec.title,
-    subject: rec.subject?.repo ?? (typeof rec.subject === "string" ? rec.subject : ""),
+    /* subject must be a string for React rendering: #0028+ records carry a
+     * structured subject object ({component, source_url, ...}). Prefer the
+     * .repo / .component fields; fall back to a plain string subject. */
+    subject:
+      rec.subject?.repo ??
+      rec.subject?.component ??
+      (typeof rec.subject === "string" ? rec.subject : ""),
     summary: rec.notes ?? "",
     verdicts: derivedVerdicts,
     findings: (rec.findings_summary ?? []).map((x) => ({

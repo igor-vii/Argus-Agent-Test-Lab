@@ -19,20 +19,7 @@
     "issued_at": "2026-11-22T19:39:19.985Z",
     "date": "2026-11-22",
     "title": "x402 evidence lens — frozen classification procedure; first external datasets: RAEN before-fix capture and Zambo A5 production receipt",
-    "subject": {
-      "component": "RAEN settlement ledger (before request-id change) + Zambo A5 lost-response production receipt (x402#4198)",
-      "source_url": "https://settlement-collector.fly.dev/ledger.json",
-      "dataset_sha256": "9c001fd731468d6cd6dcda7cf879b2ffdc908acfb23643a5c38e3517555f60d5",
-      "captured_at_utc": "2026-11-22T18:12:40Z",
-      "ledger_last_updated": "2026-11-21T14:46:07.551Z",
-      "a5_receipt": {
-        "source_url": "https://zambo.dev/run/2e9ebf1f-5743-48de-a34b-5b3584c4c102",
-        "verify_url": "https://zambo.dev/api/v2/receipt/2e9ebf1f-5743-48de-a34b-5b3584c4c102/verify",
-        "sha256": "e99785076197788e90b7cc720a8cef7db7e8a07cee8631923f6d806fa6ee50c3",
-        "captured_at_utc": "2026-11-22T18:38:04Z",
-        "posted_in_thread_utc": "2026-11-22T17:10:11Z"
-      }
-    },
+    "subject": "RAEN settlement ledger (before request-id change) + Zambo A5 lost-response production receipt (x402#4198)",
     "prev_record_hash": "e3827836ebb46f69dc6805c9879cb1ad871f97c4716b2ba703e14e118598d7d6",
     "chain_head": "bf85976eaa458820",
     "scenarios": [],

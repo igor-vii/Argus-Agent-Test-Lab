@@ -15,6 +15,13 @@ const short = (hash: string | null, n = 8) => (hash ? hash.slice(0, n) : "—");
 export function LatestSealBlock() {
   const rec = latest.record;
   const evidenceBase = `${REPO_URL}/blob/main/`;
+  /* Defensive: gen-latest-seal.mjs normalizes subject to a string, but a
+   * structured subject object ({component, ...}) must never leak here as a
+   * React child — it crashed the prerender (Vercel dpl_6t4qJw8…). */
+  const subjectText =
+    typeof rec.subject === "string"
+      ? rec.subject
+      : ((rec.subject as { component?: string } | null)?.component ?? "");
 
   return (
     <article
@@ -46,7 +53,7 @@ export function LatestSealBlock() {
             {rec.record_id}
           </span>
           <span className="font-mono text-[11px] text-al-muted">{rec.date}</span>
-          <span className="font-mono text-[11px] text-al-muted">{rec.subject}</span>
+          <span className="font-mono text-[11px] text-al-muted">{subjectText}</span>
         </div>
 
         <h3 className="mb-4 max-w-4xl text-lg font-semibold leading-snug text-al-text">

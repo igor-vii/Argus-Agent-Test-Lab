@@ -140,7 +140,15 @@ const payload = {
     issued_at: rec.issued_at,
     date: String(rec.issued_at ?? "").slice(0, 10),
     title: rec.title,
-    subject: rec.subject?.repo ?? rec.subject ?? "",
+    /* subject MUST be a string: newer records (#0028+) carry a structured
+     * subject object ({component, source_url, dataset_sha256, ...}) — passing
+     * it through made the homepage prerender crash ("Objects are not valid
+     * as a React child", Vercel dpl_6t4qJw8… / dpl_9SFcXN…). Prefer the
+     * .repo / .component fields; fall back to a plain string subject. */
+    subject:
+      rec.subject?.repo ??
+      rec.subject?.component ??
+      (typeof rec.subject === "string" ? rec.subject : ""),
     prev_record_hash: rec.prev_record_hash ?? null,
     chain_head: CHAIN_HEAD,
     scenarios,
