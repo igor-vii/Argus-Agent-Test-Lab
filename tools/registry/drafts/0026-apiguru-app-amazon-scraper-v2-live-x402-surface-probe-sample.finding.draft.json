@@ -12,14 +12,14 @@
   "run_ts": "2026-11-20T17:59:42Z",
   "status": {
     "state": "verified_local",
-    "note": "2 live calls made (1 sample 200 + 1 live 404); free probes remaining on record: 2; no paid call, no wallet provided",
-    "as_of": "2026-11-20"
+    "note": "Provenance: content first signed into main registry as argus-finding-0026 on 2026-11-20 by probe-session key argus-lab-probe-2026q4 (operator key absent in sandbox) — REVOKED same history commit 606be94e (ARG-03 operator-allowlist hardening; chain tail removed, 0000-0024 untouched, main head e5807aab6a6ac5e6... intact); migrated same day to the agent registry as argus-agent-self-0002 (commit 47c27780, agent head 54af5eb21aa08b24..., verify --registry=agent green). This draft is the operator-review promotion candidate: operator offline re-sign (argus-lab-2026q4r2) onto main head e5807aab... per the agent-registry promotion path; evidence sha256 pins recomputed 2026-11-22 (live_call_own_asin.txt=63df0c894032…); no re-run needed.",
+    "as_of": "2026-11-22"
   },
   "evidence": [
     {
       "kind": "file",
       "path": "attestations/evidence/0026-apiguru-x402-probe/live_call_own_asin.txt",
-      "sha256": null
+      "sha256": "63df0c894032026f7ab209d4c9bf9d1352f5c9196d347a95efdb5ed353cee68c"
     }
   ]
 }

@@ -11,109 +11,109 @@
   "run_ts": "2026-11-21T04:05:00Z",
   "status": {
     "state": "verified_local",
-    "note": "0 settled paid calls (burner 0x60f7593386228C0f90012796DCC5c1eA5A9D436A unfunded: Base native 0, USDC 0, checked via mainnet.base.org + base.publicnode.com); 1 signed submit attempt -> facilitator verify reject invalid_exact_evm_insufficient_balance; negatives: invalid args -> challenge (gate before validation), unknown tool -> -32602 free; settle tx hash: none (nothing settled); paid-settle receipt format (PAYMENT-RESPONSE) not observable without funds",
-    "as_of": "2026-11-21"
+    "note": "Provenance: content first signed into main registry as argus-finding-0027 on 2026-11-21 by probe-session key argus-lab-probe-2026q4 (operator key absent in sandbox) — REVOKED same history commit 606be94e (ARG-03 operator-allowlist hardening; chain tail removed, 0000-0024 untouched, main head e5807aab6a6ac5e6... intact); migrated same day to the agent registry as argus-agent-self-0003 (commit 47c27780, agent head 54af5eb21aa08b24..., verify --registry=agent green). This draft is the operator-review promotion candidate: operator offline re-sign (argus-lab-2026q4r2) onto main head e5807aab... per the agent-registry promotion path; evidence sha256 pins recomputed 2026-11-22 (01_initialize.json=cf6244198f9d…, 02_initialized_notification.json=4b28ed9dbeda…, 03_tools_list_lite.json=8276b64c8542…, 04_tools_list_full_p1.json=44a854fc8dc8…, 05_tools_list_full_stats.json=09c849dedc6f…, 06_health.json=81605ae699b9…, 07_docs_all.json=20973aa69dcc…, 10_search_1_ping.json=e59ecd3b560e…, 10_search_2_url_parse.json=bcb82ec038ef…, 10_search_3_cusip.json=bd7c00ae8875…, 10_search_4_solana_token.json=6eb5ab478813…, 11_chosen_tool_schemas.json=cb54290aa044…, 12_payment_required_1_ping.json=d5f5e991a6a3…, 12_payment_required_2_url_parse.json=7b804081cda6…, 12_payment_required_3_cusip_validate.json=307fe82e7c58…, 13_negative_invalid_args.json=45918d298095…, 14_negative_invalid_cusip.json=f94301e69208…, 15_negative_unknown_tool.json=e08d7ec5cd11…, 20_signed_submit_unfunded.json=6f16189edc17…, 21_balance_after.json=4e138fd62948…); no re-run needed.",
+    "as_of": "2026-11-22"
   },
   "evidence": [
     {
       "kind": "file",
       "path": "attestations/evidence/0027-scorptech-mcp-x402-probe/01_initialize.json",
-      "sha256": null
+      "sha256": "cf6244198f9d78c4f768753d47b83ddce1a2d0597af23dbc5027a707b8a85a36"
     },
     {
       "kind": "file",
       "path": "attestations/evidence/0027-scorptech-mcp-x402-probe/02_initialized_notification.json",
-      "sha256": null
+      "sha256": "4b28ed9dbeda41914f4664ce9ac077e2666ba7dc3f7edee09f6380c202a7ce6a"
     },
     {
       "kind": "file",
       "path": "attestations/evidence/0027-scorptech-mcp-x402-probe/03_tools_list_lite.json",
-      "sha256": null
+      "sha256": "8276b64c8542ce4266a4c41cf0f9dcdd10e6d58d86cdf20f21c9258972a5ddb7"
     },
     {
       "kind": "file",
       "path": "attestations/evidence/0027-scorptech-mcp-x402-probe/04_tools_list_full_p1.json",
-      "sha256": null
+      "sha256": "44a854fc8dc83c2bbf4c2607a08ba38c3fedbf92273081ad8b80819f03fa4483"
     },
     {
       "kind": "file",
       "path": "attestations/evidence/0027-scorptech-mcp-x402-probe/05_tools_list_full_stats.json",
-      "sha256": null
+      "sha256": "09c849dedc6fcbcceb00a85d1c37d83172f55f9b240fc2c327e2f0c3912b4138"
     },
     {
       "kind": "file",
       "path": "attestations/evidence/0027-scorptech-mcp-x402-probe/06_health.json",
-      "sha256": null
+      "sha256": "81605ae699b957d1ea6786da64e17f3ddf5b3ad561480ee18864f7dafb96ffa5"
     },
     {
       "kind": "file",
       "path": "attestations/evidence/0027-scorptech-mcp-x402-probe/07_docs_all.json",
-      "sha256": null
+      "sha256": "20973aa69dcc393b71d3ea1bcfa35fc9edeec020d8f52a480bbfc8af2a330cc2"
     },
     {
       "kind": "file",
       "path": "attestations/evidence/0027-scorptech-mcp-x402-probe/10_search_1_ping.json",
-      "sha256": null
+      "sha256": "e59ecd3b560e6f8f489b6092d926ecc687217185a358e45dc6db12384084d72c"
     },
     {
       "kind": "file",
       "path": "attestations/evidence/0027-scorptech-mcp-x402-probe/10_search_2_url_parse.json",
-      "sha256": null
+      "sha256": "bcb82ec038ef954742c3b4c16d740f127c692b6e5f53ff9b6e6d913d485a98f1"
     },
     {
       "kind": "file",
       "path": "attestations/evidence/0027-scorptech-mcp-x402-probe/10_search_3_cusip.json",
-      "sha256": null
+      "sha256": "bd7c00ae8875bcc5c78a81d961fb586cb33aae1112d4c5f71bbe54eb3cb45067"
     },
     {
       "kind": "file",
       "path": "attestations/evidence/0027-scorptech-mcp-x402-probe/10_search_4_solana_token.json",
-      "sha256": null
+      "sha256": "6eb5ab478813e202a15f4ce79adf18fd278eeb62590a8e93c74881803d25c499"
     },
     {
       "kind": "file",
       "path": "attestations/evidence/0027-scorptech-mcp-x402-probe/11_chosen_tool_schemas.json",
-      "sha256": null
+      "sha256": "cb54290aa0447572d569684af17fe2a338a2a4410855f549a8b82176b7936a76"
     },
     {
       "kind": "file",
       "path": "attestations/evidence/0027-scorptech-mcp-x402-probe/12_payment_required_1_ping.json",
-      "sha256": null
+      "sha256": "d5f5e991a6a3d7cb8ca703e17df8ca6f5729aa593188e66eb02289d6423d7740"
     },
     {
       "kind": "file",
       "path": "attestations/evidence/0027-scorptech-mcp-x402-probe/12_payment_required_2_url_parse.json",
-      "sha256": null
+      "sha256": "7b804081cda67b1f9d94c3325e3c311b024486a8f7312c1c69e022707b5c18ea"
     },
     {
       "kind": "file",
       "path": "attestations/evidence/0027-scorptech-mcp-x402-probe/12_payment_required_3_cusip_validate.json",
-      "sha256": null
+      "sha256": "307fe82e7c58f93aec7c67173c0a6a02d3bf08abcb47141754c2219857097700"
     },
     {
       "kind": "file",
       "path": "attestations/evidence/0027-scorptech-mcp-x402-probe/13_negative_invalid_args.json",
-      "sha256": null
+      "sha256": "45918d298095e79bc6fae32be128567fe6ab058f50532ddc9f4d4ff8f3d78f5e"
     },
     {
       "kind": "file",
       "path": "attestations/evidence/0027-scorptech-mcp-x402-probe/14_negative_invalid_cusip.json",
-      "sha256": null
+      "sha256": "f94301e69208c3229102efce8a4493419e7cb924019465d1231eee678bf313ef"
     },
     {
       "kind": "file",
       "path": "attestations/evidence/0027-scorptech-mcp-x402-probe/15_negative_unknown_tool.json",
-      "sha256": null
+      "sha256": "e08d7ec5cd11424d64b0675b7a7fef1a497eae618ded7bb519ac5f734170bfdb"
     },
     {
       "kind": "file",
       "path": "attestations/evidence/0027-scorptech-mcp-x402-probe/20_signed_submit_unfunded.json",
-      "sha256": null
+      "sha256": "6f16189edc172d24542d35258b1f0e9b9a44565f461356b357014f3a6e5ae630"
     },
     {
       "kind": "file",
       "path": "attestations/evidence/0027-scorptech-mcp-x402-probe/21_balance_after.json",
-      "sha256": null
+      "sha256": "4e138fd62948cbec57181f8eb3478e2ee5168b30eabb8dec3c9c85e2e0f0e18a"
     }
   ]
 }

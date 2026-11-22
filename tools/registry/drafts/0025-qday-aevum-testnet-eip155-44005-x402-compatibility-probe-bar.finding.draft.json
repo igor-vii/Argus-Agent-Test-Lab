@@ -12,19 +12,19 @@
   "run_ts": "2026-11-20T17:59:07Z",
   "status": {
     "state": "verified_local",
-    "note": "burner wallet unfunded by design; facilitator /settle intentionally not called; records signed with probe-session key argus-lab-probe-2026q4 (operator priv key not present in sandbox)",
-    "as_of": "2026-11-20"
+    "note": "Provenance: content first signed into main registry as argus-finding-0025 on 2026-11-20 by probe-session key argus-lab-probe-2026q4 (operator key absent in sandbox) — REVOKED same history commit 606be94e (ARG-03 operator-allowlist hardening; chain tail removed, 0000-0024 untouched, main head e5807aab6a6ac5e6... intact); migrated same day to the agent registry as argus-agent-self-0001 (commit 47c27780, agent head 54af5eb21aa08b24..., verify --registry=agent green). This draft is the operator-review promotion candidate: operator offline re-sign (argus-lab-2026q4r2) onto main head e5807aab... per the agent-registry promotion path; evidence sha256 pins recomputed 2026-11-22 (probe_result.json=b51ef4ab010c…, x402_handshake_evidence.json=08c40cab843c…); no re-run needed.",
+    "as_of": "2026-11-22"
   },
   "evidence": [
     {
       "kind": "file",
       "path": "attestations/evidence/0025-qday-x402-probe/probe_result.json",
-      "sha256": null
+      "sha256": "b51ef4ab010c8766604e5d1901c66978ce0a277348aad2afa4916449a4f3694b"
     },
     {
       "kind": "file",
       "path": "attestations/evidence/0025-qday-x402-probe/x402_handshake_evidence.json",
-      "sha256": null
+      "sha256": "08c40cab843c0144c4437eb129f11b48a21c930ec0024adab86f90b85c4280f1"
     }
   ]
 }
