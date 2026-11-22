@@ -1,6 +1,6 @@
 {
   "registry": "argus-agent-test-lab",
-  "chain_head": "e5807aab6a6ac5e6...",
+  "chain_head": "e3827836ebb46f69...",
   "records": [
     {
       "seq": "0000",
@@ -2461,6 +2461,198 @@
         }
       ],
       "signature": "/XBmowTW7iyB/EC7E4sBxl7pcY0shjAdFHJd3n43d0U2A8tgXG9PV5/x6F+27EAQKW+zzrIeDdUQHJ2mh0XBDw=="
+    },
+    {
+      "seq": "0025",
+      "record_id": "argus-finding-0025",
+      "issued_at": "2026-11-22T11:56:59.483Z",
+      "signer_key_id": "argus-lab-2026q4r2",
+      "prev_record_hash": "e5807aab6a6ac5e6fd54c62c6eb8042bcd5688c50f3e8f09dd5c8be786145eb6",
+      "type": "finding",
+      "severity": "info",
+      "title": "QDay Aevum testnet (eip155:44005) x402 compatibility probe: bare x402-v2 exact/EIP-3009 client+server handshake verified on tUSD8 semantics; QDay facilitator accepts the wire format (verify 200 isValid=false invalidReason=merchant_not_alive); on-chain settle blocked by faucet gates (Turnstile/email/Discord); PQC (ML-DSA-65) not in testnet yet",
+      "subject": {
+        "repo": "qday-io/aevum-starter-kit",
+        "component": "QDay Aevum testnet",
+        "version": "cdk-erigon/2.0-qday-v2.61.19-validium, x402 v2, tUSD8 FiatTokenV2",
+        "stack": "RPC rpc-test.qday.info (eth_chainId=0xabe5, gasPrice 1 gwei); tUSD8 0x456569838f1d43009A91ebA4263147Afd7233483 6 decimals EIP-3009 (EIP-712 domain name=tUSD8 version=2); facilitator signet.qday.info /supported: x402Version 2, exact + qday:erc4337 (EntryPoint 0xC6bd4359A158B6E99A86BEEF5c17AC7D83e43366, paymaster 0x912d16cA83a1A14f0f236cE06A669f8982d6e036, kernel-v3.1); signer 0xC2147AFC03AD7E92E4eA1f05e64f49bCad77D532"
+      },
+      "summary": "Independent probe 2026-11-20 (~17:41-17:59 UTC, sandbox, no funds moved, /settle never called). (1) RPC verified from this environment: eth_chainId 0xabe5 (=44005), web3_clientVersion cdk-erigon/2.0-qday-v2.61.19-validium, block height ~3.68M, gasPrice exactly 1 gwei; UA filter: python-urllib default UA gets HTTP 403, curl UA passes (integration gotcha). (2) tUSD8 on-chain: name/symbol tUSD8, decimals 6, EIP-3009 FiatTokenV2-style. (3) Local bare x402-v2 server+client (stdlib http.server + eth-account 0.14.0): 402 PAYMENT-REQUIRED challenge (v2 wire: accepts[].amount, maxTimeoutSeconds, extra{name:tUSD8,version:2}) -> client signs Authorization EIP-712 -> server recovers signer and enforces to==payTo, value==price, validity window, nonce freshness -> 200 PAYMENT-RESPONSE (server verify 5.7 ms). Negative probes rejected: 100x overcharge (value_matches_price=false) — server-side price binding blocks the overcharge vector of registry #0000; wrong recipient (to_is_payTo=false). (4) QDay facilitator POST /verify with spec body {x402Version, paymentPayload, paymentRequirements} returning HTTP 200 {\"isValid\":false,\"invalidReason\":\"merchant_not_alive\"} on attempt 2 (attempt 1, flat payload, gave 400 invalid_format) — wire format ACCEPTED, next gate is merchant liveness/registration, signature checks not the blocker. (5) Funding blocked: gas faucet gated by Cloudflare Turnstile, tUSD8 claim gated by email+code (HTTP 401 on unauthenticated status probe), Discord faucet needs a Discord account — on-chain settle NOT executed; burner key stays unfunded. (6) PQC: ECDSA only in testnet; PQ precompiles are address(0) stubs, ML-DSA-65 hybrid declared 'in progress' (Phase 2) per qday wiki; off-chain qday-pqc-sdk (Go, liboqs) exists. Verdict: our stack is wire-compatible with QDay x402 v2 up to funding + merchant registration; demo for DoraHacks needs manual faucet step.",
+      "run_ts": "2026-11-20T17:59:07Z",
+      "status": {
+        "state": "verified_local",
+        "note": "Provenance: content first signed into main registry as argus-finding-0025 on 2026-11-20 by probe-session key argus-lab-probe-2026q4 (operator key absent in sandbox) — REVOKED same history commit 606be94e (ARG-03 operator-allowlist hardening; chain tail removed, 0000-0024 untouched, main head e5807aab6a6ac5e6... intact); migrated same day to the agent registry as argus-agent-self-0001 (commit 47c27780, agent head 54af5eb21aa08b24..., verify --registry=agent green). This draft is the operator-review promotion candidate: operator offline re-sign (argus-lab-2026q4r2) onto main head e5807aab... per the agent-registry promotion path; evidence sha256 pins recomputed 2026-11-22 (probe_result.json=b51ef4ab010c…, x402_handshake_evidence.json=08c40cab843c…); no re-run needed.",
+        "as_of": "2026-11-22"
+      },
+      "evidence": [
+        {
+          "kind": "file",
+          "path": "attestations/evidence/0025-qday-x402-probe/probe_result.json",
+          "sha256": "b51ef4ab010c8766604e5d1901c66978ce0a277348aad2afa4916449a4f3694b"
+        },
+        {
+          "kind": "file",
+          "path": "attestations/evidence/0025-qday-x402-probe/x402_handshake_evidence.json",
+          "sha256": "08c40cab843c0144c4437eb129f11b48a21c930ec0024adab86f90b85c4280f1"
+        }
+      ],
+      "signature": "Ig2+R9IFykUDHbZVIDEsn/vTtyyBNRFmgXToFAJ5u2Z0iYQW0npxhwvq6y04HudBI0f13ZISBOpsLWYiv/TnCg=="
+    },
+    {
+      "seq": "0026",
+      "record_id": "argus-finding-0026",
+      "issued_at": "2026-11-22T11:57:43.779Z",
+      "signer_key_id": "argus-lab-2026q4r2",
+      "prev_record_hash": "857dab9b6867553d2c7fe5d57e2d86168d46a6ff842e30ca48163a868be23534",
+      "type": "finding",
+      "severity": "info",
+      "title": "apiguru-app/amazon-scraper-v2 live x402 surface probe: sample 200 without consuming a free probe; live own-ASIN 404 consumes one probe (3 to 2, 'billed 404' semantics confirmed); x402 v2 exact/EIP-3009 USDC (Base + 3 networks), payTo 0x766B…1422, facilitator unnamed; paid settle NOT executed (no funded wallet)",
+      "subject": {
+        "repo": "apiguru-app/amazon-scraper-v2",
+        "component": "agent.apiguru.app keyless agent gateway",
+        "version": "OpenAPI 1.1.69",
+        "stack": "x402 v2, scheme exact (EIP-3009), USDC native: Base eip155:8453 0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913 (also eip155:137, eip155:42161, eip155:43114), PAYMENT-SIGNATURE header (v1 X-PAYMENT accepted), payTo 0x766B4cc27333955BBb163a61e2B85aFa6e491422 (agent.apiguru.app/.well-known/x402)"
+      },
+      "summary": "Independent probe 2026-11-20 (~17:37-17:59 UTC). Two live HTTP calls total, within the pre-set 1-2 free-call budget; no paid call. (1) Demo endpoint with docs ASIN B09DJLW458 -> HTTP 200 from a shared sample copy: free_calls_remaining stayed 3, free_call_used=false, x-price-next-call $0.003, 38757 bytes, request_id 65347b57-f378-4af9-be43-ed5b109c6848 — the canonical docs ASIN never touches the payment path. (2) Live call with own ASIN B08N5WRWNW -> HTTP 404 'ASIN not found on this marketplace domain', 1.73 s, 174 bytes, request_id b675d905-2c2d-47ff-ae71-739204a3a4ba, X-Free-Probes-Remaining 3->2: a miss is 'billed' for keyless clients exactly as llms-full.txt states. (3) Documented payment path (llms.txt / llms-full.txt / .well-known/x402 / dash.apiguru.app/openapi.json): 3 free calls per client per 24h, then 402 with PAYMENT-REQUIRED header (base64 accepts, scheme exact), client signs EIP-3009 authorization and retries with PAYMENT-SIGNATURE; gateway settles on-chain only after a billable answer; X-Payment-Status: not-settled and no charge when the failure is theirs; no gas needed (facilitator submits the transfer); one call costs at most $0.05; gateway answers 504 deadline_exceeded itself after 55 s (not billed). Facilitator identity NOT named anywhere (0 matches in openapi.json). (4) Price discrepancy: README says 'about a cent a call', actual documented/live price $0.003 per /v2/product-details call. (5) Paid call NOT executed: sandbox has no funded Base wallet (needs ~$0.003 USDC; gas not needed) — settle timing and PAYMENT-RESPONSE tx hash therefore not observed; the live 402 challenge body (real accepts with per-network assets) also not observed since free probes were not exhausted on purpose. Verdict: suitable as a demo target only AFTER one funded call by the operator; key path and spend controls are ready.",
+      "run_ts": "2026-11-20T17:59:42Z",
+      "status": {
+        "state": "verified_local",
+        "note": "Provenance: content first signed into main registry as argus-finding-0026 on 2026-11-20 by probe-session key argus-lab-probe-2026q4 (operator key absent in sandbox) — REVOKED same history commit 606be94e (ARG-03 operator-allowlist hardening; chain tail removed, 0000-0024 untouched, main head e5807aab6a6ac5e6... intact); migrated same day to the agent registry as argus-agent-self-0002 (commit 47c27780, agent head 54af5eb21aa08b24..., verify --registry=agent green). This draft is the operator-review promotion candidate: operator offline re-sign (argus-lab-2026q4r2) onto main head e5807aab... per the agent-registry promotion path; evidence sha256 pins recomputed 2026-11-22 (live_call_own_asin.txt=63df0c894032…); no re-run needed.",
+        "as_of": "2026-11-22"
+      },
+      "evidence": [
+        {
+          "kind": "file",
+          "path": "attestations/evidence/0026-apiguru-x402-probe/live_call_own_asin.txt",
+          "sha256": "63df0c894032026f7ab209d4c9bf9d1352f5c9196d347a95efdb5ed353cee68c"
+        }
+      ],
+      "signature": "En5BQZ0Tbyu9t8ueDcGl6xzaYflxMYMizVRO2EDe95PZp0TIkqaQsElImvI6DMY0T1X6qOftCzN6eAk4xwj+DQ=="
+    },
+    {
+      "seq": "0027",
+      "record_id": "argus-finding-0027",
+      "issued_at": "2026-11-22T11:58:09.424Z",
+      "signer_key_id": "argus-lab-2026q4r2",
+      "prev_record_hash": "566daae15b0e5aa5d615c1f6e624cbe0c113e130b20e8040e048b2a785a5010f",
+      "type": "finding",
+      "severity": "info",
+      "title": "scorptech-x402-mcp (Kholley43) x402 v2 over MCP transport passport: challenge delivered as MCP isError result (HTTP 200) instead of HTTP 402; accepts exact/Base USDC v2 ($0.001) + exact/Solana (feePayer=facilitator); payment gate precedes argument validation; signed unfunded submit rejected by facilitator verify (invalid_exact_evm_insufficient_balance) with fresh challenge re-issued; no settle, no charge",
+      "subject": {
+        "repo": "Kholley43/scorptech-x402-mcp",
+        "component": "scorptech.it.com/api/x402/mcp/lite (ScorpTech x402 Lite 1.2.0, stateless Streamable HTTP, no Mcp-Session-Id)",
+        "stack": "x402 v2 over MCP: payment submitted in params._meta['x402/payment']; challenge JSON embedded in MCP isError result text. accepts: exact/eip155:8453 USDC 0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913 -> payTo 0xBC72c556166A3d3317c673DDB21Fb088C10088A0 (EIP-712 domain name 'USD Coin' version '2', EIP-3009 TransferWithAuthorization, maxTimeoutSeconds 300); exact/solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp USDC EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v -> payTo CRygpSHMuZAMHZSCm2Z2H3DDYMZBKUSvcsme1hsgebbD with extra.feePayer CjNFTjvBhbJJd2B5ePPMHRLx1ELZpa8dwQgGL727eKww (facilitator pays fees). Facilitator per README: PayAI (facilitator.payai.network). Catalog: 1020 tools, all price-declared $0.001-$0.05 (806 x $0.001), tools/list free"
+      },
+      "summary": "Independent probe 2026-11-21 (~03:44-04:05 UTC). Zero settled paid calls (sandbox burner unfunded: Base mainnet native 0, USDC 0), budget regulation <=$0.01 kept at $0.00. Findings. (1) Transport passport: initialize -> protocolVersion 2025-06-18 accepted, stateless (no Mcp-Session-Id header); tools/list free on lite (search_tools + call_tool) and full endpoint (1020 tools in one 1.79MB page, no cursor); full catalog snapshot + docs-all snapshot in evidence. (2) Challenge semantics: calling a paid tool without payment returns MCP result isError=true whose text is the x402 v2 PaymentRequired JSON (x402Version 2, error 'Payment required', resource.url = the MCP endpoint itself, extensions.bazaar with toolName/inputSchema discovery metadata, accepts[] with the two network options) — HTTP status stays 200; the plain-HTTPS path documented in the README uses HTTP 402 + PAYMENT-REQUIRED header instead. (3) Gate order: payment gate precedes argument validation — call_tool(url_parse, {url:12345}) and call_tool(cusip_validate, {cusip:'!!!not-a-cusip!!!'}) both return the same PaymentRequired challenge instead of a validation error, so an agent cannot learn its arguments are wrong without paying; unknown tool name returns RPC -32602 'Unknown tool' for free (MCP layer validates tool existence before the gate). (4) Signed submit: x402 v2 payload {x402Version, resource, accepted, payload:{authorization, signature}} built from the challenge (EIP-3009 TransferWithAuthorization, value=1000, validAfter/validBefore from maxTimeoutSeconds 300, nonce random) signed with a burner EOA over the challenge-supplied domain (USD Coin v2, chainId 8453, verifyingContract USDC) and submitted in params._meta['x402/payment'] -> server forwarded to the facilitator: verify returned invalid_exact_evm_insufficient_balance in 1.04s — the signature was VALID (not invalid_signature), the failure is the balance check, i.e. the payload shape and EIP-712 domain are correct end-to-end; the failed verify response carries the full fresh challenge (same accepts, new terms) so the client can retry after funding. No settle transaction, no charge; burner balance 0/0 before and after (evidence 21). (5) 'If the tool fails, you're not charged': pre-payment failures are free by construction (no payment token in the request); the post-payment refund/settle-on-failure path requires a funded wallet and is UNVERIFIED in this run — the observable equivalent is that no settle ever occurred without a valid payment (facilitator balance-gates before settle).",
+      "run_ts": "2026-11-21T04:05:00Z",
+      "status": {
+        "state": "verified_local",
+        "note": "Provenance: content first signed into main registry as argus-finding-0027 on 2026-11-21 by probe-session key argus-lab-probe-2026q4 (operator key absent in sandbox) — REVOKED same history commit 606be94e (ARG-03 operator-allowlist hardening; chain tail removed, 0000-0024 untouched, main head e5807aab6a6ac5e6... intact); migrated same day to the agent registry as argus-agent-self-0003 (commit 47c27780, agent head 54af5eb21aa08b24..., verify --registry=agent green). This draft is the operator-review promotion candidate: operator offline re-sign (argus-lab-2026q4r2) onto main head e5807aab... per the agent-registry promotion path; evidence sha256 pins recomputed 2026-11-22 (01_initialize.json=cf6244198f9d…, 02_initialized_notification.json=4b28ed9dbeda…, 03_tools_list_lite.json=8276b64c8542…, 04_tools_list_full_p1.json=44a854fc8dc8…, 05_tools_list_full_stats.json=09c849dedc6f…, 06_health.json=81605ae699b9…, 07_docs_all.json=20973aa69dcc…, 10_search_1_ping.json=e59ecd3b560e…, 10_search_2_url_parse.json=bcb82ec038ef…, 10_search_3_cusip.json=bd7c00ae8875…, 10_search_4_solana_token.json=6eb5ab478813…, 11_chosen_tool_schemas.json=cb54290aa044…, 12_payment_required_1_ping.json=d5f5e991a6a3…, 12_payment_required_2_url_parse.json=7b804081cda6…, 12_payment_required_3_cusip_validate.json=307fe82e7c58…, 13_negative_invalid_args.json=45918d298095…, 14_negative_invalid_cusip.json=f94301e69208…, 15_negative_unknown_tool.json=e08d7ec5cd11…, 20_signed_submit_unfunded.json=6f16189edc17…, 21_balance_after.json=4e138fd62948…); no re-run needed.",
+        "as_of": "2026-11-22"
+      },
+      "evidence": [
+        {
+          "kind": "file",
+          "path": "attestations/evidence/0027-scorptech-mcp-x402-probe/01_initialize.json",
+          "sha256": "cf6244198f9d78c4f768753d47b83ddce1a2d0597af23dbc5027a707b8a85a36"
+        },
+        {
+          "kind": "file",
+          "path": "attestations/evidence/0027-scorptech-mcp-x402-probe/02_initialized_notification.json",
+          "sha256": "4b28ed9dbeda41914f4664ce9ac077e2666ba7dc3f7edee09f6380c202a7ce6a"
+        },
+        {
+          "kind": "file",
+          "path": "attestations/evidence/0027-scorptech-mcp-x402-probe/03_tools_list_lite.json",
+          "sha256": "8276b64c8542ce4266a4c41cf0f9dcdd10e6d58d86cdf20f21c9258972a5ddb7"
+        },
+        {
+          "kind": "file",
+          "path": "attestations/evidence/0027-scorptech-mcp-x402-probe/04_tools_list_full_p1.json",
+          "sha256": "44a854fc8dc83c2bbf4c2607a08ba38c3fedbf92273081ad8b80819f03fa4483"
+        },
+        {
+          "kind": "file",
+          "path": "attestations/evidence/0027-scorptech-mcp-x402-probe/05_tools_list_full_stats.json",
+          "sha256": "09c849dedc6fcbcceb00a85d1c37d83172f55f9b240fc2c327e2f0c3912b4138"
+        },
+        {
+          "kind": "file",
+          "path": "attestations/evidence/0027-scorptech-mcp-x402-probe/06_health.json",
+          "sha256": "81605ae699b957d1ea6786da64e17f3ddf5b3ad561480ee18864f7dafb96ffa5"
+        },
+        {
+          "kind": "file",
+          "path": "attestations/evidence/0027-scorptech-mcp-x402-probe/07_docs_all.json",
+          "sha256": "20973aa69dcc393b71d3ea1bcfa35fc9edeec020d8f52a480bbfc8af2a330cc2"
+        },
+        {
+          "kind": "file",
+          "path": "attestations/evidence/0027-scorptech-mcp-x402-probe/10_search_1_ping.json",
+          "sha256": "e59ecd3b560e6f8f489b6092d926ecc687217185a358e45dc6db12384084d72c"
+        },
+        {
+          "kind": "file",
+          "path": "attestations/evidence/0027-scorptech-mcp-x402-probe/10_search_2_url_parse.json",
+          "sha256": "bcb82ec038ef954742c3b4c16d740f127c692b6e5f53ff9b6e6d913d485a98f1"
+        },
+        {
+          "kind": "file",
+          "path": "attestations/evidence/0027-scorptech-mcp-x402-probe/10_search_3_cusip.json",
+          "sha256": "bd7c00ae8875bcc5c78a81d961fb586cb33aae1112d4c5f71bbe54eb3cb45067"
+        },
+        {
+          "kind": "file",
+          "path": "attestations/evidence/0027-scorptech-mcp-x402-probe/10_search_4_solana_token.json",
+          "sha256": "6eb5ab478813e202a15f4ce79adf18fd278eeb62590a8e93c74881803d25c499"
+        },
+        {
+          "kind": "file",
+          "path": "attestations/evidence/0027-scorptech-mcp-x402-probe/11_chosen_tool_schemas.json",
+          "sha256": "cb54290aa0447572d569684af17fe2a338a2a4410855f549a8b82176b7936a76"
+        },
+        {
+          "kind": "file",
+          "path": "attestations/evidence/0027-scorptech-mcp-x402-probe/12_payment_required_1_ping.json",
+          "sha256": "d5f5e991a6a3d7cb8ca703e17df8ca6f5729aa593188e66eb02289d6423d7740"
+        },
+        {
+          "kind": "file",
+          "path": "attestations/evidence/0027-scorptech-mcp-x402-probe/12_payment_required_2_url_parse.json",
+          "sha256": "7b804081cda67b1f9d94c3325e3c311b024486a8f7312c1c69e022707b5c18ea"
+        },
+        {
+          "kind": "file",
+          "path": "attestations/evidence/0027-scorptech-mcp-x402-probe/12_payment_required_3_cusip_validate.json",
+          "sha256": "307fe82e7c58f93aec7c67173c0a6a02d3bf08abcb47141754c2219857097700"
+        },
+        {
+          "kind": "file",
+          "path": "attestations/evidence/0027-scorptech-mcp-x402-probe/13_negative_invalid_args.json",
+          "sha256": "45918d298095e79bc6fae32be128567fe6ab058f50532ddc9f4d4ff8f3d78f5e"
+        },
+        {
+          "kind": "file",
+          "path": "attestations/evidence/0027-scorptech-mcp-x402-probe/14_negative_invalid_cusip.json",
+          "sha256": "f94301e69208c3229102efce8a4493419e7cb924019465d1231eee678bf313ef"
+        },
+        {
+          "kind": "file",
+          "path": "attestations/evidence/0027-scorptech-mcp-x402-probe/15_negative_unknown_tool.json",
+          "sha256": "e08d7ec5cd11424d64b0675b7a7fef1a497eae618ded7bb519ac5f734170bfdb"
+        },
+        {
+          "kind": "file",
+          "path": "attestations/evidence/0027-scorptech-mcp-x402-probe/20_signed_submit_unfunded.json",
+          "sha256": "6f16189edc172d24542d35258b1f0e9b9a44565f461356b357014f3a6e5ae630"
+        },
+        {
+          "kind": "file",
+          "path": "attestations/evidence/0027-scorptech-mcp-x402-probe/21_balance_after.json",
+          "sha256": "4e138fd62948cbec57181f8eb3478e2ee5168b30eabb8dec3c9c85e2e0f0e18a"
+        }
+      ],
+      "signature": "+tNDrm7Du+j9wRazi6O2hcOn9sX47yt73mw9ANKKogIgFUOXRi0/ppKa/hO7hXWUfvxI8x2LI1c+iob5njIYCA=="
     }
   ]
 }
