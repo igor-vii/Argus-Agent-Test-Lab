@@ -1,0 +1,15 @@
+{
+  "capture_url": "https://settlement-collector.fly.dev/ledger.json",
+  "captured_at_utc": "2026-11-22T18:12:40Z",
+  "raw_sha256": "9c001fd731468d6cd6dcda7cf879b2ffdc908acfb23643a5c38e3517555f60d5",
+  "row_count": 64,
+  "ledger_last_updated": "2026-11-21T14:46:07.551Z",
+  "adjacent_pair_deltas_ms_leq_4250": [
+    980,
+    2010,
+    3235,
+    3586,
+    3828,
+    4204
+  ]
+}

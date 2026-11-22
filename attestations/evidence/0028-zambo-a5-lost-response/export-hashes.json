@@ -1,0 +1,25 @@
+{
+  "record_url": "https://zambo.dev/run/2e9ebf1f-5743-48de-a34b-5b3584c4c102",
+  "verify_url": "https://zambo.dev/api/v2/receipt/2e9ebf1f-5743-48de-a34b-5b3584c4c102/verify",
+  "captured_at_utc": "2026-11-22T18:38:04Z",
+  "posted_in_thread_utc": "2026-11-22T17:10:11Z",
+  "receipt_id": "2e9ebf1f-5743-48de-a34b-5b3584c4c102",
+  "receipt_profile": "zambo-hosted-receipt/1",
+  "verification_status": "verified",
+  "output_hash": "sha256:b57197d5333af492c73260784de351c587545b6837ddab98500386714d931b87",
+  "canonical_byte_length": 1269,
+  "commitment_recomputed_at_capture": true,
+  "journal_entry": {
+    "tool_name": "lost_response_probe",
+    "executor_identity": "lost-response-harness",
+    "sequence": 1,
+    "prev_hash": null,
+    "entry_hash": "sha256:d07ffbe2db7aba619f7df5b2e37caba5ded489c70872b0bfa3f3a73a1c01fa13",
+    "redacted_inputs_hash": "sha256:009dc69401a98a8cadc92ecf32baacc0bb7a1d9aa505445f7632f20b86483c4f"
+  },
+  "side_effects_declared": [
+    "state_write"
+  ],
+  "payment_attempt_tuple_fields_present": [],
+  "submission_records_in_set": 1
+}

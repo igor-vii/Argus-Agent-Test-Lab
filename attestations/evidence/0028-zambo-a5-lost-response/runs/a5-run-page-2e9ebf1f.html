@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script defer src="/campaign.js"></script>
+    
+    
+    <title>A note in your job log · saved and checkable | Zambo</title>
+    <meta name="description" content="Zambo is the verifiable work layer for AI. Verifiable receipt for a journal_log call on Zambo: {&quot;status&quot;:&quot;logged&quot;,&quot;provenance_class&quot;:&quot;LOGGED BY AGENT&quot;,&quot;entry&quot;:{&quot;entry_id&quot;:&quot;98f87534-3380-43f4-97a3-899adf1">
+    <meta property="og:type" content="article">
+    
+    <meta property="og:title" content="journal_log receipt record | Zambo">
+    <meta property="og:description" content="journal_log · UTC 2026-11-17T20:57:35.924Z · SHA-256 commitment sha256:b57197d5333af492c73260784de351c587545b6837ddab98500386714d931b87">
+    <meta property="og:url" content="https://zambo.dev/run/2e9ebf1f-5743-48de-a34b-5b3584c4c102">
+     <meta property="og:image" content="https://zambo.dev/api/og-image/receipt/2e9ebf1f-5743-48de-a34b-5b3584c4c102/share">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:alt" content="Receipt 2e9ebf1f">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="journal_log receipt record | Zambo">
+    <meta name="twitter:description" content="journal_log · UTC 2026-11-17T20:57:35.924Z · SHA-256 commitment sha256:b57197d5333af492c73260784de351c587545b6837ddab98500386714d931b87">
+    <meta name="twitter:url" content="https://zambo.dev/run/2e9ebf1f-5743-48de-a34b-5b3584c4c102">
+     <meta name="twitter:image" content="https://zambo.dev/api/og-image/receipt/2e9ebf1f-5743-48de-a34b-5b3584c4c102/share">
+    <meta name="twitter:image:alt" content="Receipt 2e9ebf1f">
+    <link rel="canonical" href="https://zambo.dev/run/2e9ebf1f-5743-48de-a34b-5b3584c4c102">
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"DigitalDocument","@id":"https://zambo.dev/run/2e9ebf1f-5743-48de-a34b-5b3584c4c102","name":"Receipt record 2e9ebf1f-5743-48de-a34b-5b3584c4c102 | journal_log result | Zambo","url":"https://zambo.dev/run/2e9ebf1f-5743-48de-a34b-5b3584c4c102","verification_url":"https://zambo.dev/api/v2/receipt/2e9ebf1f-5743-48de-a34b-5b3584c4c102/verify","identifier":"https://zambo.dev/run/2e9ebf1f-5743-48de-a34b-5b3584c4c102","dateCreated":"2026-11-17T20:57:35.924Z","description":"Zambo is the verifiable work layer for AI. Verifiable receipt for a journal_log call on Zambo: {\"status\":\"logged\",\"provenance_class\":\"LOGGED BY AGENT\",\"entry\":{\"entry_id\":\"98f87534-3380-43f4-97a3-899adf1","additionalProperty":[{"@type":"PropertyValue","name":"tool","value":"journal_log"},{"@type":"PropertyValue","name":"sha256","value":"sha256:b57197d5333af492c73260784de351c587545b6837ddab98500386714d931b87"}]}</script>
+       <style>
+        :root{color-scheme:light;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+        html,body{width:100%;max-width:100%;min-height:100%;margin:0;overflow-x:hidden;box-sizing:border-box}
+        *,*::before,*::after{box-sizing:border-box}
+        body{padding:clamp(14px,3.5vw,40px);color:#17231c;background:radial-gradient(ellipse at 50% 0%,#e9f0d8 0%,#f2f4ed 44%,#edf0e9 100%);font-size:16px;line-height:1.65}
+        main{width:100%;max-width:1020px;margin:0 auto;padding:clamp(20px,4vw,48px);border:1px solid rgba(40,60,43,.12);border-radius:28px;background:rgba(255,255,252,.96);box-shadow:0 24px 80px rgba(31,48,34,.1)}
+        .receipt-kicker{margin:0 0 10px;color:#63733f;font:800 11px/1.3 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.16em;text-transform:uppercase}
+        main>h1{max-width:900px;margin:0 0 18px;color:#111a14;font-size:clamp(32px,5vw,54px);font-weight:850;line-height:1.02;letter-spacing:-.055em}
+        .receipt-plain-status{margin:0 0 12px;padding:13px 16px;border:1px solid #c9d99e;border-radius:14px;background:linear-gradient(115deg,#f1f8dc,#e9f2d4);color:#253817;font-size:15px;font-weight:800}
+        .receipt-plain-status.is-unconfirmed{border-color:#ead5a5;background:#fff7e5;color:#604514}
+        .receipt-sender{margin:0 0 8px;color:#687166;font-size:13px;font-weight:650}
+        .receipt-top-actions{display:flex;flex-wrap:wrap;gap:9px;margin:0 0 18px}
+        .receipt-top-actions a{display:inline-flex;min-height:48px;align-items:center;justify-content:center;padding:11px 17px;border:1px solid #b2cc4e;border-radius:999px;background:#c8f135;color:#17220f;font-size:13px;font-weight:800;text-decoration:none;transition:transform .15s ease,box-shadow .15s ease}
+        .receipt-top-actions a:first-child{border-color:#d6ddcb;background:#fff;color:#253326}
+        .receipt-top-actions a:hover,.receipt-result-actions a:hover{transform:translateY(-1px);box-shadow:0 5px 16px rgba(35,53,26,.1)}
+        .receipt-plain-context{margin:0 0 16px;padding:14px 16px;border:1px solid #e0e5d9;border-radius:14px;background:#f8f9f5;color:#424b40;font-size:14px;line-height:1.75;overflow-wrap:anywhere}
+        .receipt-work-layer-intro{margin:14px 0;color:#344a21;font-size:14px;font-weight:800}
+        section{margin:24px 0}
+        section h2{margin:0 0 11px;color:#17231c;font-size:clamp(20px,3vw,26px);line-height:1.18;letter-spacing:-.035em}
+        section[aria-labelledby="receipt-result"]{margin:22px 0;padding:clamp(18px,3vw,28px);border:1px solid rgba(105,132,42,.25);border-radius:20px;background:linear-gradient(135deg,#f8fbea,#f1f5e6 62%,#f8f9f3);box-shadow:0 10px 30px rgba(37,56,25,.05)}
+        section[aria-labelledby="receipt-result"]>h2{margin:0 0 12px}
+        section[aria-labelledby="receipt-result"]>p:first-of-type{margin:0;padding:16px;border:1px solid #e0e5d7;border-radius:12px;background:rgba(255,255,255,.88);color:#202b22;font-size:15px;line-height:1.7;overflow-wrap:anywhere}
+        .receipt-result-note{margin:10px 0 0;color:#657063;font-size:13px;line-height:1.5}
+        .receipt-result-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:16px 0 0}
+        .receipt-result-actions a,.receipt-copy-button{display:inline-flex;min-height:44px;min-width:44px;align-items:center;justify-content:center;padding:9px 14px;border:1px solid #d4dccb;border-radius:999px;background:#fff;color:#263426;font-family:inherit;font-size:13px;font-weight:750;line-height:1.3;text-decoration:none;cursor:pointer}
+        .receipt-result-actions a:first-child{border-color:#b2cc4e;background:#c8f135;color:#17220f}
+        .receipt-copy-button{min-height:48px;padding:10px 16px;font-family:inherit}
+        main p a:not([class]):not([style]),main li a:not([class]):not([style]),main dd a:not([class]):not([style]){display:inline-flex;min-height:44px;align-items:center;padding-block:12px;margin-block:-12px;vertical-align:middle}
+        section[aria-label="Check this receipt"]{padding:18px 20px;border:1px solid #e2e6dc;border-radius:16px;background:#fbfcf9}
+        section[aria-label="Check this receipt"] ul{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:8px 20px;margin:0;padding-left:20px}
+        section[aria-label="Check this receipt"] li{padding:3px 0;color:#5d685b}
+        a{color:#315824;text-underline-offset:3px}
+        .receipt-technical{margin:16px 0;padding:0 17px;border:1px solid #dce2d5;border-radius:16px;background:#f8f9f5}
+        .receipt-technical>summary{min-height:54px;display:flex;align-items:center;cursor:pointer;color:#30481e;font-size:14px;font-weight:800;list-style-position:inside}
+        .receipt-technical[open]{padding-bottom:12px}
+        .receipt-technical section{margin:16px 0;padding-top:14px;border-top:1px solid #e2e6dc}
+        .receipt-technical h2{font-size:18px}
+        dl{display:grid;grid-template-columns:minmax(140px,220px) minmax(0,1fr);gap:7px 16px;margin:14px 0}
+        dt{color:#64705f;font-size:13px;font-weight:750}
+        dd{min-width:0;margin:0;color:#202a22;font-size:13px;overflow-wrap:anywhere}
+        code{overflow-wrap:anywhere;word-break:break-word;font-size:.88em}
+        pre{max-width:100%;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word;padding:16px;border:1px solid #e0e5d8;border-radius:12px;background:#f3f5ef;color:#263426;font:12px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace}
+        .provenance-legend,.job-timeline{list-style:none;padding:0}
+        .provenance-legend li{display:flex;gap:.65rem;align-items:flex-start;margin:.7rem 0;color:#465143}
+        .provenance-badge{display:inline-block;padding:.25rem .55rem;border-radius:999px;font:800 .68rem/1.2 ui-monospace,SFMono-Regular,monospace;letter-spacing:.02em;white-space:nowrap}
+        .provenance-badge.executed{background:#d9f99d;color:#14532d}
+        .provenance-badge.observed{background:#bfdbfe;color:#1e3a8a}
+        .provenance-badge.logged{background:#fed7aa;color:#7c2d12}
+        .provenance-badge.claim-bound{background:#e5e7eb;color:#111827}
+        .provenance-badge.legacy,.provenance-badge.unbound{background:#f3f4f6;color:#374151}
+        .timeline-entry{margin:12px 0;padding:15px 16px;border-left:4px solid #a5ce38;border-radius:0 12px 12px 0;background:#fff}
+        .timeline-entry.observed{border-color:#78aee5}
+        .timeline-entry.logged{border-color:#e8a35c}
+        .timeline-entry.deleted{border-color:#ef4444}
+        .timeline-entry dl{font-size:13px}
+        .receipt-install-cta{margin:16px 0 20px;padding:16px 18px;border:1px solid #c8df72;border-radius:16px;background:linear-gradient(120deg,#f7fce8,#eef5d8)}
+        .receipt-install-cta a{color:#27451a;font-weight:850}
+        .receipt-day-pass-cta{display:inline-flex;min-height:46px;align-items:center;justify-content:center;padding:11px 18px;border-radius:999px;background:#c8f135;color:#17220f;font-weight:850;text-decoration:none}
+        #copy-link-fallback{margin-top:12px}
+        #copy-link-fallback input{width:100%;padding:11px 12px;border:1px solid #cbd3c3;border-radius:10px;font:inherit}
+        button:focus-visible,a:focus-visible,summary:focus-visible{outline:3px solid #789b1a;outline-offset:3px}
+        @media(max-width:600px){
+          body{padding:0;background:#f2f4ed}
+          main{max-width:none;min-height:100vh;padding:22px 16px 36px;border:0;border-radius:0;box-shadow:none}
+          main>h1{font-size:clamp(29px,8vw,36px)}
+          .receipt-top-actions{display:grid;grid-template-columns:1fr}
+          .receipt-top-actions a{width:100%}
+          section[aria-labelledby="receipt-result"]{padding:17px 14px;border-radius:16px}
+          section[aria-labelledby="receipt-result"]>p:first-of-type{padding:13px;font-size:14px}
+          .receipt-result-actions a,.receipt-copy-button{flex:1 1 42%;padding:9px 10px;font-size:12px}
+          section[aria-label="Check this receipt"]{padding:15px}
+          dl{grid-template-columns:1fr;gap:3px}
+          dt:not(:first-child){margin-top:9px}
+          .provenance-legend li{flex-direction:column;gap:5px}
+        }
+        @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important}}
+     </style>
+  </head>
+  <body>
+    <main>
+       <p class="receipt-kicker">Public work receipt · checkable record</p>
+       <h1>A note in your job log · saved and checkable</h1>
+       
+        <p class="receipt-plain-status is-verified">✓ This result hasn’t changed since it was saved.</p>
+       <p class="receipt-sender">Sent using Zambo</p>
+       <nav class="receipt-top-actions" aria-label="Receipt actions">
+           <a href="/verify/?id=2e9ebf1f-5743-48de-a34b-5b3584c4c102">Check this receipt</a>
+         <a href="/add/?ref=verify-2e9ebf1f-5743-48de-a34b-5b3584c4c102">Get receipts for my own AI work</a>
+       <a href="/workflows/" data-workflows-link style="margin-inline:12px">Workflows</a></nav>
+       <p class="receipt-plain-context"><strong>Saved:</strong> <time datetime="2026-11-17T20:57:35.924Z">2026-11-17T20:57:35.924Z</time><br><strong>What ran:</strong> <code>journal_log</code></p>
+      <p class="receipt-work-layer-intro">Zambo is the verifiable work layer for AI.</p>
+       
+       
+       
+       
+      
+       <section aria-labelledby="receipt-result">
+         <h2 id="receipt-result">Observed result</h2>
+         <p style="white-space:pre-wrap">status: logged
+provenance class: LOGGED BY AGENT
+entry / entry id: 98f87534-3380-43f4-97a3-899adf111538
+entry / sequence: 1
+entry / provenance class: LOGGED BY AGENT
+entry / tool name: lost_response_probe
+entry / redacted inputs hash: sha256:009dc69401a98a8cadc92ecf32baacc0bb7a1d9aa505445f7632f20b86483c4f
+entry / started at: 2026-11-17T20:57:35.602Z
+entry / completed at: 2026-11-17T20:57:35.602Z
+entry / duration ms: 0
+entry / executor identity: lost-response-harness
+entry / entry hash: sha256:d07ffbe2db7aba619f7df5b2e37caba5ded489c70872b0bfa3f3a73a1c01fa13
+entry / deleted: false
+attests: Zambo attests that this record was received, redacted, timestamped, and chained.
+does not attest: Zambo did not run or observe the reported action.
+verify url: https://zambo.dev/api/journal/[private]/verify</p>
+          <p class="receipt-result-note">This is the saved result preview, not proof that the answer was correct.</p>
+          <div class="receipt-result-actions" aria-label="Receipt actions">
+             <a href="/verify/?id=2e9ebf1f-5743-48de-a34b-5b3584c4c102">Verify saved bytes</a>
+            <button class="receipt-copy-button" type="button" onclick="copyReceiptLink()">Copy receipt link</button>
+            <a href="https://zambo.dev/chat?prompt=Run%20your%20own%20free%20Zambo%20call&amp;src=receipt&amp;parent=2e9ebf1f-5743-48de-a34b-5b3584c4c102">Run your own</a>
+          </div>
+         
+       </section>
+         <section id="receipt-verify-links" aria-label="Check this receipt">
+           <h2>Check this receipt</h2>
+            <p>This page shows the result and when it was saved. Use the receipt checker to see whether the saved result has changed.</p>
+          <ul>
+             <li><a href="https://datatracker.ietf.org/doc/draft-zambo-aer1/26/">Read AER-1 draft -26</a></li>
+               <li><a href="/verify/?ref=run&id=2e9ebf1f-5743-48de-a34b-5b3584c4c102">Verify yours</a></li>
+             <li><a href="https://zambo.dev/api/v2/receipt/2e9ebf1f-5743-48de-a34b-5b3584c4c102/verify">Open the API v2 JSON check</a></li>
+              <li><a href="/verify/#attach">Attach a Zambo receipt to your project</a></li>
+            <li><a href="https://zambo.dev/aer1/fixtures/">See example fixtures</a></li>
+          </ul>
+        </section>
+        <details class="receipt-technical"><summary>Show technical provenance details</summary>
+          <section aria-labelledby="provenance-legend">
+      <h2 id="provenance-legend">Provenance for every timeline entry</h2>
+      <ul class="provenance-legend">
+        <li><span class="provenance-badge executed">EXECUTED BY ZAMBO</span><span>Zambo ran the tool call itself.</span></li>
+        <li><span class="provenance-badge observed">OBSERVED VIA GATEWAY</span><span>A Zambo gateway observed request and response bytes from the named external executor. Zambo did not run that external action.</span></li>
+        <li><span class="provenance-badge logged">LOGGED BY AGENT</span><span>An agent or local hook reported the action. Zambo attests that the record is unchanged since logging, not that the action happened as described.</span></li>
+      </ul>
+      <p>Private agent reasoning, built-in client actions, and direct calls to unrelated MCP servers are not included unless an agent or gateway reports them.</p>
+    </section>
+          
+          <section aria-labelledby="execution-receipt-definition">
+         <h2 id="execution-receipt-definition">What is this receipt?</h2>
+         <p>This is a verifiable receipt for a journal entry. It confirms receipt, redaction, timestamping, and chaining. It does not attest to execution.</p>
+       </section>
+        </details>
+        <details class="receipt-technical"><summary>What the receipt can and cannot prove</summary><section aria-labelledby="what-is-this">
+         <h2 id="what-is-this">What is this?</h2>
+         <p>Zambo's receipt store reports a journal entry from an agent or local hook. The SHA-256 commitment covers the receipt bytes. The provenance label is only a claim, not proof of issuer identity or that the reported action happened.</p>
+       </section></details>
+       
+        <section aria-labelledby="receipt-upgrade">
+          <h2 id="receipt-upgrade">Keep the work moving</h2>
+           <p>This receipt records a completed tool call. When the free allowance is not enough, choose the access path that fits the job.</p>
+          <p>
+            <a class="receipt-day-pass-cta" href="https://zambo.dev/day-pass/?ref=run">UNLOCK 24H DAY PASS ($0.99) →</a>
+          </p>
+          
+         <p><a href="https://zambo.dev/pricing/">See all plans on the pricing page →</a></p>
+        </section>
+       <p><a href="https://zambo.dev/chat?prompt=Run%20your%20own%20free%20Zambo%20call&amp;src=receipt&amp;parent=2e9ebf1f-5743-48de-a34b-5b3584c4c102" style="display:inline-block;padding:12px 20px;border-radius:8px;background:#c8f135;color:#0a0a08;font-weight:800;text-decoration:none">RUN YOUR OWN FREE CALL →</a></p>
+        <p>Or <a href="https://zambo.dev/chat?prompt=Run%20your%20own%20free%20Zambo%20call&amp;src=receipt&amp;parent=2e9ebf1f-5743-48de-a34b-5b3584c4c102">re-run this exact call</a>, using the same tool and arguments.</p>
+       <section aria-labelledby="receipt-share">
+         <h2 id="receipt-share">Share this receipt</h2>
+          <p><a style="display:inline-flex;align-items:center;min-height:44px;padding:0 8px" href="https://x.com/intent/post?text=Zambo%20receipt%20record%3A%20https%3A%2F%2Fzambo.dev%2Frun%2F2e9ebf1f-5743-48de-a34b-5b3584c4c102" onclick="trackReceiptShare('x')">Share on X</a> · <a style="display:inline-flex;align-items:center;min-height:44px;padding:0 8px" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fzambo.dev%2Frun%2F2e9ebf1f-5743-48de-a34b-5b3584c4c102" target="_blank" rel="noopener noreferrer" onclick="trackReceiptShare('linkedin')">Share on LinkedIn</a> · <button class="receipt-copy-button" type="button" onclick="copyReceiptLink()">Copy link</button> <span id="copy-link-status" role="status" aria-live="polite"></span></p>
+          <div id="copy-link-fallback" hidden><label for="copy-link-url">Copy this receipt link manually:</label><input id="copy-link-url" type="text" readonly value="https://zambo.dev/run/2e9ebf1f-5743-48de-a34b-5b3584c4c102"></div>
+       </section>
+        <details class="receipt-technical"><summary>Show technical verification checks</summary>
+        <section aria-labelledby="receipt-checks">
+         <h2 id="receipt-checks">Verification checks</h2>
+         <ul>
+             <li><strong>SHA-256 commitment:</strong> Checked independently against the exact decoded bytes</li>
+             <li><strong>Provenance binding:</strong> PASS; The metadata claim is consistent with the verified receipt bytes; issuer is not authenticated.</li>
+              <li><strong>Metadata binding:</strong> PASS; metadata_hash matches the canonical metadata block.</li>
+             <li><strong>Issuer authentication:</strong> NOT CHECKED; no pinned signing key or trusted issuer was supplied</li>
+            <li><strong>Signature:</strong> NOT CHECKED; no Ed25519 signature or pinned key is supplied</li>
+            <li><strong>Chain:</strong> NOT CHECKED; no append-only chain proof is validated</li>
+            <li><strong>Stored timestamp:</strong> 2026-11-17T20:57:35.924Z; external immutability is not checked</li>
+         </ul>
+       </section>
+        </details>
+       <section aria-label="Zambo Receipt Bot">
+         <h2>Get proof like this from your own AI</h2>
+          <p><a href="/add/">Add to my AI</a> · <button class="receipt-copy-button" type="button" data-testid="button-copy-zambo-link" onclick="var b=this;var t='https://zambo.dev/mcp';var f=function(){var e=document.createElement('textarea');e.value=t;document.body.appendChild(e);e.select();var ok=document.execCommand('copy');e.remove();if(ok)b.textContent='Copied';};if(navigator.clipboard)navigator.clipboard.writeText(t).then(function(){b.textContent='Copied';}).catch(f);else f();">Copy Zambo link</button></p>
+<style data-zi>.zi{margin:28px 0;padding:22px;border:1px solid #DEDAD1;border-radius:14px;background:#FBFAF6;color:#20241C;font:15px/1.55 system-ui,-apple-system,sans-serif}.zi h2{margin:0 0 6px;font-size:20px;color:#20241C}.zi p{margin:0 0 14px;color:#4A4F44}.zi ul{list-style:none;margin:0;padding:0;display:grid;gap:10px;grid-template-columns:repeat(2,minmax(0,1fr))}.zi li{display:flex;flex-direction:column;gap:8px;padding:14px;border:1px solid #E6E2D8;border-radius:10px;background:#F5F3EE;min-width:0}.zi strong{color:#20241C}.zi small{color:#5A5F54}.zi .zi-row{display:flex;gap:8px;align-items:center;min-width:0}.zi code{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:8px 10px;border-radius:8px;background:#fff;border:1px solid #E1DDD3;font:12px ui-monospace,monospace;color:#20241C}.zi button{min-height:40px;padding:0 14px;border:1px solid #20241C;border-radius:8px;background:#20241C;color:#F5F3EE;font:700 13px system-ui,sans-serif;cursor:pointer}.zi .zi-fine{margin:12px 0 0;font-size:13px;color:#6A6F64}@media(max-width:640px){.zi ul{grid-template-columns:1fr}}</style><section class="zi" aria-labelledby="zi-title" data-testid="section-install-cta"><h2 id="zi-title">Get receipts for your own AI work: add zambo.dev/mcp</h2><p>One URL, no key. Copy the line for your AI and add it yourself in its settings.</p><ul><li><strong>Claude</strong><small>Settings, Connectors, Add custom connector, paste the URL.</small><div class="zi-row"><code title="https://zambo.dev/mcp">https://zambo.dev/mcp</code><button type="button" data-copy="https://zambo.dev/mcp" onclick="var b=this,t=b.getAttribute(&#39;data-copy&#39;);var d=function(){b.textContent=&#39;Copied&#39;;setTimeout(function(){b.textContent=&#39;Copy&#39;},1600)};var f=function(){var e=document.createElement(&#39;textarea&#39;);e.value=t;document.body.appendChild(e);e.select();try{document.execCommand(&#39;copy&#39;)}catch(x){}e.remove();d()};if(navigator.clipboard)navigator.clipboard.writeText(t).then(d,f);else f();" data-testid="button-install-claude">Copy</button></div></li><li><strong>ChatGPT</strong><small>Settings, Apps and Connectors, developer mode, create a connector with this URL.</small><div class="zi-row"><code title="https://zambo.dev/mcp">https://zambo.dev/mcp</code><button type="button" data-copy="https://zambo.dev/mcp" onclick="var b=this,t=b.getAttribute(&#39;data-copy&#39;);var d=function(){b.textContent=&#39;Copied&#39;;setTimeout(function(){b.textContent=&#39;Copy&#39;},1600)};var f=function(){var e=document.createElement(&#39;textarea&#39;);e.value=t;document.body.appendChild(e);e.select();try{document.execCommand(&#39;copy&#39;)}catch(x){}e.remove();d()};if(navigator.clipboard)navigator.clipboard.writeText(t).then(d,f);else f();" data-testid="button-install-chatgpt">Copy</button></div></li><li><strong>Grok</strong><small>Add a remote MCP server in your Grok client and paste the URL.</small><div class="zi-row"><code title="https://zambo.dev/mcp">https://zambo.dev/mcp</code><button type="button" data-copy="https://zambo.dev/mcp" onclick="var b=this,t=b.getAttribute(&#39;data-copy&#39;);var d=function(){b.textContent=&#39;Copied&#39;;setTimeout(function(){b.textContent=&#39;Copy&#39;},1600)};var f=function(){var e=document.createElement(&#39;textarea&#39;);e.value=t;document.body.appendChild(e);e.select();try{document.execCommand(&#39;copy&#39;)}catch(x){}e.remove();d()};if(navigator.clipboard)navigator.clipboard.writeText(t).then(d,f);else f();" data-testid="button-install-grok">Copy</button></div></li><li><strong>Cursor</strong><small>Paste into ~/.cursor/mcp.json.</small><div class="zi-row"><code title="{&quot;mcpServers&quot;:{&quot;zambo&quot;:{&quot;url&quot;:&quot;https://zambo.dev/mcp&quot;}}}">{&quot;mcpServers&quot;:{&quot;zambo&quot;:{&quot;url&quot;:&quot;https://zambo.dev/mcp&quot;}}}</code><button type="button" data-copy="{&quot;mcpServers&quot;:{&quot;zambo&quot;:{&quot;url&quot;:&quot;https://zambo.dev/mcp&quot;}}}" onclick="var b=this,t=b.getAttribute(&#39;data-copy&#39;);var d=function(){b.textContent=&#39;Copied&#39;;setTimeout(function(){b.textContent=&#39;Copy&#39;},1600)};var f=function(){var e=document.createElement(&#39;textarea&#39;);e.value=t;document.body.appendChild(e);e.select();try{document.execCommand(&#39;copy&#39;)}catch(x){}e.remove();d()};if(navigator.clipboard)navigator.clipboard.writeText(t).then(d,f);else f();" data-testid="button-install-cursor">Copy</button></div></li></ul><p class="zi-fine">Nothing is installed automatically. <a href="/add/">Full setup guides</a></p></section>
+         <p>Want a verifiable receipt for every job your bots do?</p>
+         <p><a href="https://zambo.dev/receiptgrokbot?ref=run" style="display:inline-block;padding:12px 20px;border-radius:8px;background:#c8f135;color:#0a0a08;font-weight:800;text-decoration:none">Add Zambo Receipt Bot to your team</a> · <a href="https://zambo.dev/receiptgrokbot?ref=run-file">File this in Receipt Bot</a></p>
+       </section>
+        <details class="receipt-technical"><summary>Show receipt data and verification evidence</summary>
+        <section aria-labelledby="receipt-proof">
+          <h2 id="receipt-proof">Committed provenance claim</h2>
+         <p><span class="provenance-badge claim-bound">LOGGED BY AGENT</span></p>
+          <p>The metadata claim is consistent with the verified receipt bytes; issuer is not authenticated.</p>
+        <dl>
+          <dt>Receipt ID</dt><dd><code>2e9ebf1f-5743-48de-a34b-5b3584c4c102</code></dd>
+          <dt>SHA-256 output hash</dt><dd><code>sha256:b57197d5333af492c73260784de351c587545b6837ddab98500386714d931b87</code></dd>
+          <dt>Canonical bytes</dt><dd><code>eyJjYWxsZXIiOnsiaWQiOiJzaGEyNTY6YWMxNjc2ODlhZDAxOTE1NTViZWFhNGMwYmMzMDA4MmUzM2E4ODRjNWVkNWI2ZGJhOWM1NzMyZjQwYzQxOTU5MSIsInR5cGUiOiJzZXNzaW9uIn0sImlzc3Vlcl9jbGFpbXMiOnsicHJvdmVuYW5jZV9jbGFzcyI6IkxPR0dFRCBCWSBBR0VOVCJ9LCJvdXRwdXQiOnsiYXR0ZXN0cyI6IlphbWJvIGF0dGVzdHMgdGhhdCB0aGlzIHJlY29yZCB3YXMgcmVjZWl2ZWQsIHJlZGFjdGVkLCB0aW1lc3RhbXBlZCwgYW5kIGNoYWluZWQuIiwiZG9lc19ub3RfYXR0ZXN0IjoiWmFtYm8gZGlkIG5vdCBydW4gb3Igb2JzZXJ2ZSB0aGUgcmVwb3J0ZWQgYWN0aW9uLiIsImVudHJ5Ijp7ImNvbXBsZXRlZF9hdCI6IjIwMjYtMTEtMTdUMjA6NTc6MzUuNjAyWiIsImRlbGV0ZWQiOmZhbHNlLCJkdXJhdGlvbl9tcyI6MCwiZW50cnlfaGFzaCI6InNoYTI1NjpkMDdmZmJlMmRiN2FiYTYxOWY3ZGY1YjJlMzdjYWJhNWRlZDQ4OWM3MDg3MmIwYmZhM2YzYTczYTFjMDFmYTEzIiwiZW50cnlfaWQiOiI5OGY4NzUzNC0zMzgwLTQzZjQtOTdhMy04OTlhZGYxMTE1MzgiLCJleGVjdXRvcl9pZGVudGl0eSI6Imxvc3QtcmVzcG9uc2UtaGFybmVzcyIsImV4dGVybmFsX2V4ZWN1dG9yIjpudWxsLCJtZXRhZGF0YSI6e30sInByZXZfaGFzaCI6bnVsbCwicHJvdmVuYW5jZV9jbGFzcyI6IkxPR0dFRCBCWSBBR0VOVCIsInJlZGFjdGVkX2lucHV0c19oYXNoIjoic2hhMjU2OjAwOWRjNjk0MDFhOThhOGNhZGM5MmVjZjMyYmFhY2MwYmI3YTFkOWFhNTA1NDQ1Zjc2MzJmMjBiODY0ODNjNGYiLCJzZXF1ZW5jZSI6MSwic3RhcnRlZF9hdCI6IjIwMjYtMTEtMTdUMjA6NTc6MzUuNjAyWiIsInRvb2xfbmFtZSI6Imxvc3RfcmVzcG9uc2VfcHJvYmUifSwicHJvdmVuYW5jZV9jbGFzcyI6IkxPR0dFRCBCWSBBR0VOVCIsInN0YXR1cyI6ImxvZ2dlZCIsInZlcmlmeV91cmwiOiJodHRwczovL3phbWJvLmRldi9hcGkvam91cm5hbC9bcHJpdmF0ZV0vdmVyaWZ5In0sInJlY2VpcHRfc2NoZW1hX3ZlcnNpb24iOiIwLjQiLCJzaWRlX2VmZmVjdHMiOnsiZGVjbGFyYXRpb25faGFzaCI6InNoYTI1NjpkZmI0NDEyYWE0MjlkM2FjNjM3YTA1NjY4YzQzNWJjYzkwYTI1MTM2M2ZjZGQ0OWY3Yjg1YWU0YWI1NWI1YmM5IiwiZGVjbGFyZWQiOlsic3RhdGVfd3JpdGUiXSwic2NoZW1hX3ZlcnNpb24iOiJ6YW1iby1zaWRlLWVmZmVjdHMvMSJ9LCJ0b29sIjp7Im5hbWUiOiJqb3VybmFsX2xvZyIsInNjb3BlIjoicHVibGljIiwidmVyc2lvbiI6IjQuMS40In19</code></dd>
+          <dt>Timestamp</dt><dd><time datetime="2026-11-17T20:57:35.924Z">2026-11-17T20:57:35.924Z</time></dd>
+        </dl>
+      </section>
+       <section aria-labelledby="receipt-context">
+         <h2 id="receipt-context">Bound call context</h2>
+         <dl>
+           <dt>Receipt schema</dt><dd><code>0.4</code></dd>
+           
+           <dt>Tool name</dt><dd><code>journal_log</code></dd>
+           <dt>Tool version</dt><dd><code>4.1.4</code></dd>
+           <dt>Permission scope</dt><dd><code>public</code></dd>
+           <dt>Caller type</dt><dd><code>session</code></dd>
+           <dt>Caller ID</dt><dd><code>sha256:ac167689ad0191555beaa4c0bc30082e33a884c5ed5b6dba9c5732f40c419591</code></dd>
+           
+           
+           <dt>Declared side effects</dt><dd><code>state_write</code></dd>
+           <dt>Side-effects schema</dt><dd><code>zambo-side-effects/1</code></dd>
+           <dt>Declaration hash</dt><dd><code>sha256:dfb4412aa429d3ac637a05668c435bcc90a251363fcdd49f7b85ae4ab55b5bc9</code></dd>
+           
+         </dl>
+         <p>This records what the server-side tool contract declared at call time. It does not independently verify that a downstream side effect happened.</p>
+       </section>
+      <section aria-labelledby="receipt-evidence">
+        <h2 id="receipt-evidence">Bound upstream evidence</h2>
+        
+        <dl>
+          <dt>Status</dt><dd>empty</dd>
+          <dt>Evidence SHA-256</dt><dd><code>unavailable</code></dd>
+          <dt>Byte length</dt><dd>unavailable</dd>
+        </dl>
+        
+      </section>
+       <section aria-labelledby="receipt-provenance">
+         <h2 id="receipt-provenance">Upstream provenance</h2>
+         <p>This receipt is independently auditable against the named upstream source. This is not a mathematical correctness claim.</p>
+         <ul>
+           <li>
+             <strong>Source:</strong> 
+             · <strong>queried at:</strong> <time datetime=""></time>
+             · <strong>raw response hash:</strong> <code></code>
+           </li>
+         </ul>
+         
+       </section>
+      <section aria-labelledby="receipt-anchor">
+        <h2 id="receipt-anchor">Neutral Nostr anchor</h2>
+        <dl>
+          <dt>Event ID</dt><dd><code>d143f8c0a75e10908fa5374d14464c4d36a897c20bec5f0f8ee02baca28fbea0</code></dd>
+          <dt>Anchor status</dt><dd>published</dd>
+          <dt>Public key</dt><dd><code>e13475107d30c918ec664adf2ab•••••24a22fb35190f82c9e933704fa49af41</code></dd>
+        </dl>
+        <p>Relay hints: <code>wss://relay.primal.net</code></p>
+         
+         <p>Schema: <code>zambo-receipt-anchor/1</code></p>
+          <p>Anchor envelope bytes:</p>
+         <pre>{&quot;anchored_at&quot;:&quot;2026-11-17T20:57:35.924Z&quot;,&quot;evidence_byte_length&quot;:null,&quot;evidence_sha256&quot;:null,&quot;evidence_url&quot;:null,&quot;output_sha256&quot;:&quot;sha256:b57197d5333af492c73260784de351c587545b6837ddab98500386714d931b87&quot;,&quot;receipt_uuid&quot;:&quot;2e9ebf1f-5743-48de-a34b-5b3584c4c102&quot;,&quot;schema_version&quot;:&quot;zambo-receipt-anchor/1&quot;}</pre>
+         
+         <p>Anchor status "published": Published to all configured relay targets.</p>
+        <p>Relay publication is separate from receipt integrity. When the original signed event is available, Zambo retries pending, partial, or failed anchors about once a minute. Relay acknowledgements are external, so there is no guaranteed completion time; the receipt remains checkable from its saved bytes and verification link.</p>
+      </section>
+       <section aria-labelledby="receipt-verify">
+         <h2 id="receipt-verify">Check this hash yourself</h2>
+          <p>Receipt commitment: <strong>commitment matched; issuer, signature and chain not checked</strong>. This checks the saved bytes, not whether the answer was correct. <a href="/verify/?id=2e9ebf1f-5743-48de-a34b-5b3584c4c102">Open the browser receipt checker</a>. <a href="https://zambo.dev/api/v2/receipt/2e9ebf1f-5743-48de-a34b-5b3584c4c102/verify">Open the API v2 JSON response</a> to inspect the machine-readable checks.
+          <a href="https://njump.me/d143f8c0a75e10908fa5374d14464c4d36a897c20bec5f0f8ee02baca28fbea0">See the Nostr anchor event</a> on a public viewer. The fingerprint is timestamped outside Zambo too.
+         </p>
+      </section></details>
+       <section aria-labelledby="receipt-embed">
+         <h2 id="receipt-embed">Embed this receipt</h2>
+          <p>Markdown</p>
+           <pre id="receipt-markdown-badge">[![Verifiable Zambo receipt](https://zambo.dev/api/receipt/2e9ebf1f-5743-48de-a34b-5b3584c4c102/badge.svg)](https://zambo.dev/run/2e9ebf1f-5743-48de-a34b-5b3584c4c102?ref=badge)</pre>
+            <button class="receipt-copy-button" type="button" onclick="copyBadgeSnippet('receipt-markdown-badge','README badge','badge-copy-status-markdown')">Copy README badge</button> <span id="badge-copy-status-markdown" class="receipt-copy-status" role="status" aria-live="polite"></span>
+         <p>HTML</p>
+           <pre id="receipt-html-badge">&lt;a href="https://zambo.dev/run/2e9ebf1f-5743-48de-a34b-5b3584c4c102?ref=badge"&gt;&lt;img src="https://zambo.dev/api/receipt/2e9ebf1f-5743-48de-a34b-5b3584c4c102/badge.svg" alt="Verifiable Zambo receipt"&gt;&lt;/a&gt;</pre>
+            <button class="receipt-copy-button" type="button" onclick="copyBadgeSnippet('receipt-html-badge','PR badge','badge-copy-status-html')">Copy PR badge</button> <span id="badge-copy-status-html" class="receipt-copy-status" role="status" aria-live="polite"></span>
+         <p><a href="https://zambo.dev/api/receipt/2e9ebf1f-5743-48de-a34b-5b3584c4c102/badge.svg">Open badge SVG</a></p>
+       </section>
+      
+       <section aria-labelledby="recent-receipts">
+         <h2 id="recent-receipts">Recent receipts</h2>
+         <ul>
+           <li><a href="/run/72b2087a-dcbf-47bd-a5b8-150ab92a8962">memory_recall · <time datetime="2026-11-22T18:36:27.636Z">2026-11-22T18:36:27.636Z</time></a></li>
+         
+           <li><a href="/run/7736bba3-ca78-40a1-b0bb-b4ed82aa807d">continuity_get_recent · <time datetime="2026-11-22T18:36:02.683Z">2026-11-22T18:36:02.683Z</time></a></li>
+         
+           <li><a href="/run/660a7b0c-77d5-4921-8f57-785f23069d98">leadsignal · <time datetime="2026-11-22T18:35:44.406Z">2026-11-22T18:35:44.406Z</time></a></li>
+         
+           <li><a href="/run/93ee198d-d3b7-4b3d-ad3e-28d61ede0919">continuity_get_recent · <time datetime="2026-11-22T18:35:40.939Z">2026-11-22T18:35:40.939Z</time></a></li>
+         
+           <li><a href="/run/555514b5-e056-4d04-8e80-f0156043efab">prompt_shield · <time datetime="2026-11-22T18:35:31.013Z">2026-11-22T18:35:31.013Z</time></a></li>
+         </ul>
+       </section>
+       <p><strong>160,329 verifiable receipts minted</strong></p>
+       <p><a href="https://zambo.dev/chat?prompt=Run%20your%20own%20free%20Zambo%20call&amp;src=receipt&amp;parent=2e9ebf1f-5743-48de-a34b-5b3584c4c102" style="display:inline-block;padding:12px 20px;border-radius:8px;background:#c8f135;color:#0a0a08;font-weight:800;text-decoration:none">RUN YOUR OWN FREE CALL →</a></p>
+       
+       <p class="receipt-install-cta">
+          <a href="/mcp?ref=run">Get your own: connect https://zambo.dev/mcp. Free daily calls, no API key.</a>
+       </p>
+       <p style="font-size:0.85em"><a href="/receipt-ui/2e9ebf1f-5743-48de-a34b-5b3584c4c102">Open the interactive receipt view</a></p>
+       <footer style="font-size:.85em;padding:1rem 0"><a href="/add/">Made with Zambo - add it to your AI</a><a href="/workflows/" data-workflows-link style="margin-inline:12px">Workflows</a></footer>
+        <section aria-labelledby="receipt-first-job">
+         <h2 id="receipt-first-job">Your AI's work could look like this</h2>
+         <p>Run a first job free in Zambo Chat. No account needed.</p>
+         <div class="receipt-result-actions">
+           <a href="https://zambo.dev/chat?source=receipt" style="display:inline-flex;min-height:48px;align-items:center;justify-content:center;padding:12px 18px;border-radius:999px;background:#c8f135;color:#171915;font-weight:800;text-decoration:none">Start a free job</a>
+           <a href="https://zambo.dev/day-pass/?source=receipt" style="display:inline-flex;min-height:48px;align-items:center;justify-content:center;padding:12px 18px;border:1px solid #c9cec1;border-radius:999px;background:#f2f3ee;color:#171915;font-weight:800;text-decoration:none">Day Pass · $0.99 for 24 hours</a>
+         </div>
+       </section>
+    </main>
+     <script>
+        function trackReceiptShare(channel){try{window.umami?.track("share_click",{channel})}catch{}}
+         async function copyBadgeSnippet(id,label,statusId){const node=document.getElementById(id),status=document.getElementById(statusId);if(!node)return;try{await navigator.clipboard.writeText(node.textContent||"");if(status)status.textContent=label+" copied.";try{window.umami?.track("receipt_badge_copy",{kind:label})}catch{}}catch{if(status)status.textContent="Copy unavailable. Select and copy the snippet.";}}
+        async function copyReceiptLink(){
+          try{window.umami?.track("receipt_copy_click")}catch{}
+         const link=window.location.href;
+         const status=document.getElementById("copy-link-status");
+         try{
+           if(!navigator.clipboard||!window.isSecureContext)throw new Error("clipboard API unavailable");
+           await navigator.clipboard.writeText(link);
+           status.textContent="Receipt link copied.";
+           return;
+         }catch{}
+         let temporary=null;
+         try{
+           temporary=document.createElement("textarea");
+           temporary.value=link;
+           temporary.setAttribute("readonly","");
+           temporary.style.position="fixed";
+           temporary.style.left="-9999px";
+           document.body.appendChild(temporary);
+           temporary.select();
+           const copied=document.execCommand("copy");
+           if(!copied)throw new Error("copy command failed");
+           status.textContent="Receipt link copied.";
+           return;
+         }catch{}finally{
+           if(temporary)temporary.remove();
+         }
+         const fallback=document.getElementById("copy-link-fallback");
+         const input=document.getElementById("copy-link-url");
+         fallback.hidden=false;
+         input.value=link;
+         input.focus();
+         input.select();
+         status.textContent="Automatic copy failed. The receipt link is selected for you to copy manually.";
+       }
+     </script>
+  </body>
+</html>
