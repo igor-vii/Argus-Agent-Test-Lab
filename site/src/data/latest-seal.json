@@ -1,9 +1,9 @@
 {
-  "generated_at": "2026-11-17T19:17:02.237Z",
+  "generated_at": "2026-11-22T19:39:19.985Z",
   "verify": {
     "command": "node tools/registry/verify-registry.mjs",
-    "records": 28,
-    "chain_head": "e3827836ebb46f69"
+    "records": 29,
+    "chain_head": "bf85976eaa458820"
   },
   "correction": {
     "seq": "0022",
@@ -13,48 +13,78 @@
     "amends": "argus-finding-0000"
   },
   "record": {
-    "seq": "0024",
-    "record_id": "argus-seal-0024",
+    "seq": "0028",
+    "record_id": "argus-seal-0028",
     "type": "seal",
-    "issued_at": "2026-11-17T19:17:02.237Z",
-    "date": "2026-11-17",
-    "title": "T4-EXA live discovery-surface conformance battery — stage 1/2, discovery surface ONLY, deep settle-semantics battery NOT covered (reserved for authorized Stage 2) — wallet-less probes vs documented x402 v2 contract: 6/6 PASS, zero deviations; OBSERVED: gateway EURC accepts, acceptId=legacy, float64 breakdown artifact",
-    "subject": "live SUT: api.exa.ai (Exa /search, /contents x402 v2 payment gate) — first live public-endpoint probe battery (T4 chain), complements the offline T3 battery chain v2 (#0014-#0016)",
-    "prev_record_hash": "24b06d629c8cc04468c7f0941cac19d5b7ce866c8cabd3d0096e9a92208af176",
-    "chain_head": "e3827836ebb46f69",
-    "scenarios": [
-      {
-        "id": "P1",
-        "verdict": "PASS",
-        "tone": "pass"
-      },
-      {
-        "id": "P2",
-        "verdict": "PASS",
-        "tone": "pass"
-      },
-      {
-        "id": "P3",
-        "verdict": "PASS",
-        "tone": "pass"
-      },
-      {
-        "id": "P4",
-        "verdict": "PASS",
-        "tone": "pass"
+    "issued_at": "2026-11-22T19:39:19.985Z",
+    "date": "2026-11-22",
+    "title": "x402 evidence lens — frozen classification procedure; first external datasets: RAEN before-fix capture and Zambo A5 production receipt",
+    "subject": {
+      "component": "RAEN settlement ledger (before request-id change) + Zambo A5 lost-response production receipt (x402#4198)",
+      "source_url": "https://settlement-collector.fly.dev/ledger.json",
+      "dataset_sha256": "9c001fd731468d6cd6dcda7cf879b2ffdc908acfb23643a5c38e3517555f60d5",
+      "captured_at_utc": "2026-11-22T18:12:40Z",
+      "ledger_last_updated": "2026-11-21T14:46:07.551Z",
+      "a5_receipt": {
+        "source_url": "https://zambo.dev/run/2e9ebf1f-5743-48de-a34b-5b3584c4c102",
+        "verify_url": "https://zambo.dev/api/v2/receipt/2e9ebf1f-5743-48de-a34b-5b3584c4c102/verify",
+        "sha256": "e99785076197788e90b7cc720a8cef7db7e8a07cee8631923f6d806fa6ee50c3",
+        "captured_at_utc": "2026-11-22T18:38:04Z",
+        "posted_in_thread_utc": "2026-11-22T17:10:11Z"
       }
-    ],
-    "counts": {
-      "pass": 4
     },
+    "prev_record_hash": "e3827836ebb46f69dc6805c9879cb1ad871f97c4716b2ba703e14e118598d7d6",
+    "chain_head": "bf85976eaa458820",
+    "scenarios": [],
+    "counts": {},
     "evidence": [
       {
-        "path": "attestations/evidence/0024-exa-discovery/t4-exa-probes.json",
-        "sha256": "8aeb220d211b2ad84cfd9032335cde687dffdd03142920afc90cf138c5b1b788"
+        "path": "attestations/evidence/0028-raen-ledger-before/runs/ledger-capture-20261122T181240Z.json",
+        "sha256": "9c001fd731468d6cd6dcda7cf879b2ffdc908acfb23643a5c38e3517555f60d5"
       },
       {
-        "path": "attestations/evidence/0024-exa-discovery/t4-exa-probe.py",
-        "sha256": "4205fe7e3f36cf4646a8283929265c3b71543911b1c929aba8b69219aae08888"
+        "path": "attestations/evidence/0028-zambo-a5-lost-response/runs/a5-receipt-verify-2e9ebf1f.json",
+        "sha256": "e99785076197788e90b7cc720a8cef7db7e8a07cee8631923f6d806fa6ee50c3"
+      },
+      {
+        "path": "attestations/evidence/0028-zambo-a5-lost-response/runs/a5-run-page-2e9ebf1f.html",
+        "sha256": "3ddf7c132d068594875aca1e1451029bc900d40bdb4b5aab74785d3ff313abee"
+      },
+      {
+        "path": "attestations/evidence/0028-evidence-lens-run/run.json",
+        "sha256": "9007616c5597ef0120a859566410ffe25f60ef7de1910b8419cd203a1ae0ff49"
+      },
+      {
+        "path": "attestations/evidence/0028-evidence-lens-run/runs/classify.stand.json",
+        "sha256": "ab1f1f017d749c7dc0a1baae3259da6eab9ee10090cdc0479704679f3a74ce67"
+      },
+      {
+        "path": "attestations/evidence/0028-evidence-lens-run/runs/selfrun-0021.jsonl",
+        "sha256": "f74ab6f32bae8c526acadbfe3e34aa6a8e2a50d11957f32057edbf1f1a00b52c"
+      },
+      {
+        "path": "attestations/evidence/0028-evidence-lens-run/runs/selfrun-0021.jsonl.summary",
+        "sha256": "38d87204b3eda5400253dec88d71c4b5729cd68d0a9e23a7e64738720e648ef4"
+      },
+      {
+        "path": "attestations/evidence/0028-evidence-lens-run/runs/raen-before.jsonl",
+        "sha256": "e773cfbc0dcbdae8d38faabade68390d813967e1d53fbc7e7c3323f48773ba69"
+      },
+      {
+        "path": "attestations/evidence/0028-evidence-lens-run/runs/raen-before.jsonl.summary",
+        "sha256": "fd2348b16bbf228b4a25f2c634bcf004510a231ec5dc99bcbc54cf36e231bf70"
+      },
+      {
+        "path": "attestations/evidence/0028-evidence-lens-run/runs/zambo-a5.jsonl",
+        "sha256": "7287dd8055fe4e07413de5413022c094fa5561637fdcf1e7bab30a9079d2e90f"
+      },
+      {
+        "path": "attestations/evidence/0028-evidence-lens-run/runs/zambo-a5.jsonl.summary",
+        "sha256": "9995de4ddfba24995da7b47fdaf950d4a2b38e6b2e4a757499da958e1d8ac489"
+      },
+      {
+        "path": "attestations/evidence/0028-evidence-lens-run/manifest.sha256",
+        "sha256": "1deed6d4ee2946cb9dcf11569ddf0b047f1200ae43771c108c16a4cdefb9f4c7"
       }
     ]
   }
