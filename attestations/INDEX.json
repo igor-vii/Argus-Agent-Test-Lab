@@ -1,6 +1,6 @@
 {
   "registry": "argus-agent-test-lab",
-  "chain_head": "e3827836ebb46f69...",
+  "chain_head": "bf85976eaa458820...",
   "records": [
     {
       "seq": "0000",
@@ -2653,6 +2653,150 @@
         }
       ],
       "signature": "+tNDrm7Du+j9wRazi6O2hcOn9sX47yt73mw9ANKKogIgFUOXRi0/ppKa/hO7hXWUfvxI8x2LI1c+iob5njIYCA=="
+    },
+    {
+      "seq": "0028",
+      "record_id": "argus-seal-0028",
+      "issued_at": "2026-11-22T19:39:19.985Z",
+      "signer_key_id": "argus-lab-2026q4r2",
+      "prev_record_hash": "e3827836ebb46f69dc6805c9879cb1ad871f97c4716b2ba703e14e118598d7d6",
+      "type": "seal",
+      "title": "x402 evidence lens — frozen classification procedure; first external datasets: RAEN before-fix capture and Zambo A5 production receipt",
+      "subject": {
+        "component": "RAEN settlement ledger (before request-id change) + Zambo A5 lost-response production receipt (x402#4198)",
+        "source_url": "https://settlement-collector.fly.dev/ledger.json",
+        "dataset_sha256": "9c001fd731468d6cd6dcda7cf879b2ffdc908acfb23643a5c38e3517555f60d5",
+        "captured_at_utc": "2026-11-22T18:12:40Z",
+        "ledger_last_updated": "2026-11-21T14:46:07.551Z",
+        "a5_receipt": {
+          "source_url": "https://zambo.dev/run/2e9ebf1f-5743-48de-a34b-5b3584c4c102",
+          "verify_url": "https://zambo.dev/api/v2/receipt/2e9ebf1f-5743-48de-a34b-5b3584c4c102/verify",
+          "sha256": "e99785076197788e90b7cc720a8cef7db7e8a07cee8631923f6d806fa6ee50c3",
+          "captured_at_utc": "2026-11-22T18:38:04Z",
+          "posted_in_thread_utc": "2026-11-22T17:10:11Z"
+        }
+      },
+      "run_ts": "2026-11-22T18:50:41Z",
+      "prereg": {
+        "unit": "attempt",
+        "row_definition": "one row = one submission attempt: tuple (payer, idempotency key, intent digest) pinned inside the hash-bound manifest bytes, plus the result binding (result digest + execution record reference, if any); both attempts of a pair are carried, including rejected submissions",
+        "pass_rule": "records-only classification: a checker holding only the frozen records - no wallet_ops, no transport logs, no operator word - sorts each second submission as delivery-retry | second-execution | separate-purchase | absent; timing never decides, the record does",
+        "case_matrix": [
+          {
+            "id": "C1",
+            "case": "same purchase / shared owner",
+            "expected": "exactly one execution record"
+          },
+          {
+            "id": "C2",
+            "case": "same purchase / separate owners",
+            "expected": "boundary negative control: two independent executions"
+          },
+          {
+            "id": "C3",
+            "case": "distinct purchases / identical quote",
+            "expected": "two independent tuples, no collision"
+          },
+          {
+            "id": "C4",
+            "case": "same purchase, retry after fulfillment-latency timeout",
+            "expected": "delivery of the first execution unless a second execution record exists; absent if no hash-bound identity ties the submissions"
+          }
+        ],
+        "boundaries": [
+          "no vendor-defined standard enters the matrix; any record shape that places the tuple inside hash-bound bytes satisfies the lens (AER-1 or otherwise)",
+          "the same key proves only that the caller asserted the same purchase identity; only the records can show whether a second execution happened",
+          "a result digest proves the saved record was not changed after saving; it does not make the fields true",
+          "the classification is derived by the checker at run time and is never precomputed into evidence (RUNBOOK 6.5)"
+        ],
+        "datasets": [
+          {
+            "slug": "raen-ledger-before",
+            "evidence": "attestations/evidence/0028-raen-ledger-before",
+            "sha256": "9c001fd731468d6cd6dcda7cf879b2ffdc908acfb23643a5c38e3517555f60d5",
+            "rows": 64,
+            "note": "registered before the run: rows are settlement-shaped (no purchase-identity fields), so every adjacent near-duplicate pair is expected to classify as absent under the frozen rule"
+          },
+          {
+            "slug": "zambo-a5-lost-response",
+            "evidence": "attestations/evidence/0028-zambo-a5-lost-response",
+            "sha256": "e99785076197788e90b7cc720a8cef7db7e8a07cee8631923f6d806fa6ee50c3",
+            "rows": 1,
+            "note": "registered before the run: the C4 production record posted by zambodotdev in x402-foundation/x402#4198 on 2026-11-22T17:10Z (A5 delayed leg of the lost-response runs) is a single hash-bound journal entry (lost_response_probe, sequence 1, declared side effect state_write) with no payment attempt tuple and no pair of submissions in the record set, so under the frozen rule the registered expectation is absent on the C4 classification; fuller leg records, if posted later, enter as a new pinned dataset per the extension rule"
+          }
+        ],
+        "extension_rule": "further datasets enter as new pinned runs under this frozen procedure; any change to rows, pass rule or boundaries requires a new pre-registration"
+      },
+      "evidence": [
+        {
+          "kind": "file",
+          "path": "attestations/evidence/0028-raen-ledger-before/runs/ledger-capture-20261122T181240Z.json",
+          "sha256": "9c001fd731468d6cd6dcda7cf879b2ffdc908acfb23643a5c38e3517555f60d5"
+        },
+        {
+          "kind": "file",
+          "path": "attestations/evidence/0028-zambo-a5-lost-response/runs/a5-receipt-verify-2e9ebf1f.json",
+          "sha256": "e99785076197788e90b7cc720a8cef7db7e8a07cee8631923f6d806fa6ee50c3"
+        },
+        {
+          "kind": "file",
+          "path": "attestations/evidence/0028-zambo-a5-lost-response/runs/a5-run-page-2e9ebf1f.html",
+          "sha256": "3ddf7c132d068594875aca1e1451029bc900d40bdb4b5aab74785d3ff313abee"
+        },
+        {
+          "kind": "file",
+          "path": "attestations/evidence/0028-evidence-lens-run/run.json",
+          "sha256": "9007616c5597ef0120a859566410ffe25f60ef7de1910b8419cd203a1ae0ff49"
+        },
+        {
+          "kind": "file",
+          "path": "attestations/evidence/0028-evidence-lens-run/runs/classify.stand.json",
+          "sha256": "ab1f1f017d749c7dc0a1baae3259da6eab9ee10090cdc0479704679f3a74ce67"
+        },
+        {
+          "kind": "file",
+          "path": "attestations/evidence/0028-evidence-lens-run/runs/selfrun-0021.jsonl",
+          "sha256": "f74ab6f32bae8c526acadbfe3e34aa6a8e2a50d11957f32057edbf1f1a00b52c"
+        },
+        {
+          "kind": "file",
+          "path": "attestations/evidence/0028-evidence-lens-run/runs/selfrun-0021.jsonl.summary",
+          "sha256": "38d87204b3eda5400253dec88d71c4b5729cd68d0a9e23a7e64738720e648ef4"
+        },
+        {
+          "kind": "file",
+          "path": "attestations/evidence/0028-evidence-lens-run/runs/raen-before.jsonl",
+          "sha256": "e773cfbc0dcbdae8d38faabade68390d813967e1d53fbc7e7c3323f48773ba69"
+        },
+        {
+          "kind": "file",
+          "path": "attestations/evidence/0028-evidence-lens-run/runs/raen-before.jsonl.summary",
+          "sha256": "fd2348b16bbf228b4a25f2c634bcf004510a231ec5dc99bcbc54cf36e231bf70"
+        },
+        {
+          "kind": "file",
+          "path": "attestations/evidence/0028-evidence-lens-run/runs/zambo-a5.jsonl",
+          "sha256": "7287dd8055fe4e07413de5413022c094fa5561637fdcf1e7bab30a9079d2e90f"
+        },
+        {
+          "kind": "file",
+          "path": "attestations/evidence/0028-evidence-lens-run/runs/zambo-a5.jsonl.summary",
+          "sha256": "9995de4ddfba24995da7b47fdaf950d4a2b38e6b2e4a757499da958e1d8ac489"
+        },
+        {
+          "kind": "file",
+          "path": "attestations/evidence/0028-evidence-lens-run/manifest.sha256",
+          "sha256": "1deed6d4ee2946cb9dcf11569ddf0b047f1200ae43771c108c16a4cdefb9f4c7"
+        }
+      ],
+      "findings_summary": [],
+      "notes": "Two conditions accepted in x402-foundation/x402#4198 (2026-11-22, zambodotdev): (1) the pass condition is the classification itself, unsortable rows report absent, not a pass by operator account; (2) attempt-shaped rows - the attempt is the row unit of this pre-registration. Case C4 wording follows the records-only formulation confirmed in-thread on 2026-11-22. Second dataset registered before the run: the C4 production record posted by zambodotdev in x402-foundation/x402#4198 on 2026-11-22T17:10Z (zambo.dev/run/2e9ebf1f-5743-48de-a34b-5b3584c4c102, verification API captured byte-exact; commitment recomputed at capture). The record binds one journal entry inside hash-covered canonical bytes but carries no payment attempt tuple, so the registered expectation is absent on the C4 classification; the classification is derived at run time. First classification run (run_ts): sandbox-stand, freeze commit 2991a080c7a637f578e0837411aa5dc38c4eed19; leg A self-run reproduces the sealed verdicts of #0021 with zero divergences; leg B derives absent on all six adjacent pairs of the RAEN before-fix capture (matches the registered expectation); leg C derives absent on the C4 question for the Zambo A5 production record (matches the registered expectation); total divergences 0. Run pack: attestations/evidence/0028-evidence-lens-run/.",
+      "self_run": {
+        "procedure": "recompute the frozen classification offline against the sealed attempt rows of record #0021 (argus-seal-0021); derivation must reproduce the sealed verdicts",
+        "divergence": "any divergence means the draft is wrong: fix before any external run",
+        "new_record": false
+      },
+      "signature": "RwZU5oFhNys9K5WH4fq0mHyWLcz5408PguqGQz7iU/QEpMfALwwyV3Fa1V5FU6EO3v4GnwHJ0a/pzLHUVLS9Bg=="
     }
   ]
 }
