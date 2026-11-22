@@ -1,0 +1,13 @@
+{
+  "key_id": "argus-agent-session-20261123-evidence-lens",
+  "algorithm": "Ed25519",
+  "class": "agent-session",
+  "session_id": "20261123-evidence-lens",
+  "created_at": "2026-11-22T18:52:57.192Z",
+  "note": "Agent-session signer for the agent self-test registry (attestations/agent). NOT an operator key: main-registry verification rejects it (ARG-03 operator allowlist).",
+  "public_jwk": {
+    "kty": "OKP",
+    "crv": "Ed25519",
+    "x": "2X4o31Cl0CjgVM0dM6CP51Cbg_tRm8_iy2gjL7jJEsQ"
+  }
+}
