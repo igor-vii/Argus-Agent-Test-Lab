@@ -1294,5 +1294,56 @@
         "href": "https://github.com/igor-vii/Argus-Agent-Test-Lab/blob/main/attestations/records/0024-t4-exa-live-discovery-surface-conformance-battery-stage-1-2-.seal.json"
       }
     ]
+  },
+  {
+    "seq": "0025",
+    "date": "2026-11-22",
+    "type": "finding",
+    "title": "QDay Aevum testnet (eip155:44005) x402 compatibility probe: bare x402-v2 exact/EIP-3009 client+server handshake verified on tUSD8 semantics; QDay facilitator accepts the wire format (verify 200 isValid=false invalidReason=merchant_not_alive); on-chain settle blocked by faucet gates (Turnstile/email/Discord); PQC (ML-DSA-65) not in testnet yet",
+    "subject": "qday-io/aevum-starter-kit",
+    "summary": "",
+    "verdicts": [],
+    "findings": [],
+    "evidence": 2,
+    "links": [
+      {
+        "label": "record #0025",
+        "href": "https://github.com/igor-vii/Argus-Agent-Test-Lab/blob/main/attestations/records/0025-qday-aevum-testnet-eip155-44005-x402-compatibility-probe-bar.finding.json"
+      }
+    ]
+  },
+  {
+    "seq": "0026",
+    "date": "2026-11-22",
+    "type": "finding",
+    "title": "apiguru-app/amazon-scraper-v2 live x402 surface probe: sample 200 without consuming a free probe; live own-ASIN 404 consumes one probe (3 to 2, 'billed 404' semantics confirmed); x402 v2 exact/EIP-3009 USDC (Base + 3 networks), payTo 0x766B…1422, facilitator unnamed; paid settle NOT executed (no funded wallet)",
+    "subject": "apiguru-app/amazon-scraper-v2",
+    "summary": "",
+    "verdicts": [],
+    "findings": [],
+    "evidence": 1,
+    "links": [
+      {
+        "label": "record #0026",
+        "href": "https://github.com/igor-vii/Argus-Agent-Test-Lab/blob/main/attestations/records/0026-apiguru-app-amazon-scraper-v2-live-x402-surface-probe-sample.finding.json"
+      }
+    ]
+  },
+  {
+    "seq": "0027",
+    "date": "2026-11-22",
+    "type": "finding",
+    "title": "scorptech-x402-mcp (Kholley43) x402 v2 over MCP transport passport: challenge delivered as MCP isError result (HTTP 200) instead of HTTP 402; accepts exact/Base USDC v2 ($0.001) + exact/Solana (feePayer=facilitator); payment gate precedes argument validation; signed unfunded submit rejected by facilitator verify (invalid_exact_evm_insufficient_balance) with fresh challenge re-issued; no settle, no charge",
+    "subject": "Kholley43/scorptech-x402-mcp",
+    "summary": "",
+    "verdicts": [],
+    "findings": [],
+    "evidence": 20,
+    "links": [
+      {
+        "label": "record #0027",
+        "href": "https://github.com/igor-vii/Argus-Agent-Test-Lab/blob/main/attestations/records/0027-scorptech-x402-mcp-kholley43-x402-v2-over-mcp-transport-pass.finding.json"
+      }
+    ]
   }
 ]
