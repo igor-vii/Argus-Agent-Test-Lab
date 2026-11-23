@@ -1,0 +1,48 @@
+{
+  "row": "PROBE",
+  "seq": 2,
+  "method": "POST",
+  "url": "https://reciprocal-ruler-x402.vercel.app/v1/trial/quote-lock",
+  "x_trial_client": "argus-0029-p2-probe",
+  "request": {
+    "buyer_version": "v0.1.0",
+    "supplier_version": "v0.1.0",
+    "buyer_id": "argus-lab",
+    "supplier_id": "paystage-sut",
+    "terms": {
+      "price_krw": 50000
+    }
+  },
+  "captured_at_utc": "2026-11-23T05:58:13Z",
+  "status": 402,
+  "latency_s": 0.26,
+  "response": {
+    "error": "TRIAL_EXHAUSTED",
+    "message": "Free trial used (3/3 calls for this client). Continue on the paid x402 endpoints.",
+    "trial_usage": {
+      "free": true,
+      "used": 3,
+      "limit": 3,
+      "remaining": 0,
+      "counting": "per X-Trial-Client header, or per client IP when the header is absent"
+    },
+    "paid_endpoints": [
+      {
+        "method": "POST",
+        "path": "/v1/verify-math",
+        "price_usd": "0.01"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/quote-lock",
+        "price_usd": "0.05"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/reconcile",
+        "price_usd": "0.25"
+      }
+    ],
+    "how_to_continue": "POST the same JSON body to the matching paid path. That endpoint answers HTTP 402 with a PAYMENT-REQUIRED header (x402 exact scheme, USDC on Base, eip155:8453); settle it with an x402-capable client and the call returns HTTP 200."
+  }
+}

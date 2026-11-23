@@ -1,0 +1,34 @@
+{
+  "row": "EQ1",
+  "seq": 1,
+  "method": "POST",
+  "url": "https://reciprocal-ruler-x402.vercel.app/v1/trial/quote-lock",
+  "x_trial_client": "argus-0029-p2-eq1",
+  "request": {
+    "buyer_version": "0.1.0",
+    "supplier_version": "0.1.0",
+    "buyer_id": "argus-lab",
+    "supplier_id": "paystage-sut",
+    "terms": {
+      "price_krw": 50000
+    }
+  },
+  "captured_at_utc": "2026-11-23T05:57:20Z",
+  "captured_via": "manual curl discovery probe outside checker (equality hypothesis)",
+  "status": 200,
+  "response": {
+    "status": "QUOTE_LOCKED",
+    "quote_hash": "sha256:89e69d6a4effa061e7b58ff9159d65faa074544abec5e2ae437812f7da531f38",
+    "rule_version": "0.1.0",
+    "locked_at": "2026-11-23T05:57:20.515731+00:00",
+    "trial": {
+      "free": true,
+      "used": 1,
+      "limit": 3,
+      "remaining": 2,
+      "counting": "per X-Trial-Client header, or per client IP when the header is absent"
+    },
+    "persisted": false,
+    "note": "Trial result: not written to the audit ledger and not idempotent. Use POST /v1/quote-lock ($0.05) for a ledger-backed quote lock."
+  }
+}

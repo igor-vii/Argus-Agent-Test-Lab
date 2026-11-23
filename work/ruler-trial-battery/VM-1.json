@@ -1,0 +1,39 @@
+{
+  "row": "VM",
+  "seq": 1,
+  "method": "POST",
+  "url": "https://reciprocal-ruler-x402.vercel.app/v1/trial/verify-math",
+  "x_trial_client": "argus-0029-vm",
+  "request": {
+    "expr": "min(10000, 10000)"
+  },
+  "captured_at_utc": "2026-11-23T05:44:22Z",
+  "status": 422,
+  "latency_s": 0.247,
+  "response": {
+    "detail": [
+      {
+        "type": "missing",
+        "loc": [
+          "body",
+          "expected_amount"
+        ],
+        "msg": "Field required",
+        "input": {
+          "expr": "min(10000, 10000)"
+        }
+      },
+      {
+        "type": "missing",
+        "loc": [
+          "body",
+          "actual_amount"
+        ],
+        "msg": "Field required",
+        "input": {
+          "expr": "min(10000, 10000)"
+        }
+      }
+    ]
+  }
+}

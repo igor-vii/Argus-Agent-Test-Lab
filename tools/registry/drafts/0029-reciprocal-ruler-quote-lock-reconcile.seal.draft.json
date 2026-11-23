@@ -15,20 +15,75 @@
     }
   },
   "scenarios": [
-    {"id": "A2", "mode": "trial", "case": "reconcile: actual == expected (delta=0)", "expected": "SETTLED_OK, credit_delta +5"},
-    {"id": "A3", "mode": "trial", "case": "reconcile: shortfall covered by holdback (delta>0, holdback>=delta)", "expected": "COMPENSATED, uncovered=0, credit_delta -5"},
-    {"id": "A4", "mode": "trial", "case": "reconcile: shortfall NOT covered (holdback<delta)", "expected": "COMPENSATED, uncovered>0, credit_delta -17"},
-    {"id": "A5", "mode": "trial", "case": "reconcile: HALF_OPEN_TIMEOUT, delta>0", "expected": "PENDING_RECONCILIATION, credit_delta 0, no auto-compensation"},
-    {"id": "A6", "mode": "trial", "case": "idempotency: same caller key, replay with different amount", "expected": "trial tier: record actual (server-side dedup not expected per R3); any divergence is a finding candidate for the paid cycle, not a default FAIL"},
-    {"id": "B1", "mode": "trial", "case": "boundary: delta=0 explicit (holdback=0)", "expected": "per contract; expect SETTLED_OK semantics; record actual"},
-    {"id": "B2", "mode": "trial", "case": "boundary: holdback=0, delta>0", "expected": "uncovered=delta, credit_delta -17"},
-    {"id": "B3", "mode": "trial", "case": "boundary: delta<0 (overpayment)", "expected": "spec does not define it — honest absent-candidate: an undefined answer is recorded absent, not as a failure"},
-    {"id": "A1", "mode": "paid-deferred", "case": "quote-lock determinism, ledger-backed + idempotent (same terms twice)", "expected": "identical quote_hash in both attempts; both rows in the audit ledger"},
-    {"id": "A7", "mode": "paid-deferred", "case": "third-party recompute over the append-only audit ledger", "expected": "all verdicts restore from records; unsortable rows report absent"}
+    {
+      "id": "A2",
+      "mode": "trial",
+      "case": "reconcile: actual == expected (delta=0)",
+      "expected": "SETTLED_OK, credit_delta +5"
+    },
+    {
+      "id": "A3",
+      "mode": "trial",
+      "case": "reconcile: shortfall covered by holdback (delta>0, holdback>=delta)",
+      "expected": "COMPENSATED, uncovered=0, credit_delta -5"
+    },
+    {
+      "id": "A4",
+      "mode": "trial",
+      "case": "reconcile: shortfall NOT covered (holdback<delta)",
+      "expected": "COMPENSATED, uncovered>0, credit_delta -17"
+    },
+    {
+      "id": "A5",
+      "mode": "trial",
+      "case": "reconcile: HALF_OPEN_TIMEOUT, delta>0",
+      "expected": "PENDING_RECONCILIATION, credit_delta 0, no auto-compensation"
+    },
+    {
+      "id": "A6",
+      "mode": "trial",
+      "case": "idempotency: same caller key, replay with different amount",
+      "expected": "trial tier: record actual (server-side dedup not expected per R3); any divergence is a finding candidate for the paid cycle, not a default FAIL"
+    },
+    {
+      "id": "B1",
+      "mode": "trial",
+      "case": "boundary: delta=0 explicit (holdback=0)",
+      "expected": "per contract; expect SETTLED_OK semantics; record actual"
+    },
+    {
+      "id": "B2",
+      "mode": "trial",
+      "case": "boundary: holdback=0, delta>0",
+      "expected": "uncovered=delta, credit_delta -17"
+    },
+    {
+      "id": "B3",
+      "mode": "trial",
+      "case": "boundary: delta<0 (overpayment)",
+      "expected": "spec does not define it — honest absent-candidate: an undefined answer is recorded absent, not as a failure"
+    },
+    {
+      "id": "A1",
+      "mode": "paid-deferred",
+      "case": "quote-lock determinism, ledger-backed + idempotent (same terms twice)",
+      "expected": "identical quote_hash in both attempts; both rows in the audit ledger"
+    },
+    {
+      "id": "A7",
+      "mode": "paid-deferred",
+      "case": "third-party recompute over the append-only audit ledger",
+      "expected": "all verdicts restore from records; unsortable rows report absent"
+    }
   ],
-  "run_ts": null,
-  "self_run": null,
-  "findings_summary": null,
+  "run_ts": "2026-11-23T05:58:49Z",
+  "self_run": {
+    "passes": 4,
+    "calls_total": 45,
+    "ids_total": 21,
+    "matrix_verdicts": "8/8 deterministic; contract-specified rows MATCH; B3 defined (finding F1); no absent rows"
+  },
+  "findings_summary": "F1 overpayment->SETTLED_OK+5 (no OVERPAID class in reconcile); F2 trial idempotency is ledger-backed (paid-tier property); F3 API drift <24h (equality version gate, rule_version 0.1.0, canon stable); F4 verify-math floats",
   "notes": [
     "PREREG FREEZE: this draft lands before the first evaluation call; run_ts, self_run, findings_summary and evidence file pins are filled from the run pack before operator signing (0028 flow: freeze -> run -> re-pin -> seal). Freeze reference = the commit landing this draft and sut-reciprocal-ruler/ruler_trial_battery.py (checker, committed pre-run per RUNBOOK P1).",
     "Pass rule: SUT verdicts are recomputed offline from raw transcripts by the SUT's own canonicalization (R1); any row a checker cannot recompute records-only reports absent.",
@@ -37,8 +92,20 @@
     "Paid-tier deferral is explicit, not silent: A1 and A7 run in the paid x402 cycle; this seal covers the $0.00 trial evaluation only."
   ],
   "evidence": [
-    {"kind": "file", "path": "sut-reciprocal-ruler/ruler_trial_battery.py", "sha256": null},
-    {"kind": "file", "path": "attestations/evidence/0029-reciprocal-ruler-trial/manifest.sha256", "sha256": null},
-    {"kind": "file", "path": "attestations/evidence/0029-reciprocal-ruler-trial/run.json", "sha256": null}
+    {
+      "kind": "file",
+      "path": "sut-reciprocal-ruler/ruler_trial_battery.py",
+      "sha256": "5abd0609c2af9a85955253c52b9c19d0a7916ae6805860e7193e0cf870405fe2"
+    },
+    {
+      "kind": "file",
+      "path": "attestations/evidence/0029-reciprocal-ruler-trial/manifest.sha256",
+      "sha256": "f24cdcd1e30e1f3edbdbdfd573cfbd5d41e67a305f3ddde0ce714597b36089fb"
+    },
+    {
+      "kind": "file",
+      "path": "attestations/evidence/0029-reciprocal-ruler-trial/run.json",
+      "sha256": "0f8c502c304b212a92043b7ca8d18ee7c75c1fc7b37fe24d9604ef13555f8592"
+    }
   ]
 }

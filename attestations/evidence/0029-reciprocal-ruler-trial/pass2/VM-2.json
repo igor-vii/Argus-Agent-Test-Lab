@@ -1,0 +1,32 @@
+{
+  "row": "VM",
+  "seq": 2,
+  "method": "POST",
+  "url": "https://reciprocal-ruler-x402.vercel.app/v1/trial/verify-math",
+  "x_trial_client": "argus-0029-p2-vm",
+  "request": {
+    "expected_amount": 50000,
+    "actual_amount": 40000,
+    "currency": "KRW"
+  },
+  "captured_at_utc": "2026-11-23T05:58:53Z",
+  "status": 200,
+  "latency_s": 0.25,
+  "response": {
+    "status": "SHORTFALL",
+    "currency": "KRW",
+    "expected_amount": 50000.0,
+    "actual_amount": 40000.0,
+    "delta": 10000.0,
+    "within_tolerance": false,
+    "judged_at": "2026-11-23T05:58:53.956107+00:00",
+    "trial": {
+      "free": true,
+      "used": 2,
+      "limit": 3,
+      "remaining": 1,
+      "counting": "per X-Trial-Client header, or per client IP when the header is absent"
+    },
+    "persisted": false
+  }
+}

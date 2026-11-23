@@ -1,0 +1,54 @@
+{
+  "row": "B2",
+  "seq": 2,
+  "method": "POST",
+  "url": "https://reciprocal-ruler-x402.vercel.app/v1/trial/reconcile",
+  "x_trial_client": "argus-0029-b2",
+  "request": {
+    "quote_hash": "X",
+    "event_type": "POST_TRADE_REFUND",
+    "expected_amount_krw": 50000,
+    "actual_settled_krw": 40000,
+    "holdback_krw": 0,
+    "caller_key": "argus-lab-key-1"
+  },
+  "captured_at_utc": "2026-11-23T05:44:21Z",
+  "status": 422,
+  "latency_s": 0.255,
+  "response": {
+    "detail": [
+      {
+        "type": "missing",
+        "loc": [
+          "body",
+          "idempotency_key"
+        ],
+        "msg": "Field required",
+        "input": {
+          "quote_hash": "X",
+          "event_type": "POST_TRADE_REFUND",
+          "expected_amount_krw": 50000,
+          "actual_settled_krw": 40000,
+          "holdback_krw": 0,
+          "caller_key": "argus-lab-key-1"
+        }
+      },
+      {
+        "type": "missing",
+        "loc": [
+          "body",
+          "tx_id"
+        ],
+        "msg": "Field required",
+        "input": {
+          "quote_hash": "X",
+          "event_type": "POST_TRADE_REFUND",
+          "expected_amount_krw": 50000,
+          "actual_settled_krw": 40000,
+          "holdback_krw": 0,
+          "caller_key": "argus-lab-key-1"
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,182 @@
+{
+  "run_id": "0029-reciprocal-ruler-trial",
+  "run_ts": "2026-11-23T05:58:49Z",
+  "sut": {
+    "service": "Reciprocal Ruler x402 API",
+    "base_url": "https://reciprocal-ruler-x402.vercel.app",
+    "openapi_version": "0.1.0",
+    "rule_version_observed": "0.1.0",
+    "network": "eip155:8453",
+    "spec_thread": "https://github.com/base-buzz/paystage/issues/315#issuecomment-7069954625"
+  },
+  "invocations": [
+    {
+      "pass": 1,
+      "purpose": "schema discovery (transport drift vs 2026-11-22 recon)",
+      "calls": 18,
+      "ids": [
+        "argus-0029-a2",
+        "argus-0029-a3",
+        "argus-0029-a4",
+        "argus-0029-a5",
+        "argus-0029-a6",
+        "argus-0029-b1",
+        "argus-0029-b2",
+        "argus-0029-b3",
+        "argus-0029-vm"
+      ],
+      "result": "8x quote-lock 409 VERSION_MISMATCH (unequal buyer/supplier versions), 9x reconcile 422 (missing idempotency_key, tx_id), 1x verify-math 422 (fields expected_amount/actual_amount); 422 validation errors did not consume quota"
+    },
+    {
+      "pass": 2,
+      "run": 1,
+      "purpose": "version discovery, unequal-version candidates",
+      "calls": 3,
+      "ids": [
+        "argus-0029-p2-probe"
+      ],
+      "result": "409 x3 (0.1.0, v0.1.0, 0.1 rejected)"
+    },
+    {
+      "pass": 2,
+      "run": 2,
+      "purpose": "exhaustion documentation",
+      "calls": 3,
+      "ids": [
+        "argus-0029-p2-probe"
+      ],
+      "result": "402 TRIAL_EXHAUSTED x3 (3/3 used) — quota counter confirmed per-id"
+    },
+    {
+      "pass": 2,
+      "run": 3,
+      "purpose": "evaluation with corrected schema (equality: buyer_version == supplier_version)",
+      "calls": 20,
+      "ids": [
+        "argus-0029-p2-probe-r2",
+        "argus-0029-p2-a2",
+        "argus-0029-p2-a3",
+        "argus-0029-p2-a4",
+        "argus-0029-p2-a5",
+        "argus-0029-p2-a6",
+        "argus-0029-p2-b1",
+        "argus-0029-p2-b2",
+        "argus-0029-p2-b3",
+        "argus-0029-p2-vm"
+      ],
+      "result": "all 20 HTTP 200; canon check 9/9 MATCH"
+    },
+    {
+      "pass": 2,
+      "run": "manual",
+      "purpose": "equality-hypothesis discovery probe",
+      "calls": 1,
+      "ids": [
+        "argus-0029-p2-eq1"
+      ],
+      "result": "HTTP 200 QUOTE_LOCKED — equality confirmed, rule_version=0.1.0 revealed"
+    }
+  ],
+  "canon": {
+    "response_quote_hash_all_9_quote_locks": "sha256:89e69d6a4effa061e7b58ff9159d65faa074544abec5e2ae437812f7da531f38",
+    "identical_payloads_across_9_ids": true,
+    "offline_recompute": "MATCH with rule_version=0.1.0 — canonicalization unchanged from the 2026-11-22 recon (json.dumps payload, sort_keys=True, ensure_ascii=False, separators=(',',':'), UTF-8, sha256: prefix, 4 hashed fields); the rule_version VALUE evolved v0.1 -> 0.1.0"
+  },
+  "matrix_verdicts": [
+    {
+      "id": "A2",
+      "case": "reconcile: actual == expected (delta=0)",
+      "expected_frozen": "SETTLED_OK, credit_delta +5",
+      "actual": "SETTLED_OK",
+      "credit_delta_actual": 5,
+      "verdict": "MATCH"
+    },
+    {
+      "id": "A3",
+      "case": "shortfall covered by holdback (delta>0, holdback>=delta)",
+      "expected_frozen": "COMPENSATED, uncovered=0, credit_delta -5",
+      "actual": "COMPENSATED (compensated_krw=10000, uncovered_krw=0)",
+      "credit_delta_actual": -5,
+      "verdict": "MATCH"
+    },
+    {
+      "id": "A4",
+      "case": "shortfall NOT covered (holdback<delta)",
+      "expected_frozen": "COMPENSATED, uncovered>0, credit_delta -17",
+      "actual": "COMPENSATED (compensated_krw=5000, uncovered_krw=5000)",
+      "credit_delta_actual": -17,
+      "verdict": "MATCH"
+    },
+    {
+      "id": "A5",
+      "case": "HALF_OPEN_TIMEOUT, delta>0",
+      "expected_frozen": "PENDING_RECONCILIATION, credit_delta 0, no auto-compensation",
+      "actual": "PENDING_RECONCILIATION (compensated_krw=0)",
+      "credit_delta_actual": 0,
+      "verdict": "MATCH"
+    },
+    {
+      "id": "A6",
+      "case": "idempotency: same caller key, replay with different amount",
+      "expected_frozen": "trial: record actual (server-side dedup not expected per R3)",
+      "actual": "both calls judged independently (idempotent_replay:false on both; second: COMPENSATED on 45000)",
+      "credit_delta_actual": -5,
+      "verdict": "MATCH (trial-tier expectation); idempotency is ledger-backed -> paid-tier property"
+    },
+    {
+      "id": "B1",
+      "case": "boundary: delta=0 explicit (holdback=0)",
+      "expected_frozen": "per contract; expect SETTLED_OK semantics",
+      "actual": "SETTLED_OK",
+      "credit_delta_actual": 5,
+      "verdict": "MATCH"
+    },
+    {
+      "id": "B2",
+      "case": "boundary: holdback=0, delta>0",
+      "expected_frozen": "uncovered=delta, credit_delta -17",
+      "actual": "COMPENSATED (compensated_krw=0, uncovered_krw=10000)",
+      "credit_delta_actual": -17,
+      "verdict": "MATCH"
+    },
+    {
+      "id": "B3",
+      "case": "boundary: delta<0 (overpayment)",
+      "expected_frozen": "spec undefined -> honest absent-candidate",
+      "actual": "SETTLED_OK (expected 50000, actual 60000)",
+      "credit_delta_actual": 5,
+      "verdict": "DEFINED, not absent: overpayment classifies as SETTLED_OK +5 — no OVERPAID class in reconcile (unlike verify-math) -> boundary finding"
+    }
+  ],
+  "offline_recompute_check": "compensated_krw = min(holdback_krw, delta), uncovered_krw = max(0, delta - compensated_krw), credit_delta +5/-5/-17/0 recomputed from raw transcripts for all reconcile rows — 0 divergences; no row was uncomputable from records, so no absent verdicts were needed",
+  "quota": {
+    "limit_per_client": 3,
+    "counting": "per X-Trial-Client header, or per client IP when the header is absent",
+    "shared_across_trial_endpoints": true,
+    "exhaustion_signal": "HTTP 402 TRIAL_EXHAUSTED (documented in pass 2 run 2 artifacts)",
+    "total_calls_all_passes": 45,
+    "total_distinct_ids": 21,
+    "every_id_max_3_calls": true
+  },
+  "findings": [
+    "F1 (boundary, new): overpayment (delta<0) classifies as SETTLED_OK with credit_delta +5 — no OVERPAID class in /v1/reconcile, while /v1/verify-math does return OVERPAID semantics (MATCHED/SHORTFALL observed; OVERPAID per landing page). The spec comment (2026-11-21) defined COMPENSATED only for delta>0 and left delta<0 undefined; the actual behavior is deterministic but conflates overpayment with exact settlement at the same +5 credit.",
+    "F2 (trial design): reconcile accepts idempotency_key and returns idempotent_replay:false, but trial tier never deduplicates (persisted:false — nothing to compare against). Idempotency is a ledger-backed property -> confirmed as a paid-tier question (deferred A1/A7).",
+    "F3 (API drift <24h): between the 2026-11-22 recon (HTTP 200 with v0.1-era values) and the 2026-11-23 run the server introduced VERSION_MISMATCH validation requiring buyer_version == supplier_version (reciprocal declaration), and rule_version evolved v0.1 -> 0.1.0. The hash canonicalization itself remained stable (byte-exact offline recompute).",
+    "F4 (verify-math): amounts are numbers (floats in responses, 50000.0) — in contrast to the integer-KRW discipline of quote-lock/reconcile; tolerance field exists (default 0.0)."
+  ],
+  "deviations": [
+    "Pass-2 ids use the argus-0029-p2-<row> form instead of the frozen argus-0029-<row> form: pass-1 ids were partially consumed by schema-discovery errors (a 409 consumes quota, a 422 does not), so fresh disclosed ids were taken to keep every id <= 3 calls. Quota discipline itself is unchanged and fully disclosed.",
+    "One manual curl probe (argus-0029-p2-eq1, 1 call) ran outside the checker to test the equality hypothesis; response recorded verbatim in pass2/eq1-manual-probe.json.",
+    "The checker evolved between passes (pass 1 ran commit df673fd4's version; pass 2 runs the current file, sha pinned in evidence). Both passes' artifacts are retained."
+  ],
+  "labeling_verbatim": "SETTLED_OK and COMPENSATED are deterministic arithmetic/policy judgments over caller-attested inputs: actual_settled_krw is caller-reported (not re-read from chain state); the server holds no wallet and escrows no funds (holdback_krw is caller-declared); every verdict is offline-recomputable from inputs plus quote_hash. This seal asserts run validity and finding completeness, not on-chain finality.",
+  "deferred_paid": [
+    "A1 (ledger-backed quote-lock determinism + idempotency, $0.05 x2 + ledger)",
+    "A7 (third-party recompute over the append-only audit ledger)"
+  ],
+  "tool": {
+    "path": "sut-reciprocal-ruler/ruler_trial_battery.py",
+    "sha256": "5abd0609c2af9a85955253c52b9c19d0a7916ae6805860e7193e0cf870405fe2",
+    "pass1_version_commit": "df673fd4"
+  }
+}

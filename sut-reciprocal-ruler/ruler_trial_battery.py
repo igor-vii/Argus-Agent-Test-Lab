@@ -132,6 +132,117 @@ def run_row(r, row, case, qh_holder, extra=None):
     return qh
 
 
+# Pass 2 (2026-11-23): corrected schema from the live /openapi.json + pass-1 findings.
+# QuoteLockRequest: rule_version is NOT in the request schema (yet IS inside the hash per spec
+# author) -> canon check runs offline hypotheses over rule_version candidates, zero extra calls.
+# ReconcileRequest: idempotency_key + tx_id required; holdback_krw optional (default 22000);
+# event_type enum {HALF_OPEN_TIMEOUT, POST_TRADE_REFUND}. VerifyMathRequest: expected_amount/
+# actual_amount; labels MATCHED/SHORTFALL/OVERPAID. Quota: shared across trial endpoints per
+# client; a 409 consumes a call, a 422 validation error does not (observed in pass-1 artifacts).
+# Equality hypothesis CONFIRMED (probe 2026-11-23T05:57Z, HTTP 200): the server requires
+# buyer_version == supplier_version (reciprocal declaration of the same rule version); unequal
+# values explain every pass-1/probe 409. The response also reveals rule_version="0.1.0" (the
+# server-side rule version evolved from the v0.1 era of the #315 answer).
+VERSION_CANDIDATES = ["0.1.0", "v0.1.0", "0.1"]
+RULE_VERSION_HYPOTHESES = ["0.1.0", "v0.1", "0.1"]
+PASS2_PREFIX = "argus-0029-p2"
+
+
+def canon_hypotheses(buyer_id, supplier_id, terms):
+    return {rv: quote_hash(rv, buyer_id, supplier_id, terms) for rv in RULE_VERSION_HYPOTHESES}
+
+
+def canon_report(resp_hash, hyps):
+    for rv, h in hyps.items():
+        if h == resp_hash:
+            return f"canon MATCH (rule_version={rv})"
+    return "canon: no hypothesis matched — finding candidate (hash recorded)"
+
+
+def run_pass2(r):
+    """Pass 2: evaluation with corrected schema; fresh disclosed ids, quota <=3 per id."""
+    print("pass 2 — corrected schema; fresh ids argus-0029-p2-*")
+    buyer_version = "argus-lab/0029-p2"
+
+    # version discovery on a dedicated probe id (server validates versions: 409 VERSION_MISMATCH)
+    version = None
+    for i, cand in enumerate(VERSION_CANDIDATES, 1):
+        body = {"buyer_version": cand, "supplier_version": cand,
+                "buyer_id": "argus-lab", "supplier_id": "paystage-sut",
+                "terms": {"price_krw": PRICE_KRW}}
+        a = r.call("PROBE", i, "POST", TRIAL_QUOTE, body, f"{PASS2_PREFIX}-probe-r2")
+        if a and a.get("status") == 200:
+            version = cand
+            resp_h = (a["response"] or {}).get("quote_hash")
+            hyps = canon_hypotheses("argus-lab", "paystage-sut", {"price_krw": PRICE_KRW})
+            verdict = canon_report(resp_h, hyps) if resp_h else "no quote_hash in response"
+            a["canon_hypotheses"] = hyps
+            r.save(a)
+            print(f"    accepted supplier_version={cand} | {verdict}")
+            break
+        print(f"    candidate {cand} rejected" if a else f"    candidate {cand}: no response")
+    if not version:
+        print(f"STOP: no accepted supplier_version among {VERSION_CANDIDATES} — pass 2 blocked; record as finding")
+        return
+
+    qh_holder = {"v": None}
+
+    def qlock(row, seq):
+        body = {"buyer_version": version, "supplier_version": version,
+                "buyer_id": "argus-lab", "supplier_id": "paystage-sut",
+                "terms": {"price_krw": PRICE_KRW}}
+        a = r.call(row, seq, "POST", TRIAL_QUOTE, body, f"{PASS2_PREFIX}-{row.lower()}")
+        if a and a.get("status") == 200:
+            resp_h = (a["response"] or {}).get("quote_hash")
+            if resp_h:
+                qh_holder["v"] = resp_h
+                hyps = canon_hypotheses("argus-lab", "paystage-sut", {"price_krw": PRICE_KRW})
+                a["canon_hypotheses"] = hyps
+                a["canon_result"] = canon_report(resp_h, hyps)
+                r.save(a)
+                print(f"    canon: {a['canon_result']}")
+        return a
+
+    def rec(row, seq, expected, actual, holdback, event="POST_TRADE_REFUND", key=None, tx=None):
+        body = {"idempotency_key": key or f"argus-0029-p2-{row.lower()}-key",
+                "tx_id": tx or f"argus-0029-p2-{row.lower()}-tx1",
+                "quote_hash": qh_holder["v"] or "sha256:unavailable",
+                "expected_amount_krw": expected, "actual_settled_krw": actual,
+                "holdback_krw": holdback, "event_type": event}
+        return r.call(row, seq, "POST", TRIAL_RECONCILE, body, f"{PASS2_PREFIX}-{row.lower()}")
+
+    for row, case, args in [
+        ("A2", "actual == expected", (PRICE_KRW, PRICE_KRW, 10000)),
+        ("A3", "shortfall covered", (PRICE_KRW, 40000, 10000)),
+        ("A4", "shortfall NOT covered", (PRICE_KRW, 40000, 5000)),
+        ("A5", "HALF_OPEN_TIMEOUT", (PRICE_KRW, 40000, 10000)),
+    ]:
+        print(f"[{row}] {case}")
+        qlock(row, 1)
+        rec(row, 2, *args, event="HALF_OPEN_TIMEOUT" if row == "A5" else "POST_TRADE_REFUND")
+    print("[A6] idempotency replay: same key+tx, different amount")
+    qlock("A6", 1)
+    rec("A6", 2, PRICE_KRW, 40000, 10000, key="argus-0029-p2-a6-key", tx="argus-0029-p2-a6-tx1")
+    rec("A6", 3, PRICE_KRW, 45000, 10000, key="argus-0029-p2-a6-key", tx="argus-0029-p2-a6-tx1")
+    for row, case, args in [
+        ("B1", "boundary delta=0, holdback=0", (PRICE_KRW, PRICE_KRW, 0)),
+        ("B2", "boundary holdback=0, delta>0", (PRICE_KRW, 40000, 0)),
+        ("B3", "boundary overpayment (delta<0)", (PRICE_KRW, 60000, 10000)),
+    ]:
+        print(f"[{row}] {case}")
+        qlock(row, 1)
+        rec(row, 2, *args)
+    print("[VM] verify-math probes: MATCHED + SHORTFALL")
+    vm = f"{PASS2_PREFIX}-vm"
+    r.call("VM", 1, "POST", TRIAL_VERIFY_MATH,
+           {"expected_amount": PRICE_KRW, "actual_amount": PRICE_KRW, "currency": "KRW"}, vm)
+    r.call("VM", 2, "POST", TRIAL_VERIFY_MATH,
+           {"expected_amount": PRICE_KRW, "actual_amount": 40000, "currency": "KRW"}, vm)
+
+    ids = sorted({a["x_trial_client"] for a in r.log})
+    print(f"\npass 2: {len(r.log)} calls across {len(ids)} ids: {', '.join(ids)}")
+
+
 def main():
     dry = "--dry-run" in sys.argv
     outdir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "work", "ruler-trial-battery")
@@ -140,6 +251,14 @@ def main():
             outdir = sys.argv[i + 1]
     r = Runner(outdir, dry)
     print(f"reciprocal-ruler 0029 trial evaluation (dry={dry}) -> {os.path.abspath(outdir)}")
+    if "--pass2" in sys.argv:
+        if "--out" not in sys.argv:
+            outdir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "work", "ruler-trial-battery-p2")
+            r.out = outdir
+            os.makedirs(outdir, exist_ok=True)
+            print(f"pass 2 artifacts -> {os.path.abspath(outdir)}")
+        run_pass2(r)
+        return
     qh = {}
     print("R1 (recon 2026-11-22): canonicalization reproduced byte-for-byte offline; "
           "runtime canon checks run per quote-lock call below (local recompute vs response).")

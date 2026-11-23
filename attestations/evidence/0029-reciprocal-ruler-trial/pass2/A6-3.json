@@ -1,0 +1,40 @@
+{
+  "row": "A6",
+  "seq": 3,
+  "method": "POST",
+  "url": "https://reciprocal-ruler-x402.vercel.app/v1/trial/reconcile",
+  "x_trial_client": "argus-0029-p2-a6",
+  "request": {
+    "idempotency_key": "argus-0029-p2-a6-key",
+    "tx_id": "argus-0029-p2-a6-tx1",
+    "quote_hash": "sha256:89e69d6a4effa061e7b58ff9159d65faa074544abec5e2ae437812f7da531f38",
+    "expected_amount_krw": 50000,
+    "actual_settled_krw": 45000,
+    "holdback_krw": 10000,
+    "event_type": "POST_TRADE_REFUND"
+  },
+  "captured_at_utc": "2026-11-23T05:58:51Z",
+  "status": 200,
+  "latency_s": 0.252,
+  "response": {
+    "status": "COMPENSATED",
+    "idempotent_replay": false,
+    "tx_id": "argus-0029-p2-a6-tx1",
+    "expected_krw": 50000,
+    "actual_krw": 45000,
+    "holdback_krw": 10000,
+    "compensated_krw": 5000,
+    "uncovered_krw": 0,
+    "credit_delta": -5,
+    "judged_at": "2026-11-23T05:58:51.934113+00:00",
+    "trial": {
+      "free": true,
+      "used": 3,
+      "limit": 3,
+      "remaining": 0,
+      "counting": "per X-Trial-Client header, or per client IP when the header is absent"
+    },
+    "persisted": false,
+    "note": "Trial result: computed by the same deterministic engine as /v1/reconcile, but not written to the audit ledger. Use POST /v1/reconcile ($0.25) for ledger-backed, idempotent settlement."
+  }
+}
