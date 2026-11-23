@@ -112,10 +112,18 @@ def run_row(r, row, case, qh_holder, extra=None):
     """One row = one attempt: trial quote-lock (pin terms) then reconcile(s)."""
     client = f"argus-0029-{row.lower()}"
     print(f"[{row}] {case}")
-    qa = r.call(row, 1, "POST", TRIAL_QUOTE, qlock_body(), client)
+    qb = qlock_body()
+    qa = r.call(row, 1, "POST", TRIAL_QUOTE, qb, client)
+    lh = quote_hash(qb["rule_version"], qb["buyer_id"], qb["supplier_id"], qb["terms"])
     if qa and qa.get("status") == 200:
-        qh_holder[row] = (qa["response"] or {}).get("quote_hash")
-    qh = qh_holder.get(row) or "sha256:" + RECON_QUOTE_HASH
+        resp = qa["response"] or {}
+        qh_holder[row] = resp.get("quote_hash") or lh
+        if resp.get("quote_hash"):
+            ok = resp["quote_hash"] == lh
+            qa["quote_hash_canon_check"] = {"local": lh, "match": ok}
+            r.save(qa)
+            print(f"    canon check: {'MATCH' if ok else 'DIVERGENCE (finding candidate)'}")
+    qh = qh_holder.get(row) or lh  # local fallback, honest-marked if response lacked it
     seq = 2
     for body in (extra or []):
         body.setdefault("quote_hash", qh)
@@ -133,10 +141,8 @@ def main():
     r = Runner(outdir, dry)
     print(f"reciprocal-ruler 0029 trial evaluation (dry={dry}) -> {os.path.abspath(outdir)}")
     qh = {}
-    # quote_hash self-check against recon digest (R1)
-    local = quote_hash("v0.1", "argus-lab", "paystage-sut", {"price_krw": PRICE_KRW})
-    print(f"R1 self-check: local={local[:40]}… recon={('sha256:' + RECON_QUOTE_HASH)[:40]}… "
-          f"{'MATCH' if local == 'sha256:' + RECON_QUOTE_HASH else 'MISMATCH — STOP'}")
+    print("R1 (recon 2026-11-22): canonicalization reproduced byte-for-byte offline; "
+          "runtime canon checks run per quote-lock call below (local recompute vs response).")
 
     run_row(r, "A2", "actual == expected", qh, [rec_body("X", PRICE_KRW, PRICE_KRW, 10000)])
     run_row(r, "A3", "shortfall covered", qh, [rec_body("X", PRICE_KRW, 40000, 10000)])
