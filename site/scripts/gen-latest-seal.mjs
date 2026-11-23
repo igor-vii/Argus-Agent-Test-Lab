@@ -110,10 +110,12 @@ const toneOf = (verdict) => {
   return "info";
 };
 
+/* prereg-style seals (#0029) freeze the outcome as `expected`, not `verdict` —
+ * fall back so the LATEST SEAL card never renders "undefined" chips */
 const scenarios = (rec.scenarios ?? []).map((s) => ({
-  id: s.id,
-  verdict: s.verdict,
-  tone: toneOf(s.verdict),
+  id: s.id ?? "",
+  verdict: s.verdict ?? s.expected ?? "",
+  tone: toneOf(s.verdict ?? s.expected ?? ""),
 }));
 const counts = {};
 for (const s of scenarios) counts[s.tone] = (counts[s.tone] ?? 0) + 1;

@@ -25,42 +25,52 @@
     "scenarios": [
       {
         "id": "A2",
+        "verdict": "SETTLED_OK, credit_delta +5",
         "tone": "info"
       },
       {
         "id": "A3",
+        "verdict": "COMPENSATED, uncovered=0, credit_delta -5",
         "tone": "info"
       },
       {
         "id": "A4",
+        "verdict": "COMPENSATED, uncovered>0, credit_delta -17",
         "tone": "info"
       },
       {
         "id": "A5",
+        "verdict": "PENDING_RECONCILIATION, credit_delta 0, no auto-compensation",
         "tone": "info"
       },
       {
         "id": "A6",
+        "verdict": "trial tier: record actual (server-side dedup not expected per R3); any divergence is a finding candidate for the paid cycle, not a default FAIL",
         "tone": "info"
       },
       {
         "id": "B1",
+        "verdict": "per contract; expect SETTLED_OK semantics; record actual",
         "tone": "info"
       },
       {
         "id": "B2",
+        "verdict": "uncovered=delta, credit_delta -17",
         "tone": "info"
       },
       {
         "id": "B3",
+        "verdict": "spec does not define it — honest absent-candidate: an undefined answer is recorded absent, not as a failure",
         "tone": "info"
       },
       {
         "id": "A1",
+        "verdict": "identical quote_hash in both attempts; both rows in the audit ledger",
         "tone": "info"
       },
       {
         "id": "A7",
+        "verdict": "all verdicts restore from records; unsortable rows report absent",
         "tone": "info"
       }
     ],
