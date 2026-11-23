@@ -1,6 +1,6 @@
 {
   "registry": "argus-agent-test-lab",
-  "chain_head": "bf85976eaa458820...",
+  "chain_head": "5fb50086ba07b3a9...",
   "records": [
     {
       "seq": "0000",
@@ -2797,6 +2797,123 @@
         "new_record": false
       },
       "signature": "RwZU5oFhNys9K5WH4fq0mHyWLcz5408PguqGQz7iU/QEpMfALwwyV3Fa1V5FU6EO3v4GnwHJ0a/pzLHUVLS9Bg=="
+    },
+    {
+      "seq": "0029",
+      "record_id": "argus-seal-0029",
+      "issued_at": "2026-11-23T06:14:45.665Z",
+      "signer_key_id": "argus-lab-2026q4r2",
+      "prev_record_hash": "bf85976eaa4588208d9a04eb7bb784b2daef904c931df862d46e1459c12739ef",
+      "type": "seal",
+      "title": "reciprocal-ruler v0.1 (PayStage quote-lock/reconcile) — pre-registered $0.00 trial evaluation: quote-hash determinism, reconcile verdict branches, idempotency semantics; caller-attested labeling",
+      "subject": {
+        "component": "reciprocal-ruler v0.1 trial endpoints (base-buzz/paystage#315)",
+        "base_url": "https://reciprocal-ruler-x402.vercel.app",
+        "spec_comment": "https://github.com/base-buzz/paystage/issues/315#issuecomment-7069954625",
+        "rule_version": "v0.1",
+        "labeling_verbatim": "SETTLED_OK and COMPENSATED are deterministic arithmetic/policy judgments over caller-attested inputs: actual_settled_krw is caller-reported (not re-read from chain state); the server holds no wallet and escrows no funds (holdback_krw is caller-declared); every verdict is offline-recomputable from inputs plus quote_hash. This seal asserts run validity and finding completeness, not on-chain finality.",
+        "recon_facts": {
+          "R1_quote_hash_canonicalization": "json.dumps(payload, sort_keys=True, ensure_ascii=False, separators=(',',':')), UTF-8, 'sha256:' prefix; exactly 4 hashed fields (rule_version, buyer_id, supplier_id, terms); offline recompute 14723d939ea170807a0d326c211dc6dbbab0b2416700a1ea091165d8ee1b2fd3 = live v0.1 trial response (2026-11-22T10:13:10Z)",
+          "R2_boundary_note": "buyer_version/supplier_version are required by the request schema but sit outside the hash — the hash pins terms, not software versions (boundary, not defect)",
+          "R3_trial_mechanics": "trial calls are not persisted to the audit ledger and are not server-side idempotent; quota counter per X-Trial-Client header (3 per id); every id used is disclosed in the run pack",
+          "R4_timestamp_form": "responses carry ISO-8601 +00:00 (not Z); machine artifacts normalize to Z when pinned"
+        }
+      },
+      "scenarios": [
+        {
+          "id": "A2",
+          "mode": "trial",
+          "case": "reconcile: actual == expected (delta=0)",
+          "expected": "SETTLED_OK, credit_delta +5"
+        },
+        {
+          "id": "A3",
+          "mode": "trial",
+          "case": "reconcile: shortfall covered by holdback (delta>0, holdback>=delta)",
+          "expected": "COMPENSATED, uncovered=0, credit_delta -5"
+        },
+        {
+          "id": "A4",
+          "mode": "trial",
+          "case": "reconcile: shortfall NOT covered (holdback<delta)",
+          "expected": "COMPENSATED, uncovered>0, credit_delta -17"
+        },
+        {
+          "id": "A5",
+          "mode": "trial",
+          "case": "reconcile: HALF_OPEN_TIMEOUT, delta>0",
+          "expected": "PENDING_RECONCILIATION, credit_delta 0, no auto-compensation"
+        },
+        {
+          "id": "A6",
+          "mode": "trial",
+          "case": "idempotency: same caller key, replay with different amount",
+          "expected": "trial tier: record actual (server-side dedup not expected per R3); any divergence is a finding candidate for the paid cycle, not a default FAIL"
+        },
+        {
+          "id": "B1",
+          "mode": "trial",
+          "case": "boundary: delta=0 explicit (holdback=0)",
+          "expected": "per contract; expect SETTLED_OK semantics; record actual"
+        },
+        {
+          "id": "B2",
+          "mode": "trial",
+          "case": "boundary: holdback=0, delta>0",
+          "expected": "uncovered=delta, credit_delta -17"
+        },
+        {
+          "id": "B3",
+          "mode": "trial",
+          "case": "boundary: delta<0 (overpayment)",
+          "expected": "spec does not define it — honest absent-candidate: an undefined answer is recorded absent, not as a failure"
+        },
+        {
+          "id": "A1",
+          "mode": "paid-deferred",
+          "case": "quote-lock determinism, ledger-backed + idempotent (same terms twice)",
+          "expected": "identical quote_hash in both attempts; both rows in the audit ledger"
+        },
+        {
+          "id": "A7",
+          "mode": "paid-deferred",
+          "case": "third-party recompute over the append-only audit ledger",
+          "expected": "all verdicts restore from records; unsortable rows report absent"
+        }
+      ],
+      "run_ts": "2026-11-23T05:58:49Z",
+      "self_run": {
+        "passes": 4,
+        "calls_total": 45,
+        "ids_total": 21,
+        "matrix_verdicts": "8/8 deterministic; contract-specified rows MATCH; B3 defined (finding F1); no absent rows"
+      },
+      "findings_summary": "F1 overpayment->SETTLED_OK+5 (no OVERPAID class in reconcile); F2 trial idempotency is ledger-backed (paid-tier property); F3 API drift <24h (equality version gate, rule_version 0.1.0, canon stable); F4 verify-math floats",
+      "notes": [
+        "PREREG FREEZE: this draft lands before the first evaluation call; run_ts, self_run, findings_summary and evidence file pins are filled from the run pack before operator signing (0028 flow: freeze -> run -> re-pin -> seal). Freeze reference = the commit landing this draft and sut-reciprocal-ruler/ruler_trial_battery.py (checker, committed pre-run per RUNBOOK P1).",
+        "Pass rule: SUT verdicts are recomputed offline from raw transcripts by the SUT's own canonicalization (R1); any row a checker cannot recompute records-only reports absent.",
+        "Trial quota discipline: one X-Trial-Client id per row (argus-0029-<row>), max 3 calls per id, every call raw-paired in the run pack; the id list is published with the results.",
+        "credit_delta table (per spec author): +5 SETTLED_OK; -5 covered COMPENSATED; -17 COMPENSATED with uncovered_krw > 0; 0 PENDING_RECONCILIATION. COMPENSATED math: compensated_krw = min(holdback_krw, delta), uncovered_krw = max(0, delta - compensated_krw); HALF_OPEN_TIMEOUT with delta>0 never auto-compensates.",
+        "Paid-tier deferral is explicit, not silent: A1 and A7 run in the paid x402 cycle; this seal covers the $0.00 trial evaluation only."
+      ],
+      "evidence": [
+        {
+          "kind": "file",
+          "path": "sut-reciprocal-ruler/ruler_trial_battery.py",
+          "sha256": "5abd0609c2af9a85955253c52b9c19d0a7916ae6805860e7193e0cf870405fe2"
+        },
+        {
+          "kind": "file",
+          "path": "attestations/evidence/0029-reciprocal-ruler-trial/manifest.sha256",
+          "sha256": "f24cdcd1e30e1f3edbdbdfd573cfbd5d41e67a305f3ddde0ce714597b36089fb"
+        },
+        {
+          "kind": "file",
+          "path": "attestations/evidence/0029-reciprocal-ruler-trial/run.json",
+          "sha256": "0f8c502c304b212a92043b7ca8d18ee7c75c1fc7b37fe24d9604ef13555f8592"
+        }
+      ],
+      "signature": "NFbB1a4K1esmeeXEyy8AxWPFhwRzXomItHRoViCD7o3eWTsntljpW4F/QhRVTH4bIAGFInDqkJlJlFd6oYV1BQ=="
     }
   ]
 }
