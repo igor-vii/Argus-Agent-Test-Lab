@@ -1362,5 +1362,100 @@
         "href": "https://github.com/igor-vii/Argus-Agent-Test-Lab/blob/main/attestations/records/0028-x402-evidence-lens-frozen-classification-procedure-first-ext.seal.json"
       }
     ]
+  },
+  {
+    "seq": "0029",
+    "date": "2026-11-23",
+    "type": "seal",
+    "title": "reciprocal-ruler v0.1 (PayStage quote-lock/reconcile) — pre-registered $0.00 trial evaluation: quote-hash determinism, reconcile verdict branches, idempotency semantics; caller-attested labeling",
+    "subject": "reciprocal-ruler v0.1 trial endpoints (base-buzz/paystage#315)",
+    "summary": [
+      "PREREG FREEZE: this draft lands before the first evaluation call; run_ts, self_run, findings_summary and evidence file pins are filled from the run pack before operator signing (0028 flow: freeze -> run -> re-pin -> seal). Freeze reference = the commit landing this draft and sut-reciprocal-ruler/ruler_trial_battery.py (checker, committed pre-run per RUNBOOK P1).",
+      "Pass rule: SUT verdicts are recomputed offline from raw transcripts by the SUT's own canonicalization (R1); any row a checker cannot recompute records-only reports absent.",
+      "Trial quota discipline: one X-Trial-Client id per row (argus-0029-<row>), max 3 calls per id, every call raw-paired in the run pack; the id list is published with the results.",
+      "credit_delta table (per spec author): +5 SETTLED_OK; -5 covered COMPENSATED; -17 COMPENSATED with uncovered_krw > 0; 0 PENDING_RECONCILIATION. COMPENSATED math: compensated_krw = min(holdback_krw, delta), uncovered_krw = max(0, delta - compensated_krw); HALF_OPEN_TIMEOUT with delta>0 never auto-compensates.",
+      "Paid-tier deferral is explicit, not silent: A1 and A7 run in the paid x402 cycle; this seal covers the $0.00 trial evaluation only."
+    ],
+    "verdicts": [
+      {
+        "id": "A2",
+        "verdict": "SETTLED_OK, credit_delta +5",
+        "tone": "info"
+      },
+      {
+        "id": "A3",
+        "verdict": "COMPENSATED, uncovered=0, credit_delta -5",
+        "tone": "info"
+      },
+      {
+        "id": "A4",
+        "verdict": "COMPENSATED, uncovered>0, credit_delta -17",
+        "tone": "info"
+      },
+      {
+        "id": "A5",
+        "verdict": "PENDING_RECONCILIATION, credit_delta 0, no auto-compensation",
+        "tone": "info"
+      },
+      {
+        "id": "A6",
+        "verdict": "trial tier: record actual (server-side dedup not expected per R3); any divergence is a finding candidate for the paid cycle, not a default FAIL",
+        "tone": "info"
+      },
+      {
+        "id": "B1",
+        "verdict": "per contract; expect SETTLED_OK semantics; record actual",
+        "tone": "info"
+      },
+      {
+        "id": "B2",
+        "verdict": "uncovered=delta, credit_delta -17",
+        "tone": "info"
+      },
+      {
+        "id": "B3",
+        "verdict": "spec does not define it — honest absent-candidate: an undefined answer is recorded absent, not as a failure",
+        "tone": "info"
+      },
+      {
+        "id": "A1",
+        "verdict": "identical quote_hash in both attempts; both rows in the audit ledger",
+        "tone": "info"
+      },
+      {
+        "id": "A7",
+        "verdict": "all verdicts restore from records; unsortable rows report absent",
+        "tone": "info"
+      }
+    ],
+    "findings": [
+      {
+        "id": "F1",
+        "severity": "info",
+        "text": "overpayment->SETTLED_OK+5 (no OVERPAID class in reconcile)"
+      },
+      {
+        "id": "F2",
+        "severity": "info",
+        "text": "trial idempotency is ledger-backed (paid-tier property)"
+      },
+      {
+        "id": "F3",
+        "severity": "info",
+        "text": "API drift <24h (equality version gate, rule_version 0.1.0, canon stable)"
+      },
+      {
+        "id": "F4",
+        "severity": "info",
+        "text": "verify-math floats"
+      }
+    ],
+    "evidence": 3,
+    "links": [
+      {
+        "label": "record #0029",
+        "href": "https://github.com/igor-vii/Argus-Agent-Test-Lab/blob/main/attestations/records/0029-reciprocal-ruler-v0-1-paystage-quote-lock-reconcile-pre-regi.seal.json"
+      }
+    ]
   }
 ]

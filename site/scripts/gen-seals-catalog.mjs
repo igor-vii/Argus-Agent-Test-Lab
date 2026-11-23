@@ -69,6 +69,40 @@ const overlay = fs.existsSync(overlayPath)
   ? JSON.parse(fs.readFileSync(overlayPath, "utf8"))
   : {};
 
+/* findings_summary is an array of {id, severity, title} in most seals, but
+ * seal #0029 carries it as a free-text string ("F1 …; F2 …; …"). Records are
+ * immutable (signed + hash-chained), so the generator normalizes both shapes
+ * instead of assuming one schema. */
+function findingsItems(raw) {
+  if (Array.isArray(raw)) {
+    return raw.map((x) => ({
+      id: x?.id ?? "",
+      severity: x?.severity ?? "info",
+      text: x?.title ?? "",
+    }));
+  }
+  if (typeof raw === "string" && raw.trim()) {
+    return raw
+      .split(";")
+      .map((chunk) => chunk.trim())
+      .filter(Boolean)
+      .map((chunk) => {
+        const m = chunk.match(/^[A-Za-z0-9_.-]+/); // leading "F1"–"F4"-style id
+        return m
+          ? { id: m[0], severity: "info", text: chunk.slice(m[0].length).trim() }
+          : { id: "note", severity: "info", text: chunk };
+      });
+  }
+  if (raw && typeof raw === "object") {
+    return Object.entries(raw).map(([id, text]) => ({
+      id,
+      severity: "info",
+      text: String(text),
+    }));
+  }
+  return [];
+}
+
 const toneOf = (verdict) => {
   const v = String(verdict).toUpperCase();
   if (v.startsWith("PASS")) return "pass";
@@ -95,9 +129,11 @@ for (const f of files) {
   const derivedVerdicts =
     (rec.scenarios ?? []).length > 0
       ? (rec.scenarios ?? []).map((s) => ({
-          id: s.id,
-          verdict: s.verdict,
-          tone: toneOf(s.verdict),
+          id: s.id ?? "",
+          /* prereg-style seals (#0029) freeze the outcome as `expected`, not
+           * `verdict` — show that instead of rendering "undefined" chips */
+          verdict: s.verdict ?? s.expected ?? "",
+          tone: toneOf(s.verdict ?? s.expected ?? ""),
         }))
       : rec.type === "correction"
         ? [{ id: "correction status", verdict: rec.status?.state ?? "applied", tone: "info" }]
@@ -117,11 +153,7 @@ for (const f of files) {
       (typeof rec.subject === "string" ? rec.subject : ""),
     summary: rec.notes ?? "",
     verdicts: derivedVerdicts,
-    findings: (rec.findings_summary ?? []).map((x) => ({
-      id: x.id,
-      severity: x.severity ?? "info",
-      text: x.title ?? "",
-    })),
+    findings: findingsItems(rec.findings_summary),
     evidence: (rec.evidence ?? []).filter((e) => e.kind === "file" && e.path).length,
     links: [
       {
