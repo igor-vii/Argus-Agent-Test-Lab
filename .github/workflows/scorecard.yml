@@ -4,7 +4,7 @@ on:
   schedule:
     - cron: '30 3 * * 2'
   push:
-    branches: [main]
+    branches: [ "main" ]
   workflow_dispatch:
 
 permissions: read-all
@@ -43,3 +43,4 @@ jobs:
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: results.sarif
+
