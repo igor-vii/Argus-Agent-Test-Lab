@@ -1,0 +1,120 @@
+{
+  "type": "seal",
+  "title": "reciprocal-ruler v0.2 (PayStage quote-lock/reconcile) — pre-registered $0.00 A0 battery: durable-ledger receipts, idempotent replay, intent-mismatch, receipt-capability reads, OVERPAID split; caller-attested labeling",
+  "subject": {
+    "component": "reciprocal-ruler v0.2 trial endpoints (base-buzz/paystage#315)",
+    "base_url": "https://reciprocal-ruler-x402.vercel.app",
+    "spec_comment": "https://github.com/base-buzz/paystage/issues/315#issuecomment-7069954625",
+    "v02_spec_comment": "https://github.com/base-buzz/paystage/issues/315#issuecomment-7097154364",
+    "agreed_order_comment": "https://github.com/base-buzz/paystage/issues/315#issuecomment-7101307979",
+    "pin_commit": {
+      "sha": "75867aa",
+      "provenance": "declared in #315 comment 7101307979 (A0 order: 'trial tier with persist_receipt: true, pinning commit 75867aa'); NOT resolvable via public GitHub API as of 2026-11-24T04:40Z (checked base-buzz/paystage incl. all branch heads, x402-foundation/x402, hwcho310/reciprocal-ruler-keepalive, hwcho310/reciprocal-ruler-mcp; global commit search has no plausible hit — the service source repo appears private). Verifiable pin of this freeze = the recon snapshots pinned below plus live /health; the author can confirm the deployment commit.",
+      "note": "honest pin: pinned as declared; provenance gap recorded, not papered over"
+    },
+    "rule_version": "0.2.0",
+    "labeling_verbatim": "SETTLED_OK and COMPENSATED are deterministic arithmetic/policy judgments over caller-attested inputs: actual_settled_krw is caller-reported (not re-read from chain state); the server holds no wallet and escrows no funds (holdback_krw is caller-declared); every verdict is offline-recomputable from inputs plus quote_hash. At rule_version 0.2.0 an overpayment (delta < 0) is its own state: OVERPAID, compensated_krw=0, uncovered_krw=0, credit_delta=0; 0.1.0 (also the default when the field is omitted) runs the frozen legacy engine byte for byte — an overpayment falls through to SETTLED_OK, credit_delta +5. This seal asserts run validity and finding completeness, not on-chain finality.",
+    "recon_facts": {
+      "R1_quote_hash_canonicalization": "carried over from 0029 (byte-exact, 9/9): json.dumps(payload, sort_keys=True, ensure_ascii=False, separators=(',',':')), UTF-8, 'sha256:' prefix; exactly 4 hashed fields (rule_version, buyer_id, supplier_id, terms)",
+      "R2_quote_hash_rule_version_hypothesis": "primary hash Q020 = sha256:ecfadcb750a4fac739eb000cd18edd8bc4beb8579682e373e4a3a60cf6f205aa (rule_version 0.2.0, buyer_id argus-lab, supplier_id paystage-sut, terms {price_krw:50000}); frozen fallback Q010 = sha256:89e69d6a4effa061e7b58ff9159d65faa074544abec5e2ae437812f7da531f38 (rule_version 0.1.0). Server rule_versions latest=0.2.0 per /health recon. A0.1 reconciles against Q020; the A0.6 ledger read reveals the stored inputs — if the server hashed a different rule_version, that is recorded as a finding, never as an edit of this freeze",
+      "R3_trial_mechanics_v02": "quota 3 POST per X-Trial-Client id (409 consumes a call, 422 validation does not — 0029 observation); trial judgments are persisted to the durable ledger (backend blob, durable true per /health recon 2026-11-24T04:31:40Z) only when persist_receipt is true, tier=trial; GET /v1/ledger reads are free (author spec)",
+      "R4_receipt_mechanics_verbatim": "record written with a receipt, no receipt or a wrong one -> 403 RECEIPT_REQUIRED; unknown idempotency_key -> 404 LEDGER_NOT_FOUND; correct receipt -> 200 with receipt_verified: true and recomputation.match + ledger_hash_match. Precedence for 'unknown key without receipt' is not specified: expected 404 per the author's wording; a 403 would be recorded honestly as a check-order fact, not a failure",
+      "R5_overpayment_split_verbatim": "author (comment 7097154364, checked live on identical payloads expected 50000 actual 60000): 0.1.0 -> SETTLED_OK +5; 0.2.0 -> OVERPAID 0. A0.7 reproduces this independently on a fresh trial id",
+      "R6_credit_table": "per 0029 (observed mapping, formula not published): +5 SETTLED_OK; -5 COMPENSATED with uncovered_krw=0; -17 COMPENSATED with uncovered_krw>0; 0 PENDING_RECONCILIATION and OVERPAID. COMPENSATED math: compensated_krw = min(holdback_krw, delta), uncovered_krw = max(0, delta - compensated_krw)"
+    }
+  },
+  "scenarios": [
+    {
+      "id": "A0.1",
+      "mode": "trial",
+      "client": "argus-0030-a0c1",
+      "case": "reconcile persist_receipt:true (durable-ledger write): expected 50000, actual 40000, holdback 10000, POST_TRADE_REFUND, rule_version 0.2.0, quote_hash Q020 — numbers fixed in this freeze",
+      "expected": "200 COMPENSATED; ledger.persisted true; receipt returned; offline recompute: compensated_krw 10000, uncovered_krw 0, credit_delta -5"
+    },
+    {
+      "id": "A0.2",
+      "mode": "trial",
+      "client": "argus-0030-a0c1",
+      "case": "byte-identical body to A0.1 (same idempotency_key, same amounts) — replay against the durable row",
+      "expected": "200; idempotent_replay true; ledger_hash unchanged (equals A0.1's ledger_hash)"
+    },
+    {
+      "id": "A0.3",
+      "mode": "trial",
+      "client": "argus-0030-a0c1",
+      "case": "same idempotency_key, actual_settled_krw changed 40000 -> 45000 (intent diverges from the stored row)",
+      "expected": "409 INTENT_MISMATCH; stored_intent_digest != incoming_intent_digest; consumes the 3rd call of the id (0029 observation)"
+    },
+    {
+      "id": "A0.4",
+      "mode": "trial-get",
+      "client": "argus-0030-a0c1",
+      "case": "GET /v1/ledger/argus-0030-a0-1 with a wrong receipt",
+      "expected": "403 RECEIPT_REQUIRED"
+    },
+    {
+      "id": "A0.5",
+      "mode": "trial-get",
+      "client": "argus-0030-a0c1",
+      "case": "GET /v1/ledger/argus-0030-no-such-key (unknown key, no receipt)",
+      "expected": "404 LEDGER_NOT_FOUND (per R4 wording; a 403 is recorded as a check-order fact)"
+    },
+    {
+      "id": "A0.6",
+      "mode": "trial-get",
+      "client": "argus-0030-a0c1",
+      "case": "GET /v1/ledger/argus-0030-a0-1 with the receipt returned by A0.1",
+      "expected": "200; receipt_verified true; recomputation.match true; ledger_hash_match true; stored inputs reveal the quote-hash rule_version (R2 check)"
+    },
+    {
+      "id": "A0.7a",
+      "mode": "trial",
+      "client": "argus-0030-a0c2",
+      "case": "overpayment pair, leg 1: identical payload (expected 50000, actual 60000, holdback 10000, POST_TRADE_REFUND, quote_hash Q020), rule_version omitted -> server default 0.1.0",
+      "expected": "200 SETTLED_OK, credit_delta +5 (0.1.0: overpayment unclassified, falls through)"
+    },
+    {
+      "id": "A0.7b",
+      "mode": "trial",
+      "client": "argus-0030-a0c2",
+      "case": "overpayment pair, leg 2: payload identical to A0.7a except rule_version \"0.2.0\" (own idempotency_key)",
+      "expected": "200 OVERPAID, compensated_krw 0, uncovered_krw 0, credit_delta 0"
+    },
+    {
+      "id": "A0.8",
+      "mode": "trial-get",
+      "client": "argus-0030-a0c2",
+      "case": "GET /health after the run",
+      "expected": "storage.durable true; rule_versions unchanged {frozen_below 0.2.0, latest 0.2.0}"
+    }
+  ],
+  "notes": [
+    "PREREG FREEZE (freeze-0030): this draft and sut-reciprocal-ruler/ruler_a0_battery.py (checker, RUNBOOK P1) land BEFORE the first A0 call; run_ts, self_run, findings_summary and run-pack evidence pins are filled from the run after it completes (0029 flow: freeze -> run -> re-pin -> operator seal). Freeze reference = the commit landing this draft, the checker and recon-v02 snapshots; the freeze canonical sha256 is posted to #315 and x402#4198 before the first call, with an offline Ed25519 signature by the agent session key.",
+    "Pass rule: the four-row recompute table (A0.1 verdict fields + persisted/receipt; A0.2 replay + hash equality; A0.7a; A0.7b) is recomputed offline from raw transcripts; rows a checker cannot recompute are reported honestly. Error-path rows (A0.3-A0.5) and A0.6/A0.8 are asserted against the frozen expected column. Divergences are findings, never edits.",
+    "Trial quota discipline: X-Trial-Client argus-0030-a0c1 carries exactly 3 POST (A0.1, A0.2, A0.3); argus-0030-a0c2 carries exactly 2 POST (A0.7a, A0.7b); GET reads are outside the quota per the author's spec. Both ids and every call are disclosed raw in the run pack.",
+    "Paid-tier deferral stays explicit: funded A1 ($0.05 + 2x$0.25) on the same pinned semantics and the whole-run export question run only on operator go with the funded burner; this battery is $0.00.",
+    "Budget: $0.00 — no paid endpoint is called in A0; no payment is signed."
+  ],
+  "evidence": [
+    {
+      "kind": "file",
+      "path": "sut-reciprocal-ruler/ruler_a0_battery.py",
+      "sha256": "8d65bf145a92b298dc38c30eee58c2d75e3803872e34f5689bb94cd2b16c6702"
+    },
+    {
+      "kind": "file",
+      "path": "sut-reciprocal-ruler/recon-v02/health-20261124T043140Z.json",
+      "sha256": "2dd904c6a32ce598831dfbcce388b43cbba515bd027cd1c5e6de5fb4c178e6ae"
+    },
+    {
+      "kind": "file",
+      "path": "sut-reciprocal-ruler/recon-v02/well-known-x402-20261124T0431Z.json",
+      "sha256": "80ebb31eeb7af1f43206662d58b2b1cdc7cc01563df48180082bd46216b990a5"
+    },
+    {
+      "kind": "file",
+      "path": "sut-reciprocal-ruler/recon-v02/openapi-20261124T0431Z.json",
+      "sha256": "7e9344c55d88637f2361b5c122ce7d3e72977b9cae8448248ea421975f1bacbd"
+    }
+  ]
+}
