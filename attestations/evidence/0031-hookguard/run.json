@@ -1,0 +1,63 @@
+{
+  "record_id": "0031",
+  "prereg": {
+    "id": "tools/registry/drafts/0031-agentic-finance-gate-hook-guard.seal.draft.json",
+    "sha256": "4f36ff7daa69a0a6e42e67b5a69e1a07669023c8a671ba47b9f9506fedc110fe",
+    "freeze_commit": "b00570dd",
+    "freeze_signed_wrapper_sha256": "6dcf8cecf0f68cf89552b8deec962fbdc897a986df59aa8437113cbfef51110e",
+    "prereg_posts": [
+      "https://github.com/x402-foundation/x402/issues/3866#issuecomment-7123847605 (follow-up with the prereg hash, before the first check call)",
+      "https://github.com/x402-foundation/x402/issues/3866#issuecomment-7123472722 (the freeze itself, by the operator)"
+    ]
+  },
+  "platform": {
+    "kind": "sandbox-stand",
+    "engine": {
+      "name": "argus lab sandbox (stdlib checker over the SUT hook, no framework)",
+      "version_or_digest": "sut-hookguard/battery_hookguard.mjs sha256 41dc9c93f85ce7e2913ef7cdf12caa2540606f16bfe1809b4f639e81c30a0503 at freeze commit b00570dd"
+    },
+    "scenarios": {
+      "source": "tools/registry/drafts/0031-agentic-finance-gate-hook-guard.seal.draft.json scenarios S1-S7",
+      "digest": "4f36ff7daa69a0a6e42e67b5a69e1a07669023c8a671ba47b9f9506fedc110fe"
+    },
+    "sut": {
+      "target": "onBeforePaymentCreation hook of agentic-finance-graph@0.3.7 (npm), policy recommended-v3; free gate_check MCP endpoint https://agenticfinancegraph.com/mcp",
+      "commit_or_version": "0.3.7 — dist.integrity sha512-6qs6WkP46d5L61SrSSLz5zgv4CJy1ATytw3qG4ZkfQVF1/hgDPrxcwiXKtYMCto5q2YrIDioQT1jXYcFb4LUsg== (verbatim npm pin; no public commit resolves — provenance note in the draft); installed bin/x402-gate-hook.mjs sha256 b3983aed5db8ead24d4ea65e7fe44155307a24455fb96b97666c9f83f59508ed"
+    },
+    "transport": "local invocation of makeGateHook (bin/x402-gate-hook.mjs) via node; per check exactly one free gate_check MCP tools/call; raw MCP HTTP exchange captured verbatim by an injected fetchImpl wrapper; no key, no payment signed"
+  },
+  "host": {
+    "class": "sandbox",
+    "os": "linux x64 (5.10.134)",
+    "runtime": {
+      "node": "24.22.3",
+      "npm": "11.19.1"
+    },
+    "tz": "UTC"
+  },
+  "window": {
+    "start_utc": "2026-11-24T06:21:57Z",
+    "end_utc": "2026-11-24T06:22:19Z",
+    "etap0_start_utc": "2026-11-24T06:21:47Z"
+  },
+  "etap0_checks": {
+    "npm_view_dist_integrity_equals_draft": true,
+    "npm_ci_clean": true,
+    "verify_registry": "31 records, chain head ed94e07f44ae93cf…, green",
+    "node_e_prereg_hash_equals_posted": true
+  },
+  "budget": {
+    "declared": "$0.00",
+    "spent": "$0.00",
+    "paid_endpoint_calls": 0,
+    "payments_signed": 0
+  },
+  "runs": [
+    {
+      "argv": "node sut-hookguard/battery_hookguard.mjs <s1a|s1b|s2|s3|s4|s5|s6|s7>",
+      "exit": 0,
+      "calls_total": 33,
+      "log": "runs/ (33 raw transcripts, one file per call, written once, no retries)"
+    }
+  ]
+}

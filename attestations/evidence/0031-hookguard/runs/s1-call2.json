@@ -1,0 +1,115 @@
+{
+  "utc_ts": "2026-11-24T06:21:59Z",
+  "session": 1,
+  "call_no": 2,
+  "role": "control C1 (after process restart)",
+  "reference": "argus-0031-s1-r1",
+  "payee": "0xec91f2294383838f0b434d969415aa3259229eaa",
+  "amount_atomic": "200000000",
+  "amount_usd": 200,
+  "full_response_verbatim": "{\"jsonrpc\":\"2.0\",\"id\":1,\"result\":{\"content\":[{\"type\":\"text\",\"text\":\"{\\\"name\\\":\\\"Agentic Finance Graph — gate check (advisory)\\\",\\\"definitions\\\":[\\\"https://agenticfinancegraph.com/def/payee.facts.v2\\\",\\\"https://agenticfinancegraph.com/def/behaviour.out_of_character.v3\\\"],\\\"decision_id\\\":\\\"gd_1202d67b0b0705df66268652\\\",\\\"mode\\\":\\\"advisory\\\",\\\"agent\\\":{\\\"actor_id\\\":\\\"act_8453_45978\\\",\\\"token_id\\\":\\\"45978\\\",\\\"level\\\":7},\\\"payee\\\":\\\"0xec91f2294383838f0b434d969415aa3259229eaa\\\",\\\"amount_usd\\\":200,\\\"policy\\\":{\\\"name\\\":\\\"recommended-v3\\\",\\\"hash\\\":\\\"fdca84e4e0e0b216\\\",\\\"body\\\":{\\\"amount_range\\\":{\\\"max\\\":2500,\\\"currency\\\":\\\"USD\\\"},\\\"budget\\\":{\\\"max\\\":5000,\\\"period\\\":\\\"rolling_24h\\\",\\\"currency\\\":\\\"USD\\\"},\\\"new_payee\\\":{\\\"max\\\":250,\\\"currency\\\":\\\"USD\\\",\\\"window_hours\\\":168,\\\"max_new_per_day\\\":3,\\\"step_up_ratio\\\":5,\\\"step_up_days\\\":30},\\\"refuse_conditions\\\":{\\\"fresh_destination_size\\\":\\\"warn\\\",\\\"relay_shape\\\":\\\"warn\\\",\\\"swap_unfreezable\\\":\\\"warn\\\",\\\"pay_on_proof_claim\\\":\\\"warn\\\",\\\"sweeper_7702\\\":\\\"block\\\",\\\"poisoning_lookalike\\\":\\\"block\\\",\\\"frozen\\\":\\\"block\\\",\\\"unavailable\\\":\\\"log\\\"},\\\"signal\\\":{\\\"v1\\\":{\\\"notable\\\":\\\"warn\\\",\\\"major\\\":\\\"block\\\"},\\\"v2\\\":{\\\"notable\\\":\\\"warn\\\",\\\"major\\\":\\\"block\\\"}}}},\\\"decision\\\":\\\"block\\\",\\\"reasons\\\":[\\\"new_payee_window_above_max:200+200>250/168h\\\"],\\\"facts\\\":{\\\"definition_id\\\":\\\"payee.facts.v2\\\",\\\"address\\\":\\\"0xec91f2294383838f0b434d969415aa3259229eaa\\\",\\\"chain\\\":\\\"eip155:8453\\\",\\\"measured_at\\\":\\\"2026-11-24T06:21:59.612Z\\\",\\\"block_number\\\":61554720,\\\"kind\\\":\\\"key\\\",\\\"delegate\\\":null,\\\"frozen\\\":false,\\\"pop\\\":0,\\\"facts\\\":{\\\"relay_shape\\\":{\\\"value\\\":null,\\\"evidence\\\":{\\\"inbound\\\":0,\\\"relayed_within_10min\\\":0,\\\"pairs\\\":[]},\\\"method\\\":\\\"fewer than 3 inbound transfers in the window; stablecoin Transfer logs in blocks 61252312-61554712 (0 transfers, 7 days)\\\",\\\"measured_at\\\":\\\"2026-11-24T06:21:59.612Z\\\",\\\"cached\\\":true},\\\"swap_unfreezable\\\":{\\\"value\\\":null,\\\"evidence\\\":{\\\"outflow_usd\\\":0,\\\"to_swap_venues_usd\\\":0,\\\"venues\\\":[]},\\\"method\\\":\\\"stablecoin outflow to addresses labelled as swap venues (config/venues.json); the asset bought is not read. stablecoin Transfer logs in blocks 61252312-61554712 (0 transfers, 7 days)\\\",\\\"measured_at\\\":\\\"2026-11-24T06:21:59.612Z\\\",\\\"cached\\\":true},\\\"funded_by_exits_to\\\":{\\\"value\\\":{\\\"funded_by\\\":[],\\\"exits_to\\\":[]},\\\"evidence\\\":{\\\"inbound\\\":0,\\\"outbound\\\":0,\\\"registered_payers\\\":{\\\"n_payments\\\":0,\\\"distinct_payers\\\":0,\\\"distinct_l7_payers\\\":0,\\\"usd\\\":0,\\\"first_seen\\\":null,\\\"last_seen\\\":null}},\\\"method\\\":\\\"stablecoin Transfer logs in blocks 61252312-61554712 (0 transfers, 7 days)\\\",\\\"measured_at\\\":\\\"2026-11-24T06:21:59.612Z\\\",\\\"cached\\\":true},\\\"poisoning_lookalike\\\":{\\\"value\\\":false,\\\"evidence\\\":{\\\"matches\\\":[],\\\"compared\\\":5},\\\"method\\\":\\\"first 3 and last 4 hex characters equal to a different address the agent paid or was funded by (pay.poison.lookalike.v2 threshold)\\\",\\\"measured_at\\\":\\\"2026-11-24T06:21:59.612Z\\\"},\\\"sweeper_7702\\\":{\\\"value\\\":false,\\\"evidence\\\":{\\\"kind\\\":\\\"key\\\"},\\\"method\\\":\\\"payee code read at latest: not an EIP-7702 delegated account\\\",\\\"measured_at\\\":\\\"2026-11-24T06:21:59.612Z\\\"},\\\"pay_on_proof_claim\\\":{\\\"value\\\":\\\"not_a_contract\\\",\\\"evidence\\\":{\\\"kind\\\":\\\"key\\\"},\\\"method\\\":\\\"payee code read at latest\\\",\\\"measured_at\\\":\\\"2026-11-24T06:21:59.612Z\\\"},\\\"fresh_destination_size\\\":{\\\"value\\\":false,\\\"evidence\\\":{\\\"novel\\\":true,\\\"amount_usd\\\":200,\\\"max_prior_usd\\\":933.10488,\\\"prior_payments\\\":15},\\\"method\\\":\\\"payee never paid before by this agent and the amount exceeds its largest earlier counted payment\\\",\\\"measured_at\\\":\\\"2026-11-24T06:21:59.612Z\\\"},\\\"payee_price_dispersion\\\":{\\\"value\\\":null,\\\"evidence\\\":{\\\"payments_30d\\\":0,\\\"max_usd\\\":null},\\\"method\\\":\\\"fewer than 20 payments to this address in 30 days: no usual price to state\\\",\\\"measured_at\\\":\\\"2026-11-24T06:21:59.612Z\\\"},\\\"payer_oversize_history\\\":{\\\"value\\\":0,\\\"evidence\\\":{\\\"settlements_30d\\\":0,\\\"oversize\\\":0,\\\"usd\\\":0,\\\"sellers\\\":0},\\\"method\\\":\\\"the agent's x402 settlements of the last 30 days at or above 100 times the seller's median price and at least $1 (x402.settle.oversize.v1); variable pricing produces the same shape\\\",\\\"measured_at\\\":\\\"2026-11-24T06:21:59.612Z\\\"}}},\\\"context\\\":{\\\"paid_in_period\\\":200,\\\"occurrences_in_period\\\":1,\\\"payee_first_paid_at\\\":1795501318.999,\\\"payee_paid_usd_window\\\":200,\\\"payee_paid_usd_total\\\":200,\\\"new_payees_today\\\":1,\\\"prior_payments\\\":16,\\\"pending\\\":{\\\"counted\\\":true,\\\"hours\\\":12,\\\"decisions\\\":1,\\\"usd\\\":200,\\\"to_this_payee\\\":{\\\"decisions\\\":1,\\\"usd\\\":200},\\\"ledger_only\\\":{\\\"paid_in_period\\\":0,\\\"occurrences_in_period\\\":0,\\\"payee_first_paid_at\\\":null,\\\"payee_paid_usd_window\\\":0,\\\"payee_paid_usd_total\\\":0,\\\"new_payees_today\\\":0,\\\"prior_payments\\\":15}}},\\\"score_v2\\\":{\\\"definition_id\\\":\\\"behaviour.out_of_character.v3\\\",\\\"score\\\":0.4,\\\"level\\\":\\\"none\\\",\\\"reasons\\\":[\\\"new_plain_key_payee\\\",\\\"payee_unpaid_by_others\\\"],\\\"pop\\\":0,\\\"prior_payments\\\":15,\\\"warm\\\":true,\\\"flags\\\":[]},\\\"as_of\\\":\\\"2026-11-24T06:21:59.612Z\\\",\\\"latency_ms\\\":425,\\\"receipt\\\":{\\\"body\\\":{\\\"schema\\\":\\\"afg-gate-receipt/1\\\",\\\"decision_id\\\":\\\"gd_1202d67b0b0705df66268652\\\",\\\"issuer\\\":\\\"agenticfinancegraph.com\\\",\\\"key_id\\\":\\\"afg-pass-2026-10\\\",\\\"agent\\\":{\\\"chain\\\":\\\"eip155:8453\\\",\\\"token_id\\\":\\\"45978\\\"},\\\"payee\\\":\\\"0xec91f2294383838f0b434d969415aa3259229eaa\\\",\\\"amount_usd\\\":200,\\\"policy\\\":{\\\"name\\\":\\\"recommended-v3\\\",\\\"hash\\\":\\\"fdca84e4e0e0b216\\\"},\\\"decision\\\":\\\"block\\\",\\\"reasons\\\":[\\\"new_payee_window_above_max:200+200>250/168h\\\"],\\\"mode\\\":\\\"advisory\\\",\\\"decided_at\\\":\\\"2026-11-24T06:21:59.612Z\\\",\\\"definitions\\\":[\\\"gate.receipt.v1\\\",\\\"payee.facts.v2\\\",\\\"behaviour.out_of_character.v3\\\"],\\\"does_not_assert\\\":[\\\"That a payment was made, or that the client followed this answer.\\\",\\\"That the payee or the agent is safe. The answer is advisory: the client decides.\\\"]},\\\"canonical\\\":\\\"{\\\\\\\"agent\\\\\\\":{\\\\\\\"chain\\\\\\\":\\\\\\\"eip155:8453\\\\\\\",\\\\\\\"token_id\\\\\\\":\\\\\\\"45978\\\\\\\"},\\\\\\\"amount_usd\\\\\\\":200,\\\\\\\"decided_at\\\\\\\":\\\\\\\"2026-11-24T06:21:59.612Z\\\\\\\",\\\\\\\"decision\\\\\\\":\\\\\\\"block\\\\\\\",\\\\\\\"decision_id\\\\\\\":\\\\\\\"gd_1202d67b0b0705df66268652\\\\\\\",\\\\\\\"definitions\\\\\\\":[\\\\\\\"gate.receipt.v1\\\\\\\",\\\\\\\"payee.facts.v2\\\\\\\",\\\\\\\"behaviour.out_of_character.v3\\\\\\\"],\\\\\\\"does_not_assert\\\\\\\":[\\\\\\\"That a payment was made, or that the client followed this answer.\\\\\\\",\\\\\\\"That the payee or the agent is safe. The answer is advisory: the client decides.\\\\\\\"],\\\\\\\"issuer\\\\\\\":\\\\\\\"agenticfinancegraph.com\\\\\\\",\\\\\\\"key_id\\\\\\\":\\\\\\\"afg-pass-2026-10\\\\\\\",\\\\\\\"mode\\\\\\\":\\\\\\\"advisory\\\\\\\",\\\\\\\"payee\\\\\\\":\\\\\\\"0xec91f2294383838f0b434d969415aa3259229eaa\\\\\\\",\\\\\\\"policy\\\\\\\":{\\\\\\\"hash\\\\\\\":\\\\\\\"fdca84e4e0e0b216\\\\\\\",\\\\\\\"name\\\\\\\":\\\\\\\"recommended-v3\\\\\\\"},\\\\\\\"reasons\\\\\\\":[\\\\\\\"new_payee_window_above_max:200+200>250/168h\\\\\\\"],\\\\\\\"schema\\\\\\\":\\\\\\\"afg-gate-receipt/1\\\\\\\"}\\\",\\\"sha256\\\":\\\"688e00247d65d94d2052100b87f94e8d74dd1acae781d9b75ad98e6ed3998dfa\\\",\\\"signature\\\":\\\"i1Bemna1qVQDp6VVAFTC1MA4K00jR8tehErk9DBMC/CcD7g661VlsSpCwJkYdaTruAPtW8c1KKrXkQaeIP2/BQ==\\\",\\\"key_id\\\":\\\"afg-pass-2026-10\\\",\\\"logged\\\":false,\\\"note\\\":\\\"Signed. Receipts are written into the public log only for checks made with a Desk session.\\\"},\\\"rule\\\":\\\"decision = the worst of what fired: block > warn > log > allow. Caps come from the policy (AP2 vocabulary: allowed_payees, amount_range, budget, agent_recurrence, execution_date; ours: new_payee, refuse_conditions, signal); context figures (paid_in_period, occurrences, the payee's first payment and totals, new payees today) are computed from the agent's own counted payments, past-only, never taken from the caller; an unknown constraint or field fails closed. A fact that could not be read is the reason unavailable; a fact that had nothing to measure is listed in facts and is a reason only if the policy sets refuse_conditions.no_reading, so a payment on which nothing fired answers allow with no reasons. Advisory (from 1 Nov 2026; log-only 16 Oct - 1 Nov): the decision is our answer for your client to act on, and every call is recorded; nothing is blocked by us. With no policy named, the log-only policy applies and never warns or blocks; balanced, recommended, recommended-v3 and strict are opt-in by name.\\\",\\\"policies\\\":\\\"https://agenticfinancegraph.com/api/gate/policies\\\",\\\"license\\\":\\\"https://creativecommons.org/licenses/by/4.0/\\\",\\\"attribution\\\":\\\"Agentic Finance Graph — https://agenticfinancegraph.com\\\"}\"}]}}",
+  "sha256_response": "3f68c63c031b8b6f281e14c22024a324c2990a9c128c5829f0239357155c4d07",
+  "mcp_status": 200,
+  "hook_outcome": {
+    "abort": true,
+    "reason": "AFG gate_check: block (new_payee_window_above_max:200+200>250/168h; policy recommended-v3; decision gd_1202d67b0b0705df66268652; as of 2026-11-24T06:21:59.612Z)"
+  },
+  "hook_log": [
+    {
+      "agent": "45978",
+      "payTo": "0xec91f2294383838f0b434d969415aa3259229eaa",
+      "network": "eip155:8453",
+      "asset": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+      "scheme": "exact",
+      "amount": "200000000",
+      "resource": null,
+      "at": "2026-11-24T06:21:59.402Z",
+      "signed_amount": "200000000",
+      "usd": 200,
+      "decision": "abort",
+      "gate": "block",
+      "reasons": [
+        "new_payee_window_above_max:200+200>250/168h"
+      ],
+      "facts": {
+        "kind": "key",
+        "paid_by_registered_agents": 0,
+        "frozen": false,
+        "v2": {
+          "level": "none",
+          "reasons": [
+            "new_plain_key_payee",
+            "payee_unpaid_by_others"
+          ]
+        },
+        "as_of": "2026-11-24T06:21:59.612Z",
+        "decision_id": "gd_1202d67b0b0705df66268652"
+      },
+      "pending": {
+        "counted": true,
+        "hours": 12,
+        "decisions": 1,
+        "usd": 200,
+        "to_this_payee": {
+          "decisions": 1,
+          "usd": 200
+        },
+        "ledger_only": {
+          "paid_in_period": 0,
+          "occurrences_in_period": 0,
+          "payee_first_paid_at": null,
+          "payee_paid_usd_window": 0,
+          "payee_paid_usd_total": 0,
+          "new_payees_today": 0,
+          "prior_payments": 15
+        }
+      },
+      "receipt": {
+        "body": {
+          "schema": "afg-gate-receipt/1",
+          "decision_id": "gd_1202d67b0b0705df66268652",
+          "issuer": "agenticfinancegraph.com",
+          "key_id": "afg-pass-2026-10",
+          "agent": {
+            "chain": "eip155:8453",
+            "token_id": "45978"
+          },
+          "payee": "0xec91f2294383838f0b434d969415aa3259229eaa",
+          "amount_usd": 200,
+          "policy": {
+            "name": "recommended-v3",
+            "hash": "fdca84e4e0e0b216"
+          },
+          "decision": "block",
+          "reasons": [
+            "new_payee_window_above_max:200+200>250/168h"
+          ],
+          "mode": "advisory",
+          "decided_at": "2026-11-24T06:21:59.612Z",
+          "definitions": [
+            "gate.receipt.v1",
+            "payee.facts.v2",
+            "behaviour.out_of_character.v3"
+          ],
+          "does_not_assert": [
+            "That a payment was made, or that the client followed this answer.",
+            "That the payee or the agent is safe. The answer is advisory: the client decides."
+          ]
+        },
+        "canonical": "{\"agent\":{\"chain\":\"eip155:8453\",\"token_id\":\"45978\"},\"amount_usd\":200,\"decided_at\":\"2026-11-24T06:21:59.612Z\",\"decision\":\"block\",\"decision_id\":\"gd_1202d67b0b0705df66268652\",\"definitions\":[\"gate.receipt.v1\",\"payee.facts.v2\",\"behaviour.out_of_character.v3\"],\"does_not_assert\":[\"That a payment was made, or that the client followed this answer.\",\"That the payee or the agent is safe. The answer is advisory: the client decides.\"],\"issuer\":\"agenticfinancegraph.com\",\"key_id\":\"afg-pass-2026-10\",\"mode\":\"advisory\",\"payee\":\"0xec91f2294383838f0b434d969415aa3259229eaa\",\"policy\":{\"hash\":\"fdca84e4e0e0b216\",\"name\":\"recommended-v3\"},\"reasons\":[\"new_payee_window_above_max:200+200>250/168h\"],\"schema\":\"afg-gate-receipt/1\"}",
+        "sha256": "688e00247d65d94d2052100b87f94e8d74dd1acae781d9b75ad98e6ed3998dfa",
+        "signature": "i1Bemna1qVQDp6VVAFTC1MA4K00jR8tehErk9DBMC/CcD7g661VlsSpCwJkYdaTruAPtW8c1KKrXkQaeIP2/BQ==",
+        "key_id": "afg-pass-2026-10",
+        "logged": false,
+        "note": "Signed. Receipts are written into the public log only for checks made with a Desk session."
+      }
+    }
+  ],
+  "process": {
+    "pid": 2629,
+    "argv": [
+      "/home/z/my-project/work/Argus-Agent-Test-Lab/sut-hookguard/battery_hookguard.mjs"
+    ],
+    "node": "v24.22.3"
+  }
+}

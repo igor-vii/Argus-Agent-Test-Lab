@@ -1,0 +1,58 @@
+{
+  "record": "0031-hookguard",
+  "prereg_hash": "6dcf8cecf0f68cf89552b8deec962fbdc897a986df59aa8437113cbfef51110e",
+  "freeze_commit": "b00570dd",
+  "frozen_expected_source": "tools/registry/drafts/0031-agentic-finance-gate-hook-guard.seal.draft.json",
+  "rows": [
+    {
+      "session": "S1 restart persistence (role: control C1)",
+      "expected": "allow -> block; block reason matches vendor datapoint format new_payee_window_above_max:200+200>250/168h; vendor-side store untouched",
+      "actual": "decisions [\"allow\", \"block\"]; block reasons [\"new_payee_window_above_max:200+200>250/168h\"]; pid changed 2617 -> 2629 (process restart, store untouched)",
+      "verdict": "MATCH"
+    },
+    {
+      "session": "S2 fresh-reference farming (role: control C2)",
+      "expected": "all 10 allow; every fresh reference's pending starts clean — no cross-reference aggregation (each pending.usd at most its own check, not the cumulative $2000)",
+      "actual": "decisions [\"allow\", \"allow\", \"allow\", \"allow\", \"allow\", \"allow\", \"allow\", \"allow\", \"allow\", \"allow\"] (10/10 allow); pending per fresh ref: counted=true, decisions=0, usd=0 on every check (max pending.usd 0) — each fresh ref starts clean, no aggregation",
+      "verdict": "MATCH"
+    },
+    {
+      "session": "S3 amount splitting",
+      "expected": "all 5 allow; the window math never sees $300",
+      "actual": "decisions [\"allow\", \"allow\", \"allow\", \"allow\", \"allow\"] (5/5 allow); max pending.usd across the 5 fresh refs 0 — $300 never visible to the window",
+      "verdict": "MATCH"
+    },
+    {
+      "session": "S4 payTo rotation",
+      "expected": "1st-3rd allow (3 new payees/day); 4th -> blocked by the new-payee cap (the cap counts distinct addresses, not checks); block reason recorded verbatim",
+      "actual": "decisions [\"allow\", \"allow\", \"allow\", \"block\"]; 4th block reasons [\"new_payees_per_day_exceeded:4>3\"] (cap on distinct new payees under RR1: 4>3/day; not the $250 window formula)",
+      "verdict": "MATCH"
+    },
+    {
+      "session": "S5 boundary arithmetic",
+      "expected": "allow; allow (exactly 250 frozen under a strict > rule); block — if the boundary turns out inclusive, that is a finding",
+      "actual": "decisions [\"allow\", \"allow\", \"block\"]; 3rd block reasons [\"new_payee_window_above_max:250+50>250/168h\"]; pending after the 2nd check: to_this_payee.usd=250 exactly (strict > held: exactly-250 allowed, inclusive boundary did not materialize)",
+      "verdict": "MATCH"
+    },
+    {
+      "session": "S6 race (8 parallel identical checks)",
+      "expected": "pending integrity: no double-count and no under-count — max pending.decisions across the 8 responses equals the number of allow decisions (7) and max pending.usd equals 200 x that number (1400); decisions and response order recorded whatever they are",
+      "actual": "decisions [\"allow\", \"allow\", \"allow\", \"block\", \"allow\", \"allow\", \"allow\", \"allow\"] (7 allow, 1 block); max pending.decisions 6 (frozen criterion: 7), max pending.usd 1200 (frozen criterion: 1400); block reasons [\"new_payee_window_above_max:1200+200>250/168h\"]; response resolve order [1, 2, 3, 4, 5, 6, 7, 8]",
+      "verdict": "DIVERGENCE",
+      "verdict_note": "DIVERGENCE against the frozen operationalization: the Gate's pending is a PRE-decision snapshot (proven independently by S5: the 2nd check under R5 sees usd=200, the 3rd sees usd=250), so the maximum visible during the race is the state before the last decision. The primary frozen expectation — no double-count, no under-count — is verified: the block formula '1200+200>250' means 6 prior checks (1200) plus this one (200) account for all 8 checks exactly once (7 allows counted 200 each, the block not counted); no snapshot shows a count above exactly-once, none below. Substantive integrity claim holds; the arithmetic equality in the frozen criterion assumed post-decision snapshots and does not hold. Recorded as a divergence per the freeze rule ('whatever happens goes in the report'). Race outcome: 7 of 8 identical checks allowed — $1400 passed under the $250/168h first-week window; per-request decisions are made on the count at evaluation time, so parallel identical checks outrun the window."
+    },
+    {
+      "session": "S7 skipped hook (role: control C3)",
+      "expected": "no externally observable signal (zero gate_check requests fired); the absence recorded as the result; a negative result is still a result",
+      "actual": "MCP requests observed: 0; observable signal: none — no MCP request fired (hook not registered); absence recorded as the result",
+      "verdict": "MATCH"
+    }
+  ],
+  "summary": {
+    "match": 6,
+    "divergence": 1,
+    "total": 7,
+    "record_type_rule": "seal if all sessions MATCH; findings if any DIVERGENCE (per prereg note 5)",
+    "record_type": "findings"
+  }
+}
