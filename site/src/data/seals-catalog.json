@@ -1542,5 +1542,101 @@
         "href": "https://github.com/igor-vii/Argus-Agent-Test-Lab/blob/main/attestations/records/0030-reciprocal-ruler-v0-2-paystage-quote-lock-reconcile-pre-regi.seal.json"
       }
     ]
+  },
+  {
+    "seq": "0031",
+    "date": "2026-11-24",
+    "type": "finding",
+    "title": "onBeforePaymentCreation gate hook (agentic-finance-graph@0.3.7, policy recommended-v3) — pre-registered hostile battery: restart persistence, fresh-reference farming, splitting, payTo rotation, boundary arithmetic, race, skipped hook; $0.00",
+    "subject": "onBeforePaymentCreation hook of agentic-finance-graph@0.3.7 (npm), policy recommended-v3 (x402#3866 hostile battery, agreed with the vendor in-thread)",
+    "summary": [
+      "PREREG FREEZE (freeze-0031): this draft and sut-hookguard/battery_hookguard.mjs (checker) land BEFORE the first check call, committed to igor-vii/Argus-Agent-Test-Lab; the canonical sha256 of the signed wrapper (draft + detached Ed25519 by the agent session key) is published as a follow-up comment in #3866 before the first call, per the freeze post's registry mechanics. run_ts, self_run, findings_summary and run-pack evidence pins are filled from the run after it completes.",
+      "Scope and budget: $0.00 — the free gate_check endpoint only, no keys, no real payments, no settlements; our own client references only; every response recorded verbatim including reason strings and pending.counted.",
+      "Control rows are the vendor's own disclosures (C1 restart survival, C2 fresh reference clean count, C3 skipped hook no signal) reproduced as controls, marked role: control; they are not findings — a control that fails its disclosure is recorded honestly.",
+      "Sessions 2, 3 and 7 are the ones the vendor's disclosure does not cover; if they come back clean, that is a positive statement about the hook and gets sealed the same way as a finding.",
+      "Pass rule for the final record: seal if all 7 sessions MATCH their frozen expected column; findings-type record if any session diverges — in both cases the record is complete: what matched, what did not. The offline table has zero empty cells: an unobservable field is recorded 'absent (by design)', never blank.",
+      "Paid-tier work is out of scope here: reciprocal-ruler A1 (#315, $0.30) follows only after 0031 is sealed, per the agreed queue."
+    ],
+    "verdicts": [
+      {
+        "id": "S1",
+        "verdict": "allow -> block; the block reason matches the vendor datapoint format new_payee_window_above_max:200+200>250/168h; store not deleted (outside the freeze)",
+        "tone": "info"
+      },
+      {
+        "id": "S2",
+        "verdict": "all 10 allow; every fresh reference's pending starts clean — no cross-reference aggregation (each pending.usd reflects at most its own check, not the cumulative $2000); all 10 responses and pending counters recorded",
+        "tone": "info"
+      },
+      {
+        "id": "S3",
+        "verdict": "all 5 allow; the window math never sees $300",
+        "tone": "info"
+      },
+      {
+        "id": "S4",
+        "verdict": "1st-3rd allow (3 new payees/day); 4th -> blocked by the new-payee cap (the cap counts distinct addresses, not checks); the block reason recorded verbatim; a block by the $250 window instead of the cap is recorded as a divergence",
+        "tone": "info"
+      },
+      {
+        "id": "S5",
+        "verdict": "allow; allow (exactly 250 frozen under a strict > rule); block — if the boundary turns out inclusive, that is a finding",
+        "tone": "info"
+      },
+      {
+        "id": "S6",
+        "verdict": "frozen expectation is pending integrity: no double-count and no under-count — max pending.decisions across the 8 responses equals the number of allow decisions and max pending.usd equals 200 x that number; the decisions themselves and their order go in the report whatever they are",
+        "tone": "info"
+      },
+      {
+        "id": "S7",
+        "verdict": "no externally observable signal (zero gate_check requests fired); the absence recorded as the result; a negative result is still a result",
+        "tone": "info"
+      }
+    ],
+    "findings": [
+      {
+        "id": "match",
+        "severity": "info",
+        "text": "6"
+      },
+      {
+        "id": "divergence",
+        "severity": "info",
+        "text": "1"
+      },
+      {
+        "id": "total",
+        "severity": "info",
+        "text": "7"
+      },
+      {
+        "id": "by_session",
+        "severity": "info",
+        "text": "[object Object]"
+      },
+      {
+        "id": "positive_statement",
+        "severity": "info",
+        "text": "sessions 2, 3 and 7 — the ones the vendor's disclosure does not cover — came back clean: a fresh reference costs nothing and never aggregates, splitting is invisible to the window, a skipped hook leaves nothing observable; recorded the same way as a finding, per the freeze"
+      },
+      {
+        "id": "record_type_rule",
+        "severity": "info",
+        "text": "prereg note 5: seal only if all 7 sessions MATCH; any divergence -> findings-type record, complete either way (what matched, what did not)"
+      },
+      {
+        "id": "record_type",
+        "severity": "info",
+        "text": "findings"
+      }
+    ],
+    "evidence": 3,
+    "links": [
+      {
+        "label": "record #0031",
+        "href": "https://github.com/igor-vii/Argus-Agent-Test-Lab/blob/main/attestations/records/0031-onbeforepaymentcreation-gate-hook-agentic-finance-graph-0-3-.finding.json"
+      }
+    ]
   }
 ]

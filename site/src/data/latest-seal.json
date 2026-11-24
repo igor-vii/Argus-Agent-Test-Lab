@@ -2,8 +2,8 @@
   "generated_at": "2026-11-24T05:20:00.930Z",
   "verify": {
     "command": "node tools/registry/verify-registry.mjs",
-    "records": 31,
-    "chain_head": "ed94e07f44ae93cf"
+    "records": 32,
+    "chain_head": "27f2f6149ac9f5a0"
   },
   "correction": {
     "seq": "0022",
@@ -21,7 +21,7 @@
     "title": "reciprocal-ruler v0.2 (PayStage quote-lock/reconcile) — pre-registered $0.00 A0 battery: durable-ledger receipts, idempotent replay, intent-mismatch, receipt-capability reads, OVERPAID split; caller-attested labeling",
     "subject": "reciprocal-ruler v0.2 trial endpoints (base-buzz/paystage#315)",
     "prev_record_hash": "5fb50086ba07b3a9062dd42bcb7862478d0a3a4dd9654f4b058368e4916015ff",
-    "chain_head": "ed94e07f44ae93cf",
+    "chain_head": "27f2f6149ac9f5a0",
     "scenarios": [
       {
         "id": "A0.1",
