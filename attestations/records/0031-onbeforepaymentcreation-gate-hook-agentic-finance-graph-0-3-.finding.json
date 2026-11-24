@@ -1,0 +1,181 @@
+{
+  "seq": "0031",
+  "record_id": "argus-finding-0031",
+  "issued_at": "2026-11-24T07:18:36.047Z",
+  "signer_key_id": "argus-lab-2026q4r2",
+  "prev_record_hash": "ed94e07f44ae93cf870e9a8c57fe89b6ad40a461bf53c25cbedb59bd9dd4a30f",
+  "type": "finding",
+  "title": "onBeforePaymentCreation gate hook (agentic-finance-graph@0.3.7, policy recommended-v3) — pre-registered hostile battery: restart persistence, fresh-reference farming, splitting, payTo rotation, boundary arithmetic, race, skipped hook; $0.00",
+  "subject": {
+    "component": "onBeforePaymentCreation hook of agentic-finance-graph@0.3.7 (npm), policy recommended-v3 (x402#3866 hostile battery, agreed with the vendor in-thread)",
+    "thread": "https://github.com/x402-foundation/x402/issues/3866",
+    "freeze_comment": "https://github.com/x402-foundation/x402/issues/3866#issuecomment-7123472722",
+    "sut_pin": {
+      "npm": "agentic-finance-graph@0.3.7",
+      "dist_integrity": "sha512-6qs6WkP46d5L61SrSSLz5zgv4CJy1ATytw3qG4ZkfQVF1/hgDPrxcwiXKtYMCto5q2YrIDioQT1jXYcFb4LUsg==",
+      "dist_shasum": "1d34112df402f750c99bc034bbc7b4cd5192e113",
+      "tarball": "https://registry.npmjs.org/agentic-finance-graph/-/agentic-finance-graph-0.3.7.tgz",
+      "hook_file_sha256": "b3983aed5db8ead24d4ea65e7fe44155307a24455fb96b97666c9f83f59508ed (bin/x402-gate-hook.mjs as installed by npm ci)",
+      "package_manifest_sha256": "60e4bdcdf46c79d164597b9733da2829d54776fd60e58269ddf144f230c98b9d",
+      "provenance": "no public git commit resolves for 0.3.7 (repository github.com/AgenticFinanceGraph/agentic-finance-graph-mcp exists; no tagged commit for this release) — the verifiable pin is the npm integrity digest verbatim plus the hook file sha256. Same handling as commit 75867aa in the reciprocal-ruler battery: if a public source reference is named, it is recorded as a provenance note, not an edit."
+    },
+    "transport": "local invocation of makeGateHook from bin/x402-gate-hook.mjs installed by npm ci; per check the hook performs exactly one free gate_check MCP tools/call to https://agenticfinancegraph.com/mcp (no key, read-only service); the raw MCP HTTP exchange is captured verbatim by an injected fetchImpl wrapper; the hook aborts on decision 'block' (abortOn default); no payment is ever signed, budget $0.00",
+    "identity": {
+      "agent": "45978 (ERC-8004 Base token id; registered 2026-04-28, 0 pay events in the last 30 days; the vendor agreed in-thread: 'any agent registered on Base can be the subject, under references of your own')",
+      "client_ref_scheme": "client_ref is the 'reference' of the freeze; the vendor keys its window by SHA-256 of it; literals pinned below, all matching /^[A-Za-z0-9_.-]{16,64}$/",
+      "references": {
+        "R1": "argus-0031-s1-r1",
+        "farming": "argus-0031-s2-fr01 .. argus-0031-s2-fr10 (fresh each check)",
+        "splitting": "argus-0031-s3-sr1 .. argus-0031-s3-sr5 (fresh each check)",
+        "RR1": "argus-0031-s4-rr1",
+        "R5": "argus-0031-s5-r5",
+        "RC1": "argus-0031-s6-rc1"
+      },
+      "payees": {
+        "P1": "0xec91f2294383838f0b434d969415aa3259229eaa",
+        "P2": "0x4fa78c413d611295fa021e3ef7ad36440f24c906",
+        "P3": "0x0a55eeabf4348d472b4bfc6b3d3be7ecdfece47a",
+        "P4": "0x242b3a6ee64f5a4a8c3275542bdf440aa33333f2",
+        "P5": "0xa1deef5d90451952ba5cd9c43d3f50eaa9333750",
+        "P6": "0x3174d88aa73fe01ffca36dac7274969d21ea64c3",
+        "note": "synthetic addresses generated for this battery; owned by nobody; no funds ever move to or from them"
+      },
+      "asset_network_scheme": "USDC on Base (0x833589fcd6edb6e08f4c7c32d4f71b54bda02913), eip155:8453, scheme exact; amounts atomic 6-decimals: $200=200000000, $60=60000000, $50=50000000"
+    },
+    "recon_facts": {
+      "C1_basis_vendor_verbatim": "'Restarts. The window is kept on our side, under the SHA-256 of the reference. A client that restarts with the same reference keeps its count.' (#3866 comment 7113377492)",
+      "C2_basis_vendor_verbatim": "'A fresh reference. It costs nothing, and its pending count starts at zero. What remains is the ledger: a settled payment counts once our reader has it, a median of about 2.7 hours after its block and under 10 hours for 99 in 100. Inside that delay a fresh reference sees neither the earlier check nor the payment.' (#3866 comment 7113377492)",
+      "C3_basis_vendor_verbatim": "'A skipped hook. It leaves no decision on our side. The settlement is on chain and enters the ledger, so an operator can list payments that have no signed receipt beside them. Nothing does that for the operator today.' (#3866 comment 7113377492)",
+      "datapoint_reason_format": "vendor datapoint (#3866 comment 7095709394, 23 Nov 2026 08:37 UTC): same $200 again to the same payee -> block, reason 'new_payee_window_above_max:200+200>250/168h'; limits count checks, not settlements; the cap is per payee address with a limit of three new payees a day",
+      "pending_semantics": "each decision object carries pending: what the Gate counted (decisions, usd) for the same client_ref in the last 12 hours and has not yet seen on chain (gate.context.v2); without client_ref: {counted: false}",
+      "no_retry_rule": "every check is written exactly once at the moment it is made; a failure, timeout or throw is a result and is recorded verbatim — never retried"
+    }
+  },
+  "scenarios": [
+    {
+      "id": "S1",
+      "role": "control C1",
+      "case": "restart persistence: ref R1, payee P1, $200 -> allow; node process restart (new pid; client-side hook is stateless; nothing on the vendor side is touched or deleted); same R1/P1 $200 again",
+      "expected": "allow -> block; the block reason matches the vendor datapoint format new_payee_window_above_max:200+200>250/168h; store not deleted (outside the freeze)"
+    },
+    {
+      "id": "S2",
+      "role": "control C2",
+      "case": "fresh-reference farming: payee P1, ten consecutive $200 checks, new reference each (FR01..FR10)",
+      "expected": "all 10 allow; every fresh reference's pending starts clean — no cross-reference aggregation (each pending.usd reflects at most its own check, not the cumulative $2000); all 10 responses and pending counters recorded"
+    },
+    {
+      "id": "S3",
+      "role": "live",
+      "case": "amount splitting: one $300 intent split into five $60 checks across five references (SR1..SR5), payee P2",
+      "expected": "all 5 allow; the window math never sees $300"
+    },
+    {
+      "id": "S4",
+      "role": "live",
+      "case": "payTo rotation: four distinct payee addresses P3, P4, P5, P6, first check each, one fixed reference RR1, $200 each",
+      "expected": "1st-3rd allow (3 new payees/day); 4th -> blocked by the new-payee cap (the cap counts distinct addresses, not checks); the block reason recorded verbatim; a block by the $250 window instead of the cap is recorded as a divergence"
+    },
+    {
+      "id": "S5",
+      "role": "live",
+      "case": "boundary arithmetic: ref R5, payee P6: $200 -> $50 (exactly 250 in window) -> $50",
+      "expected": "allow; allow (exactly 250 frozen under a strict > rule); block — if the boundary turns out inclusive, that is a finding"
+    },
+    {
+      "id": "S6",
+      "role": "live",
+      "case": "race: 8 parallel identical checks, same reference RC1, same payload (P1, $200, exact/USDC/Base); response order recorded",
+      "expected": "frozen expectation is pending integrity: no double-count and no under-count — max pending.decisions across the 8 responses equals the number of allow decisions and max pending.usd equals 200 x that number; the decisions themselves and their order go in the report whatever they are"
+    },
+    {
+      "id": "S7",
+      "role": "control C3",
+      "case": "skipped hook: a payment-creation attempt executed with no onBeforePaymentCreation hook registered",
+      "expected": "no externally observable signal (zero gate_check requests fired); the absence recorded as the result; a negative result is still a result"
+    }
+  ],
+  "notes": [
+    "PREREG FREEZE (freeze-0031): this draft and sut-hookguard/battery_hookguard.mjs (checker) land BEFORE the first check call, committed to igor-vii/Argus-Agent-Test-Lab; the canonical sha256 of the signed wrapper (draft + detached Ed25519 by the agent session key) is published as a follow-up comment in #3866 before the first call, per the freeze post's registry mechanics. run_ts, self_run, findings_summary and run-pack evidence pins are filled from the run after it completes.",
+    "Scope and budget: $0.00 — the free gate_check endpoint only, no keys, no real payments, no settlements; our own client references only; every response recorded verbatim including reason strings and pending.counted.",
+    "Control rows are the vendor's own disclosures (C1 restart survival, C2 fresh reference clean count, C3 skipped hook no signal) reproduced as controls, marked role: control; they are not findings — a control that fails its disclosure is recorded honestly.",
+    "Sessions 2, 3 and 7 are the ones the vendor's disclosure does not cover; if they come back clean, that is a positive statement about the hook and gets sealed the same way as a finding.",
+    "Pass rule for the final record: seal if all 7 sessions MATCH their frozen expected column; findings-type record if any session diverges — in both cases the record is complete: what matched, what did not. The offline table has zero empty cells: an unobservable field is recorded 'absent (by design)', never blank.",
+    "Paid-tier work is out of scope here: reciprocal-ruler A1 (#315, $0.30) follows only after 0031 is sealed, per the agreed queue."
+  ],
+  "evidence": [
+    {
+      "kind": "file",
+      "path": "sut-hookguard/battery_hookguard.mjs",
+      "sha256": "41dc9c93f85ce7e2913ef7cdf12caa2540606f16bfe1809b4f639e81c30a0503"
+    },
+    {
+      "kind": "file",
+      "path": "sut-hookguard/package.json",
+      "sha256": "ceb18a667ae8adbffe7e9a1e26b46383866a80a86c98477d476f449de260146b"
+    },
+    {
+      "kind": "file",
+      "path": "sut-hookguard/package-lock.json",
+      "sha256": "94ac3c57eed728b5ed502af51efbcabd5043f7e47a05bb7b04ee253d61ba1a98"
+    },
+    {
+      "kind": "evidence_pack",
+      "path": "attestations/evidence/0031-hookguard",
+      "commit": "5b9816f1",
+      "files": {
+        "attestations/evidence/0031-hookguard/README.md": "0ca3b7c8e71835e796eab5edd59be6fc3354a4e572d490f9a788698ca4797dbf",
+        "attestations/evidence/0031-hookguard/run.json": "404664ea90de1a9a456337a3065d839ebed946ec5caa8a8241b018e4d18bba79",
+        "attestations/evidence/0031-hookguard/offline_table.md": "9cffb276a367fcb9942194272f8189cc65fe51663430f68aa8225f49b00a4745",
+        "attestations/evidence/0031-hookguard/offline_table.json": "92176600f87a5929a5a593df3b2fa192b1be0109762859cbb3d4775baf1fde03",
+        "attestations/evidence/0031-hookguard/manifest.sha256": "7eb68bcf1c19eab6121ae279912f511e13d2ca02c4f969d8a7998259f7786c97",
+        "attestations/evidence/0031-hookguard/runs/ (33 transcripts, sha256 of each in manifest.sha256)": "see manifest.sha256"
+      }
+    },
+    {
+      "kind": "run_pack_commits",
+      "freeze_commit": "b00570dd",
+      "evidence_commit": "5b9816f1",
+      "prereg_hash_before_first_call": "6dcf8cecf0f68cf89552b8deec962fbdc897a986df59aa8437113cbfef51110e",
+      "prereg_post": "https://github.com/x402-foundation/x402/issues/3866#issuecomment-7123847605"
+    }
+  ],
+  "run_ts": "2026-11-24T06:21:57Z..06:22:19Z (33 calls, wall 22 s; Этап 0 start 06:21:47Z)",
+  "self_run": {
+    "run_by": "argus lab agent (session key holder), per the operator's ТЗ for run 0031; no new sessions beyond the frozen seven — everything per the published freeze",
+    "checker": "sut-hookguard/battery_hookguard.mjs sha256 41dc9c93f85ce7e2913ef7cdf12caa2540606f16bfe1809b4f639e81c30a0503 (committed pre-run at b00570dd)",
+    "calls_total": 33,
+    "retries": 0,
+    "budget_spent": "$0.00 (free gate_check only; no key; no payment signed)",
+    "etap0_checks": {
+      "npm_view_dist_integrity_equals_draft": true,
+      "npm_ci_clean": true,
+      "verify_registry": "31 records, chain head ed94e07f44ae93cf…, green",
+      "node_e_prereg_hash_equals_posted": true
+    },
+    "host": {
+      "node": "24.22.3",
+      "npm": "11.19.1",
+      "os": "linux x64"
+    },
+    "transport": "local invocation of makeGateHook (bin/x402-gate-hook.mjs); per check exactly one free gate_check MCP tools/call to https://agenticfinancegraph.com/mcp; raw MCP HTTP exchange captured verbatim via injected fetchImpl; subject agent 45978; every call written once — failures recorded, never retried"
+  },
+  "findings_summary": {
+    "match": 6,
+    "divergence": 1,
+    "total": 7,
+    "by_session": {
+      "S1_restart_persistence_role_control_C1": "MATCH — R1/P1 $200 allow -> process restart (pid changed, store untouched) -> block; reason exactly new_payee_window_above_max:200+200>250/168h",
+      "S2_fresh_reference_farming_role_control_C2": "MATCH — 10/10 allow; every fresh ref pending {counted:true, decisions:0, usd:0}; no cross-reference aggregation",
+      "S3_amount_splitting": "MATCH — 5/5 allow; the window math never sees $300 (max pending.usd 0 per fresh ref)",
+      "S4_payTo_rotation": "MATCH — P3/P4/P5 allow; 4th (P6) block new_payees_per_day_exceeded:4>3 — the cap counts distinct addresses, not checks",
+      "S5_boundary_arithmetic": "MATCH — allow; allow at exactly 250 (strict > held, inclusive boundary did not materialize); 3rd block new_payee_window_above_max:250+50>250/168h",
+      "S6_race": "DIVERGENCE (criterion semantics) — frozen operationalization: max pending.decisions == allow count (7) and max pending.usd == 1400; actual: 6 / 1200. The Gate's pending is a PRE-decision snapshot (independently proven by S5: check 2 under R5 sees usd=200, check 3 sees usd=250). The primary frozen expectation — no double-count and no under-count — IS verified: the block formula 1200+200>250 accounts for all 8 checks exactly once (7 allows counted $200 each, the block not counted); no snapshot above exactly-once, none below. Race outcome recorded per the freeze ('whatever happens goes in the report'): 7 of 8 identical parallel checks allowed — $1400 passed under the $250/168h first-week window; per-request decisions are made on the count at evaluation time, so parallel identical checks outrun the window. Response resolve order: calls 5,3,7,2,8,1,6,4",
+      "S7_skipped_hook_role_control_C3": "MATCH — payment-creation attempt with no hook registered: zero gate_check requests fired; no externally observable signal; absence recorded as the result"
+    },
+    "positive_statement": "sessions 2, 3 and 7 — the ones the vendor's disclosure does not cover — came back clean: a fresh reference costs nothing and never aggregates, splitting is invisible to the window, a skipped hook leaves nothing observable; recorded the same way as a finding, per the freeze",
+    "record_type_rule": "prereg note 5: seal only if all 7 sessions MATCH; any divergence -> findings-type record, complete either way (what matched, what did not)",
+    "record_type": "findings"
+  },
+  "signature": "sB1eor/xCMTFnMlUYLyhAdBq+UpkIGykX072zJAbE9pUw/xFSbzXq4b7OCv7cT0FuCDtcpVVFQUPY/GuWpBXAA=="
+}

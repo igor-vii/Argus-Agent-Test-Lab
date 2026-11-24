@@ -1,5 +1,5 @@
 {
-  "type": "findings",
+  "type": "finding",
   "title": "onBeforePaymentCreation gate hook (agentic-finance-graph@0.3.7, policy recommended-v3) — pre-registered hostile battery: restart persistence, fresh-reference farming, splitting, payTo rotation, boundary arithmetic, race, skipped hook; $0.00",
   "subject": {
     "component": "onBeforePaymentCreation hook of agentic-finance-graph@0.3.7 (npm), policy recommended-v3 (x402#3866 hostile battery, agreed with the vendor in-thread)",
