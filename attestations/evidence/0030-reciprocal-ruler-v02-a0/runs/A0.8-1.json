@@ -1,0 +1,36 @@
+{
+  "row": "A0.8",
+  "seq": 1,
+  "method": "GET",
+  "url": "https://reciprocal-ruler-x402.vercel.app/health",
+  "x_trial_client": "argus-0030-a0c2",
+  "request": null,
+  "captured_at_utc": "2026-11-24T04:42:50Z",
+  "status": 200,
+  "latency_s": 0.241,
+  "response": {
+    "ok": true,
+    "network": "eip155:8453",
+    "facilitator": "https://facilitator.payai.network",
+    "pay_to_configured": true,
+    "runtime": "vercel-serverless",
+    "public_base_url": "https://reciprocal-ruler-x402.vercel.app",
+    "rule_versions": {
+      "frozen_below": "0.2.0",
+      "latest": "0.2.0"
+    },
+    "storage": {
+      "backend": "blob",
+      "durable": true,
+      "blob_env_configured": true,
+      "blob_sdk_available": true,
+      "checked_at": "2026-11-24T04:31:40.690015+00:00",
+      "last_error": null,
+      "check": {
+        "ok": true,
+        "detail": "write+read+delete round trip on the private blob store",
+        "roundtrip_ms": 309
+      }
+    }
+  }
+}

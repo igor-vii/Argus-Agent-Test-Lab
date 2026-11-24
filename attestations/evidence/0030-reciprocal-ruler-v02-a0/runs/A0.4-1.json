@@ -1,0 +1,18 @@
+{
+  "row": "A0.4",
+  "seq": 1,
+  "method": "GET",
+  "url": "https://reciprocal-ruler-x402.vercel.app/v1/ledger/argus-0030-a0-1?receipt=argus-0030-wrong-receipt",
+  "x_trial_client": "argus-0030-a0c1",
+  "request": null,
+  "captured_at_utc": "2026-11-24T04:42:48Z",
+  "status": 403,
+  "latency_s": 0.299,
+  "response": {
+    "detail": {
+      "error": "RECEIPT_REQUIRED",
+      "message": "This record is receipt-protected. Pass the receipt returned when the judgment was written: GET /v1/ledger/{idempotency_key}?receipt=...",
+      "idempotency_key": "argus-0030-a0-1"
+    }
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "row": "A0.1",
+  "seq": 1,
+  "method": "POST",
+  "url": "https://reciprocal-ruler-x402.vercel.app/v1/trial/reconcile",
+  "x_trial_client": "argus-0030-a0c1",
+  "request": {
+    "idempotency_key": "argus-0030-a0-1",
+    "tx_id": "argus-0030-tx-1",
+    "quote_hash": "sha256:ecfadcb750a4fac739eb000cd18edd8bc4beb8579682e373e4a3a60cf6f205aa",
+    "expected_amount_krw": 50000,
+    "actual_settled_krw": 40000,
+    "holdback_krw": 10000,
+    "event_type": "POST_TRADE_REFUND",
+    "rule_version": "0.2.0",
+    "persist_receipt": true
+  },
+  "captured_at_utc": "2026-11-24T04:42:47Z",
+  "status": 200,
+  "latency_s": 0.578,
+  "response": {
+    "status": "COMPENSATED",
+    "idempotent_replay": false,
+    "rule_version": "0.2.0",
+    "tx_id": "argus-0030-tx-1",
+    "expected_krw": 50000,
+    "actual_krw": 40000,
+    "holdback_krw": 10000,
+    "compensated_krw": 10000,
+    "uncovered_krw": 0,
+    "credit_delta": -5,
+    "judged_at": "2026-11-24T04:42:47.582687+00:00",
+    "trial": {
+      "free": true,
+      "used": 1,
+      "limit": 3,
+      "remaining": 2,
+      "counting": "per X-Trial-Client header, or per client IP when the header is absent"
+    },
+    "persisted": true,
+    "ledger": {
+      "persisted": true,
+      "created": true,
+      "storage": "blob",
+      "ledger_hash": "sha256:2c5d4be8b20c2128cd07353028f3aae745e51f441e3073f5703b07893402a7cc",
+      "receipt": "NvA7-C74iI6PgcH75Usz4N7cjZbCcZmq",
+      "lookup": "GET /v1/ledger/argus-0030-a0-1?receipt=NvA7-C74iI6PgcH75Usz4N7cjZbCcZmq"
+    },
+    "note": "Trial receipt: this judgment is stored in the durable ledger (tier=trial) and can be re-read with the returned receipt. The paid /v1/reconcile ($0.25) stores the same record as tier=paid."
+  }
+}

@@ -95,6 +95,17 @@
     "Paid-tier deferral stays explicit: funded A1 ($0.05 + 2x$0.25) on the same pinned semantics and the whole-run export question run only on operator go with the funded burner; this battery is $0.00.",
     "Budget: $0.00 — no paid endpoint is called in A0; no payment is signed."
   ],
+  "run_ts": "2026-11-24T04:42:50Z",
+  "self_run": {
+    "passes": 1,
+    "calls_total": 9,
+    "post_calls": 5,
+    "get_reads": 4,
+    "ids_total": 2,
+    "recompute_divergences": 0,
+    "matrix_verdicts": "9/9 statuses on the frozen expected column; four-row offline recompute 4/4 MATCH; R2 resolved (stored quote_hash = Q020, rule_version 0.2.0 inside the hash); no absent rows"
+  },
+  "findings_summary": "0 divergences. Durable-ledger receipt capability live on the trial tier: persist -> replay 200 (idempotent_replay true, ledger_hash unchanged) -> intent-mismatch 409 (digests differ; binding field set disclosed: tx_id, quote_hash, event_type, expected/actual/holdback) -> receipt-gated reads 403/404/200 with receipt_verified + recomputation.match + ledger_hash_match. OVERPAID split confirmed on identical payload: default 0.1.0 SETTLED_OK +5 vs 0.2.0 OVERPAID 0. Provenance: pin 75867aa remains unresolvable via public API (declared in #315); no new defects found.",
   "evidence": [
     {
       "kind": "file",
@@ -115,6 +126,16 @@
       "kind": "file",
       "path": "sut-reciprocal-ruler/recon-v02/openapi-20261124T0431Z.json",
       "sha256": "7e9344c55d88637f2361b5c122ce7d3e72977b9cae8448248ea421975f1bacbd"
+    },
+    {
+      "kind": "file",
+      "path": "attestations/evidence/0030-reciprocal-ruler-v02-a0/manifest.sha256",
+      "sha256": "773fc122bc3a5f560586cb0c7f55112ac7a6acf8efd7611382229af703ff32dd"
+    },
+    {
+      "kind": "file",
+      "path": "attestations/evidence/0030-reciprocal-ruler-v02-a0/run.json",
+      "sha256": "9f002f2b52cf775636e92b4182dac2c9edcacd78e4b73c510db3f041e32d607b"
     }
   ]
 }

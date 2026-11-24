@@ -1,0 +1,41 @@
+{
+  "row": "A0.6",
+  "seq": 1,
+  "method": "GET",
+  "url": "https://reciprocal-ruler-x402.vercel.app/v1/ledger/argus-0030-a0-1?receipt=NvA7-C74iI6PgcH75Usz4N7cjZbCcZmq",
+  "x_trial_client": "argus-0030-a0c1",
+  "request": null,
+  "captured_at_utc": "2026-11-24T04:42:49Z",
+  "status": 200,
+  "latency_s": 0.314,
+  "response": {
+    "idempotency_key": "argus-0030-a0-1",
+    "status": "COMPENSATED",
+    "tx_id": "argus-0030-tx-1",
+    "quote_hash": "sha256:ecfadcb750a4fac739eb000cd18edd8bc4beb8579682e373e4a3a60cf6f205aa",
+    "rule_version": "0.2.0",
+    "event_type": "POST_TRADE_REFUND",
+    "expected_krw": 50000,
+    "actual_krw": 40000,
+    "holdback_krw": 10000,
+    "compensated_krw": 10000,
+    "uncovered_krw": 0,
+    "credit_delta": -5,
+    "tier": "trial",
+    "created_at": "2026-11-24T04:42:47.604407+00:00",
+    "intent_digest": "sha256:9195dd1fd426d75aa7756384f35df26ccacd8777b6944cfbae30dc70f0eb317d",
+    "ledger_hash": "sha256:2c5d4be8b20c2128cd07353028f3aae745e51f441e3073f5703b07893402a7cc",
+    "storage": "blob",
+    "receipt_verified": true,
+    "recomputation": {
+      "match": true,
+      "recomputed": {
+        "status": "COMPENSATED",
+        "compensated_krw": 10000,
+        "uncovered_krw": 0,
+        "credit_delta": -5
+      },
+      "ledger_hash_match": true
+    }
+  }
+}

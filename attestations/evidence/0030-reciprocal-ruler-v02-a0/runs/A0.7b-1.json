@@ -1,0 +1,42 @@
+{
+  "row": "A0.7b",
+  "seq": 1,
+  "method": "POST",
+  "url": "https://reciprocal-ruler-x402.vercel.app/v1/trial/reconcile",
+  "x_trial_client": "argus-0030-a0c2",
+  "request": {
+    "idempotency_key": "argus-0030-a0-7b",
+    "tx_id": "argus-0030-tx-7b",
+    "quote_hash": "sha256:ecfadcb750a4fac739eb000cd18edd8bc4beb8579682e373e4a3a60cf6f205aa",
+    "expected_amount_krw": 50000,
+    "actual_settled_krw": 60000,
+    "holdback_krw": 10000,
+    "event_type": "POST_TRADE_REFUND",
+    "rule_version": "0.2.0"
+  },
+  "captured_at_utc": "2026-11-24T04:42:50Z",
+  "status": 200,
+  "latency_s": 0.426,
+  "response": {
+    "status": "OVERPAID",
+    "idempotent_replay": false,
+    "rule_version": "0.2.0",
+    "tx_id": "argus-0030-tx-7b",
+    "expected_krw": 50000,
+    "actual_krw": 60000,
+    "holdback_krw": 10000,
+    "compensated_krw": 0,
+    "uncovered_krw": 0,
+    "credit_delta": 0,
+    "judged_at": "2026-11-24T04:42:50.449539+00:00",
+    "trial": {
+      "free": true,
+      "used": 2,
+      "limit": 3,
+      "remaining": 1,
+      "counting": "per X-Trial-Client header, or per client IP when the header is absent"
+    },
+    "persisted": false,
+    "note": "Trial result: computed by the same deterministic engine as /v1/reconcile, but not written to the audit ledger. Use POST /v1/reconcile ($0.25) for ledger-backed, idempotent settlement, or send persist_receipt=true here to store a tier=trial receipt."
+  }
+}

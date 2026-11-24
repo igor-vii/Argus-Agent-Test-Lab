@@ -1,0 +1,18 @@
+{
+  "row": "A0.5",
+  "seq": 1,
+  "method": "GET",
+  "url": "https://reciprocal-ruler-x402.vercel.app/v1/ledger/argus-0030-no-such-key",
+  "x_trial_client": "argus-0030-a0c1",
+  "request": null,
+  "captured_at_utc": "2026-11-24T04:42:49Z",
+  "status": 404,
+  "latency_s": 0.292,
+  "response": {
+    "detail": {
+      "error": "LEDGER_NOT_FOUND",
+      "idempotency_key": "argus-0030-no-such-key",
+      "note": "Paid /v1/reconcile calls are always stored; free trial calls only when persist_receipt=true is sent."
+    }
+  }
+}

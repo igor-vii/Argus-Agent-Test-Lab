@@ -1,0 +1,38 @@
+{
+  "record_id": "0030",
+  "prereg": {
+    "id": "tools/registry/drafts/0030-reciprocal-ruler-v02-a0-receipt-ledger.seal.draft.json",
+    "sha256": "7662f7175a939b656264c8da0ca09a345ec76761e60b0fe4c7d4e8e2df9cee45",
+    "freeze_commit": "a00d8815",
+    "freeze_signed_wrapper_sha256": "786f04ee24cca3ad631d30ded106339be028752383a162d639d0d9726110fec6",
+    "prereg_posts": [
+      "https://github.com/base-buzz/paystage/issues/315#issuecomment-7122267628",
+      "https://github.com/x402-foundation/x402/issues/4198#issuecomment-7122267897"
+    ]
+  },
+  "platform": {
+    "kind": "sandbox-stand",
+    "engine": {
+      "name": "argus lab sandbox (stdlib checker, no framework)",
+      "version_or_digest": "sut-reciprocal-ruler/ruler_a0_battery.py sha256 8d65bf145a92b298dc38c30eee58c2d75e3803872e34f5689bb94cd2b16c6702 at freeze commit a00d8815"
+    },
+    "scenarios": {
+      "source": "tools/registry/drafts/0030-reciprocal-ruler-v02-a0-receipt-ledger.seal.draft.json scenarios A0.1-A0.8",
+      "digest": "7662f7175a939b656264c8da0ca09a345ec76761e60b0fe4c7d4e8e2df9cee45"
+    },
+    "sut": {
+      "target": "https://reciprocal-ruler-x402.vercel.app (reciprocal-ruler v0.2, base-buzz/paystage#315)",
+      "commit_or_version": "75867aa (declared in #315 comment 7101307979; not resolvable via public API — provenance note in the draft; verifiable pin: recon-v02 snapshots + live /health)"
+    }
+  },
+  "host": {
+    "class": "sandbox",
+    "os": "linux x64",
+    "runtime": { "python": "3.12.16", "node": "not used in run (offline signing used node 24.22.3)" },
+    "tz": "UTC"
+  },
+  "window": { "start_utc": "2026-11-24T04:42:47Z", "end_utc": "2026-11-24T04:42:50Z" },
+  "runs": [
+    { "argv": "python3 sut-reciprocal-ruler/ruler_a0_battery.py", "exit": 0, "log": "runs/summary.json" }
+  ]
+}
