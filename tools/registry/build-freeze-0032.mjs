@@ -1,0 +1,128 @@
+// Build the 0032 prereg freeze: draft.json + agent session key + signed wrapper.
+// Mirror of the 0031 mechanics (freeze-0031.signed.json): the wrapper signs
+// canonical(draft) with a per-run agent session key; privkey stays outside the repo.
+import crypto from 'node:crypto';
+import fs from 'node:fs';
+import path from 'path';
+import { canonical, sha256Hex } from './lib.mjs';
+
+const ROOT = path.resolve(import.meta.dirname, '..', '..'); // argus-lab/
+const SUT = path.join(ROOT, 'sut-fiangshi-census');
+
+const f = (p) => path.join(SUT, p);
+const fileSha = (p) => sha256Hex(fs.readFileSync(p));
+
+// ---------- draft ----------
+const draft = {
+  type: 'seal',
+  title: 'fiangshi census-receipt anchoring (Aceop-001/fiangshi @ 1d19e408, served census as a function of commit + FIANGSHI_NOW) — pre-registered dual-context offline rebuild with independent receipt-hash recompute, $0.00',
+  subject: {
+    component: 'fiangshi census receipts for two live x402 sellers (api.cleave.fi/x402/gas, api.bitrefill.com/x402/gift-cards/search), anchored as claims in the Argus registry; classification under the record-0028 frozen-procedure discipline (recomputes from the records alone)',
+    thread: 'https://github.com/Aceop-001/fiangshi/issues/1',
+    vendor_answers: 'thread comment 7136711046 (2026-11-24 15:50 UTC): a receipt never changes — its id is the sha256 of its canonical JSON, a new verdict is a new receipt with a new id; recompute over the canonical receipt object, not the HTTP response wrapper; current main is 1d19e408…, pin the commit at freeze (a scheduled 36h ALLOW-only refresh may move main after 2026-11-26 01:04 UTC); the served census is a function of the commit and the clock (a refresh counts only once its collection time has passed); no code-level rate limits on the demo routes; /v1/index.json bytes move on every request (served_at, per-record data_age_hours) — its sha256 is a one-time snapshot fingerprint, not a reproducibility claim',
+    demo_shape: '$0.00: no paid x402 calls, no keys, no settlements; the live API is touched only for one GET /v1/index.json and the per-receipt verify routes; the receipt chain is rebuilt offline from the pinned commit; receipt hashes are recomputed independently of fiangshi\'s code by the checker\'s own Python canonicalizer',
+    sut_pin: {
+      repo: 'https://github.com/Aceop-001/fiangshi',
+      commit: '1d19e408e8c324c5c8085b8b143cfb6399cb0161',
+      install: 'npm ci at the pin (54 packages; tsx pinned in devDeps); npm audit findings are noise — npm audit fix is NOT run (it would leave the pin)',
+      census_semantics: 'served census is a function of the commit and the clock: FIANGSHI_NOW pins the clock; the wall clock is never consulted (probe contexts A and B run at pinned instants)',
+      offline_rebuild: 'git checkout <commit> && npm ci, then FIANGSHI_NOW=<T> npx tsx argus-fiangshi-probe.ts <out.json> <receipts-dir> (imports src/census.ts, src/core/receipt.ts, src/core/canonical.ts at the pin)',
+    },
+    receipts: {
+      R1: { seller: 'api.cleave.fi/x402/gas', payee: '0x0000000000000000000000000000000000000000', note: 'null_payee vow', id: 'd2c68884841332834a1e0b203e2175c5e1e92de5d279344bd6504db6b5bf4ce0', prev_hash: '2465f1ab971520d4ea093fed171f59a6c859b0d5252c0f7571671f91b3482e98', issued: 'census 2026-11-09, checked_at 02:57:19.701Z', band_at_issuance: 'BLOCK' },
+      R2: { seller: 'api.bitrefill.com/x402/gift-cards/search', payee: '0x480cd46e6fade651a0437deadda53d5c8e7d846a', id: '97b5dded4c5cff75d5b26377b659ef40c7620c45cf143fac27910fb8b1af7691', prev_hash: 'f72b3f02eefba08eb33b4336fe48cdce2d3adac8d155c82e70024dccce861249', issued: 'census 2026-11-20, checked_at 03:50:53.345Z', band_at_issuance: 'ALLOW' },
+      R3: { seller: 'api.bitrefill.com/x402/gift-cards/search', payee: '0x480cd46e6fade651a0437deadda53d5c8e7d846a', id: '83d618ba5344776c16fd8b159ad7d6c177838db2057b7cad2c993c8a6a076819', prev_hash: 'f64bd4bb6917a345190482787d3ba401453992551cf6f63a10ca2904cbea9f1c', issued: 'ALLOW-only refresh 2026-11-24, checked_at 13:05:02.148Z', band_at_issuance: 'ALLOW' },
+    },
+    canonicalization: 'per src/core/canonical.ts at the pin: JSON.stringify over recursively sorted object keys, undefined dropped, compact separators, UTF-8; receipt_hash = sha256 over every field except receipt_hash itself; recompute over the canonical receipt object, not the HTTP wrapper',
+    endpoints: [
+      'GET https://fiangshi.xyz/v1/index.json (one-time snapshot fingerprint)',
+      'GET /v1/verify?id=<id>',
+      'GET /v1/receipt/<id> (vendor durable receipt store in progress, store_total null as of 2026-11-24 — recorded either way; census receipts do not depend on it)',
+    ],
+    platform: {
+      kind: 'sandbox-stand',
+      checker: 'python3 stdlib census_checker.py (independent canonicalizer; probe runner; live rows)',
+      probe: 'npx tsx argus-fiangshi-probe.ts (tsx from the pin\'s devDeps, installed by npm ci)',
+    },
+  },
+  scenarios: [
+    { id: 'A1', unit: 'verdict', case: 'context A rebuild, FIANGSHI_NOW=2026-11-24T14:00:00Z (after the 24 Nov refresh collection)', expected: 'bands exactly {ALLOW: 105, REVIEW: 1293, BLOCK: 525}' },
+    { id: 'A2', unit: 'verdict', case: 'Bitrefill row in context A', expected: 'band ALLOW, issued_band ALLOW, band_cap null, receipt_id=R3, data_age_hours in [0.85, 0.95], stale false' },
+    { id: 'A3', unit: 'verdict', case: 'cleave row in context A', expected: 'band BLOCK, issued_band BLOCK, band_cap null, stale true, receipt_id=R1' },
+    { id: 'A4', unit: 'verdict', case: 'receipt pins in context A', expected: 'R1 in chain 1 at pos 124; R2 in chain 2 at pos 1073; R3 in chain 0 at pos 1073; fiangshi verifyReceipt ok on all three; chain walk ok on chains 0, 1, 2' },
+    { id: 'B1', unit: 'verdict', case: 'context B rebuild, FIANGSHI_NOW=2026-11-24T12:00:00Z (after the 72h limit, before the refresh collection)', expected: 'bands exactly {ALLOW: 0, REVIEW: 1402, BLOCK: 521}' },
+    { id: 'B2', unit: 'verdict', case: 'Bitrefill row in context B — the freshness case', expected: 'band REVIEW, issued_band ALLOW, receipt_id=R2, band_cap {reason: "data_stale", age_hours in [104.0, 104.3], limit_hours: 72}' },
+    { id: 'B3', unit: 'verdict', case: 'cleave row in context B', expected: 'band BLOCK, band_cap null, stale true, receipt_id=R1' },
+    { id: 'B4', unit: 'verdict', case: 'receipt presence in context B', expected: 'R2 present (chain 0, pos 1073); R3 absent — issued after the pinned now; absence is the expected result, recorded as such' },
+    { id: 'C1', unit: 'verdict', case: 'receipt integrity, independent of fiangshi\'s code', expected: 'sha256 over the canonical JSON of each pinned receipt minus receipt_hash, recomputed by the checker\'s own Python canonicalizer, equals the pinned id — for all three' },
+    { id: 'C2', unit: 'verdict', case: 'chain linkage of the pinned receipts', expected: 'prev_hash of R1/R2/R3 equals the pinned values verbatim' },
+    { id: 'C3', unit: 'verdict', case: 'fiangshi\'s own chain verification', expected: 'verifyChain over each affected chain returns ok with zero errors' },
+    { id: 'L1', unit: 'verdict', role: 'evidence-only', case: 'one GET /v1/index.json', expected: 'byte sha256 recorded as a one-time snapshot fingerprint — explicitly not a reproducibility claim (served_at and data_age_hours make the bytes move per request); parsed bands and both pinned seller rows recorded verbatim; never affects the verdict' },
+    { id: 'L2', unit: 'verdict', role: 'evidence-only', case: 'GET /v1/verify?id= and GET /v1/receipt/<id> for all three receipts', expected: 'recorded DOCUMENTED either way — chain_linkage verified if the durable store is live, 404 if not (the redeploy gap this run anchors closed); never affects the verdict' },
+  ],
+  notes: [
+    'PREREG FREEZE (freeze-0032): this draft, PREREG-0032.md (prose twin), argus-fiangshi-probe.ts and census_checker.py land BEFORE the first live GET, committed to igor-vii/Argus-Agent-Test-Lab; the canonical sha256 of the signed wrapper (draft + detached Ed25519 by the agent session key) is published in Aceop-001/fiangshi#1 before the first live GET, per the 0031 discipline. run_ts, self_run, findings_summary and run-pack evidence pins are filled from the run after it completes (re-pin commit before signing, as in 0031).',
+    'Pass rule for the final record: seal iff A1–A4, B1–B4 and C1–C3 all match as frozen; any divergence → finding, recorded as-is; the record is complete either way; corrections are separate records, sealed originals are never edited. The L1/L2 rows are evidence-only and never affect the verdict.',
+    'Verifier independence: receipt hashes are recomputed by the checker\'s own Python canonicalizer (not fiangshi\'s code); fiangshi\'s verifyReceipt/verifyChain results are recorded alongside as corroboration, not as the source of truth.',
+    'What this anchors, honestly: the receipts existed at the pinned commit and their canonical bytes are fixed and re-derivable offline from git history; it says nothing about fiangshi\'s internal API ledger beyond the anchored bytes (the vendor\'s own disclosure). fiangshi stays advisory: no signing key, no new call in its request path.',
+    'Disclosed choice: the probes run with the repo\'s pinned tsx (devDeps via npm ci). If the local tsx were missing, the checker aborts rather than silently letting npx download an unpinned tsx; --allow-npx-download exists and its use would be disclosed in the run pack (run_meta.json tsx_source).',
+  ],
+  evidence: [
+    { kind: 'file', path: 'sut-fiangshi-census/argus-fiangshi-probe.ts', sha256: fileSha(f('argus-fiangshi-probe.ts')) },
+    { kind: 'file', path: 'sut-fiangshi-census/census_checker.py', sha256: fileSha(f('census_checker.py')) },
+    { kind: 'file', path: 'sut-fiangshi-census/PREREG-0032.md', sha256: fileSha(f('PREREG-0032.md')) },
+  ],
+};
+
+fs.writeFileSync(f('0032-fiangshi-census-receipt-anchoring.seal.draft.json'), JSON.stringify(draft, null, 2) + '\n');
+
+// ---------- agent session key ----------
+const SESSION = '20261125-fiangshi-census';
+const keyId = `argus-agent-session-${SESSION}`;
+const AGENT_KEYS = path.join(ROOT, 'attestations', 'agent', 'keys');
+const pubPath = path.join(AGENT_KEYS, `${keyId}.pub.json`);
+const privDir = process.env.ARGUS_AGENT_PRIVKEY_DIR || path.resolve(ROOT, '..', 'keys');
+if (!fs.existsSync(pubPath)) {
+  const { publicKey, privateKey } = crypto.generateKeyPairSync('ed25519');
+  const now = new Date().toISOString();
+  fs.mkdirSync(privDir, { recursive: true });
+  fs.writeFileSync(path.join(privDir, `${keyId}.priv.json`), JSON.stringify({
+    key_id: keyId, algorithm: 'Ed25519', class: 'agent-session', session_id: SESSION,
+    created_at: now,
+    note: 'Agent-session key for the freeze-0032 prereg wrapper (mirror of the 0031 mechanics). Sandbox-only; never committed; revoke by removing the pub file.',
+    private_jwk: privateKey.export({ format: 'jwk' }),
+  }, null, 2), { mode: 0o600 });
+  fs.mkdirSync(AGENT_KEYS, { recursive: true });
+  fs.writeFileSync(pubPath, JSON.stringify({
+    key_id: keyId, algorithm: 'Ed25519', class: 'agent-session', session_id: SESSION,
+    created_at: now,
+    note: 'Agent-session signer for the freeze-0032 prereg wrapper (sut-fiangshi-census). NOT an operator key: main-registry verification rejects it (ARG-03 operator allowlist).',
+    public_jwk: publicKey.export({ format: 'jwk' }),
+  }, null, 2), { mode: 0o644 });
+  console.log(`session key generated: ${keyId}`);
+} else {
+  console.log(`session key already present: ${keyId}`);
+}
+
+// ---------- signed wrapper ----------
+const privJwk = JSON.parse(fs.readFileSync(path.join(privDir, `${keyId}.priv.json`), 'utf8')).private_jwk;
+const privKey = crypto.createPrivateKey({ key: privJwk, format: 'jwk' });
+const sig = crypto.sign(null, Buffer.from(canonical(draft), 'utf8'), privKey);
+const wrapper = {
+  freeze_id: 'freeze-0032',
+  draft,
+  signed_at: new Date().toISOString().replace(/\.\d{3}Z$/, 'Z'),
+  signature: {
+    signer_key_id: keyId,
+    algorithm: 'Ed25519',
+    signed_over: `canonical(draft): recursively sorted keys, no whitespace, UTF-8; pubkey at attestations/agent/keys/${keyId}.pub.json`,
+    signature: sig.toString('base64'),
+  },
+};
+fs.writeFileSync(f('freeze-0032.signed.json'), JSON.stringify(wrapper, null, 2) + '\n');
+
+// self-check: verify the signature + print the prereg hash
+const pubJwk = JSON.parse(fs.readFileSync(pubPath, 'utf8')).public_jwk;
+const ok = crypto.verify(null, Buffer.from(canonical(draft), 'utf8'), crypto.createPublicKey({ key: pubJwk, format: 'jwk' }), Buffer.from(wrapper.signature.signature, 'base64'));
+console.log('wrapper signature self-check:', ok ? 'OK' : 'FAIL');
+console.log('prereg hash (canonical sha256 of the signed wrapper):', sha256Hex(canonical(wrapper)));

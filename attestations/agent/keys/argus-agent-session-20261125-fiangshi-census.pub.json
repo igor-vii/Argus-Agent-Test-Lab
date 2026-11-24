@@ -1,0 +1,13 @@
+{
+  "key_id": "argus-agent-session-20261125-fiangshi-census",
+  "algorithm": "Ed25519",
+  "class": "agent-session",
+  "session_id": "20261125-fiangshi-census",
+  "created_at": "2026-11-24T17:55:39.618Z",
+  "note": "Agent-session signer for the freeze-0032 prereg wrapper (sut-fiangshi-census). NOT an operator key: main-registry verification rejects it (ARG-03 operator allowlist).",
+  "public_jwk": {
+    "kty": "OKP",
+    "crv": "Ed25519",
+    "x": "RaASw2BmUpyl6yfashUEJzxyqVeTWXfGn8vRBOQnckY"
+  }
+}
