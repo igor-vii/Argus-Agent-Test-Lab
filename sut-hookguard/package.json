@@ -1,0 +1,9 @@
+{
+  "name": "sut-hookguard",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Argus lab: hostile battery of the onBeforePaymentCreation hook (agentic-finance-graph@0.3.7, policy recommended-v3), pre-registered as draft 0031",
+  "dependencies": {
+    "agentic-finance-graph": "0.3.7"
+  }
+}
