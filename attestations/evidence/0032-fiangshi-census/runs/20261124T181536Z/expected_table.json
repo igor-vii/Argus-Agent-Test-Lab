@@ -1,0 +1,311 @@
+{
+ "pin": "1d19e408e8c324c5c8085b8b143cfb6399cb0161",
+ "contexts": [
+  "2026-11-24T14:00:00Z",
+  "2026-11-24T12:00:00Z"
+ ],
+ "verdict": "SEAL \u2014 all frozen rows match",
+ "rows": [
+  {
+   "row": "P1 repo HEAD == pin",
+   "expected": "1d19e408e8c324c5c8085b8b143cfb6399cb0161",
+   "actual": "1d19e408e8c324c5c8085b8b143cfb6399cb0161",
+   "match": true
+  },
+  {
+   "row": "P2 probe present",
+   "expected": "./argus-fiangshi-probe.ts",
+   "actual": true,
+   "match": true
+  },
+  {
+   "row": "P3 tsx installed",
+   "expected": "node_modules/.bin/tsx",
+   "actual": true,
+   "match": true
+  },
+  {
+   "row": "P4 prereg hash == posted (canonical-json, 0031 discipline)",
+   "expected": "ca3858e04a31e45331875947834455e121e79d03878564178434b360326e896a",
+   "actual": "ca3858e04a31e45331875947834455e121e79d03878564178434b360326e896a",
+   "match": true
+  },
+  {
+   "row": "A1 bands",
+   "expected": {
+    "ALLOW": 105,
+    "REVIEW": 1293,
+    "BLOCK": 525
+   },
+   "actual": {
+    "ALLOW": 105,
+    "REVIEW": 1293,
+    "BLOCK": 525
+   },
+   "match": true
+  },
+  {
+   "row": "A2 Bitrefill fresh",
+   "expected": {
+    "band": "ALLOW",
+    "issued_band": "ALLOW",
+    "band_cap": null,
+    "receipt_id": "83d618ba5344776c16fd8b159ad7d6c177838db2057b7cad2c993c8a6a076819",
+    "stale": false,
+    "data_age_hours": "in [0.85,0.95]"
+   },
+   "actual": {
+    "band": "ALLOW",
+    "issued_band": "ALLOW",
+    "band_cap": null,
+    "receipt_id": "83d618ba5344776c16fd8b159ad7d6c177838db2057b7cad2c993c8a6a076819",
+    "stale": false,
+    "data_age_hours": 0.9
+   },
+   "match": true
+  },
+  {
+   "row": "A3 cleave stale BLOCK",
+   "expected": {
+    "band": "BLOCK",
+    "issued_band": "BLOCK",
+    "band_cap": null,
+    "stale": true,
+    "receipt_id": "d2c68884841332834a1e0b203e2175c5e1e92de5d279344bd6504db6b5bf4ce0"
+   },
+   "actual": {
+    "band": "BLOCK",
+    "issued_band": "BLOCK",
+    "band_cap": null,
+    "stale": true,
+    "receipt_id": "d2c68884841332834a1e0b203e2175c5e1e92de5d279344bd6504db6b5bf4ce0"
+   },
+   "match": true
+  },
+  {
+   "row": "A4 pins chains/pos/verify/walk",
+   "expected": {
+    "R1_cleave": [
+     1,
+     124
+    ],
+    "R2_bitrefill_20nov": [
+     2,
+     1073
+    ],
+    "R3_bitrefill_24nov": [
+     0,
+     1073
+    ]
+   },
+   "actual": {
+    "R1_cleave": {
+     "found": true,
+     "chain": 1,
+     "pos": 124,
+     "chain_len": 800,
+     "verify_receipt": {
+      "ok": true,
+      "errors": []
+     },
+     "prev_ok": true,
+     "next_ok": true,
+     "chain_walk_ok": true,
+     "chain_walk_errors": [],
+     "prev_hash": "2465f1ab971520d4ea093fed171f59a6c859b0d5252c0f7571671f91b3482e98",
+     "band": "BLOCK",
+     "as_of": null,
+     "url": "https://api.cleave.fi/x402/gas"
+    },
+    "R2_bitrefill_20nov": {
+     "found": true,
+     "chain": 2,
+     "pos": 1073,
+     "chain_len": 1922,
+     "verify_receipt": {
+      "ok": true,
+      "errors": []
+     },
+     "prev_ok": true,
+     "next_ok": true,
+     "chain_walk_ok": true,
+     "chain_walk_errors": [],
+     "prev_hash": "f72b3f02eefba08eb33b4336fe48cdce2d3adac8d155c82e70024dccce861249",
+     "band": "ALLOW",
+     "as_of": "2026-11-20T03:50:53.345Z",
+     "url": "https://api.bitrefill.com/x402/gift-cards/search"
+    },
+    "R3_bitrefill_24nov": {
+     "found": true,
+     "chain": 0,
+     "pos": 1073,
+     "chain_len": 1922,
+     "verify_receipt": {
+      "ok": true,
+      "errors": []
+     },
+     "prev_ok": true,
+     "next_ok": true,
+     "chain_walk_ok": true,
+     "chain_walk_errors": [],
+     "prev_hash": "f64bd4bb6917a345190482787d3ba401453992551cf6f63a10ca2904cbea9f1c",
+     "band": "ALLOW",
+     "as_of": "2026-11-24T13:05:02.148Z",
+     "url": "https://api.bitrefill.com/x402/gift-cards/search"
+    }
+   },
+   "match": true
+  },
+  {
+   "row": "B1 bands",
+   "expected": {
+    "ALLOW": 0,
+    "REVIEW": 1402,
+    "BLOCK": 521
+   },
+   "actual": {
+    "ALLOW": 0,
+    "REVIEW": 1402,
+    "BLOCK": 521
+   },
+   "match": true
+  },
+  {
+   "row": "B2 Bitrefill capped REVIEW",
+   "expected": {
+    "band": "REVIEW",
+    "issued_band": "ALLOW",
+    "receipt_id": "97b5dded4c5cff75d5b26377b659ef40c7620c45cf143fac27910fb8b1af7691",
+    "cap_reason": "data_stale",
+    "limit_hours": 72,
+    "age": "in [104.0,104.3]"
+   },
+   "actual": {
+    "band": "REVIEW",
+    "issued_band": "ALLOW",
+    "receipt_id": "97b5dded4c5cff75d5b26377b659ef40c7620c45cf143fac27910fb8b1af7691",
+    "cap_reason": "data_stale",
+    "limit_hours": 72,
+    "age": 104.2
+   },
+   "match": true
+  },
+  {
+   "row": "B3 cleave BLOCK",
+   "expected": {
+    "band": "BLOCK",
+    "band_cap": null,
+    "stale": true,
+    "receipt_id": "d2c68884841332834a1e0b203e2175c5e1e92de5d279344bd6504db6b5bf4ce0"
+   },
+   "actual": {
+    "band": "BLOCK",
+    "band_cap": null,
+    "stale": true,
+    "receipt_id": "d2c68884841332834a1e0b203e2175c5e1e92de5d279344bd6504db6b5bf4ce0"
+   },
+   "match": true
+  },
+  {
+   "row": "B4 R2 present chain 0 pos 1073; R3 absent",
+   "expected": {
+    "R1_cleave": [
+     1,
+     124
+    ],
+    "R2_bitrefill_20nov": [
+     0,
+     1073
+    ],
+    "R3_bitrefill_24nov": null
+   },
+   "actual": {
+    "R2": true,
+    "R3": false
+   },
+   "match": true
+  },
+  {
+   "row": "C1 python-canonical sha256 == id (x3)",
+   "expected": "all three reproduce",
+   "actual": true,
+   "match": true
+  },
+  {
+   "row": "C2 prev_hash pins verbatim (x3)",
+   "expected": {
+    "d2c68884841332834a1e0b203e2175c5e1e92de5d279344bd6504db6b5bf4ce0": "2465f1ab971520d4ea093fed171f59a6c859b0d5252c0f7571671f91b3482e98",
+    "97b5dded4c5cff75d5b26377b659ef40c7620c45cf143fac27910fb8b1af7691": "f72b3f02eefba08eb33b4336fe48cdce2d3adac8d155c82e70024dccce861249",
+    "83d618ba5344776c16fd8b159ad7d6c177838db2057b7cad2c993c8a6a076819": "f64bd4bb6917a345190482787d3ba401453992551cf6f63a10ca2904cbea9f1c"
+   },
+   "actual": true,
+   "match": true
+  },
+  {
+   "row": "C3 fiangshi verifyChain ok (chains 0/1/2)",
+   "expected": "ok, zero errors",
+   "actual": true,
+   "match": true
+  },
+  {
+   "row": "L1 index snapshot (DOCUMENTED)",
+   "expected": "status 200, fingerprint recorded: c7294b54c091310c\u2026, bands {'BLOCK': 525, 'REVIEW': 1293, 'ALLOW': 105}",
+   "actual": true,
+   "match": true
+  },
+  {
+   "row": "L2 R1 /verify (DOCUMENTED)",
+   "expected": "recorded as-is",
+   "actual": 404,
+   "match": true
+  },
+  {
+   "row": "L2 R1 /receipt (DOCUMENTED)",
+   "expected": "recorded as-is",
+   "actual": 404,
+   "match": true
+  },
+  {
+   "row": "L2 R1 /receipts (DOCUMENTED)",
+   "expected": "recorded as-is",
+   "actual": 404,
+   "match": true
+  },
+  {
+   "row": "L2 R2 /verify (DOCUMENTED)",
+   "expected": "recorded as-is",
+   "actual": 404,
+   "match": true
+  },
+  {
+   "row": "L2 R2 /receipt (DOCUMENTED)",
+   "expected": "recorded as-is",
+   "actual": 404,
+   "match": true
+  },
+  {
+   "row": "L2 R2 /receipts (DOCUMENTED)",
+   "expected": "recorded as-is",
+   "actual": 404,
+   "match": true
+  },
+  {
+   "row": "L2 R3 /verify (DOCUMENTED)",
+   "expected": "recorded as-is",
+   "actual": 404,
+   "match": true
+  },
+  {
+   "row": "L2 R3 /receipt (DOCUMENTED)",
+   "expected": "recorded as-is",
+   "actual": 404,
+   "match": true
+  },
+  {
+   "row": "L2 R3 /receipts (DOCUMENTED)",
+   "expected": "recorded as-is",
+   "actual": 404,
+   "match": true
+  }
+ ]
+}

@@ -1,0 +1,147 @@
+{
+ "FIANGSHI_NOW": "2026-11-24T14:00:00Z",
+ "served_at": "2026-11-24T14:00:00.000Z",
+ "stale_limit_hours": 72,
+ "bands": {
+  "ALLOW": 105,
+  "REVIEW": 1293,
+  "BLOCK": 525
+ },
+ "payee_rows": [
+  {
+   "chain": "eip155:8453",
+   "payee": "0x480cd46e6fade651a0437deadda53d5c8e7d846a",
+   "url": "https://api.bitrefill.com/x402/gift-cards/search",
+   "service": "Bitrefill",
+   "price_usd": 0.002,
+   "band": "ALLOW",
+   "issued_band": "ALLOW",
+   "as_of": "2026-11-24T13:05:02.148Z",
+   "data_age_hours": 0.9,
+   "stale": false,
+   "band_cap": null,
+   "verdict_confidence": "normal",
+   "score": 90.59,
+   "vows": [],
+   "identity": {
+    "claims_org": "Bitrefill",
+    "claims_product": null,
+    "corroborated": true,
+    "sources": [
+     "host",
+     "label"
+    ]
+   },
+   "first_funder": "0x7a4388b166c5df22bd0ed4988edf084ccae24a8c",
+   "receipt_id": "83d618ba5344776c16fd8b159ad7d6c177838db2057b7cad2c993c8a6a076819"
+  },
+  {
+   "chain": "eip155:8453",
+   "payee": "0x0000000000000000000000000000000000000000",
+   "url": "https://api.cleave.fi/x402/gas",
+   "service": null,
+   "price_usd": 5,
+   "band": "BLOCK",
+   "issued_band": "BLOCK",
+   "as_of": "2026-11-09T02:57:19.701Z",
+   "data_age_hours": 371,
+   "stale": true,
+   "band_cap": null,
+   "verdict_confidence": "degraded",
+   "score": 88.63,
+   "vows": [
+    "null_payee"
+   ],
+   "identity": {
+    "claims_org": null,
+    "claims_product": null,
+    "corroborated": null
+   },
+   "first_funder": "0x278d858f05b94576c1e6f73285886876ff6ef8d2",
+   "receipt_id": "d2c68884841332834a1e0b203e2175c5e1e92de5d279344bd6504db6b5bf4ce0"
+  }
+ ],
+ "pins": {
+  "R1_cleave": {
+   "found": true,
+   "chain": 1,
+   "pos": 124,
+   "chain_len": 800,
+   "verify_receipt": {
+    "ok": true,
+    "errors": []
+   },
+   "prev_ok": true,
+   "next_ok": true,
+   "chain_walk_ok": true,
+   "chain_walk_errors": [],
+   "prev_hash": "2465f1ab971520d4ea093fed171f59a6c859b0d5252c0f7571671f91b3482e98",
+   "band": "BLOCK",
+   "as_of": null,
+   "url": "https://api.cleave.fi/x402/gas"
+  },
+  "R2_bitrefill_20nov": {
+   "found": true,
+   "chain": 2,
+   "pos": 1073,
+   "chain_len": 1922,
+   "verify_receipt": {
+    "ok": true,
+    "errors": []
+   },
+   "prev_ok": true,
+   "next_ok": true,
+   "chain_walk_ok": true,
+   "chain_walk_errors": [],
+   "prev_hash": "f72b3f02eefba08eb33b4336fe48cdce2d3adac8d155c82e70024dccce861249",
+   "band": "ALLOW",
+   "as_of": "2026-11-20T03:50:53.345Z",
+   "url": "https://api.bitrefill.com/x402/gift-cards/search"
+  },
+  "R3_bitrefill_24nov": {
+   "found": true,
+   "chain": 0,
+   "pos": 1073,
+   "chain_len": 1922,
+   "verify_receipt": {
+    "ok": true,
+    "errors": []
+   },
+   "prev_ok": true,
+   "next_ok": true,
+   "chain_walk_ok": true,
+   "chain_walk_errors": [],
+   "prev_hash": "f64bd4bb6917a345190482787d3ba401453992551cf6f63a10ca2904cbea9f1c",
+   "band": "ALLOW",
+   "as_of": "2026-11-24T13:05:02.148Z",
+   "url": "https://api.bitrefill.com/x402/gift-cards/search"
+  }
+ },
+ "chain_walk_all": [
+  {
+   "chain": 0,
+   "len": 1922,
+   "ok": true
+  },
+  {
+   "chain": 1,
+   "len": 800,
+   "ok": true
+  },
+  {
+   "chain": 2,
+   "len": 1922,
+   "ok": true
+  },
+  {
+   "chain": 3,
+   "len": 1922,
+   "ok": true
+  },
+  {
+   "chain": 4,
+   "len": 1922,
+   "ok": true
+  }
+ ]
+}

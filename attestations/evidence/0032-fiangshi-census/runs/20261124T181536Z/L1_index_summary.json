@@ -1,0 +1,43 @@
+{
+ "status": 200,
+ "sha256": "c7294b54c091310c356ca842194adc83a30c7f64af43f1dd6d9538ff4a21094f",
+ "bands": {
+  "BLOCK": 525,
+  "REVIEW": 1293,
+  "ALLOW": 105
+ },
+ "pinned_seller_rows": [
+  {
+   "chain": "eip155:8453",
+   "payee": "0x480cd46e6fade651a0437deadda53d5c8e7d846a",
+   "url": "https://api.bitrefill.com/x402/gift-cards/search",
+   "band": "ALLOW",
+   "issued_band": "ALLOW",
+   "band_cap": null,
+   "verdict_confidence": "normal",
+   "score": 90.59,
+   "vows": [],
+   "as_of": "2026-11-24T13:05:02.148Z",
+   "data_age_hours": 4.6,
+   "stale": false,
+   "receipt_id": "83d618ba5344776c16fd8b159ad7d6c177838db2057b7cad2c993c8a6a076819"
+  },
+  {
+   "chain": "eip155:8453",
+   "payee": "0x0000000000000000000000000000000000000000",
+   "url": "https://api.cleave.fi/x402/gas",
+   "band": "BLOCK",
+   "issued_band": "BLOCK",
+   "band_cap": null,
+   "verdict_confidence": "degraded",
+   "score": 88.63,
+   "vows": [
+    "null_payee"
+   ],
+   "as_of": "2026-11-09T02:57:19.701Z",
+   "data_age_hours": 374.7,
+   "stale": true,
+   "receipt_id": "d2c68884841332834a1e0b203e2175c5e1e92de5d279344bd6504db6b5bf4ce0"
+  }
+ ]
+}

@@ -1,0 +1,19 @@
+{
+ "run_id": "0032-fiangshi-census/runs/20261124T181536Z",
+ "run_ts": "2026-11-24T18:15:36Z..18:15:41Z (2 offline probes + 10 live GETs, wall ~6 s; Этап 0 start 18:15:36Z)",
+ "freeze_commit": "71a577b00811b36c121e579fc2f97480224e0ca8",
+ "prereg_hash_before_first_call": "ca3858e04a31e45331875947834455e121e79d03878564178434b360326e896a",
+ "sut_pin": "Aceop-001/fiangshi @ 1d19e408e8c324c5c8085b8b143cfb6399cb0161",
+ "contexts": [
+  {"name": "A", "FIANGSHI_NOW": "2026-11-24T14:00:00Z", "bands": {"ALLOW": 105, "REVIEW": 1293, "BLOCK": 525}},
+  {"name": "B", "FIANGSHI_NOW": "2026-11-24T12:00:00Z", "bands": {"ALLOW": 0, "REVIEW": 1402, "BLOCK": 521}}
+ ],
+ "live_calls": {"index_snapshots": 1, "verify_receipt_routes": 9, "retries": 0, "budget_spent": "$0.00"},
+ "verdict": "SEAL — all frozen rows match (A1–A4, B1–B4, C1–C3: 11 MATCH, 0 DIVERGENCE)",
+ "live_evidence": {
+  "L1_fingerprint": "c7294b54c091310c356ca842194adc83a30c7f64af43f1dd6d9538ff4a21094f",
+  "L2": "all nine routes 404 — durable receipt store not switched on yet; recorded DOCUMENTED either way"
+ },
+ "host": {"node": "24.22.3", "npm": "11.19.1", "os": "Linux x86_64"},
+ "tool": "sut-fiangshi-census/census_checker.py sha256 53e4dd6684c0f9d886b59492e71f11d1fb1ba1faa8952602beebe0294ce230a8 (committed pre-run at 71a577b0)"
+}

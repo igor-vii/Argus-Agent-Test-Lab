@@ -1,0 +1,38 @@
+{
+  "payee": "0x0000000000000000000000000000000000000000",
+  "url": "https://api.cleave.fi/x402/gas",
+  "terms_hash": "21a9ab7e9ac3241b9eb16e19c1e584e46399af8831d6260120f38d30109e35af",
+  "price": 5,
+  "band": "BLOCK",
+  "score": 88.63,
+  "vow_fired": "null_payee",
+  "evidence": [
+    {
+      "signal": "wallet_age_hours",
+      "quote": "first transfer 2026-08-11T00:00:01.000Z (window start: age is a lower bound) (surf agent.base_transfers)"
+    },
+    {
+      "signal": "tx_count",
+      "quote": "19567714 inbound + 32724623 outbound transfers in window"
+    },
+    {
+      "signal": "first_funder",
+      "quote": "first inbound transfer from 0x278d858f05b94576c1e6f73285886876ff6ef8d2"
+    }
+  ],
+  "model": {
+    "verdict": null,
+    "extractor": "census (no model)",
+    "degraded": false
+  },
+  "snapshot_id": "70ddc40989f4f4bd23089be1e0cea5b4936b7524d2c4f830896e0d099661e132",
+  "checked_at": "2026-11-09T02:57:19.701Z",
+  "settlement": "dry-run",
+  "enrichment": {
+    "status": "skipped",
+    "reason": "census policy band: deterministic score + vows, no model calls"
+  },
+  "chain": "eip155:8453",
+  "prev_hash": "2465f1ab971520d4ea093fed171f59a6c859b0d5252c0f7571671f91b3482e98",
+  "receipt_hash": "d2c68884841332834a1e0b203e2175c5e1e92de5d279344bd6504db6b5bf4ce0"
+}

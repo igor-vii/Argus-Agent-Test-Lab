@@ -1,0 +1,46 @@
+{
+  "payee": "0x480cd46e6fade651a0437deadda53d5c8e7d846a",
+  "url": "https://api.bitrefill.com/x402/gift-cards/search",
+  "terms_hash": "8343cd7c3f07513fabd9ae8673e0e83f25b3307f4f6a3c7ccc7928c485cf6c0c",
+  "price": 0.002,
+  "band": "ALLOW",
+  "score": 90.59,
+  "vow_fired": null,
+  "evidence": [
+    {
+      "signal": "wallet_age_hours",
+      "quote": "first transfer 2026-08-26T00:01:31.000Z (window start: age is a lower bound) (surf agent.base_transfers)"
+    },
+    {
+      "signal": "tx_count",
+      "quote": "20039 inbound + 3184 outbound transfers in window"
+    },
+    {
+      "signal": "first_funder",
+      "quote": "first inbound transfer from 0x7a4388b166c5df22bd0ed4988edf084ccae24a8c"
+    }
+  ],
+  "model": {
+    "verdict": null,
+    "extractor": "census (no model)",
+    "degraded": false
+  },
+  "snapshot_id": "ea77f7b935be6ff6b13ec5abaa4ed1a3524b9721675b43f864c5d3e3a5d20de5",
+  "checked_at": "2026-11-24T13:05:02.148Z",
+  "settlement": "dry-run",
+  "enrichment": {
+    "status": "skipped",
+    "reason": "census policy band: deterministic score + vows, no model calls"
+  },
+  "policy_version": "2026-11-13.5",
+  "as_of": "2026-11-24T13:05:02.148Z",
+  "band_basis": {
+    "score_band": "ALLOW",
+    "model_band": "ALLOW",
+    "vow_band": "ALLOW",
+    "cap_band": "ALLOW"
+  },
+  "chain": "eip155:8453",
+  "prev_hash": "f64bd4bb6917a345190482787d3ba401453992551cf6f63a10ca2904cbea9f1c",
+  "receipt_hash": "83d618ba5344776c16fd8b159ad7d6c177838db2057b7cad2c993c8a6a076819"
+}
