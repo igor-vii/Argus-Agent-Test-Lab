@@ -1,9 +1,9 @@
 {
-  "generated_at": "2026-11-24T05:20:00.930Z",
+  "generated_at": "2026-11-24T18:32:51.618Z",
   "verify": {
     "command": "node tools/registry/verify-registry.mjs",
-    "records": 32,
-    "chain_head": "27f2f6149ac9f5a0"
+    "records": 33,
+    "chain_head": "695a7a229b6cc264"
   },
   "correction": {
     "seq": "0022",
@@ -13,89 +13,129 @@
     "amends": "argus-finding-0000"
   },
   "record": {
-    "seq": "0030",
-    "record_id": "argus-seal-0030",
+    "seq": "0032",
+    "record_id": "argus-seal-0032",
     "type": "seal",
-    "issued_at": "2026-11-24T05:20:00.930Z",
+    "issued_at": "2026-11-24T18:32:51.618Z",
     "date": "2026-11-24",
-    "title": "reciprocal-ruler v0.2 (PayStage quote-lock/reconcile) — pre-registered $0.00 A0 battery: durable-ledger receipts, idempotent replay, intent-mismatch, receipt-capability reads, OVERPAID split; caller-attested labeling",
-    "subject": "reciprocal-ruler v0.2 trial endpoints (base-buzz/paystage#315)",
-    "prev_record_hash": "5fb50086ba07b3a9062dd42bcb7862478d0a3a4dd9654f4b058368e4916015ff",
-    "chain_head": "27f2f6149ac9f5a0",
+    "title": "fiangshi census-receipt anchoring (Aceop-001/fiangshi @ 1d19e408, served census as a function of commit + FIANGSHI_NOW) — pre-registered dual-context offline rebuild with independent receipt-hash recompute, $0.00",
+    "subject": "fiangshi census receipts for two live x402 sellers (api.cleave.fi/x402/gas, api.bitrefill.com/x402/gift-cards/search), anchored as claims in the Argus registry; classification under the record-0028 frozen-procedure discipline (recomputes from the records alone)",
+    "prev_record_hash": "27f2f6149ac9f5a0aad0d72f5af9694ccdfa3e10a8411cc2c6dd34fd788f8333",
+    "chain_head": "695a7a229b6cc264",
     "scenarios": [
       {
-        "id": "A0.1",
-        "verdict": "200 COMPENSATED; ledger.persisted true; receipt returned; offline recompute: compensated_krw 10000, uncovered_krw 0, credit_delta -5",
+        "id": "A1",
+        "verdict": "bands exactly {ALLOW: 105, REVIEW: 1293, BLOCK: 525}",
         "tone": "info"
       },
       {
-        "id": "A0.2",
-        "verdict": "200; idempotent_replay true; ledger_hash unchanged (equals A0.1's ledger_hash)",
+        "id": "A2",
+        "verdict": "band ALLOW, issued_band ALLOW, band_cap null, receipt_id=R3, data_age_hours in [0.85, 0.95], stale false",
         "tone": "info"
       },
       {
-        "id": "A0.3",
-        "verdict": "409 INTENT_MISMATCH; stored_intent_digest != incoming_intent_digest; consumes the 3rd call of the id (0029 observation)",
+        "id": "A3",
+        "verdict": "band BLOCK, issued_band BLOCK, band_cap null, stale true, receipt_id=R1",
         "tone": "info"
       },
       {
-        "id": "A0.4",
-        "verdict": "403 RECEIPT_REQUIRED",
+        "id": "A4",
+        "verdict": "R1 in chain 1 at pos 124; R2 in chain 2 at pos 1073; R3 in chain 0 at pos 1073; fiangshi verifyReceipt ok on all three; chain walk ok on chains 0, 1, 2",
         "tone": "info"
       },
       {
-        "id": "A0.5",
-        "verdict": "404 LEDGER_NOT_FOUND (per R4 wording; a 403 is recorded as a check-order fact)",
+        "id": "B1",
+        "verdict": "bands exactly {ALLOW: 0, REVIEW: 1402, BLOCK: 521}",
         "tone": "info"
       },
       {
-        "id": "A0.6",
-        "verdict": "200; receipt_verified true; recomputation.match true; ledger_hash_match true; stored inputs reveal the quote-hash rule_version (R2 check)",
+        "id": "B2",
+        "verdict": "band REVIEW, issued_band ALLOW, receipt_id=R2, band_cap {reason: \"data_stale\", age_hours in [104.0, 104.3], limit_hours: 72}",
         "tone": "info"
       },
       {
-        "id": "A0.7a",
-        "verdict": "200 SETTLED_OK, credit_delta +5 (0.1.0: overpayment unclassified, falls through)",
+        "id": "B3",
+        "verdict": "band BLOCK, band_cap null, stale true, receipt_id=R1",
         "tone": "info"
       },
       {
-        "id": "A0.7b",
-        "verdict": "200 OVERPAID, compensated_krw 0, uncovered_krw 0, credit_delta 0",
+        "id": "B4",
+        "verdict": "R2 present (chain 0, pos 1073); R3 absent — issued after the pinned now; absence is the expected result, recorded as such",
         "tone": "info"
       },
       {
-        "id": "A0.8",
-        "verdict": "storage.durable true; rule_versions unchanged {frozen_below 0.2.0, latest 0.2.0}",
+        "id": "C1",
+        "verdict": "sha256 over the canonical JSON of each pinned receipt minus receipt_hash, recomputed by the checker's own Python canonicalizer, equals the pinned id — for all three",
+        "tone": "info"
+      },
+      {
+        "id": "C2",
+        "verdict": "prev_hash of R1/R2/R3 equals the pinned values verbatim",
+        "tone": "info"
+      },
+      {
+        "id": "C3",
+        "verdict": "verifyChain over each affected chain returns ok with zero errors",
+        "tone": "info"
+      },
+      {
+        "id": "L1",
+        "verdict": "byte sha256 recorded as a one-time snapshot fingerprint — explicitly not a reproducibility claim (served_at and data_age_hours make the bytes move per request); parsed bands and both pinned seller rows recorded verbatim; never affects the verdict",
+        "tone": "info"
+      },
+      {
+        "id": "L2",
+        "verdict": "recorded DOCUMENTED either way — chain_linkage verified if the durable store is live, 404 if not (the redeploy gap this run anchors closed); never affects the verdict",
         "tone": "info"
       }
     ],
     "counts": {
-      "info": 9
+      "info": 13
     },
     "evidence": [
       {
-        "path": "sut-reciprocal-ruler/ruler_a0_battery.py",
-        "sha256": "8d65bf145a92b298dc38c30eee58c2d75e3803872e34f5689bb94cd2b16c6702"
+        "path": "sut-fiangshi-census/argus-fiangshi-probe.ts",
+        "sha256": "e1fe0840575fed49ca993bc3aea0be0504d3b79f7f40632bf1c587d6ebfd0e55"
       },
       {
-        "path": "sut-reciprocal-ruler/recon-v02/health-20261124T043140Z.json",
-        "sha256": "2dd904c6a32ce598831dfbcce388b43cbba515bd027cd1c5e6de5fb4c178e6ae"
+        "path": "sut-fiangshi-census/census_checker.py",
+        "sha256": "53e4dd6684c0f9d886b59492e71f11d1fb1ba1faa8952602beebe0294ce230a8"
       },
       {
-        "path": "sut-reciprocal-ruler/recon-v02/well-known-x402-20261124T0431Z.json",
-        "sha256": "80ebb31eeb7af1f43206662d58b2b1cdc7cc01563df48180082bd46216b990a5"
+        "path": "sut-fiangshi-census/PREREG-0032.md",
+        "sha256": "5336d23ed723064a971540d5f23cd02fc631febb1f468deff969663c2a611604"
       },
       {
-        "path": "sut-reciprocal-ruler/recon-v02/openapi-20261124T0431Z.json",
-        "sha256": "7e9344c55d88637f2361b5c122ce7d3e72977b9cae8448248ea421975f1bacbd"
+        "path": "attestations/evidence/0032-fiangshi-census/runs/20261124T181536Z/expected_table.json",
+        "sha256": "a33908b53b5793c865f670543c91a659820a6d7915dfa8354a09d2c351b903e0"
       },
       {
-        "path": "attestations/evidence/0030-reciprocal-ruler-v02-a0/manifest.sha256",
-        "sha256": "773fc122bc3a5f560586cb0c7f55112ac7a6acf8efd7611382229af703ff32dd"
+        "path": "attestations/evidence/0032-fiangshi-census/runs/20261124T181536Z/probe_A.json",
+        "sha256": "0aed77521a4fe20c0de7275a94fcb35b4a9d67f94f582efb40256077e766bb00"
       },
       {
-        "path": "attestations/evidence/0030-reciprocal-ruler-v02-a0/run.json",
-        "sha256": "9f002f2b52cf775636e92b4182dac2c9edcacd78e4b73c510db3f041e32d607b"
+        "path": "attestations/evidence/0032-fiangshi-census/runs/20261124T181536Z/probe_B.json",
+        "sha256": "5dcf33accf691ec5a33e51c11480ee582ec3c95dab082feb5f34455979ec82c0"
+      },
+      {
+        "path": "attestations/evidence/0032-fiangshi-census/runs/20261124T181536Z/receipts/d2c68884841332834a1e0b203e2175c5e1e92de5d279344bd6504db6b5bf4ce0.json",
+        "sha256": "ca01b9f1fe93f562b818b59abf81bc66d2b16773a994fa37257adab406676e1a"
+      },
+      {
+        "path": "attestations/evidence/0032-fiangshi-census/runs/20261124T181536Z/receipts/97b5dded4c5cff75d5b26377b659ef40c7620c45cf143fac27910fb8b1af7691.json",
+        "sha256": "041d5a2982029740f9096c5fc92527f68d27bc22314a8318321ca67037bde322"
+      },
+      {
+        "path": "attestations/evidence/0032-fiangshi-census/runs/20261124T181536Z/receipts/83d618ba5344776c16fd8b159ad7d6c177838db2057b7cad2c993c8a6a076819.json",
+        "sha256": "6e9e184cd50368df07349461d40400ef0ac66d71e236ee42f502203877af9ec0"
+      },
+      {
+        "path": "attestations/evidence/0032-fiangshi-census/runs/20261124T181536Z/L1_index_summary.json",
+        "sha256": "333c3020c384a2fc6c1fd67170f345ddbc872ef2713561ecfc852c3487b96961"
+      },
+      {
+        "path": "attestations/evidence/0032-fiangshi-census/runs/20261124T181536Z/run_meta.json",
+        "sha256": "026094aaca4731fe5754a790b0c8a48c1adbf7d367bbb0a844f265b5f235f23e"
       }
     ]
   }

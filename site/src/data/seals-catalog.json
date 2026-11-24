@@ -1638,5 +1638,125 @@
         "href": "https://github.com/igor-vii/Argus-Agent-Test-Lab/blob/main/attestations/records/0031-onbeforepaymentcreation-gate-hook-agentic-finance-graph-0-3-.finding.json"
       }
     ]
+  },
+  {
+    "seq": "0032",
+    "date": "2026-11-24",
+    "type": "seal",
+    "title": "fiangshi census-receipt anchoring (Aceop-001/fiangshi @ 1d19e408, served census as a function of commit + FIANGSHI_NOW) — pre-registered dual-context offline rebuild with independent receipt-hash recompute, $0.00",
+    "subject": "fiangshi census receipts for two live x402 sellers (api.cleave.fi/x402/gas, api.bitrefill.com/x402/gift-cards/search), anchored as claims in the Argus registry; classification under the record-0028 frozen-procedure discipline (recomputes from the records alone)",
+    "summary": [
+      "PREREG FREEZE (freeze-0032): this draft, PREREG-0032.md (prose twin), argus-fiangshi-probe.ts and census_checker.py land BEFORE the first live GET, committed to igor-vii/Argus-Agent-Test-Lab; the canonical sha256 of the signed wrapper (draft + detached Ed25519 by the agent session key) is published in Aceop-001/fiangshi#1 before the first live GET, per the 0031 discipline. run_ts, self_run, findings_summary and run-pack evidence pins are filled from the run after it completes (re-pin commit before signing, as in 0031).",
+      "Pass rule for the final record: seal iff A1–A4, B1–B4 and C1–C3 all match as frozen; any divergence → finding, recorded as-is; the record is complete either way; corrections are separate records, sealed originals are never edited. The L1/L2 rows are evidence-only and never affect the verdict.",
+      "Verifier independence: receipt hashes are recomputed by the checker's own Python canonicalizer (not fiangshi's code); fiangshi's verifyReceipt/verifyChain results are recorded alongside as corroboration, not as the source of truth.",
+      "What this anchors, honestly: the receipts existed at the pinned commit and their canonical bytes are fixed and re-derivable offline from git history; it says nothing about fiangshi's internal API ledger beyond the anchored bytes (the vendor's own disclosure). fiangshi stays advisory: no signing key, no new call in its request path.",
+      "Disclosed choice: the probes run with the repo's pinned tsx (devDeps via npm ci). If the local tsx were missing, the checker aborts rather than silently letting npx download an unpinned tsx; --allow-npx-download exists and its use would be disclosed in the run pack (run_meta.json tsx_source)."
+    ],
+    "verdicts": [
+      {
+        "id": "A1",
+        "verdict": "bands exactly {ALLOW: 105, REVIEW: 1293, BLOCK: 525}",
+        "tone": "info"
+      },
+      {
+        "id": "A2",
+        "verdict": "band ALLOW, issued_band ALLOW, band_cap null, receipt_id=R3, data_age_hours in [0.85, 0.95], stale false",
+        "tone": "info"
+      },
+      {
+        "id": "A3",
+        "verdict": "band BLOCK, issued_band BLOCK, band_cap null, stale true, receipt_id=R1",
+        "tone": "info"
+      },
+      {
+        "id": "A4",
+        "verdict": "R1 in chain 1 at pos 124; R2 in chain 2 at pos 1073; R3 in chain 0 at pos 1073; fiangshi verifyReceipt ok on all three; chain walk ok on chains 0, 1, 2",
+        "tone": "info"
+      },
+      {
+        "id": "B1",
+        "verdict": "bands exactly {ALLOW: 0, REVIEW: 1402, BLOCK: 521}",
+        "tone": "info"
+      },
+      {
+        "id": "B2",
+        "verdict": "band REVIEW, issued_band ALLOW, receipt_id=R2, band_cap {reason: \"data_stale\", age_hours in [104.0, 104.3], limit_hours: 72}",
+        "tone": "info"
+      },
+      {
+        "id": "B3",
+        "verdict": "band BLOCK, band_cap null, stale true, receipt_id=R1",
+        "tone": "info"
+      },
+      {
+        "id": "B4",
+        "verdict": "R2 present (chain 0, pos 1073); R3 absent — issued after the pinned now; absence is the expected result, recorded as such",
+        "tone": "info"
+      },
+      {
+        "id": "C1",
+        "verdict": "sha256 over the canonical JSON of each pinned receipt minus receipt_hash, recomputed by the checker's own Python canonicalizer, equals the pinned id — for all three",
+        "tone": "info"
+      },
+      {
+        "id": "C2",
+        "verdict": "prev_hash of R1/R2/R3 equals the pinned values verbatim",
+        "tone": "info"
+      },
+      {
+        "id": "C3",
+        "verdict": "verifyChain over each affected chain returns ok with zero errors",
+        "tone": "info"
+      },
+      {
+        "id": "L1",
+        "verdict": "byte sha256 recorded as a one-time snapshot fingerprint — explicitly not a reproducibility claim (served_at and data_age_hours make the bytes move per request); parsed bands and both pinned seller rows recorded verbatim; never affects the verdict",
+        "tone": "info"
+      },
+      {
+        "id": "L2",
+        "verdict": "recorded DOCUMENTED either way — chain_linkage verified if the durable store is live, 404 if not (the redeploy gap this run anchors closed); never affects the verdict",
+        "tone": "info"
+      }
+    ],
+    "findings": [
+      {
+        "id": "match",
+        "severity": "info",
+        "text": "11"
+      },
+      {
+        "id": "divergence",
+        "severity": "info",
+        "text": "0"
+      },
+      {
+        "id": "total",
+        "severity": "info",
+        "text": "11"
+      },
+      {
+        "id": "by_row",
+        "severity": "info",
+        "text": "[object Object]"
+      },
+      {
+        "id": "live_evidence_only",
+        "severity": "info",
+        "text": "[object Object]"
+      },
+      {
+        "id": "verdict",
+        "severity": "info",
+        "text": "SEAL — all frozen rows match"
+      }
+    ],
+    "evidence": 11,
+    "links": [
+      {
+        "label": "record #0032",
+        "href": "https://github.com/igor-vii/Argus-Agent-Test-Lab/blob/main/attestations/records/0032-fiangshi-census-receipt-anchoring-aceop-001-fiangshi-1d19e40.seal.json"
+      }
+    ]
   }
 ]
