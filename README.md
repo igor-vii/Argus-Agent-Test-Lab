@@ -23,12 +23,12 @@ node tools/registry/verify-registry.mjs
 Verification uses only the Node.js standard library — no `npm install`, no
 network access, no trust in this README.
 
-**Latest public verification — first third-party SUT run end-to-end:**
-**0023-x402-lens (Rozenberg888) — 18 PASS / 3 DOCUMENTED / 0 FAIL · 0.2.0** —
-the full battery with the candidate's own documentation pre-registered as
-verdict semantics ([run report](sut-x402-lens/RUN-REPORT.md),
-[evidence](attestations/evidence/0023-x402-lens/README.md),
-[doc-registry](sut-x402-lens/doc-registry.md)).
+**Track record (2026-11-24): 32 signed records · ~20 external subjects ·
+4 vendor fixes shipped after our runs · 2 external registry verifications ·
+$0.00 hostile batteries.** Latest: 0030 PayStage re-run (4/4 MATCH, 0
+divergences) and 0031 agentic-finance-graph race finding (vendor fix deployed
+the same day). Full engagement table, case studies and open engagements:
+**[TRACK_RECORD.md](TRACK_RECORD.md)**.
 
 ## Connect Argus to your coding agent (MCP)
 
