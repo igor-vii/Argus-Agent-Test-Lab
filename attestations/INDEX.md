@@ -1,7 +1,7 @@
 # Argus registry — INDEX (generated; do not edit)
 
 Records are signed and hash-chained. Verify: `node tools/registry/verify-registry.mjs`.
-Chain head: `27f2f6149ac9f5a0...`
+Chain head: `695a7a229b6cc264...`
 
 ## Findings (5) — third-party issues we disclosed; statuses are live.
 
@@ -13,7 +13,7 @@ Chain head: `27f2f6149ac9f5a0...`
 | #0027 | `argus-finding-0027` | scorptech.it.com/api/x402/mcp/lite (ScorpTech x402 Lite 1.2.0, stateless Streamable HTTP, no Mcp-Session-Id)  | scorptech-x402-mcp (Kholley43) x402 v2 over MCP transport passport: challenge delivered as MCP isError result (HTTP 200) instead of HTTP 402; accepts exact/Base USDC v2 ($0.001) + exact/Solana (feePayer=facilitator); payment gate precedes argument validation; signed unfunded submit rejected by facilitator verify (invalid_exact_evm_insufficient_balance) with fresh challenge re-issued; no settle, no charge | verified_local — Provenance: content first signed into main registry as argus-finding-0027 on 2026-11-21 by probe-session key argus-lab-probe-2026q4 (operator key absent in sandbox) — REVOKED same history commit 606be94e (ARG-03 operator-allowlist hardening; chain tail removed, 0000-0024 untouched, main head e5807aab6a6ac5e6... intact); migrated same day to the agent registry as argus-agent-self-0003 (commit 47c27780, agent head 54af5eb21aa08b24..., verify --registry=agent green). This draft is the operator-review promotion candidate: operator offline re-sign (argus-lab-2026q4r2) onto main head e5807aab... per the agent-registry promotion path; evidence sha256 pins recomputed 2026-11-22 (01_initialize.json=cf6244198f9d…, 02_initialized_notification.json=4b28ed9dbeda…, 03_tools_list_lite.json=8276b64c8542…, 04_tools_list_full_p1.json=44a854fc8dc8…, 05_tools_list_full_stats.json=09c849dedc6f…, 06_health.json=81605ae699b9…, 07_docs_all.json=20973aa69dcc…, 10_search_1_ping.json=e59ecd3b560e…, 10_search_2_url_parse.json=bcb82ec038ef…, 10_search_3_cusip.json=bd7c00ae8875…, 10_search_4_solana_token.json=6eb5ab478813…, 11_chosen_tool_schemas.json=cb54290aa044…, 12_payment_required_1_ping.json=d5f5e991a6a3…, 12_payment_required_2_url_parse.json=7b804081cda6…, 12_payment_required_3_cusip_validate.json=307fe82e7c58…, 13_negative_invalid_args.json=45918d298095…, 14_negative_invalid_cusip.json=f94301e69208…, 15_negative_unknown_tool.json=e08d7ec5cd11…, 20_signed_submit_unfunded.json=6f16189edc17…, 21_balance_after.json=4e138fd62948…); no re-run needed. | 2026-11-22 |
 | #0031 | `argus-finding-0031` | onBeforePaymentCreation hook of agentic-finance-graph@0.3.7 (npm), policy recommended-v3 (x402#3866 hostile battery, agreed with the vendor in-thread)  | onBeforePaymentCreation gate hook (agentic-finance-graph@0.3.7, policy recommended-v3) — pre-registered hostile battery: restart persistence, fresh-reference farming, splitting, payTo rotation, boundary arithmetic, race, skipped hook; $0.00 | ? | 2026-11-24 |
 
-## Seals (23) — attestations of runs; final at issuance, findings attached.
+## Seals (24) — attestations of runs; final at issuance, findings attached.
 
 | Seq | ID | Subject | Title | Verdicts | Issued |
 |---|---|---|---|---|---|
@@ -40,6 +40,7 @@ Chain head: `27f2f6149ac9f5a0...`
 | #0028 | `argus-seal-0028` |  | x402 evidence lens — frozen classification procedure; first external datasets: RAEN before-fix capture and Zambo A5 production receipt | undefined | 2026-11-22 |
 | #0029 | `argus-seal-0029` |  | reciprocal-ruler v0.1 (PayStage quote-lock/reconcile) — pre-registered $0.00 trial evaluation: quote-hash determinism, reconcile verdict branches, idempotency semantics; caller-attested labeling | A2 undefined , A3 undefined , A4 undefined , A5 undefined , A6 undefined , B1 undefined , B2 undefined , B3 undefined , A1 undefined , A7 undefined  | 2026-11-23 |
 | #0030 | `argus-seal-0030` |  | reciprocal-ruler v0.2 (PayStage quote-lock/reconcile) — pre-registered $0.00 A0 battery: durable-ledger receipts, idempotent replay, intent-mismatch, receipt-capability reads, OVERPAID split; caller-attested labeling | A0.1 undefined , A0.2 undefined , A0.3 undefined , A0.4 undefined , A0.5 undefined , A0.6 undefined , A0.7a undefined , A0.7b undefined , A0.8 undefined  | 2026-11-24 |
+| #0032 | `argus-seal-0032` |  | fiangshi census-receipt anchoring (Aceop-001/fiangshi @ 1d19e408, served census as a function of commit + FIANGSHI_NOW) — pre-registered dual-context offline rebuild with independent receipt-hash recompute, $0.00 | A1 undefined , A2 undefined , A3 undefined , A4 undefined , B1 undefined , B2 undefined , B3 undefined , B4 undefined , C1 undefined , C2 undefined , C3 undefined , L1 undefined , L2 undefined  | 2026-11-24 |
 
 ## Corrections (4) — post-seal corrections; sealed records are never rewritten.
 

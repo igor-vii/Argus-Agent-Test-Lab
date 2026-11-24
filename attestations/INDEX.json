@@ -1,6 +1,6 @@
 {
   "registry": "argus-agent-test-lab",
-  "chain_head": "27f2f6149ac9f5a0...",
+  "chain_head": "695a7a229b6cc264...",
   "records": [
     {
       "seq": "0000",
@@ -3242,6 +3242,274 @@
         "record_type": "findings"
       },
       "signature": "sB1eor/xCMTFnMlUYLyhAdBq+UpkIGykX072zJAbE9pUw/xFSbzXq4b7OCv7cT0FuCDtcpVVFQUPY/GuWpBXAA=="
+    },
+    {
+      "seq": "0032",
+      "record_id": "argus-seal-0032",
+      "issued_at": "2026-11-24T18:32:51.618Z",
+      "signer_key_id": "argus-lab-2026q4r2",
+      "prev_record_hash": "27f2f6149ac9f5a0aad0d72f5af9694ccdfa3e10a8411cc2c6dd34fd788f8333",
+      "type": "seal",
+      "title": "fiangshi census-receipt anchoring (Aceop-001/fiangshi @ 1d19e408, served census as a function of commit + FIANGSHI_NOW) — pre-registered dual-context offline rebuild with independent receipt-hash recompute, $0.00",
+      "subject": {
+        "component": "fiangshi census receipts for two live x402 sellers (api.cleave.fi/x402/gas, api.bitrefill.com/x402/gift-cards/search), anchored as claims in the Argus registry; classification under the record-0028 frozen-procedure discipline (recomputes from the records alone)",
+        "thread": "https://github.com/Aceop-001/fiangshi/issues/1",
+        "vendor_answers": "thread comment 7136711046 (2026-11-24 15:50 UTC): a receipt never changes — its id is the sha256 of its canonical JSON, a new verdict is a new receipt with a new id; recompute over the canonical receipt object, not the HTTP response wrapper; current main is 1d19e408…, pin the commit at freeze (a scheduled 36h ALLOW-only refresh may move main after 2026-11-26 01:04 UTC); the served census is a function of the commit and the clock (a refresh counts only once its collection time has passed); no code-level rate limits on the demo routes; /v1/index.json bytes move on every request (served_at, per-record data_age_hours) — its sha256 is a one-time snapshot fingerprint, not a reproducibility claim",
+        "demo_shape": "$0.00: no paid x402 calls, no keys, no settlements; the live API is touched only for one GET /v1/index.json and the per-receipt verify routes; the receipt chain is rebuilt offline from the pinned commit; receipt hashes are recomputed independently of fiangshi's code by the checker's own Python canonicalizer",
+        "sut_pin": {
+          "repo": "https://github.com/Aceop-001/fiangshi",
+          "commit": "1d19e408e8c324c5c8085b8b143cfb6399cb0161",
+          "install": "npm ci at the pin (54 packages; tsx pinned in devDeps); npm audit findings are noise — npm audit fix is NOT run (it would leave the pin)",
+          "census_semantics": "served census is a function of the commit and the clock: FIANGSHI_NOW pins the clock; the wall clock is never consulted (probe contexts A and B run at pinned instants)",
+          "offline_rebuild": "git checkout <commit> && npm ci, then FIANGSHI_NOW=<T> npx tsx argus-fiangshi-probe.ts <out.json> <receipts-dir> (imports src/census.ts, src/core/receipt.ts, src/core/canonical.ts at the pin)"
+        },
+        "receipts": {
+          "R1": {
+            "seller": "api.cleave.fi/x402/gas",
+            "payee": "0x0000000000000000000000000000000000000000",
+            "note": "null_payee vow",
+            "id": "d2c68884841332834a1e0b203e2175c5e1e92de5d279344bd6504db6b5bf4ce0",
+            "prev_hash": "2465f1ab971520d4ea093fed171f59a6c859b0d5252c0f7571671f91b3482e98",
+            "issued": "census 2026-11-09, checked_at 02:57:19.701Z",
+            "band_at_issuance": "BLOCK"
+          },
+          "R2": {
+            "seller": "api.bitrefill.com/x402/gift-cards/search",
+            "payee": "0x480cd46e6fade651a0437deadda53d5c8e7d846a",
+            "id": "97b5dded4c5cff75d5b26377b659ef40c7620c45cf143fac27910fb8b1af7691",
+            "prev_hash": "f72b3f02eefba08eb33b4336fe48cdce2d3adac8d155c82e70024dccce861249",
+            "issued": "census 2026-11-20, checked_at 03:50:53.345Z",
+            "band_at_issuance": "ALLOW"
+          },
+          "R3": {
+            "seller": "api.bitrefill.com/x402/gift-cards/search",
+            "payee": "0x480cd46e6fade651a0437deadda53d5c8e7d846a",
+            "id": "83d618ba5344776c16fd8b159ad7d6c177838db2057b7cad2c993c8a6a076819",
+            "prev_hash": "f64bd4bb6917a345190482787d3ba401453992551cf6f63a10ca2904cbea9f1c",
+            "issued": "ALLOW-only refresh 2026-11-24, checked_at 13:05:02.148Z",
+            "band_at_issuance": "ALLOW"
+          }
+        },
+        "canonicalization": "per src/core/canonical.ts at the pin: JSON.stringify over recursively sorted object keys, undefined dropped, compact separators, UTF-8; receipt_hash = sha256 over every field except receipt_hash itself; recompute over the canonical receipt object, not the HTTP wrapper",
+        "endpoints": [
+          "GET https://fiangshi.xyz/v1/index.json (one-time snapshot fingerprint)",
+          "GET /v1/verify?id=<id>",
+          "GET /v1/receipt/<id> (vendor durable receipt store in progress, store_total null as of 2026-11-24 — recorded either way; census receipts do not depend on it)"
+        ],
+        "platform": {
+          "kind": "sandbox-stand",
+          "checker": "python3 stdlib census_checker.py (independent canonicalizer; probe runner; live rows)",
+          "probe": "npx tsx argus-fiangshi-probe.ts (tsx from the pin's devDeps, installed by npm ci)"
+        }
+      },
+      "scenarios": [
+        {
+          "id": "A1",
+          "unit": "verdict",
+          "case": "context A rebuild, FIANGSHI_NOW=2026-11-24T14:00:00Z (after the 24 Nov refresh collection)",
+          "expected": "bands exactly {ALLOW: 105, REVIEW: 1293, BLOCK: 525}"
+        },
+        {
+          "id": "A2",
+          "unit": "verdict",
+          "case": "Bitrefill row in context A",
+          "expected": "band ALLOW, issued_band ALLOW, band_cap null, receipt_id=R3, data_age_hours in [0.85, 0.95], stale false"
+        },
+        {
+          "id": "A3",
+          "unit": "verdict",
+          "case": "cleave row in context A",
+          "expected": "band BLOCK, issued_band BLOCK, band_cap null, stale true, receipt_id=R1"
+        },
+        {
+          "id": "A4",
+          "unit": "verdict",
+          "case": "receipt pins in context A",
+          "expected": "R1 in chain 1 at pos 124; R2 in chain 2 at pos 1073; R3 in chain 0 at pos 1073; fiangshi verifyReceipt ok on all three; chain walk ok on chains 0, 1, 2"
+        },
+        {
+          "id": "B1",
+          "unit": "verdict",
+          "case": "context B rebuild, FIANGSHI_NOW=2026-11-24T12:00:00Z (after the 72h limit, before the refresh collection)",
+          "expected": "bands exactly {ALLOW: 0, REVIEW: 1402, BLOCK: 521}"
+        },
+        {
+          "id": "B2",
+          "unit": "verdict",
+          "case": "Bitrefill row in context B — the freshness case",
+          "expected": "band REVIEW, issued_band ALLOW, receipt_id=R2, band_cap {reason: \"data_stale\", age_hours in [104.0, 104.3], limit_hours: 72}"
+        },
+        {
+          "id": "B3",
+          "unit": "verdict",
+          "case": "cleave row in context B",
+          "expected": "band BLOCK, band_cap null, stale true, receipt_id=R1"
+        },
+        {
+          "id": "B4",
+          "unit": "verdict",
+          "case": "receipt presence in context B",
+          "expected": "R2 present (chain 0, pos 1073); R3 absent — issued after the pinned now; absence is the expected result, recorded as such"
+        },
+        {
+          "id": "C1",
+          "unit": "verdict",
+          "case": "receipt integrity, independent of fiangshi's code",
+          "expected": "sha256 over the canonical JSON of each pinned receipt minus receipt_hash, recomputed by the checker's own Python canonicalizer, equals the pinned id — for all three"
+        },
+        {
+          "id": "C2",
+          "unit": "verdict",
+          "case": "chain linkage of the pinned receipts",
+          "expected": "prev_hash of R1/R2/R3 equals the pinned values verbatim"
+        },
+        {
+          "id": "C3",
+          "unit": "verdict",
+          "case": "fiangshi's own chain verification",
+          "expected": "verifyChain over each affected chain returns ok with zero errors"
+        },
+        {
+          "id": "L1",
+          "unit": "verdict",
+          "role": "evidence-only",
+          "case": "one GET /v1/index.json",
+          "expected": "byte sha256 recorded as a one-time snapshot fingerprint — explicitly not a reproducibility claim (served_at and data_age_hours make the bytes move per request); parsed bands and both pinned seller rows recorded verbatim; never affects the verdict"
+        },
+        {
+          "id": "L2",
+          "unit": "verdict",
+          "role": "evidence-only",
+          "case": "GET /v1/verify?id= and GET /v1/receipt/<id> for all three receipts",
+          "expected": "recorded DOCUMENTED either way — chain_linkage verified if the durable store is live, 404 if not (the redeploy gap this run anchors closed); never affects the verdict"
+        }
+      ],
+      "notes": [
+        "PREREG FREEZE (freeze-0032): this draft, PREREG-0032.md (prose twin), argus-fiangshi-probe.ts and census_checker.py land BEFORE the first live GET, committed to igor-vii/Argus-Agent-Test-Lab; the canonical sha256 of the signed wrapper (draft + detached Ed25519 by the agent session key) is published in Aceop-001/fiangshi#1 before the first live GET, per the 0031 discipline. run_ts, self_run, findings_summary and run-pack evidence pins are filled from the run after it completes (re-pin commit before signing, as in 0031).",
+        "Pass rule for the final record: seal iff A1–A4, B1–B4 and C1–C3 all match as frozen; any divergence → finding, recorded as-is; the record is complete either way; corrections are separate records, sealed originals are never edited. The L1/L2 rows are evidence-only and never affect the verdict.",
+        "Verifier independence: receipt hashes are recomputed by the checker's own Python canonicalizer (not fiangshi's code); fiangshi's verifyReceipt/verifyChain results are recorded alongside as corroboration, not as the source of truth.",
+        "What this anchors, honestly: the receipts existed at the pinned commit and their canonical bytes are fixed and re-derivable offline from git history; it says nothing about fiangshi's internal API ledger beyond the anchored bytes (the vendor's own disclosure). fiangshi stays advisory: no signing key, no new call in its request path.",
+        "Disclosed choice: the probes run with the repo's pinned tsx (devDeps via npm ci). If the local tsx were missing, the checker aborts rather than silently letting npx download an unpinned tsx; --allow-npx-download exists and its use would be disclosed in the run pack (run_meta.json tsx_source)."
+      ],
+      "evidence": [
+        {
+          "kind": "file",
+          "path": "sut-fiangshi-census/argus-fiangshi-probe.ts",
+          "sha256": "e1fe0840575fed49ca993bc3aea0be0504d3b79f7f40632bf1c587d6ebfd0e55"
+        },
+        {
+          "kind": "file",
+          "path": "sut-fiangshi-census/census_checker.py",
+          "sha256": "53e4dd6684c0f9d886b59492e71f11d1fb1ba1faa8952602beebe0294ce230a8"
+        },
+        {
+          "kind": "file",
+          "path": "sut-fiangshi-census/PREREG-0032.md",
+          "sha256": "5336d23ed723064a971540d5f23cd02fc631febb1f468deff969663c2a611604"
+        },
+        {
+          "kind": "file",
+          "path": "attestations/evidence/0032-fiangshi-census/runs/20261124T181536Z/expected_table.json",
+          "sha256": "a33908b53b5793c865f670543c91a659820a6d7915dfa8354a09d2c351b903e0"
+        },
+        {
+          "kind": "file",
+          "path": "attestations/evidence/0032-fiangshi-census/runs/20261124T181536Z/probe_A.json",
+          "sha256": "0aed77521a4fe20c0de7275a94fcb35b4a9d67f94f582efb40256077e766bb00"
+        },
+        {
+          "kind": "file",
+          "path": "attestations/evidence/0032-fiangshi-census/runs/20261124T181536Z/probe_B.json",
+          "sha256": "5dcf33accf691ec5a33e51c11480ee582ec3c95dab082feb5f34455979ec82c0"
+        },
+        {
+          "kind": "file",
+          "path": "attestations/evidence/0032-fiangshi-census/runs/20261124T181536Z/receipts/d2c68884841332834a1e0b203e2175c5e1e92de5d279344bd6504db6b5bf4ce0.json",
+          "sha256": "ca01b9f1fe93f562b818b59abf81bc66d2b16773a994fa37257adab406676e1a"
+        },
+        {
+          "kind": "file",
+          "path": "attestations/evidence/0032-fiangshi-census/runs/20261124T181536Z/receipts/97b5dded4c5cff75d5b26377b659ef40c7620c45cf143fac27910fb8b1af7691.json",
+          "sha256": "041d5a2982029740f9096c5fc92527f68d27bc22314a8318321ca67037bde322"
+        },
+        {
+          "kind": "file",
+          "path": "attestations/evidence/0032-fiangshi-census/runs/20261124T181536Z/receipts/83d618ba5344776c16fd8b159ad7d6c177838db2057b7cad2c993c8a6a076819.json",
+          "sha256": "6e9e184cd50368df07349461d40400ef0ac66d71e236ee42f502203877af9ec0"
+        },
+        {
+          "kind": "file",
+          "path": "attestations/evidence/0032-fiangshi-census/runs/20261124T181536Z/L1_index_summary.json",
+          "sha256": "333c3020c384a2fc6c1fd67170f345ddbc872ef2713561ecfc852c3487b96961"
+        },
+        {
+          "kind": "file",
+          "path": "attestations/evidence/0032-fiangshi-census/runs/20261124T181536Z/run_meta.json",
+          "sha256": "026094aaca4731fe5754a790b0c8a48c1adbf7d367bbb0a844f265b5f235f23e"
+        },
+        {
+          "kind": "evidence_pack",
+          "path": "attestations/evidence/0032-fiangshi-census",
+          "commit": "32af10d8",
+          "files": {
+            "attestations/evidence/0032-fiangshi-census/README.md": "53a37d1a749e814118d763680b958a8108f37ee5dd6f238886346980a4ffa930",
+            "attestations/evidence/0032-fiangshi-census/run.json": "452702a4e800f9e173907753f1fd94b09c5d36c8caba4c3c49696429ddf987bc",
+            "attestations/evidence/0032-fiangshi-census/manifest.sha256": "see manifest.sha256 (20 files: README, run.json, the full run pack incl. the 1,001,662-byte index_snapshot.json)",
+            "attestations/evidence/0032-fiangshi-census/runs/ (run pack, 18 files, sha256 of each in manifest.sha256)": "see manifest.sha256"
+          }
+        },
+        {
+          "kind": "run_pack_commits",
+          "freeze_commit": "71a577b0",
+          "evidence_commit": "32af10d8",
+          "prereg_hash_before_first_live_get": "ca3858e04a31e45331875947834455e121e79d03878564178434b360326e896a",
+          "prereg_post": "https://github.com/Aceop-001/fiangshi/issues/1#issuecomment-7140252892"
+        }
+      ],
+      "run_ts": "2026-11-24T18:15:36Z..18:15:41Z (2 offline probes + 10 live GETs, wall ~6 s; Этап 0 start 18:15:36Z)",
+      "self_run": {
+        "run_by": "argus lab agent (session key holder), per the operator's ТЗ for run 0032 (the thread agreement); no live calls beyond the frozen ten GETs — everything per the published freeze",
+        "checker": "sut-fiangshi-census/census_checker.py sha256 53e4dd6684c0f9d886b59492e71f11d1fb1ba1faa8952602beebe0294ce230a8 (committed pre-run at 71a577b0)",
+        "calls_total": 10,
+        "retries": 0,
+        "budget_spent": "$0.00 (free public endpoints only: one GET /v1/index.json, nine GETs on /v1/verify?id=, /v1/receipt/<id>, /v1/receipts/<id>; no paid x402 calls, no keys, no settlements)",
+        "etap0_checks": {
+          "repo_head_equals_pin": "1d19e408e8c324c5c8085b8b143cfb6399cb0161",
+          "tsx_source": "repo devDeps (pinned by npm ci), no unpinned download",
+          "prereg_hash_equals_posted": "canonical-json mode (ensure_ascii=False over the signed wrapper) == ca3858e0…926e896a",
+          "verify_registry_before_run": "32 records, chain head 27f2f6149ac9f5a0…, green"
+        },
+        "host": {
+          "node": "24.22.3",
+          "npm": "11.19.1",
+          "os": "Linux x86_64"
+        },
+        "transport": "offline rebuild at the pinned commit via the pin's own tsx (npx tsx argus-fiangshi-probe.ts at FIANGSHI_NOW=2026-11-24T14:00:00Z and FIANGSHI_NOW=2026-11-24T12:00:00Z); receipt hashes recomputed by the checker's own Python canonicalizer, not fiangshi's code; live rows via urllib GETs to https://fiangshi.xyz; every call written once — failures recorded, never retried"
+      },
+      "findings_summary": {
+        "match": 11,
+        "divergence": 0,
+        "total": 11,
+        "by_row": {
+          "A1": "MATCH — bands exactly {ALLOW: 105, REVIEW: 1293, BLOCK: 525} at FIANGSHI_NOW=2026-11-24T14:00:00Z",
+          "A2": "MATCH — Bitrefill fresh ALLOW under R3: data_age_hours 0.9 in [0.85, 0.95], band_cap null, stale false",
+          "A3": "MATCH — cleave BLOCK, issued_band BLOCK, band_cap null, stale true (371 h), receipt_id=R1",
+          "A4": "MATCH — R1 chain 1 pos 124, R2 chain 2 pos 1073, R3 chain 0 pos 1073; verifyReceipt ok on all three; chain walk ok on chains 0/1/2",
+          "B1": "MATCH — bands exactly {ALLOW: 0, REVIEW: 1402, BLOCK: 521} at FIANGSHI_NOW=2026-11-24T12:00:00Z",
+          "B2": "MATCH — the freshness case reproduces offline: issued ALLOW capped to REVIEW, band_cap {reason: data_stale, age_hours 104.2 in [104.0, 104.3], limit_hours 72}, receipt_id=R2",
+          "B3": "MATCH — cleave BLOCK, band_cap null, stale true, receipt_id=R1",
+          "B4": "MATCH — R2 present (chain 0, pos 1073); R3 absent, issued after the pinned now; absence recorded as the expected result",
+          "C1": "MATCH — all three pinned ids reproduce under the checker's own Python canonicalizer (sha256 over the canonical receipt minus receipt_hash)",
+          "C2": "MATCH — prev_hash pins verbatim: R1 2465f1ab…, R2 f72b3f02…, R3 f64bd4bb…",
+          "C3": "MATCH — fiangshi verifyChain ok with zero errors on every affected chain"
+        },
+        "live_evidence_only": {
+          "L1": "status 200, one-time snapshot fingerprint c7294b54c091310c356ca842194adc83a30c7f64af43f1dd6d9538ff4a21094f; parsed bands {BLOCK 525, REVIEW 1293, ALLOW 105} match frozen context A; vendor served_at 2026-11-24T17:40:23.736Z recorded as-is (pack stamp 18:15:36Z — not adjudicated, evidence-only)",
+          "L2": "all nine routes 404 — the durable receipt store is not switched on yet (store_total null, as the vendor disclosed on 24 Nov); recorded DOCUMENTED either way — the redeploy gap this run anchors closed"
+        },
+        "verdict": "SEAL — all frozen rows match"
+      },
+      "signature": "SeAM+25MO06KxdF3jASEObWUwKpIYSq55SnjQKcN4iDG+mim+ifAeDrB1e2l96STd6KCBTSYW1coRe3m5QO/BA=="
     }
   ]
 }
