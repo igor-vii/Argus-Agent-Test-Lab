@@ -1,9 +1,9 @@
 {
-  "generated_at": "2026-11-23T06:14:45.665Z",
+  "generated_at": "2026-11-24T05:20:00.930Z",
   "verify": {
     "command": "node tools/registry/verify-registry.mjs",
-    "records": 30,
-    "chain_head": "5fb50086ba07b3a9"
+    "records": 31,
+    "chain_head": "ed94e07f44ae93cf"
   },
   "correction": {
     "seq": "0022",
@@ -13,82 +13,89 @@
     "amends": "argus-finding-0000"
   },
   "record": {
-    "seq": "0029",
-    "record_id": "argus-seal-0029",
+    "seq": "0030",
+    "record_id": "argus-seal-0030",
     "type": "seal",
-    "issued_at": "2026-11-23T06:14:45.665Z",
-    "date": "2026-11-23",
-    "title": "reciprocal-ruler v0.1 (PayStage quote-lock/reconcile) — pre-registered $0.00 trial evaluation: quote-hash determinism, reconcile verdict branches, idempotency semantics; caller-attested labeling",
-    "subject": "reciprocal-ruler v0.1 trial endpoints (base-buzz/paystage#315)",
-    "prev_record_hash": "bf85976eaa4588208d9a04eb7bb784b2daef904c931df862d46e1459c12739ef",
-    "chain_head": "5fb50086ba07b3a9",
+    "issued_at": "2026-11-24T05:20:00.930Z",
+    "date": "2026-11-24",
+    "title": "reciprocal-ruler v0.2 (PayStage quote-lock/reconcile) — pre-registered $0.00 A0 battery: durable-ledger receipts, idempotent replay, intent-mismatch, receipt-capability reads, OVERPAID split; caller-attested labeling",
+    "subject": "reciprocal-ruler v0.2 trial endpoints (base-buzz/paystage#315)",
+    "prev_record_hash": "5fb50086ba07b3a9062dd42bcb7862478d0a3a4dd9654f4b058368e4916015ff",
+    "chain_head": "ed94e07f44ae93cf",
     "scenarios": [
       {
-        "id": "A2",
-        "verdict": "SETTLED_OK, credit_delta +5",
+        "id": "A0.1",
+        "verdict": "200 COMPENSATED; ledger.persisted true; receipt returned; offline recompute: compensated_krw 10000, uncovered_krw 0, credit_delta -5",
         "tone": "info"
       },
       {
-        "id": "A3",
-        "verdict": "COMPENSATED, uncovered=0, credit_delta -5",
+        "id": "A0.2",
+        "verdict": "200; idempotent_replay true; ledger_hash unchanged (equals A0.1's ledger_hash)",
         "tone": "info"
       },
       {
-        "id": "A4",
-        "verdict": "COMPENSATED, uncovered>0, credit_delta -17",
+        "id": "A0.3",
+        "verdict": "409 INTENT_MISMATCH; stored_intent_digest != incoming_intent_digest; consumes the 3rd call of the id (0029 observation)",
         "tone": "info"
       },
       {
-        "id": "A5",
-        "verdict": "PENDING_RECONCILIATION, credit_delta 0, no auto-compensation",
+        "id": "A0.4",
+        "verdict": "403 RECEIPT_REQUIRED",
         "tone": "info"
       },
       {
-        "id": "A6",
-        "verdict": "trial tier: record actual (server-side dedup not expected per R3); any divergence is a finding candidate for the paid cycle, not a default FAIL",
+        "id": "A0.5",
+        "verdict": "404 LEDGER_NOT_FOUND (per R4 wording; a 403 is recorded as a check-order fact)",
         "tone": "info"
       },
       {
-        "id": "B1",
-        "verdict": "per contract; expect SETTLED_OK semantics; record actual",
+        "id": "A0.6",
+        "verdict": "200; receipt_verified true; recomputation.match true; ledger_hash_match true; stored inputs reveal the quote-hash rule_version (R2 check)",
         "tone": "info"
       },
       {
-        "id": "B2",
-        "verdict": "uncovered=delta, credit_delta -17",
+        "id": "A0.7a",
+        "verdict": "200 SETTLED_OK, credit_delta +5 (0.1.0: overpayment unclassified, falls through)",
         "tone": "info"
       },
       {
-        "id": "B3",
-        "verdict": "spec does not define it — honest absent-candidate: an undefined answer is recorded absent, not as a failure",
+        "id": "A0.7b",
+        "verdict": "200 OVERPAID, compensated_krw 0, uncovered_krw 0, credit_delta 0",
         "tone": "info"
       },
       {
-        "id": "A1",
-        "verdict": "identical quote_hash in both attempts; both rows in the audit ledger",
-        "tone": "info"
-      },
-      {
-        "id": "A7",
-        "verdict": "all verdicts restore from records; unsortable rows report absent",
+        "id": "A0.8",
+        "verdict": "storage.durable true; rule_versions unchanged {frozen_below 0.2.0, latest 0.2.0}",
         "tone": "info"
       }
     ],
     "counts": {
-      "info": 10
+      "info": 9
     },
     "evidence": [
       {
-        "path": "sut-reciprocal-ruler/ruler_trial_battery.py",
-        "sha256": "5abd0609c2af9a85955253c52b9c19d0a7916ae6805860e7193e0cf870405fe2"
+        "path": "sut-reciprocal-ruler/ruler_a0_battery.py",
+        "sha256": "8d65bf145a92b298dc38c30eee58c2d75e3803872e34f5689bb94cd2b16c6702"
       },
       {
-        "path": "attestations/evidence/0029-reciprocal-ruler-trial/manifest.sha256",
-        "sha256": "f24cdcd1e30e1f3edbdbdfd573cfbd5d41e67a305f3ddde0ce714597b36089fb"
+        "path": "sut-reciprocal-ruler/recon-v02/health-20261124T043140Z.json",
+        "sha256": "2dd904c6a32ce598831dfbcce388b43cbba515bd027cd1c5e6de5fb4c178e6ae"
       },
       {
-        "path": "attestations/evidence/0029-reciprocal-ruler-trial/run.json",
-        "sha256": "0f8c502c304b212a92043b7ca8d18ee7c75c1fc7b37fe24d9604ef13555f8592"
+        "path": "sut-reciprocal-ruler/recon-v02/well-known-x402-20261124T0431Z.json",
+        "sha256": "80ebb31eeb7af1f43206662d58b2b1cdc7cc01563df48180082bd46216b990a5"
+      },
+      {
+        "path": "sut-reciprocal-ruler/recon-v02/openapi-20261124T0431Z.json",
+        "sha256": "7e9344c55d88637f2361b5c122ce7d3e72977b9cae8448248ea421975f1bacbd"
+      },
+      {
+        "path": "attestations/evidence/0030-reciprocal-ruler-v02-a0/manifest.sha256",
+        "sha256": "773fc122bc3a5f560586cb0c7f55112ac7a6acf8efd7611382229af703ff32dd"
+      },
+      {
+        "path": "attestations/evidence/0030-reciprocal-ruler-v02-a0/run.json",
+        "sha256": "9f002f2b52cf775636e92b4182dac2c9edcacd78e4b73c510db3f041e32d607b"
       }
     ]
   }

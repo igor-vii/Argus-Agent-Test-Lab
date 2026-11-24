@@ -1457,5 +1457,90 @@
         "href": "https://github.com/igor-vii/Argus-Agent-Test-Lab/blob/main/attestations/records/0029-reciprocal-ruler-v0-1-paystage-quote-lock-reconcile-pre-regi.seal.json"
       }
     ]
+  },
+  {
+    "seq": "0030",
+    "date": "2026-11-24",
+    "type": "seal",
+    "title": "reciprocal-ruler v0.2 (PayStage quote-lock/reconcile) — pre-registered $0.00 A0 battery: durable-ledger receipts, idempotent replay, intent-mismatch, receipt-capability reads, OVERPAID split; caller-attested labeling",
+    "subject": "reciprocal-ruler v0.2 trial endpoints (base-buzz/paystage#315)",
+    "summary": [
+      "PREREG FREEZE (freeze-0030): this draft and sut-reciprocal-ruler/ruler_a0_battery.py (checker, RUNBOOK P1) land BEFORE the first A0 call; run_ts, self_run, findings_summary and run-pack evidence pins are filled from the run after it completes (0029 flow: freeze -> run -> re-pin -> operator seal). Freeze reference = the commit landing this draft, the checker and recon-v02 snapshots; the freeze canonical sha256 is posted to #315 and x402#4198 before the first call, with an offline Ed25519 signature by the agent session key.",
+      "Pass rule: the four-row recompute table (A0.1 verdict fields + persisted/receipt; A0.2 replay + hash equality; A0.7a; A0.7b) is recomputed offline from raw transcripts; rows a checker cannot recompute are reported honestly. Error-path rows (A0.3-A0.5) and A0.6/A0.8 are asserted against the frozen expected column. Divergences are findings, never edits.",
+      "Trial quota discipline: X-Trial-Client argus-0030-a0c1 carries exactly 3 POST (A0.1, A0.2, A0.3); argus-0030-a0c2 carries exactly 2 POST (A0.7a, A0.7b); GET reads are outside the quota per the author's spec. Both ids and every call are disclosed raw in the run pack.",
+      "Paid-tier deferral stays explicit: funded A1 ($0.05 + 2x$0.25) on the same pinned semantics and the whole-run export question run only on operator go with the funded burner; this battery is $0.00.",
+      "Budget: $0.00 — no paid endpoint is called in A0; no payment is signed."
+    ],
+    "verdicts": [
+      {
+        "id": "A0.1",
+        "verdict": "200 COMPENSATED; ledger.persisted true; receipt returned; offline recompute: compensated_krw 10000, uncovered_krw 0, credit_delta -5",
+        "tone": "info"
+      },
+      {
+        "id": "A0.2",
+        "verdict": "200; idempotent_replay true; ledger_hash unchanged (equals A0.1's ledger_hash)",
+        "tone": "info"
+      },
+      {
+        "id": "A0.3",
+        "verdict": "409 INTENT_MISMATCH; stored_intent_digest != incoming_intent_digest; consumes the 3rd call of the id (0029 observation)",
+        "tone": "info"
+      },
+      {
+        "id": "A0.4",
+        "verdict": "403 RECEIPT_REQUIRED",
+        "tone": "info"
+      },
+      {
+        "id": "A0.5",
+        "verdict": "404 LEDGER_NOT_FOUND (per R4 wording; a 403 is recorded as a check-order fact)",
+        "tone": "info"
+      },
+      {
+        "id": "A0.6",
+        "verdict": "200; receipt_verified true; recomputation.match true; ledger_hash_match true; stored inputs reveal the quote-hash rule_version (R2 check)",
+        "tone": "info"
+      },
+      {
+        "id": "A0.7a",
+        "verdict": "200 SETTLED_OK, credit_delta +5 (0.1.0: overpayment unclassified, falls through)",
+        "tone": "info"
+      },
+      {
+        "id": "A0.7b",
+        "verdict": "200 OVERPAID, compensated_krw 0, uncovered_krw 0, credit_delta 0",
+        "tone": "info"
+      },
+      {
+        "id": "A0.8",
+        "verdict": "storage.durable true; rule_versions unchanged {frozen_below 0.2.0, latest 0.2.0}",
+        "tone": "info"
+      }
+    ],
+    "findings": [
+      {
+        "id": "0",
+        "severity": "info",
+        "text": "divergences. Durable-ledger receipt capability live on the trial tier: persist -> replay 200 (idempotent_replay true, ledger_hash unchanged) -> intent-mismatch 409 (digests differ"
+      },
+      {
+        "id": "binding",
+        "severity": "info",
+        "text": "field set disclosed: tx_id, quote_hash, event_type, expected/actual/holdback) -> receipt-gated reads 403/404/200 with receipt_verified + recomputation.match + ledger_hash_match. OVERPAID split confirmed on identical payload: default 0.1.0 SETTLED_OK +5 vs 0.2.0 OVERPAID 0. Provenance: pin 75867aa remains unresolvable via public API (declared in #315)"
+      },
+      {
+        "id": "no",
+        "severity": "info",
+        "text": "new defects found."
+      }
+    ],
+    "evidence": 6,
+    "links": [
+      {
+        "label": "record #0030",
+        "href": "https://github.com/igor-vii/Argus-Agent-Test-Lab/blob/main/attestations/records/0030-reciprocal-ruler-v0-2-paystage-quote-lock-reconcile-pre-regi.seal.json"
+      }
+    ]
   }
 ]
