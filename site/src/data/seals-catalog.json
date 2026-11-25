@@ -1758,5 +1758,121 @@
         "href": "https://github.com/igor-vii/Argus-Agent-Test-Lab/blob/main/attestations/records/0032-fiangshi-census-receipt-anchoring-aceop-001-fiangshi-1d19e40.seal.json"
       }
     ]
+  },
+  {
+    "seq": "0033",
+    "date": "2026-11-25",
+    "type": "seal",
+    "title": "onBeforePaymentCreation gate hook re-run under vendor-issued conditions (agentic-finance-graph@0.3.7 client, gate 0.22.7+, receipt v2): 9/9 MATCH incl. vendor-issued S6 1 allow / 7 blocks with pending 1 x $200, 503 not observed, 32/32 receipts afg-gate-receipt/2; $0.00",
+    "subject": "onBeforePaymentCreation hook battery re-run of agentic-finance-graph@0.3.7 (npm client unchanged since 0031), policy recommended-v3, against the current AFG gate server (openapi 0.22.7 issued by vendor, 0.22.8 observed at run start — recorded, verdict-neutral; receipt schema afg-gate-receipt/2 since 2026-11-24T10:10:11Z); registry slot 0033 (the vendor comment says 'Run 0032' — renumbering disclosed in the prereg post)",
+    "summary": [
+      "Prereg discipline held: operator prereg post 7153392127 at 2026-11-25T05:02:21Z, first live-GET 2026-11-25T05:06:49Z (4m28s later); issued conditions (AFG comment 7144596133) are frozen verbatim in the prereg post; no expectation derives from any pre-run gate_check observation.",
+      "Delta vs 0031: the S6 divergence (7 allow / 1 block via pre-decision pending snapshots) did not repeat on the current gate — the vendor-issued outcome (1 allow / 7 blocks, pending 1 x $200) was observed; recorded as the honest 0031->0033 delta.",
+      "Budget $0.00; free gate_check only; every check written exactly once at the moment it was made; retries: 0; failures/timeouts: none (all 32 calls HTTP 200).",
+      "Pass rule: seal iff all nine sessions MATCH — condition met; this draft is sealed by tools/registry/sign-record.mjs with the operator lab key (privkey never in the repo; ARGUS_PRIVKEY_PATH override), then verify-registry.mjs, then the record hash is posted in x402#3866.",
+      "Issued-conditions verify command (post-time): curl -s https://api.github.com/repos/x402-foundation/x402/issues/comments/7144596133 | jq -j .body | sha256sum  # must equal 840ffa33…c966c",
+      "Numbering: vendor comment says 'Run 0032'; registry slot 0032 was sealed 2026-11-24 (fiangshi census) before the vendor green light landed — this run takes slot 0033; renumbering disclosed in the prereg post."
+    ],
+    "verdicts": [
+      {
+        "id": "S1",
+        "verdict": "MATCH",
+        "tone": "info"
+      },
+      {
+        "id": "S2",
+        "verdict": "MATCH",
+        "tone": "info"
+      },
+      {
+        "id": "S3",
+        "verdict": "MATCH",
+        "tone": "info"
+      },
+      {
+        "id": "S4",
+        "verdict": "MATCH",
+        "tone": "info"
+      },
+      {
+        "id": "S5",
+        "verdict": "MATCH",
+        "tone": "info"
+      },
+      {
+        "id": "S6",
+        "verdict": "MATCH",
+        "tone": "info"
+      },
+      {
+        "id": "S7",
+        "verdict": "MATCH",
+        "tone": "info"
+      },
+      {
+        "id": "S8",
+        "verdict": "MATCH",
+        "tone": "info"
+      },
+      {
+        "id": "S9",
+        "verdict": "MATCH",
+        "tone": "info"
+      },
+      {
+        "id": "L1",
+        "verdict": "evidence-only (no verdict)",
+        "tone": "info"
+      }
+    ],
+    "findings": [
+      {
+        "id": "sessions",
+        "severity": "info",
+        "text": "9/9 MATCH (S1–S9); L1 evidence-only"
+      },
+      {
+        "id": "divergences",
+        "severity": "info",
+        "text": "0"
+      },
+      {
+        "id": "checks_total",
+        "severity": "info",
+        "text": "32"
+      },
+      {
+        "id": "receipts_total",
+        "severity": "info",
+        "text": "32"
+      },
+      {
+        "id": "receipts_v2_conformant",
+        "severity": "info",
+        "text": "32"
+      },
+      {
+        "id": "vendor_issued_rows",
+        "severity": "info",
+        "text": "S6 (1 allow / 7 blocks, pending 1 x $200) MATCH; S8 (503 'not observed') MATCH; S9 (all receipts v2, 16-char hash absent) MATCH"
+      },
+      {
+        "id": "policy_sha256_recompute",
+        "severity": "info",
+        "text": "canon(policy.body) == e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046 byte-exact for all 32 receipts and answers"
+      },
+      {
+        "id": "delta_vs_0031",
+        "severity": "info",
+        "text": "S6 divergence did not repeat; server-side lock now yields the vendor-issued outcome"
+      }
+    ],
+    "evidence": 47,
+    "links": [
+      {
+        "label": "record #0033",
+        "href": "https://github.com/igor-vii/Argus-Agent-Test-Lab/blob/main/attestations/records/0033-onbeforepaymentcreation-gate-hook-re-run-under-vendor-issued.seal.json"
+      }
+    ]
   }
 ]

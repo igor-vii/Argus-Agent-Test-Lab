@@ -1,9 +1,9 @@
 {
-  "generated_at": "2026-11-24T18:32:51.618Z",
+  "generated_at": "2026-11-25T06:08:44.200Z",
   "verify": {
     "command": "node tools/registry/verify-registry.mjs",
-    "records": 33,
-    "chain_head": "695a7a229b6cc264"
+    "records": 34,
+    "chain_head": "aa021ce0a59a0878"
   },
   "correction": {
     "seq": "0022",
@@ -13,129 +13,258 @@
     "amends": "argus-finding-0000"
   },
   "record": {
-    "seq": "0032",
-    "record_id": "argus-seal-0032",
+    "seq": "0033",
+    "record_id": "argus-seal-0033",
     "type": "seal",
-    "issued_at": "2026-11-24T18:32:51.618Z",
-    "date": "2026-11-24",
-    "title": "fiangshi census-receipt anchoring (Aceop-001/fiangshi @ 1d19e408, served census as a function of commit + FIANGSHI_NOW) — pre-registered dual-context offline rebuild with independent receipt-hash recompute, $0.00",
-    "subject": "fiangshi census receipts for two live x402 sellers (api.cleave.fi/x402/gas, api.bitrefill.com/x402/gift-cards/search), anchored as claims in the Argus registry; classification under the record-0028 frozen-procedure discipline (recomputes from the records alone)",
-    "prev_record_hash": "27f2f6149ac9f5a0aad0d72f5af9694ccdfa3e10a8411cc2c6dd34fd788f8333",
-    "chain_head": "695a7a229b6cc264",
+    "issued_at": "2026-11-25T06:08:44.200Z",
+    "date": "2026-11-25",
+    "title": "onBeforePaymentCreation gate hook re-run under vendor-issued conditions (agentic-finance-graph@0.3.7 client, gate 0.22.7+, receipt v2): 9/9 MATCH incl. vendor-issued S6 1 allow / 7 blocks with pending 1 x $200, 503 not observed, 32/32 receipts afg-gate-receipt/2; $0.00",
+    "subject": "onBeforePaymentCreation hook battery re-run of agentic-finance-graph@0.3.7 (npm client unchanged since 0031), policy recommended-v3, against the current AFG gate server (openapi 0.22.7 issued by vendor, 0.22.8 observed at run start — recorded, verdict-neutral; receipt schema afg-gate-receipt/2 since 2026-11-24T10:10:11Z); registry slot 0033 (the vendor comment says 'Run 0032' — renumbering disclosed in the prereg post)",
+    "prev_record_hash": "695a7a229b6cc2648376f84152be6bfe46e779232f662c1f63266aef950d7436",
+    "chain_head": "aa021ce0a59a0878",
     "scenarios": [
       {
-        "id": "A1",
-        "verdict": "bands exactly {ALLOW: 105, REVIEW: 1293, BLOCK: 525}",
+        "id": "S1",
+        "verdict": "MATCH",
         "tone": "info"
       },
       {
-        "id": "A2",
-        "verdict": "band ALLOW, issued_band ALLOW, band_cap null, receipt_id=R3, data_age_hours in [0.85, 0.95], stale false",
+        "id": "S2",
+        "verdict": "MATCH",
         "tone": "info"
       },
       {
-        "id": "A3",
-        "verdict": "band BLOCK, issued_band BLOCK, band_cap null, stale true, receipt_id=R1",
+        "id": "S3",
+        "verdict": "MATCH",
         "tone": "info"
       },
       {
-        "id": "A4",
-        "verdict": "R1 in chain 1 at pos 124; R2 in chain 2 at pos 1073; R3 in chain 0 at pos 1073; fiangshi verifyReceipt ok on all three; chain walk ok on chains 0, 1, 2",
+        "id": "S4",
+        "verdict": "MATCH",
         "tone": "info"
       },
       {
-        "id": "B1",
-        "verdict": "bands exactly {ALLOW: 0, REVIEW: 1402, BLOCK: 521}",
+        "id": "S5",
+        "verdict": "MATCH",
         "tone": "info"
       },
       {
-        "id": "B2",
-        "verdict": "band REVIEW, issued_band ALLOW, receipt_id=R2, band_cap {reason: \"data_stale\", age_hours in [104.0, 104.3], limit_hours: 72}",
+        "id": "S6",
+        "verdict": "MATCH",
         "tone": "info"
       },
       {
-        "id": "B3",
-        "verdict": "band BLOCK, band_cap null, stale true, receipt_id=R1",
+        "id": "S7",
+        "verdict": "MATCH",
         "tone": "info"
       },
       {
-        "id": "B4",
-        "verdict": "R2 present (chain 0, pos 1073); R3 absent — issued after the pinned now; absence is the expected result, recorded as such",
+        "id": "S8",
+        "verdict": "MATCH",
         "tone": "info"
       },
       {
-        "id": "C1",
-        "verdict": "sha256 over the canonical JSON of each pinned receipt minus receipt_hash, recomputed by the checker's own Python canonicalizer, equals the pinned id — for all three",
-        "tone": "info"
-      },
-      {
-        "id": "C2",
-        "verdict": "prev_hash of R1/R2/R3 equals the pinned values verbatim",
-        "tone": "info"
-      },
-      {
-        "id": "C3",
-        "verdict": "verifyChain over each affected chain returns ok with zero errors",
+        "id": "S9",
+        "verdict": "MATCH",
         "tone": "info"
       },
       {
         "id": "L1",
-        "verdict": "byte sha256 recorded as a one-time snapshot fingerprint — explicitly not a reproducibility claim (served_at and data_age_hours make the bytes move per request); parsed bands and both pinned seller rows recorded verbatim; never affects the verdict",
-        "tone": "info"
-      },
-      {
-        "id": "L2",
-        "verdict": "recorded DOCUMENTED either way — chain_linkage verified if the durable store is live, 404 if not (the redeploy gap this run anchors closed); never affects the verdict",
+        "verdict": "evidence-only (no verdict)",
         "tone": "info"
       }
     ],
     "counts": {
-      "info": 13
+      "info": 10
     },
     "evidence": [
       {
-        "path": "sut-fiangshi-census/argus-fiangshi-probe.ts",
-        "sha256": "e1fe0840575fed49ca993bc3aea0be0504d3b79f7f40632bf1c587d6ebfd0e55"
+        "path": "sut-hookguard/battery_hookguard_v2.mjs",
+        "sha256": "ca55f1f422ae50464b292a39d09d27813ddac6307315ee01ca79cfb930546151"
       },
       {
-        "path": "sut-fiangshi-census/census_checker.py",
-        "sha256": "53e4dd6684c0f9d886b59492e71f11d1fb1ba1faa8952602beebe0294ce230a8"
+        "path": "sut-hookguard/payees-0033.json",
+        "sha256": "bb6a605d269de739a90545636b9c11f9e70f81ce2961fb9139ae1fddc1a288cf"
       },
       {
-        "path": "sut-fiangshi-census/PREREG-0032.md",
-        "sha256": "5336d23ed723064a971540d5f23cd02fc631febb1f468deff969663c2a611604"
+        "path": "sut-hookguard/recon/def-gate.receipt.v2.snap",
+        "sha256": "4d7ad61d0e376a14835f5a9bf5fb892c60fbd02004c96a1a8c1b03b21625dff0"
       },
       {
-        "path": "attestations/evidence/0032-fiangshi-census/runs/20261124T181536Z/expected_table.json",
-        "sha256": "a33908b53b5793c865f670543c91a659820a6d7915dfa8354a09d2c351b903e0"
+        "path": "attestations/evidence/0033-hookguard/README.md",
+        "sha256": "c47ab9c4ce0e0e45e20e960bb8cfbf84062f8129def48b2a0ed1a4428c2622fd"
       },
       {
-        "path": "attestations/evidence/0032-fiangshi-census/runs/20261124T181536Z/probe_A.json",
-        "sha256": "0aed77521a4fe20c0de7275a94fcb35b4a9d67f94f582efb40256077e766bb00"
+        "path": "attestations/evidence/0033-hookguard/run.json",
+        "sha256": "0e0ba273222f5c4c32daf6a65fdc336a72112476ab44efe6df01008f6712f52a"
       },
       {
-        "path": "attestations/evidence/0032-fiangshi-census/runs/20261124T181536Z/probe_B.json",
-        "sha256": "5dcf33accf691ec5a33e51c11480ee582ec3c95dab082feb5f34455979ec82c0"
+        "path": "attestations/evidence/0033-hookguard/offline_table.json",
+        "sha256": "9575826e25114dfa7d02cd44bee87267b7a6cccf688117b7d96a5cca3e81ca8a"
       },
       {
-        "path": "attestations/evidence/0032-fiangshi-census/runs/20261124T181536Z/receipts/d2c68884841332834a1e0b203e2175c5e1e92de5d279344bd6504db6b5bf4ce0.json",
-        "sha256": "ca01b9f1fe93f562b818b59abf81bc66d2b16773a994fa37257adab406676e1a"
+        "path": "attestations/evidence/0033-hookguard/offline_table.md",
+        "sha256": "720b5de8ac5efed175540bff25a897b24c922f2bcf884d234171f4bfdb67a492"
       },
       {
-        "path": "attestations/evidence/0032-fiangshi-census/runs/20261124T181536Z/receipts/97b5dded4c5cff75d5b26377b659ef40c7620c45cf143fac27910fb8b1af7691.json",
-        "sha256": "041d5a2982029740f9096c5fc92527f68d27bc22314a8318321ca67037bde322"
+        "path": "attestations/evidence/0033-hookguard/manifest.sha256",
+        "sha256": "b3992fba8c08d35aa95bb27873043118bd3b3258acc9ab321c702e0400cd1d1c"
       },
       {
-        "path": "attestations/evidence/0032-fiangshi-census/runs/20261124T181536Z/receipts/83d618ba5344776c16fd8b159ad7d6c177838db2057b7cad2c993c8a6a076819.json",
-        "sha256": "6e9e184cd50368df07349461d40400ef0ac66d71e236ee42f502203877af9ec0"
+        "path": "attestations/evidence/0033-hookguard/runs/afg-pass-keys.json",
+        "sha256": "1af0922227af492418707344e737701dd9b5d6d1d4d4553486293b30a9861bd9"
       },
       {
-        "path": "attestations/evidence/0032-fiangshi-census/runs/20261124T181536Z/L1_index_summary.json",
-        "sha256": "333c3020c384a2fc6c1fd67170f345ddbc872ef2713561ecfc852c3487b96961"
+        "path": "attestations/evidence/0033-hookguard/runs/l1-openapi.json",
+        "sha256": "d540af915357b4e2c63c4985da96399ad7b1416051fc66efab03e3ba6407f6e4"
       },
       {
-        "path": "attestations/evidence/0032-fiangshi-census/runs/20261124T181536Z/run_meta.json",
-        "sha256": "026094aaca4731fe5754a790b0c8a48c1adbf7d367bbb0a844f265b5f235f23e"
+        "path": "attestations/evidence/0033-hookguard/runs/openapi-runstart.json",
+        "sha256": "7d22ce2c57b2706cb34e98665c4b7a1fc0f011cb19d23c959d1eed5e070be71b"
+      },
+      {
+        "path": "attestations/evidence/0033-hookguard/runs/s1-call1.json",
+        "sha256": "cdca3df97c3111ddd3beb4bebd5811fef714a28755bb8b35b46f84b076aff5f6"
+      },
+      {
+        "path": "attestations/evidence/0033-hookguard/runs/s1-call2.json",
+        "sha256": "3b8a280b26c697f46516e1c9a47dbdc43371ef80aaf771b140da41bd29a3634f"
+      },
+      {
+        "path": "attestations/evidence/0033-hookguard/runs/s2-call1.json",
+        "sha256": "c83b093757f405399fa704fe5ced339285c6cf5f3ab7d97b6c3faf2c8b43c720"
+      },
+      {
+        "path": "attestations/evidence/0033-hookguard/runs/s2-call10.json",
+        "sha256": "be47dc5cddc709a1261ce3407e2f10259ef73158ff04931a955212e2aaab8ed6"
+      },
+      {
+        "path": "attestations/evidence/0033-hookguard/runs/s2-call2.json",
+        "sha256": "174f325d340ca763299da40550f5cd7849ac5597f38e3f3fdb81a3f9ff235a2e"
+      },
+      {
+        "path": "attestations/evidence/0033-hookguard/runs/s2-call3.json",
+        "sha256": "fef24489a986895051427621c80c19c71c6149dfdf2b6a3fcf5ebd734f2378d7"
+      },
+      {
+        "path": "attestations/evidence/0033-hookguard/runs/s2-call4.json",
+        "sha256": "54e0bc62ba5266dd3d1ab41e2243126bcaa92eaf944c74e25062c94897038f7c"
+      },
+      {
+        "path": "attestations/evidence/0033-hookguard/runs/s2-call5.json",
+        "sha256": "1791d86fcc118b2ba300d6307f9b063c67127af0d5efc766b8eb82dbf26ba6a3"
+      },
+      {
+        "path": "attestations/evidence/0033-hookguard/runs/s2-call6.json",
+        "sha256": "4fe7d8c63b4c1c5914beec44e54312f0bd3e5105c6abd294b7140086a948a7a5"
+      },
+      {
+        "path": "attestations/evidence/0033-hookguard/runs/s2-call7.json",
+        "sha256": "bd6522796b88ff8916438c29c37b777e5f1598c48051724b5dda645dd0e36c4b"
+      },
+      {
+        "path": "attestations/evidence/0033-hookguard/runs/s2-call8.json",
+        "sha256": "50e53c84b5b8c2f5acc6ee14f4cc5652e96a422aa931d8bf8e11f516b6e0c9b0"
+      },
+      {
+        "path": "attestations/evidence/0033-hookguard/runs/s2-call9.json",
+        "sha256": "1c49fc94e1d320306eb4009bb7a73cf792a6c44eaba36a97e4a001dbf86049b1"
+      },
+      {
+        "path": "attestations/evidence/0033-hookguard/runs/s3-call1.json",
+        "sha256": "99adbf6d553a290468d083eb494f20581041736feca57111bb9a8b6375a7a861"
+      },
+      {
+        "path": "attestations/evidence/0033-hookguard/runs/s3-call2.json",
+        "sha256": "ff3bb2071ea3a68555df032640e6b2d52190e8bc3a40cd0a50c1c1fac3337006"
+      },
+      {
+        "path": "attestations/evidence/0033-hookguard/runs/s3-call3.json",
+        "sha256": "d4982b805bf94c93972643cf7425d859392de3a078c9d9a7c1942fe80e1c33d0"
+      },
+      {
+        "path": "attestations/evidence/0033-hookguard/runs/s3-call4.json",
+        "sha256": "34677d493f0ed96927d7da67263e407a9aa53082369267026c151e237be85ac0"
+      },
+      {
+        "path": "attestations/evidence/0033-hookguard/runs/s3-call5.json",
+        "sha256": "79f2c728c953f769298e3107977be976c4bfacf0b32b1418429fd91ca71f9e20"
+      },
+      {
+        "path": "attestations/evidence/0033-hookguard/runs/s4-call1.json",
+        "sha256": "0276b15adfa1eef9db5507630a546011add250455debd3395798fdb966ab97d4"
+      },
+      {
+        "path": "attestations/evidence/0033-hookguard/runs/s4-call2.json",
+        "sha256": "2e0ca72ece1dcc7f03ee3204547d6b7a6b17a2254da763490ccbb4a7f0bc2957"
+      },
+      {
+        "path": "attestations/evidence/0033-hookguard/runs/s4-call3.json",
+        "sha256": "b0ca0ef9b058d282e94a925c61ab398b020158211bd8a80068ea43711b4fa30d"
+      },
+      {
+        "path": "attestations/evidence/0033-hookguard/runs/s4-call4.json",
+        "sha256": "421fb3e87034ec4b6aa16bf3774385028fdbba9e2639de6fbffbf6d9dc9cfa24"
+      },
+      {
+        "path": "attestations/evidence/0033-hookguard/runs/s5-call1.json",
+        "sha256": "4fe5eb849a7e643762e6522a374d7ef1b5cbb32c17bd4a57a91fa17553eed474"
+      },
+      {
+        "path": "attestations/evidence/0033-hookguard/runs/s5-call2.json",
+        "sha256": "0875211fcb03c42e3cb30e3ce20a1a9b5dd264f6651962edde6631fdc08d9f10"
+      },
+      {
+        "path": "attestations/evidence/0033-hookguard/runs/s5-call3.json",
+        "sha256": "48e2dd420e7e15b001185a153fe5beeb87af3acb995c1e7925a4e0d38f3bfda3"
+      },
+      {
+        "path": "attestations/evidence/0033-hookguard/runs/s6-call1.json",
+        "sha256": "2cc4273f938d4ace536c921590dfd3219cc34d8bd1181589b53dac3935028221"
+      },
+      {
+        "path": "attestations/evidence/0033-hookguard/runs/s6-call2.json",
+        "sha256": "c937f8d4f5ae7f73b05d55d7f4364ad6ca6e86a1f2dc1375fc79d5765e8c1f11"
+      },
+      {
+        "path": "attestations/evidence/0033-hookguard/runs/s6-call3.json",
+        "sha256": "97b75da5f07e25b2b6c693e779f28ce554448f08dfd9c62472477d350c2a7f0e"
+      },
+      {
+        "path": "attestations/evidence/0033-hookguard/runs/s6-call4.json",
+        "sha256": "d28a67ae740b081eabe5e18f0176626fe184990a2778ccdb8415000ba628516f"
+      },
+      {
+        "path": "attestations/evidence/0033-hookguard/runs/s6-call5.json",
+        "sha256": "0e999d57fd6796265ad532c2fd11d204bba7d74770998b0eef3138d5891953f8"
+      },
+      {
+        "path": "attestations/evidence/0033-hookguard/runs/s6-call6.json",
+        "sha256": "804c6a0f4ab9068a1ceb3f781080baa126a8823e593978b768e2c9f1f21469a5"
+      },
+      {
+        "path": "attestations/evidence/0033-hookguard/runs/s6-call7.json",
+        "sha256": "5eba82accf4c6312200d64af8195e8900be14495c052eefd4311edae5c6214bb"
+      },
+      {
+        "path": "attestations/evidence/0033-hookguard/runs/s6-call8.json",
+        "sha256": "f93bf0a99c2f28925515708d64566e0afe7aa221edbaf1ba7a6bb1a367cfd02b"
+      },
+      {
+        "path": "attestations/evidence/0033-hookguard/runs/s7-call1.json",
+        "sha256": "a38f1aa32859d201e2456d9f08ad55d15b71160342d31fb52f71c2e5afe84cd1"
+      },
+      {
+        "path": "attestations/evidence/0033-hookguard/runs/s8-503-survey.json",
+        "sha256": "3dcdc3f40517934a794791bb9828c4cea7410c1e0c0382a767b92453bbc3d0ee"
+      },
+      {
+        "path": "attestations/evidence/0033-hookguard/runs/s9-receipt-v2-verify.json",
+        "sha256": "cd0e44b76592f247c5165f6a336f3703d4a055bf1c6fca98e76e6d217a0192f1"
+      },
+      {
+        "path": "attestations/evidence/0033-hookguard/runs/summary-0033.json",
+        "sha256": "1ac00919ec8b44318041037239c1b1fd22132897e4927419164facb3558d0d76"
       }
     ]
   }
