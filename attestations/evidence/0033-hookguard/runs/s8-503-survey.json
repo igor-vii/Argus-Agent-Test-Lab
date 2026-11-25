@@ -1,0 +1,13 @@
+{
+  "utc_ts": "2026-11-25T05:07:23Z",
+  "session": 8,
+  "role": "live (passive)",
+  "calls_total": 32,
+  "mcp_status_histogram": {
+    "200": 32
+  },
+  "count_503": 0,
+  "files_with_503": [],
+  "expected": "not observed (vendor-issued expectation, comment 7144596133)",
+  "note": "sessions 1-6 only: session 7 fires no gate_check by design; every check of the run is counted exactly once (no retries by construction)"
+}

@@ -1,0 +1,11 @@
+{
+  "run": "0033",
+  "note": "fresh synthetic payees generated at freeze build; owned by nobody; no funds ever move to or from them; the 0031 payees are NOT reused (no longer new-payee-window candidates for agent 45978)",
+  "generated_at": "2026-11-25T04:27:07Z",
+  "P1": "0x20b512e451144428a5fc59fc91d25a600b97aa5e",
+  "P2": "0x528180b2725ec54ef3b146392ccc8e28eee2585e",
+  "P3": "0x7abdef38231036940907e7f9b5395fa83b577d1e",
+  "P4": "0x9a67cf9a3030b758bfdc8fc52a41792dc5fbffc2",
+  "P5": "0x02e0aae0699f7e2a7563314836124962e9c829a7",
+  "P6": "0x6d9c1eec4cce2e5b08f582e775c8474e35f441d0"
+}

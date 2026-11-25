@@ -1,0 +1,21 @@
+{
+  "utc_ts": "2026-11-25T05:06:43Z",
+  "role": "evidence-only L1",
+  "snapshots": [
+    {
+      "url": "https://agenticfinancegraph.com/openapi.json",
+      "http_status": 200,
+      "sha256_response": "7d22ce2c57b2706cb34e98665c4b7a1fc0f011cb19d23c959d1eed5e070be71b",
+      "saved": "openapi-runstart.json",
+      "parsed_meta": "0.22.8"
+    },
+    {
+      "url": "https://agenticfinancegraph.com/.well-known/afg-pass-keys.json",
+      "http_status": 200,
+      "sha256_response": "1af0922227af492418707344e737701dd9b5d6d1d4d4553486293b30a9861bd9",
+      "saved": "afg-pass-keys.json",
+      "parsed_meta": null
+    }
+  ],
+  "note": "one-time snapshot fingerprints, not a reproducibility claim; if the openapi version moved above 0.22.7 mid-queue it is recorded and does not affect the verdict (receipts remain v2 per the vendor: v2 since 2026-11-24T10:10:11Z)"
+}

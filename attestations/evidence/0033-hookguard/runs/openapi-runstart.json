@@ -1,0 +1,3766 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Agentic Finance Graph — public state API",
+    "version": "0.22.8",
+    "description": "The machine-readable tape of the AI-agent economy. Free, unauthenticated, CC BY 4.0 with attribution to https://agenticfinancegraph.com. Live values are read from public APIs and on-chain eth_call; cited values are imported research and are labeled kind=cited. Registration counts are never a live-agent count. Paid evidence packs (/check/{kind}) are sold per call over x402 v2 on Base in USDC: a bare GET answers 402 with the requirements; retry with a signed PAYMENT-SIGNATURE header. Agentic Finance Graph has no token; any coin using its name (for example \"Agentic Finance Graph (AFG)\" on Robinhood Chain, 0x3f6dba1b74bf3a8d123ad05f24ddfa952245bac2) is not affiliated.",
+    "license": {
+      "name": "CC BY 4.0",
+      "url": "https://creativecommons.org/licenses/by/4.0/"
+    },
+    "contact": {
+      "email": "agenticfinancegraph@proton.me",
+      "url": "https://agenticfinancegraph.com"
+    },
+    "x-guidance": "Free routes (/api/*) need no key and no payment; read /api/state first for every current figure with its definition id and as_of. Paid evidence packs: GET /check/{kind}?id=<ERC-8004 token id on Base> answers 402 with x402 v2 requirements (USDC on Base, exact scheme, amount in atomic units, payTo); sign the payment and retry with the PAYMENT-SIGNATURE header; the 200 body is the pack with its receipt. Kinds and prices in USDC: liveness 0.01, paygraph 0.05, drain 0.02, incidents 0.01, peer 0.01, bundle 0.10, reval 0.25; the 402 states the exact amount before anything is charged. MCP clients can read the same free data at https://agenticfinancegraph.com/mcp. Every figure is a measurement with a time, never an estimate; quote the counted total only beside the top-wallet share and the median."
+  },
+  "x-agentcash-guidance": {
+    "llmsTxtUrl": "https://agenticfinancegraph.com/llms.txt"
+  },
+  "servers": [
+    {
+      "url": "https://agenticfinancegraph.com"
+    }
+  ],
+  "paths": {
+    "/api/state": {
+      "get": {
+        "operationId": "getState",
+        "summary": "Current machine-money tape: live and cited metrics with provenance",
+        "description": "Returns stablecoin float, USDC circulating and share, native USDC on Base (eth_call totalSupply), agent vault cash (ERC-4626 totalAssets), DeFi TVL, plus cited ERC-8004 liveness and x402 payment statistics. Cached 5 minutes at the edge.",
+        "responses": {
+          "200": {
+            "description": "The tape",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "as_of": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "live": {
+                      "type": "object",
+                      "description": "First-party or directly-read values",
+                      "properties": {
+                        "stablecoin_float_usd": {
+                          "$ref": "#/components/schemas/Metric"
+                        },
+                        "usdc_circulating_usd": {
+                          "$ref": "#/components/schemas/Metric"
+                        },
+                        "usdt_circulating_usd": {
+                          "$ref": "#/components/schemas/Metric"
+                        },
+                        "usdc_share_of_float": {
+                          "$ref": "#/components/schemas/Metric"
+                        },
+                        "native_usdc_on_base_usd": {
+                          "$ref": "#/components/schemas/Metric"
+                        },
+                        "total_agent_vault_cash_usdc": {
+                          "$ref": "#/components/schemas/Metric"
+                        },
+                        "defi_tvl_total_usd": {
+                          "$ref": "#/components/schemas/Metric"
+                        },
+                        "defi_tvl_base_usd": {
+                          "$ref": "#/components/schemas/Metric"
+                        }
+                      },
+                      "additionalProperties": {
+                        "$ref": "#/components/schemas/Metric"
+                      }
+                    },
+                    "cited": {
+                      "type": "object",
+                      "description": "Imported research, labeled with its producer and window",
+                      "properties": {
+                        "erc8004_registrations_total": {
+                          "$ref": "#/components/schemas/Metric"
+                        },
+                        "erc8004_working_service_rate": {
+                          "$ref": "#/components/schemas/Metric"
+                        },
+                        "base_strict_liveness_rate": {
+                          "$ref": "#/components/schemas/Metric"
+                        },
+                        "agent_payments_settled_usd": {
+                          "$ref": "#/components/schemas/Metric"
+                        },
+                        "agent_payment_avg_ticket_usd": {
+                          "$ref": "#/components/schemas/Metric"
+                        },
+                        "usdc_settlement_share_agent_rails": {
+                          "$ref": "#/components/schemas/Metric"
+                        },
+                        "agentfi_tvl_labeled_usd": {
+                          "$ref": "#/components/schemas/Metric"
+                        }
+                      },
+                      "additionalProperties": {
+                        "$ref": "#/components/schemas/Metric"
+                      }
+                    },
+                    "measured": {
+                      "type": "object",
+                      "description": "Our own sweeps, census and payment scans",
+                      "additionalProperties": {
+                        "$ref": "#/components/schemas/Metric"
+                      }
+                    },
+                    "context": {
+                      "type": "object",
+                      "description": "Market scale (prices, float); never agent activity",
+                      "additionalProperties": {
+                        "$ref": "#/components/schemas/Metric"
+                      }
+                    },
+                    "degraded": {
+                      "type": "boolean"
+                    },
+                    "health": {
+                      "type": "object",
+                      "description": "Collector health: sources answering, metrics fresh and stale over the served set, definition coverage"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "240 requests a minute per address for the full state; the body states the limit; Retry-After is set"
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/series": {
+      "get": {
+        "operationId": "getSeries",
+        "summary": "Historical archive of the tape at two resolutions",
+        "description": "Two-resolution history. daily[] keeps one point per UTC day for two years and is never evicted by live traffic; recent[] keeps 5-minute points for 48 hours. The response stitches them for the requested window. Points marked source=defillama-historical are daily backfill, source=live are our own snapshots, source=live-close is the last snapshot of a completed day. A gap means nobody visited during that bucket — gaps are visible in coverage rather than interpolated away.",
+        "parameters": [
+          {
+            "name": "range",
+            "in": "query",
+            "required": false,
+            "description": "Window to return. Defaults to 90d. An unrecognised value falls back to 90d rather than returning everything.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "24h",
+                "7d",
+                "30d",
+                "90d",
+                "1y",
+                "all"
+              ],
+              "default": "90d"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The archive for the requested window",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "range": {
+                      "type": "string"
+                    },
+                    "resolution": {
+                      "type": "string",
+                      "examples": [
+                        "5min",
+                        "daily + 5min tail"
+                      ]
+                    },
+                    "as_of": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "bucket_minutes": {
+                      "type": "number"
+                    },
+                    "coverage": {
+                      "type": "object",
+                      "description": "What the archive actually holds, so a consumer can tell a gap from a zero",
+                      "properties": {
+                        "daily_points": {
+                          "type": "integer"
+                        },
+                        "recent_points": {
+                          "type": "integer"
+                        },
+                        "oldest": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "newest": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "retention": {
+                          "type": "object"
+                        }
+                      }
+                    },
+                    "keys": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "count": {
+                      "type": "integer"
+                    },
+                    "points": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "t": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "source": {
+                            "type": "string",
+                            "enum": [
+                              "defillama-historical",
+                              "live",
+                              "live-close"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "120 requests a minute per address; the body states the limit; Retry-After is set"
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/flags": {
+      "get": {
+        "operationId": "getFlags",
+        "summary": "Sourced event markers drawn over the series",
+        "description": "Timestamped markers answering 'what happened here' on the chart. Every flag carries an https source; a flag without one cannot be stored. Authoring is key-gated and not public. kind is one of launch|incident|regulation|rail|vault|market; severity is one of info|notable|major.",
+        "responses": {
+          "200": {
+            "description": "All stored flags, oldest first",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "as_of": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "kinds": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "severities": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "count": {
+                      "type": "integer"
+                    },
+                    "flags": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Flag"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/partners": {
+      "get": {
+        "operationId": "getPartnerGravity",
+        "summary": "Third-party agent catalogs joined to our own qualifier",
+        "description": "Marketplaces and registries each publish a census of themselves; none of those counts answer whether the listed names are economic actors. This endpoint runs our qualifier over their catalogs and reports the result against OUR denominator.\n\nRead three things before quoting any figure here.\n\n1. `attempted` is the identities WE ingested and checked — never the partner's own published census. A rate over somebody else's marketing total cannot be reproduced.\n2. `moved_usdc` is NOT L7. It means the declared wallet sent USDC to a different address after the identity existed. From a raw wallet read a token launch, a bonding-curve buy and a DEX swap are indistinguishable from a payment for work, so L7 is withheld on catalogs where we cannot yet see job state, and the blocker is named in the response.\n3. Each partner block carries a `caveats` array. The caveats are part of the number.\n\nA measured zero and a withheld value are different things and are represented differently: 0 is a finding, `null` means we have not earned the figure yet. Worked examples are desk-only and are stripped from anonymous responses, with the count of what was withheld reported rather than silently omitted. Cached 5 minutes at the edge.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Partner gravity report",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "as_of": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "tier": {
+                      "type": "string",
+                      "enum": [
+                        "public",
+                        "desk"
+                      ]
+                    },
+                    "evidence_withheld": {
+                      "type": "integer",
+                      "description": "Worked examples removed from this response."
+                    },
+                    "denominator_rule": {
+                      "type": "string"
+                    },
+                    "partners": {
+                      "type": "object",
+                      "description": "One block per partner: fetch, virtuals, olas, x402, wallets_7702, circle, bankr.",
+                      "additionalProperties": {
+                        "type": "object",
+                        "properties": {
+                          "attempted": {
+                            "type": "integer",
+                            "description": "Identities we ingested and ran the qualifier on. The denominator for every rate in this block."
+                          },
+                          "declared_a_wallet": {
+                            "type": "integer"
+                          },
+                          "distinct_wallets": {
+                            "type": "integer",
+                            "description": "Distinct addresses behind those declarations. Lower than declared_a_wallet wherever operators reuse one wallet across many identities."
+                          },
+                          "on_shared_wallet": {
+                            "type": "integer",
+                            "description": "Identities declaring a wallet another identity in the same catalog also declares. Excluded from `bound`."
+                          },
+                          "bound": {
+                            "type": "integer",
+                            "description": "Identities bound to a sole-declarant wallet."
+                          },
+                          "bind_rate": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "qualified": {
+                            "type": "integer",
+                            "description": "Bound wallets we have actually read on-chain."
+                          },
+                          "moved_usdc": {
+                            "type": "integer",
+                            "description": "Qualified wallets that sent USDC to a different address after the identity existed. NOT L7."
+                          },
+                          "had_history_before_launch": {
+                            "type": "integer",
+                            "description": "Wallets whose USDC history predates their identity. That history is excluded from every figure here."
+                          },
+                          "l7": {
+                            "type": [
+                              "integer",
+                              "null"
+                            ],
+                            "description": "Null where withheld; see l7_blocker."
+                          },
+                          "l7_blocker": {
+                            "type": "string"
+                          },
+                          "blocker": {
+                            "type": "string",
+                            "description": "Present when a whole partner block is empty because we have measured nothing."
+                          },
+                          "caveats": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The collector's partner document could not be read or did not verify. No substitute value is served."
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/x402flow": {
+      "get": {
+        "operationId": "getX402Flow",
+        "summary": "What x402 Bazaar sellers receive, read from the chains",
+        "description": "Every stablecoin transfer INTO the payTo addresses sellers declare in the Coinbase x402 Bazaar: Base, Polygon, Arbitrum, OP Mainnet, Ethereum (eth_getLogs, every three hours) and Solana (token-account signatures). Upper bound on settlement for listed sellers, floor for x402 overall. agent_* fields: the payer wallet is bound to an ERC-8004 registration.",
+        "responses": {
+          "200": {
+            "description": "A signed JSON document (CC BY 4.0)."
+          },
+          "503": {
+            "description": "The document is not available yet; nothing is invented in its place."
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/xchain": {
+      "get": {
+        "operationId": "getXchain",
+        "summary": "ERC-8004 beyond Base",
+        "description": "Registrations, owner wallets and stablecoins sent by owners on Ethereum, Arbitrum One, OP Mainnet and Polygon PoS, after each owner's first registration. Transfers, not agent spending: the routing-hop receipt check has not run on them. Never added to Base figures.",
+        "responses": {
+          "200": {
+            "description": "A signed JSON document (CC BY 4.0)."
+          },
+          "503": {
+            "description": "The document is not available yet; nothing is invented in its place."
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/treasury": {
+      "get": {
+        "operationId": "getTreasury",
+        "summary": "What ranked agents hold",
+        "description": "Priced holdings of wallets bound to L7+ agents on Base, split into cash (stablecoins), ETH, DeFi positions net of debt, and other tokens. Unpriced tokens are counted, never valued.",
+        "responses": {
+          "200": {
+            "description": "A signed JSON document (CC BY 4.0)."
+          },
+          "503": {
+            "description": "The document is not available yet; nothing is invented in its place."
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/bazaar": {
+      "get": {
+        "operationId": "getBazaar",
+        "summary": "The x402 Bazaar as a census",
+        "description": "Resources and distinct seller addresses per network in the Coinbase x402 Bazaar. An offer to sell is not a payment.",
+        "responses": {
+          "200": {
+            "description": "A signed JSON document (CC BY 4.0)."
+          },
+          "503": {
+            "description": "The document is not available yet; nothing is invented in its place."
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/chains": {
+      "get": {
+        "operationId": "getChains",
+        "summary": "ERC-8004 issuance on other chains",
+        "description": "Registry mints watched live on Ethereum, Arbitrum, OP Mainnet and Polygon. Issuance, never agents.",
+        "responses": {
+          "200": {
+            "description": "A signed JSON document (CC BY 4.0)."
+          },
+          "503": {
+            "description": "The document is not available yet; nothing is invented in its place."
+          }
+        },
+        "security": []
+      }
+    },
+    "/check/liveness": {
+      "get": {
+        "operationId": "check_liveness",
+        "summary": "AI agent liveness check: is this ERC-8004 agent on Base alive and paying? L0–L9 rank with evidence",
+        "description": "L0–L9 rank with the evidence behind it: bindings (method, confidence, validity), first and last observed payment, stablecoin float, delegation. Dated, with a receipt. The pack is built before the payment settles; a failure on our side costs nothing. Bought from a signed-in wallet it is also listed under Your purchases on the Desk.",
+        "tags": [
+          "Evidence packs (paid, x402)"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": true,
+            "description": "The registration: an ERC-8004 token id on Base (e.g. 53008), the agent slug (8004-base-53008) or a bound wallet address.",
+            "schema": {
+              "type": "string"
+            },
+            "example": "53008"
+          }
+        ],
+        "security": [],
+        "x-payment-info": {
+          "price": {
+            "mode": "fixed",
+            "currency": "USD",
+            "amount": "0.01"
+          },
+          "protocols": [
+            {
+              "x402": {
+                "network": "eip155:8453",
+                "asset": "USDC",
+                "payTo": "0xb25c17e26054bf34e507185dd8981888c9e044fd"
+              }
+            }
+          ]
+        },
+        "responses": {
+          "200": {
+            "description": "The pack, with x402.receipt (transaction, network, payer), as_of, definition_ids, license (CC BY 4.0) and what it does not assert.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unknown kind or an id that names no registration we have a record for."
+          },
+          "402": {
+            "description": "Payment required. x402 v2 requirements in the PAYMENT-REQUIRED header and the JSON body: accepts[] (scheme exact, network eip155:8453, USDC, amount in atomic units, payTo, maxTimeoutSeconds) and extensions.bazaar (input schema).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/check/paygraph": {
+      "get": {
+        "operationId": "check_paygraph",
+        "summary": "Where an AI agent pays: every counterparty, 30-day USD and rail split for one ERC-8004 agent on Base",
+        "description": "Every counterparty in the record, 30-day USD, rail split, top-counterparty share and the idle flag. The pack is built before the payment settles; a failure on our side costs nothing. Bought from a signed-in wallet it is also listed under Your purchases on the Desk.",
+        "tags": [
+          "Evidence packs (paid, x402)"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": true,
+            "description": "The registration: an ERC-8004 token id on Base (e.g. 53008), the agent slug (8004-base-53008) or a bound wallet address.",
+            "schema": {
+              "type": "string"
+            },
+            "example": "53008"
+          }
+        ],
+        "security": [],
+        "x-payment-info": {
+          "price": {
+            "mode": "fixed",
+            "currency": "USD",
+            "amount": "0.05"
+          },
+          "protocols": [
+            {
+              "x402": {
+                "network": "eip155:8453",
+                "asset": "USDC",
+                "payTo": "0xb25c17e26054bf34e507185dd8981888c9e044fd"
+              }
+            }
+          ]
+        },
+        "responses": {
+          "200": {
+            "description": "The pack, with x402.receipt (transaction, network, payer), as_of, definition_ids, license (CC BY 4.0) and what it does not assert.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unknown kind or an id that names no registration we have a record for."
+          },
+          "402": {
+            "description": "Payment required. x402 v2 requirements in the PAYMENT-REQUIRED header and the JSON body: accepts[] (scheme exact, network eip155:8453, USDC, amount in atomic units, payTo, maxTimeoutSeconds) and extensions.bazaar (input schema).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/check/drain": {
+      "get": {
+        "operationId": "check_drain",
+        "summary": "AI agent wallet drain check: the public drain rule applied to one agent's payments, and whether it tripped",
+        "description": "The public drain rule (a counted payment at least 5× the wallet's previous largest, at least $250, to an address it had never paid, after at least 3 earlier payments) applied to this wallet's payments, and whether it tripped. The pack is built before the payment settles; a failure on our side costs nothing. Bought from a signed-in wallet it is also listed under Your purchases on the Desk.",
+        "tags": [
+          "Evidence packs (paid, x402)"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": true,
+            "description": "The registration: an ERC-8004 token id on Base (e.g. 53008), the agent slug (8004-base-53008) or a bound wallet address.",
+            "schema": {
+              "type": "string"
+            },
+            "example": "53008"
+          }
+        ],
+        "security": [],
+        "x-payment-info": {
+          "price": {
+            "mode": "fixed",
+            "currency": "USD",
+            "amount": "0.02"
+          },
+          "protocols": [
+            {
+              "x402": {
+                "network": "eip155:8453",
+                "asset": "USDC",
+                "payTo": "0xb25c17e26054bf34e507185dd8981888c9e044fd"
+              }
+            }
+          ]
+        },
+        "responses": {
+          "200": {
+            "description": "The pack, with x402.receipt (transaction, network, payer), as_of, definition_ids, license (CC BY 4.0) and what it does not assert.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unknown kind or an id that names no registration we have a record for."
+          },
+          "402": {
+            "description": "Payment required. x402 v2 requirements in the PAYMENT-REQUIRED header and the JSON body: accepts[] (scheme exact, network eip155:8453, USDC, amount in atomic units, payTo, maxTimeoutSeconds) and extensions.bazaar (input schema).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/check/incidents": {
+      "get": {
+        "operationId": "check_incidents",
+        "summary": "AI agent incident history: every detection logged on one ERC-8004 registration, with verification status",
+        "description": "Every detection logged on this registration, newest first, with the kind explained and its verification status. The pack is built before the payment settles; a failure on our side costs nothing. Bought from a signed-in wallet it is also listed under Your purchases on the Desk.",
+        "tags": [
+          "Evidence packs (paid, x402)"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": true,
+            "description": "The registration: an ERC-8004 token id on Base (e.g. 53008), the agent slug (8004-base-53008) or a bound wallet address.",
+            "schema": {
+              "type": "string"
+            },
+            "example": "53008"
+          }
+        ],
+        "security": [],
+        "x-payment-info": {
+          "price": {
+            "mode": "fixed",
+            "currency": "USD",
+            "amount": "0.01"
+          },
+          "protocols": [
+            {
+              "x402": {
+                "network": "eip155:8453",
+                "asset": "USDC",
+                "payTo": "0xb25c17e26054bf34e507185dd8981888c9e044fd"
+              }
+            }
+          ]
+        },
+        "responses": {
+          "200": {
+            "description": "The pack, with x402.receipt (transaction, network, payer), as_of, definition_ids, license (CC BY 4.0) and what it does not assert.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unknown kind or an id that names no registration we have a record for."
+          },
+          "402": {
+            "description": "Payment required. x402 v2 requirements in the PAYMENT-REQUIRED header and the JSON body: accepts[] (scheme exact, network eip155:8453, USDC, amount in atomic units, payTo, maxTimeoutSeconds) and extensions.bazaar (input schema).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/check/peer": {
+      "get": {
+        "operationId": "check_peer",
+        "summary": "Peer agents: up to 10 ranked AI agents that pay the same top counterparty as this one",
+        "description": "Up to 10 ranked agents that pay the same top counterparty as this one. The pack is built before the payment settles; a failure on our side costs nothing. Bought from a signed-in wallet it is also listed under Your purchases on the Desk.",
+        "tags": [
+          "Evidence packs (paid, x402)"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": true,
+            "description": "The registration: an ERC-8004 token id on Base (e.g. 53008), the agent slug (8004-base-53008) or a bound wallet address.",
+            "schema": {
+              "type": "string"
+            },
+            "example": "53008"
+          }
+        ],
+        "security": [],
+        "x-payment-info": {
+          "price": {
+            "mode": "fixed",
+            "currency": "USD",
+            "amount": "0.01"
+          },
+          "protocols": [
+            {
+              "x402": {
+                "network": "eip155:8453",
+                "asset": "USDC",
+                "payTo": "0xb25c17e26054bf34e507185dd8981888c9e044fd"
+              }
+            }
+          ]
+        },
+        "responses": {
+          "200": {
+            "description": "The pack, with x402.receipt (transaction, network, payer), as_of, definition_ids, license (CC BY 4.0) and what it does not assert.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unknown kind or an id that names no registration we have a record for."
+          },
+          "402": {
+            "description": "Payment required. x402 v2 requirements in the PAYMENT-REQUIRED header and the JSON body: accepts[] (scheme exact, network eip155:8453, USDC, amount in atomic units, payTo, maxTimeoutSeconds) and extensions.bazaar (input schema).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/check/reval": {
+      "get": {
+        "operationId": "check_reval",
+        "summary": "Fresh re-probe of an ERC-8004 agent registration: tokenURI, registration file and endpoints vs our last read",
+        "description": "A fresh probe of the registration from our sandbox (tokenURI, registration file, declared endpoints), compared with our last read. The pack is built before the payment settles; a failure on our side costs nothing. Bought from a signed-in wallet it is also listed under Your purchases on the Desk.",
+        "tags": [
+          "Evidence packs (paid, x402)"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": true,
+            "description": "The registration: an ERC-8004 token id on Base (e.g. 53008), the agent slug (8004-base-53008) or a bound wallet address.",
+            "schema": {
+              "type": "string"
+            },
+            "example": "53008"
+          }
+        ],
+        "security": [],
+        "x-payment-info": {
+          "price": {
+            "mode": "fixed",
+            "currency": "USD",
+            "amount": "0.25"
+          },
+          "protocols": [
+            {
+              "x402": {
+                "network": "eip155:8453",
+                "asset": "USDC",
+                "payTo": "0xb25c17e26054bf34e507185dd8981888c9e044fd"
+              }
+            }
+          ]
+        },
+        "responses": {
+          "200": {
+            "description": "The pack, with x402.receipt (transaction, network, payer), as_of, definition_ids, license (CC BY 4.0) and what it does not assert.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unknown kind or an id that names no registration we have a record for."
+          },
+          "402": {
+            "description": "Payment required. x402 v2 requirements in the PAYMENT-REQUIRED header and the JSON body: accepts[] (scheme exact, network eip155:8453, USDC, amount in atomic units, payTo, maxTimeoutSeconds) and extensions.bazaar (input schema).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/check/bundle": {
+      "get": {
+        "operationId": "check_bundle",
+        "summary": "AI agent due-diligence pack: liveness, counterparties, drain shape and incidents in one file",
+        "description": "Liveness, where it pays, drain shape and incidents in one file. The pack is built before the payment settles; a failure on our side costs nothing. Bought from a signed-in wallet it is also listed under Your purchases on the Desk.",
+        "tags": [
+          "Evidence packs (paid, x402)"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": true,
+            "description": "The registration: an ERC-8004 token id on Base (e.g. 53008), the agent slug (8004-base-53008) or a bound wallet address.",
+            "schema": {
+              "type": "string"
+            },
+            "example": "53008"
+          }
+        ],
+        "security": [],
+        "x-payment-info": {
+          "price": {
+            "mode": "fixed",
+            "currency": "USD",
+            "amount": "0.10"
+          },
+          "protocols": [
+            {
+              "x402": {
+                "network": "eip155:8453",
+                "asset": "USDC",
+                "payTo": "0xb25c17e26054bf34e507185dd8981888c9e044fd"
+              }
+            }
+          ]
+        },
+        "responses": {
+          "200": {
+            "description": "The pack, with x402.receipt (transaction, network, payer), as_of, definition_ids, license (CC BY 4.0) and what it does not assert.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unknown kind or an id that names no registration we have a record for."
+          },
+          "402": {
+            "description": "Payment required. x402 v2 requirements in the PAYMENT-REQUIRED header and the JSON body: accepts[] (scheme exact, network eip155:8453, USDC, amount in atomic units, payTo, maxTimeoutSeconds) and extensions.bazaar (input schema).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/agents": {
+      "get": {
+        "operationId": "listRankedAgents",
+        "summary": "Ranked agents (L7+)",
+        "description": "Agents whose bound wallet was observed paying a different address after registration, with payments, counterparties, float and incidents. Free tier: the top 25; a paid Desk session unlocks the full list. With q, looks up one id and answers ranked:false for a registration never seen paying.",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "description": "Token id, slug or wallet address: look up one agent",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "How many to return (free: at most 25)",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "min_level",
+            "in": "query",
+            "required": false,
+            "description": "Only agents at or above this liveness level",
+            "schema": {
+              "type": "integer",
+              "minimum": 7,
+              "maximum": 9
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "description": "Sort key",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "delegated",
+            "in": "query",
+            "required": false,
+            "description": "Only wallets with (true) or without (false) an EIP-7702 delegation",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "has_incidents",
+            "in": "query",
+            "required": false,
+            "description": "Only agents with logged detections",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON (CC BY 4.0). Free tier: the top 25; the full list with a Desk plan.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentList"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "60 lookups (?q=) a minute per address; the body states the limit; Retry-After is set"
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/agent": {
+      "get": {
+        "operationId": "getAgentRecord",
+        "summary": "One ranked agent's record",
+        "description": "Rank with evidence, bindings, and the 25 newest observed payments with counterparties. 404 for a registration never seen paying.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": true,
+            "description": "Token id, slug or wallet address",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "format",
+            "in": "query",
+            "required": false,
+            "description": "json for the machine record",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "json"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON (CC BY 4.0)."
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/detections": {
+      "get": {
+        "operationId": "listDetections",
+        "summary": "Detections",
+        "description": "Anomalies our detectors logged, newest first: drain shapes, retry storms, mint bursts, owner changes under a binding, delegation to unknown code. A detection is a shape with evidence, never a verdict.",
+        "parameters": [
+          {
+            "name": "actor",
+            "in": "query",
+            "required": false,
+            "description": "One agent: act_8453_N or token id",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "kind",
+            "in": "query",
+            "required": false,
+            "description": "Detection kind",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "severity",
+            "in": "query",
+            "required": false,
+            "description": "info, notable or major",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "How many to return",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON (CC BY 4.0)."
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/incidents": {
+      "get": {
+        "operationId": "listIncidents",
+        "summary": "Live incidents",
+        "description": "The detections still live, grouped by registration.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "JSON (CC BY 4.0)."
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/findings": {
+      "get": {
+        "operationId": "listFindings",
+        "summary": "Findings",
+        "description": "The newest public slice of detections, with sources.",
+        "parameters": [
+          {
+            "name": "kind",
+            "in": "query",
+            "required": false,
+            "description": "Finding kind",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "severity",
+            "in": "query",
+            "required": false,
+            "description": "notable or major",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "on_chart",
+            "in": "query",
+            "required": false,
+            "description": "Only findings drawn as chart markers",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "How many to return",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON (CC BY 4.0)."
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/def": {
+      "get": {
+        "operationId": "getDefinition",
+        "summary": "Metric definitions",
+        "description": "Without id: the index of every frozen definition. With id: what one metric counts, the method, what it excludes and what it does not claim. Every figure in /api/state carries its definition_id.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": false,
+            "description": "Definition id, e.g. pay.usd.total.v1",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON (CC BY 4.0)."
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/payday": {
+      "get": {
+        "operationId": "getPayday",
+        "summary": "Agent spending by day",
+        "description": "Counted agent spending on Base grouped by the UTC day it was paid, with the last full day and 7-day and 30-day averages: the hub of the Engine wheel at /engine.",
+        "responses": {
+          "200": {
+            "description": "A signed JSON document (CC BY 4.0)."
+          },
+          "503": {
+            "description": "The document is not available yet; nothing is invented in its place."
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/bnbpay": {
+      "get": {
+        "operationId": "getBnbPay",
+        "summary": "Every BNB registration owner, receipt-checked",
+        "description": "Every BNB Smart Chain wallet that minted an ERC-8004 registration itself: stablecoins sent after its first mint, each receipt read and classed as pass-through, swap, contract call or payment to a plain wallet. Class shares publish once at least 98% of receipts are read. Never added to Base figures.",
+        "responses": {
+          "200": {
+            "description": "A signed JSON document (CC BY 4.0)."
+          },
+          "503": {
+            "description": "The document is not available yet; nothing is invented in its place."
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/bridges": {
+      "get": {
+        "operationId": "getBridges",
+        "summary": "Where bridged agent money arrived",
+        "description": "Counted payments into bridges, followed to the chain where each arrived: same address, back to the payer, positions at the destination, refunds.",
+        "responses": {
+          "200": {
+            "description": "A signed JSON document (CC BY 4.0)."
+          },
+          "503": {
+            "description": "The document is not available yet; nothing is invented in its place."
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/builders": {
+      "get": {
+        "operationId": "getBuilders",
+        "summary": "Which apps agent money moves through (ERC-8021 Builder Codes)",
+        "description": "Counted agent payments grouped by the ERC-8021 Builder Code in their transaction calldata: USD, payments, agents and payees per code, the registered-code rollup, daily coverage, and how much of counted value has been read (definition pay.builder.attribution.v1). Value is summed per row and, as a check, per transaction; consistent says whether the two agree within 0.5%. Per agent, the codes are the 1-cent pack /check/builders.",
+        "responses": {
+          "200": {
+            "description": "A signed JSON document (CC BY 4.0)."
+          },
+          "503": {
+            "description": "The document is not available yet; nothing is invented in its place."
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/bnb": {
+      "get": {
+        "operationId": "getBnb",
+        "summary": "BNB Smart Chain watch",
+        "description": "IXS agent vaults and ERC-8004 issuance on BNB Smart Chain (eip155:56). Issuance, never agents.",
+        "responses": {
+          "200": {
+            "description": "A signed JSON document (CC BY 4.0)."
+          },
+          "503": {
+            "description": "The document is not available yet; nothing is invented in its place."
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/dq": {
+      "get": {
+        "operationId": "getDataQuality",
+        "summary": "Data health",
+        "description": "Assertion checks over our own tables, every three hours; zero failing rows is a pass.",
+        "responses": {
+          "200": {
+            "description": "A signed JSON document (CC BY 4.0)."
+          },
+          "503": {
+            "description": "The document is not available yet; nothing is invented in its place."
+          }
+        },
+        "security": []
+      }
+    },
+    "/mcp": {
+      "post": {
+        "operationId": "mcp",
+        "summary": "MCP server (Streamable HTTP, stateless)",
+        "description": "JSON-RPC 2.0 over HTTP POST: initialize, tools/list, tools/call, prompts/list, prompts/get, resources/list, resources/read. Twenty-six read-only tools: market_state, find_agent, agent_record, ranked_agents, detections, definition, metric_history, list_metrics, since_last, counterparty_preview, agent_statement, pay_check, payer_set, agent_stability, agent_independence, ladder_dynamics, verify_sum_log, self_check, agent_pattern, payee_facts, gate_check, agent_pass, blast_radius, canary_register, canary_status, evidence_pack_quote; five prompts (start_here, daily_brief, check_before_paying, explain_agent, where_agents_pay). Free; no session and no key. Server version 1.9.1 (7 Nov 2026). Tool calls count against the same per-address limits as the plain routes, and against 120 tool calls a minute in all; over a limit the answer is an error that names the limit, and nothing is run.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "jsonrpc",
+                  "method"
+                ],
+                "properties": {
+                  "jsonrpc": {
+                    "const": "2.0"
+                  },
+                  "id": {},
+                  "method": {
+                    "type": "string"
+                  },
+                  "params": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "A JSON-RPC response."
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/contact": {
+      "get": {
+        "operationId": "describeContact",
+        "summary": "How to contact us",
+        "description": "Describes the fields; companies and agents can POST a message (licensing, data partnerships, research).",
+        "responses": {
+          "200": {
+            "description": "The field list."
+          }
+        },
+        "security": []
+      },
+      "post": {
+        "operationId": "contact",
+        "summary": "Send a message",
+        "description": "POST JSON {kind, message, email or reply_to}.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "message"
+                ],
+                "properties": {
+                  "kind": {
+                    "type": "string"
+                  },
+                  "message": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  },
+                  "reply_to": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Received."
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/since": {
+      "get": {
+        "operationId": "getSince",
+        "summary": "A figure beside its previous stored sample",
+        "description": "since_last: current, prior, delta, delta_ratio, current_as_of, prior_as_of, definition_id, unit, and material (under the published thresholds, for the headline set). window=sweep is the previous stored sample of the metric; 24h, 7d and 30d take the newest stored sample at least that old, inside a stated tolerance. No prior sample means gap: true and no delta; nothing is interpolated. id accepts a metric key or a definition id (409 when a definition covers several metrics).",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": true,
+            "description": "Metric key (actors_l7_plus) or definition id (rank.l7plus.v2)",
+            "schema": {
+              "type": "string"
+            },
+            "example": "actors_l7_plus"
+          },
+          {
+            "name": "window",
+            "in": "query",
+            "required": false,
+            "description": "sweep (default), 24h, 7d or 30d",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "sweep",
+                "24h",
+                "7d",
+                "30d"
+              ]
+            },
+            "example": "24h"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON (CC BY 4.0)."
+          },
+          "404": {
+            "description": "Nothing stored for this input; nothing is estimated in its place."
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/detectors": {
+      "get": {
+        "operationId": "getDetectorScores",
+        "summary": "Each detector's record",
+        "description": "Per rule: fired, open, checked (later re-derived), confirmed, reversed (withdrawn, with the reason stored), poisoning_adjacent, the latest fire, and known cases replayed in research notes. A null cell means no stored record could fill it; it is never estimated. Definition detector.score.v1.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "JSON (CC BY 4.0)."
+          },
+          "404": {
+            "description": "Nothing stored for this input; nothing is estimated in its place."
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/counterparty": {
+      "get": {
+        "operationId": "getCounterpartyPreview",
+        "summary": "Who paid this address (free preview, counts only)",
+        "description": "For one receiving address on Base, or an x402 resource URL listed in the Bazaar: counted payments from registered agents (after registration, receipt read, never a routing hop), distinct payers, distinct L7+ payers, first and last seen, and what was excluded. An address that only received routing hops is not a payee (404). Without an address: the endpoints the most ranked agents pay. Definition cp.payers.l7.v1.",
+        "parameters": [
+          {
+            "name": "address",
+            "in": "query",
+            "required": false,
+            "description": "0x receiving address on Base",
+            "schema": {
+              "type": "string"
+            },
+            "example": "0x4cd00e387622c35bddb9b4c962c136462338bc31"
+          },
+          {
+            "name": "endpoint",
+            "in": "query",
+            "required": false,
+            "description": "An x402 resource URL listed in the Bazaar (resolved to its Base payTo)",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON (CC BY 4.0)."
+          },
+          "404": {
+            "description": "Nothing stored for this input; nothing is estimated in its place."
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/statement/{id}": {
+      "get": {
+        "operationId": "getAgentStatement",
+        "summary": "An agent's latest statement (free)",
+        "description": "The latest 3-hour statement for one agent at L7 or above: payments out split into spend, routing hops and payments whose receipt is not read yet (they add up to the outflow), what left its control, income, open flags, prevHash (the previous statement's hash), and a Merkle proof against the window's Ed25519-signed root. check_before_you_pay says how to use it. Definition agent.statement.v1.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Token id, slug or bound wallet",
+            "schema": {
+              "type": "string"
+            },
+            "example": "53008"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON (CC BY 4.0)."
+          },
+          "404": {
+            "description": "Below L7, or no statement written yet."
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/statements": {
+      "get": {
+        "operationId": "getStatementRoots",
+        "summary": "Statement roots and the signing key",
+        "description": "The Merkle root of every 3-hour window with its leaf count, previous root and Ed25519 signature; the public key; the hashing rules; whether roots are committed on chain (not yet: that needs a funded publisher key); and how often statements are read. Definition agent.statement.root.v1.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "JSON (CC BY 4.0)."
+          },
+          "404": {
+            "description": "Nothing stored for this input; nothing is estimated in its place."
+          }
+        },
+        "security": []
+      }
+    },
+    "/check/counterparty": {
+      "get": {
+        "operationId": "check_counterparty",
+        "summary": "Who paid this address: every registered AI agent that paid a wallet, with counted USD and top-payer share",
+        "description": "Every registered agent that paid this address in a counted payment: first and last seen, payments, counted USD, distinct L7+ payers, the top payer's share, and up to 100 payers with level, binding method and confidence, wallet set and their latest transaction hashes. Answered 404 before any payment for an address no registered agent paid, or one that only received routing hops.",
+        "tags": [
+          "Evidence packs (paid, x402)"
+        ],
+        "parameters": [
+          {
+            "name": "address",
+            "in": "query",
+            "required": true,
+            "description": "A receiving address on Base (0x…). endpoint=<x402 resource URL> also works.",
+            "schema": {
+              "type": "string"
+            },
+            "example": "0x4cd00e387622c35bddb9b4c962c136462338bc31"
+          }
+        ],
+        "security": [],
+        "x-payment-info": {
+          "price": {
+            "mode": "fixed",
+            "currency": "USD",
+            "amount": "0.02"
+          },
+          "protocols": [
+            {
+              "x402": {
+                "network": "eip155:8453",
+                "asset": "USDC",
+                "payTo": "0xb25c17e26054bf34e507185dd8981888c9e044fd"
+              }
+            }
+          ]
+        },
+        "responses": {
+          "200": {
+            "description": "The pack, with x402.receipt (transaction, network, payer), as_of, definition_ids, license (CC BY 4.0) and what it does not assert.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unknown kind or an id that names no registration we have a record for."
+          },
+          "402": {
+            "description": "Payment required. x402 v2 requirements in the PAYMENT-REQUIRED header and the JSON body: accepts[] (scheme exact, network eip155:8453, USDC, amount in atomic units, payTo, maxTimeoutSeconds) and extensions.bazaar (input schema).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/check/statement": {
+      "get": {
+        "operationId": "check_statement",
+        "summary": "AI agent statement history: 24 three-hour statements, hash-chained, with Merkle proofs against signed roots",
+        "description": "The agent's last 24 three-hour statements, each with its hash, the prevHash link that chains them, and a Merkle proof against the signed root of its window, plus chain_ok and stale.",
+        "tags": [
+          "Evidence packs (paid, x402)"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": true,
+            "description": "The registration: an ERC-8004 token id on Base (e.g. 53008), the agent slug (8004-base-53008) or a bound wallet address.",
+            "schema": {
+              "type": "string"
+            },
+            "example": "53008"
+          }
+        ],
+        "security": [],
+        "x-payment-info": {
+          "price": {
+            "mode": "fixed",
+            "currency": "USD",
+            "amount": "0.01"
+          },
+          "protocols": [
+            {
+              "x402": {
+                "network": "eip155:8453",
+                "asset": "USDC",
+                "payTo": "0xb25c17e26054bf34e507185dd8981888c9e044fd"
+              }
+            }
+          ]
+        },
+        "responses": {
+          "200": {
+            "description": "The pack, with x402.receipt (transaction, network, payer), as_of, definition_ids, license (CC BY 4.0) and what it does not assert.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unknown kind or an id that names no registration we have a record for."
+          },
+          "402": {
+            "description": "Payment required. x402 v2 requirements in the PAYMENT-REQUIRED header and the JSON body: accepts[] (scheme exact, network eip155:8453, USDC, amount in atomic units, payTo, maxTimeoutSeconds) and extensions.bazaar (input schema).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/check/precheck": {
+      "get": {
+        "operationId": "check_precheck",
+        "summary": "Check before you pay: the routine pre-payment check on one AI agent (and the address it gave you)",
+        "description": "The routine check an operator runs before an agent pays or hires another: the agent's level and last observed payment, live incidents, how old its latest three-hour statement is, whether the statement chain is intact and its flags, and, with payto, what that address is: label and basis, contract or plain key, how many registered agents paid it, whether this agent paid it before, whether it is an x402 seller, and whether our poisoning watch saw it planted as a look-alike. Facts only, never a verdict; rules_you_may_apply lists the published rules beside the facts. An agent never observed paying is a 404 before any payment.",
+        "tags": [
+          "Evidence packs (paid, x402)"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": true,
+            "description": "The registration: an ERC-8004 token id on Base (e.g. 53008), the agent slug (8004-base-53008) or a bound wallet address.",
+            "schema": {
+              "type": "string"
+            },
+            "example": "53008"
+          },
+          {
+            "name": "payto",
+            "in": "query",
+            "required": false,
+            "description": "Optional: the 0x address on Base you are about to pay. Adds what that address is.",
+            "schema": {
+              "type": "string"
+            },
+            "example": "0x0e84ddedaae6a779c462c22a59f301ec31b6b808"
+          }
+        ],
+        "security": [],
+        "x-payment-info": {
+          "price": {
+            "mode": "fixed",
+            "currency": "USD",
+            "amount": "0.05"
+          },
+          "protocols": [
+            {
+              "x402": {
+                "network": "eip155:8453",
+                "asset": "USDC",
+                "payTo": "0xb25c17e26054bf34e507185dd8981888c9e044fd"
+              }
+            }
+          ]
+        },
+        "responses": {
+          "200": {
+            "description": "The pack, with x402.receipt (transaction, network, payer), as_of, definition_ids, license (CC BY 4.0) and what it does not assert.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unknown kind or an id that names no registration we have a record for."
+          },
+          "402": {
+            "description": "Payment required. x402 v2 requirements in the PAYMENT-REQUIRED header and the JSON body: accepts[] (scheme exact, network eip155:8453, USDC, amount in atomic units, payTo, maxTimeoutSeconds) and extensions.bazaar (input schema).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/check/builders": {
+      "get": {
+        "operationId": "check_builders",
+        "summary": "Which apps move this agent's money: ERC-8021 Builder Codes on its counted payments",
+        "description": "The ERC-8021 Builder Codes found in the calldata of this agent's counted payments: payments, USD and share per code, the top payee per code, the latest transactions, and how much of its counted spending has been read so far (reads run hourly, highest value first). No counted payment is a 404 and none read yet is a 409, both before any payment. The aggregate by code is free at /api/builders.",
+        "tags": [
+          "Evidence packs (paid, x402)"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": true,
+            "description": "The registration: an ERC-8004 token id on Base (e.g. 53008), the agent slug (8004-base-53008) or a bound wallet address.",
+            "schema": {
+              "type": "string"
+            },
+            "example": "53008"
+          }
+        ],
+        "security": [],
+        "x-payment-info": {
+          "price": {
+            "mode": "fixed",
+            "currency": "USD",
+            "amount": "0.01"
+          },
+          "protocols": [
+            {
+              "x402": {
+                "network": "eip155:8453",
+                "asset": "USDC",
+                "payTo": "0xb25c17e26054bf34e507185dd8981888c9e044fd"
+              }
+            }
+          ]
+        },
+        "responses": {
+          "200": {
+            "description": "The pack, with x402.receipt (transaction, network, payer), as_of, definition_ids, license (CC BY 4.0) and what it does not assert.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unknown kind or an id that names no registration we have a record for."
+          },
+          "402": {
+            "description": "Payment required. x402 v2 requirements in the PAYMENT-REQUIRED header and the JSON body: accepts[] (scheme exact, network eip155:8453, USDC, amount in atomic units, payTo, maxTimeoutSeconds) and extensions.bazaar (input schema).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/check/exit": {
+      "get": {
+        "operationId": "check_exit",
+        "summary": "Did this agent's wallet empty out: dominant-share windows (drain.abandoned.v1 candidates) with the second hop",
+        "description": "Every window in which a new payee took at least 80% of the agent's counted outflow within 72 hours, at the drain thresholds (5× its previous largest, at least $250, after three earlier payments): the payee, its label, contract or plain key, how many registered agents pay it, whether the agent paid anyone else in the 30 days after and since, and its status under drain.abandoned.v1 (candidate, pending, resumed, service). For up to three windows, the second hop read live when the pack is built: the payee's first USDC, USDT or EURC transfers out in the 7 days after, with each receiving address's label, kind and agent payer count. Candidates, never verdicts. An agent with no window is a 404 before any payment.",
+        "tags": [
+          "Evidence packs (paid, x402)"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": true,
+            "description": "The registration: an ERC-8004 token id on Base (e.g. 53008), the agent slug (8004-base-53008) or a bound wallet address.",
+            "schema": {
+              "type": "string"
+            },
+            "example": "45978"
+          }
+        ],
+        "security": [],
+        "x-payment-info": {
+          "price": {
+            "mode": "fixed",
+            "currency": "USD",
+            "amount": "0.03"
+          },
+          "protocols": [
+            {
+              "x402": {
+                "network": "eip155:8453",
+                "asset": "USDC",
+                "payTo": "0xb25c17e26054bf34e507185dd8981888c9e044fd"
+              }
+            }
+          ]
+        },
+        "responses": {
+          "200": {
+            "description": "The pack, with x402.receipt (transaction, network, payer), as_of, definition_ids, license (CC BY 4.0) and what it does not assert.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unknown kind or an id that names no registration we have a record for."
+          },
+          "402": {
+            "description": "Payment required. x402 v2 requirements in the PAYMENT-REQUIRED header and the JSON body: accepts[] (scheme exact, network eip155:8453, USDC, amount in atomic units, payTo, maxTimeoutSeconds) and extensions.bazaar (input schema).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No dominant-share window in this agent's counted payments, or no record for the id; answered before any payment, nothing charged."
+          }
+        }
+      }
+    },
+    "/check/venue": {
+      "get": {
+        "operationId": "check_venue",
+        "summary": "What is this address: label, contract or key, who pays it, poisoning look-alike or not, live 48-hour flow",
+        "description": "One address on Base: its label with category, basis and evidence link, contract or plain key (and any EIP-7702 delegation), registered agents that paid it in 30 days and all time with counted USD, whether it is a registered agent's bound wallet, an x402 seller or an address our poisoning watch saw planted as a look-alike, and its USDC, USDT and EURC transfers over the last 48 hours, read live (capped at 2,000 per direction and marked when capped). An address with no label and no record in our tables is a 404 before any payment.",
+        "tags": [
+          "Evidence packs (paid, x402)"
+        ],
+        "parameters": [
+          {
+            "name": "address",
+            "in": "query",
+            "required": true,
+            "description": "An address on Base (0x…).",
+            "schema": {
+              "type": "string"
+            },
+            "example": "0x337685fdab40d39bd02028545a4ffa7d287cc3e2"
+          }
+        ],
+        "security": [],
+        "x-payment-info": {
+          "price": {
+            "mode": "fixed",
+            "currency": "USD",
+            "amount": "0.03"
+          },
+          "protocols": [
+            {
+              "x402": {
+                "network": "eip155:8453",
+                "asset": "USDC",
+                "payTo": "0xb25c17e26054bf34e507185dd8981888c9e044fd"
+              }
+            }
+          ]
+        },
+        "responses": {
+          "200": {
+            "description": "The pack, with x402.receipt (transaction, network, payer), as_of, definition_ids, license (CC BY 4.0) and what it does not assert.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unknown kind or an id that names no registration we have a record for."
+          },
+          "402": {
+            "description": "Payment required. x402 v2 requirements in the PAYMENT-REQUIRED header and the JSON body: accepts[] (scheme exact, network eip155:8453, USDC, amount in atomic units, payTo, maxTimeoutSeconds) and extensions.bazaar (input schema).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/def": {
+      "get": {
+        "operationId": "getDefinitionIndex",
+        "summary": "Definition registry",
+        "description": "Every frozen definition id with its title. With Accept: text/html, a readable page; otherwise JSON (add ?format=json to force it).",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "JSON (CC BY 4.0)."
+          }
+        },
+        "security": []
+      }
+    },
+    "/def/{id}": {
+      "get": {
+        "operationId": "getDefinitionById",
+        "summary": "One definition",
+        "description": "What one metric counts, the method, what it excludes and what it does not claim. Frozen: a breaking change is a new id.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "examples": {
+              "l7": {
+                "value": "rank.l7plus.v2"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON (CC BY 4.0)."
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/wallet-sets": {
+      "get": {
+        "operationId": "getWalletSets",
+        "summary": "Wallet-set register",
+        "description": "The address lists behind every claim: provenance, size, completeness and which metrics lean on each set. members=0 for the register only; set=<id> for one set with its members (capped).",
+        "parameters": [
+          {
+            "name": "members",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "0 returns the register without member addresses"
+          },
+          {
+            "name": "set",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON (CC BY 4.0)."
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/subscribe": {
+      "get": {
+        "operationId": "getDeskPlans",
+        "summary": "Desk plans",
+        "description": "view=plans lists the Desk plans (Watch, Operator, Team) with prices in USDC on Base and what each includes. Plans are bought from a signed-in wallet on the Desk.",
+        "parameters": [
+          {
+            "name": "view",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "plans"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON (CC BY 4.0)."
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/changepoints": {
+      "get": {
+        "operationId": "getChangepoints",
+        "summary": "Dated changes of ours that moved a series",
+        "description": "Every change to coverage, method, the asset set, the label map or a detector rule, with its date, the metric keys it moved and where it is written up. A step in a series at one of these dates is our change, not the market's. Entries are never edited or removed.",
+        "tags": [
+          "Data"
+        ],
+        "responses": {
+          "200": {
+            "description": "The changepoint register",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "count": {
+                      "type": "integer"
+                    },
+                    "changepoints": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "date": {
+                            "type": "string"
+                          },
+                          "kind": {
+                            "type": "string",
+                            "enum": [
+                              "method",
+                              "coverage",
+                              "asset_set",
+                              "label_map",
+                              "detector_rule",
+                              "backfill"
+                            ]
+                          },
+                          "comparable_from": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "metric_keys": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "definition_ids": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "summary": {
+                            "type": "string"
+                          },
+                          "reference": {
+                            "type": "string"
+                          },
+                          "corrects": {
+                            "type": "string",
+                            "description": "For a correcting entry: the id of the entry whose scope or facts it corrects (that entry stays unchanged)."
+                          },
+                          "registered": {
+                            "type": "string",
+                            "description": "For a correcting entry: the date it was added, when later than the change itself."
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/steps": {
+      "get": {
+        "operationId": "getSteps",
+        "summary": "Steps in our own series, and what explains each",
+        "description": "A step is a material move in one of our archived series, concentrated in one day and persisting for two more (PELT over each daily series, Killick, Fearnhead & Eckley 2012, confirmed by a one-day jump test). Each step is explained by a dated entry in /api/changepoints, by a checked note (a move of the world, measured two ways), marked settling (the series is under a week old), or left open; the data check unexplained_step warns on open steps from the last 14 days.",
+        "tags": [
+          "Data"
+        ],
+        "responses": {
+          "200": {
+            "description": "Steps from the last 14 days with their status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "as_of": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "method": {
+                      "type": "string"
+                    },
+                    "parameters": {
+                      "type": "object"
+                    },
+                    "summary": {
+                      "type": "object"
+                    },
+                    "steps": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "metric": {
+                            "type": "string"
+                          },
+                          "step_day": {
+                            "type": "string",
+                            "format": "date"
+                          },
+                          "before": {
+                            "type": "number"
+                          },
+                          "after": {
+                            "type": "number"
+                          },
+                          "shift": {
+                            "type": "number"
+                          },
+                          "ratio": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "z": {
+                            "type": "number"
+                          },
+                          "status": {
+                            "type": "string",
+                            "enum": [
+                              "explained",
+                              "acknowledged",
+                              "settling",
+                              "open"
+                            ]
+                          },
+                          "explained_by": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "note": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The document could not be read or did not verify; nothing is substituted"
+          }
+        }
+      }
+    },
+    "/api/approvals": {
+      "get": {
+        "operationId": "getApprovals",
+        "summary": "Token approvals from AI-agent wallets, and what stands behind them",
+        "description": "ERC-20 and Permit2 approvals that paying agent wallets on Base gave in the last 30 days (USDC, USDT, DAI, USDbC, EURC, WETH, cbBTC); spenders with their code type and label; the balances behind unlimited approvals still standing; and approvals to plain accounts (no contract code) with their transactions. Daily. A standing approval is exposure, not a loss. Definitions: /def/approval.*.",
+        "tags": [
+          "Data"
+        ],
+        "responses": {
+          "200": {
+            "description": "Totals, exposure, top spenders, plain-account approvals"
+          },
+          "503": {
+            "description": "Not published yet or did not verify; nothing is substituted"
+          }
+        }
+      }
+    },
+    "/api/stability": {
+      "get": {
+        "operationId": "getStability",
+        "summary": "Stable for N days: the behaviour clock per ranked agent",
+        "description": "The run length since the last break in each ranked agent's own payment behaviour (CUSUM on payments, USD, payees and new-payee share against its own history), the last break, and its 30-day heartbeat class; ?agent= for one agent. Definitions: /def/stability.run_length.v1, /def/stability.heartbeat.v1. Free.",
+        "tags": [
+          "Agents"
+        ],
+        "parameters": [
+          {
+            "name": "agent",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Optional: a Base ERC-8004 token id, act_8453_N, slug or bound wallet for one agent's record"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The document"
+          }
+        }
+      }
+    },
+    "/api/independence": {
+      "get": {
+        "operationId": "getIndependence",
+        "summary": "The independence score, the inflation ratio and the operator sets",
+        "description": "Seed-based best-path independence score per ranked agent, its L9 support under the published and the cluster-aware rule, the inflation ratio, the operator sets behind the rank and the held merges; ?agent= for one agent. Definitions: /def/rank.independence.v1, /def/rank.inflation.v1, /def/cluster.ratio.v1. Free.",
+        "tags": [
+          "Agents"
+        ],
+        "parameters": [
+          {
+            "name": "agent",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Optional: one agent's record"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The document"
+          }
+        }
+      }
+    },
+    "/api/ladder-dynamics": {
+      "get": {
+        "operationId": "getLadderDynamics",
+        "summary": "How ranked agents end, the drain ratio per platform, the transition matrix, the landmark re-check",
+        "description": "Cumulative incidence of competing exits with numbers at risk, the Standardised Drain Ratio per minting address with intervals, day-to-day moves between L7, L8, L9 and out, and the landmark re-check of the published survival figures. Definitions: /def/ladder.exit_incidence.v1, /def/platform.sdr.v1, /def/ladder.transition.v1, /def/survival.landmark.v1. Free.",
+        "tags": [
+          "Agents"
+        ],
+        "responses": {
+          "200": {
+            "description": "The document"
+          }
+        }
+      }
+    },
+    "/api/sum-log": {
+      "get": {
+        "operationId": "getSumLog",
+        "summary": "The verifiable counted total: signed head, proofs per payment and per agent",
+        "description": "The Merkle-sum head over every counted payment (root, total, agent root, Ed25519 signature, what changed since the previous head); ?event=<event_id> gives a payment's proof to the root and the total; ?agent=<token id>[&leaves=1] gives an agent's record (root, sum, count), its proof in the agent tree and whether its history was rewritten. Definition: /def/sumlog.v1. Free.",
+        "tags": [
+          "Agents"
+        ],
+        "parameters": [
+          {
+            "name": "event",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "A counted payment's event id (a proof of that payment), or use agent"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The document"
+          }
+        }
+      }
+    },
+    "/api/freezes": {
+      "get": {
+        "operationId": "getFreezes",
+        "summary": "Issuer freezes on Base",
+        "description": "The stablecoin issuers' own freeze events (Circle on USDC and EURC, Tether on USDT), the addresses frozen now, which of them registered agents paid, and which bound agent wallets are frozen. Definition: /def/issuer.freeze.v1. Free.",
+        "tags": [
+          "Agents"
+        ],
+        "responses": {
+          "200": {
+            "description": "The document"
+          }
+        }
+      }
+    },
+    "/api/x402-submitters": {
+      "get": {
+        "operationId": "getX402Submitters",
+        "summary": "Who submits x402 settlements on Base",
+        "description": "Settlements of the last 24 hours into Bazaar-listed sellers classified by submitter (self, facilitator, third party, bundler), the share in the closed receiveWithAuthorization form, and the third-party transactions to read. Definition: /def/x402.settle.submitter.v1. Free.",
+        "tags": [
+          "Agents"
+        ],
+        "responses": {
+          "200": {
+            "description": "The document"
+          }
+        }
+      }
+    },
+    "/api/payers": {
+      "get": {
+        "operationId": "getPayers",
+        "summary": "Who paid an agent, and how much of its feedback came from payers",
+        "description": "The wallets observed paying one ERC-8004 agent on Base (income into its bound wallets, plus counted payments from other registered agents), up to 250, largest by USD first, with how much of its ERC-8004 feedback is payment-grounded (the reviewer paid before rating). get_summary_input is ready to pass to the Reputation Registry's getSummary as clientAddresses. Since 16 November 2026 a payment counts only when the paid address was the agent's address at the time of the payment. Free. Definitions: /def/payers.set.v2, /def/rep.grounded.v2.",
+        "tags": [
+          "Agents"
+        ],
+        "parameters": [
+          {
+            "name": "agent",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Base ERC-8004 token id, act_8453_N, or a ranked agent's slug or bound wallet"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The payer set and the feedback grounding",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "token_id": {
+                      "type": "string"
+                    },
+                    "payers_total": {
+                      "type": "integer"
+                    },
+                    "payers": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "address": {
+                            "type": "string"
+                          },
+                          "payments": {
+                            "type": "integer"
+                          },
+                          "usd": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "first_paid": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "last_paid": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "via": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "payer_token_id": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    "feedback": {
+                      "type": "object"
+                    },
+                    "get_summary_input": {
+                      "type": "object"
+                    },
+                    "coverage": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Not a recognisable agent"
+          },
+          "503": {
+            "description": "The payer set could not be read; nothing is substituted"
+          }
+        }
+      }
+    },
+    "/api/statements/log": {
+      "get": {
+        "operationId": "getStatementLog",
+        "summary": "Append-only log over the signed statement roots (RFC 6962)",
+        "description": "The signed tree head, every past head and the leaves (each leaf is the exact message a statement-window root was signed over). With consistency=<m>: the RFC 6962 proof that the current tree extends the tree of size m, so a head you kept proves our history was not rewritten. With inclusion=<index>: the audit path of one leaf. SHA-256 with 0x00/0x01 prefixes; heads signed with the Ed25519 statement key. Definition: /def/agent.statement.log.v1.",
+        "tags": [
+          "Statements"
+        ],
+        "parameters": [
+          {
+            "name": "consistency",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "inclusion",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "description": "Tree size to prove against (default: the latest head)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Head, proofs and leaves",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "sth": {
+                      "type": "object",
+                      "properties": {
+                        "tree_size": {
+                          "type": "integer"
+                        },
+                        "root_hash": {
+                          "type": "string"
+                        },
+                        "timestamp_ms": {
+                          "type": "integer"
+                        },
+                        "signature": {
+                          "type": "string"
+                        },
+                        "key_id": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "consistency": {
+                      "type": "object"
+                    },
+                    "inclusion": {
+                      "type": "object"
+                    },
+                    "heads": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "leaves": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Out-of-range size or index"
+          },
+          "503": {
+            "description": "The leaves do not rebuild the signed head, or the log is not published; nothing is served"
+          }
+        }
+      }
+    },
+    "/api/crosscheck": {
+      "get": {
+        "operationId": "getCrosscheck",
+        "summary": "ERC-8004 registrations measured two ways, per chain",
+        "description": "Each row is one chain and one closed UTC day: The Graph Agent0 subgraph total for that day beside our own count. Base is counted exactly at the day end from our dated mint table; other chains test whether the subgraph total falls between our census readings just before and just after the day ended. A gap is published as measured. Refreshed daily (afg-graphcheck).",
+        "tags": [
+          "Data"
+        ],
+        "responses": {
+          "200": {
+            "description": "latest row per chain and the last 7 days of rows",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "the document could not be read; no substitute is served"
+          }
+        }
+      }
+    },
+    "/api/bindings": {
+      "get": {
+        "operationId": "getBindings",
+        "summary": "Bindings of every ranked agent (one file)",
+        "description": "Every binding of every agent ranked L7 or above on Base: wallet, ERC-8004 registration, method (1 = holds the registration via ownerOf, 3 = agentWallet declared in the registration file), confidence, validity and evidence, with a SHA-256 of the rows. Rebuilt every three hours by the rank job. Ranked agents only.",
+        "tags": [
+          "Data"
+        ],
+        "responses": {
+          "200": {
+            "description": "count, rows_sha256 and rows",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "the document could not be read; no substitute is served"
+          }
+        }
+      }
+    },
+    "/api/a2a": {
+      "post": {
+        "operationId": "a2aMessageSend",
+        "summary": "A2A message/send (JSON-RPC, protocol 0.3)",
+        "description": "Send an A2A JSON-RPC request with method message/send. Text is routed by what it asks (an agent id or 0x address, a check before paying, detections, the top of the rank, the market state); a data part {\"tool\": \"<MCP tool name>\", \"arguments\": {...}} calls a tool of the MCP server directly. Every reply is a Message (no tasks, no streaming). The agent card is at /.well-known/agent-card.json. Tool calls count against the same per-address limits as the plain routes, and against 120 tool calls a minute in all; over a limit the answer is an error that names the limit, and nothing is run.",
+        "tags": [
+          "Data"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "JSON-RPC response with a Message result or an error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/usage": {
+      "get": {
+        "operationId": "getUsage",
+        "summary": "What our origin served: requests by route family, status class and UTC hour",
+        "description": "Counts of the requests our origin server answered, keyed by UTC hour, route family (home, page/<slug>, api/<name>, mcp, check/<kind>, def/*, agents/*, asset, well-known, other) and status class (2xx, 3xx, 402, 4xx, 5xx); MCP tool calls are also counted per tool. Nothing per visitor is kept: no address, no user agent, no query string, no body. Cloudflare answers some requests from its cache and those never reach the origin, so every figure is a floor; our own checks are included. Definition usage.origin.v1. Counting started on 30 Oct 2026.",
+        "tags": [
+          "Data"
+        ],
+        "responses": {
+          "200": {
+            "description": "Today by hour and by route, and daily totals for up to 31 days",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "definition_id": {
+                      "type": "string"
+                    },
+                    "definition_url": {
+                      "type": "string"
+                    },
+                    "as_of": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "since": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "note": {
+                      "type": "string"
+                    },
+                    "counting": {
+                      "type": "string"
+                    },
+                    "today": {
+                      "type": [
+                        "object",
+                        "null"
+                      ],
+                      "properties": {
+                        "day": {
+                          "type": "string"
+                        },
+                        "total": {
+                          "type": "integer"
+                        },
+                        "by_status": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "integer"
+                          }
+                        },
+                        "by_route": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "integer"
+                          }
+                        },
+                        "mcp_tool_calls": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "integer"
+                          }
+                        },
+                        "by_hour": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "integer"
+                          }
+                        }
+                      }
+                    },
+                    "days": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "day": {
+                            "type": "string"
+                          },
+                          "total": {
+                            "type": "integer"
+                          },
+                          "by_status": {
+                            "type": "object",
+                            "additionalProperties": {
+                              "type": "integer"
+                            }
+                          },
+                          "by_route": {
+                            "type": "object",
+                            "additionalProperties": {
+                              "type": "integer"
+                            }
+                          },
+                          "mcp_tool_calls": {
+                            "type": "object",
+                            "additionalProperties": {
+                              "type": "integer"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/address-facts": {
+      "get": {
+        "operationId": "getAddressFacts",
+        "summary": "Address facts: every Base address agents paid, with what we know of it",
+        "description": "One row per Base address that a registered agent paid with a counted payment: code type and EIP-7702 implementation, our label and category, how many agents paid it and how much, first and last payment, whether it is itself an agent wallet or an x402 seller's payTo, whether it appeared as a look-alike in address poisoning, and the stablecoin issuers whose latest action on it was a freeze. Facts, not a score (address.facts.v1). Rebuilt every six hours. Since 14 November 2026 the SHA-256 of every file is written into the signed statement log, so a kept copy can be shown to be the file published at that time.",
+        "tags": [
+          "Data"
+        ],
+        "parameters": [
+          {
+            "name": "address",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^0x[0-9a-fA-F]{40}$"
+            },
+            "description": "Return the one row for this address (found: false when no agent paid it)."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 5000,
+              "default": 1000
+            },
+            "description": "Rows per page, most-paid first."
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0
+            }
+          },
+          {
+            "name": "format",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "file"
+              ]
+            },
+            "description": "file: the whole six-hourly file, byte for byte as it was written, with its SHA-256 in the response header X-AFG-SHA256. Its hash is a leaf of the signed statement log (see /api/statements/proof)."
+          },
+          {
+            "name": "head",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Any value: which file is the newest (time, rows, bytes, SHA-256, its leaf in the signed log) and how to check a file."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "a page of rows, or one row with ?address=",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "the address is not 0x followed by 40 hex characters"
+          },
+          "429": {
+            "description": "6 downloads of the file (?format=file) a minute per address; the body states the limit; Retry-After is set"
+          },
+          "503": {
+            "description": "the document could not be read; no substitute is served"
+          }
+        }
+      }
+    },
+    "/api/gate/check": {
+      "post": {
+        "operationId": "gateCheck",
+        "summary": "The Gate: check one payment against a policy before it is made",
+        "description": "One call before an agent pays. Returns block, warn, log or allow with every reason, the nine payee facts, the Watch reading of this payment against the agent's own history, and a signed receipt (gate.receipt.v2: the policy by name and by the SHA-256 of all its limits). Advisory: the caller decides, nothing is blocked by us. A payment on which nothing fired answers allow with no reasons. The default policy is log-only; named policies are at /api/gate/policies, or send your own in the AP2 constraint vocabulary. An unknown constraint fails closed. Free tier: 30 calls a minute per address. A Bearer Desk session makes the check identified: its receipt goes into the signed log. Browsers may call it from any origin.",
+        "tags": [
+          "Security"
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Bearer <Desk session>. Optional."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "agent",
+                  "payee",
+                  "amount_usd"
+                ],
+                "properties": {
+                  "agent": {
+                    "type": "string",
+                    "description": "The paying agent: token id, act_8453_N, slug or bound wallet."
+                  },
+                  "payee": {
+                    "type": "string",
+                    "pattern": "^0x[0-9a-fA-F]{40}$",
+                    "description": "The address to be paid."
+                  },
+                  "amount_usd": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "policy_name": {
+                    "type": "string",
+                    "enum": [
+                      "log-only",
+                      "balanced",
+                      "recommended",
+                      "recommended-v3",
+                      "strict"
+                    ],
+                    "description": "A named policy. Default log-only."
+                  },
+                  "policy": {
+                    "type": "object",
+                    "description": "Your own policy: allowed_payees, amount_range, budget, agent_recurrence, execution_date, new_payee, refuse_conditions, signal."
+                  },
+                  "client_ref": {
+                    "type": "string",
+                    "minLength": 16,
+                    "maxLength": 64,
+                    "pattern": "^[A-Za-z0-9_.-]{16,64}$",
+                    "description": "Optional. A random string your client keeps and sends with every check. Checks with the same client_ref count against each other for 12 hours, until the ledger holds the payments (gate.context.v2), so a payment split into small parts meets the same limits. Keep it outside the reach of the model you guard."
+                  }
+                }
+              },
+              "example": {
+                "agent": "57657",
+                "payee": "0x4cd00e387622c35bddb9b4c962c136462338bc31",
+                "amount_usd": 25,
+                "policy_name": "recommended-v3"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "the decision",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "decision_id": {
+                      "type": "string",
+                      "pattern": "^gd_[0-9a-f]{24}$"
+                    },
+                    "decision": {
+                      "type": "string",
+                      "enum": [
+                        "block",
+                        "warn",
+                        "log",
+                        "allow"
+                      ]
+                    },
+                    "reasons": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "facts": {
+                      "type": "object"
+                    },
+                    "receipt": {
+                      "type": "object"
+                    },
+                    "policy": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "the body is not {agent, payee, amount_usd, policy_name | policy}"
+          },
+          "404": {
+            "description": "the agent is not a Base ERC-8004 registration we know"
+          },
+          "422": {
+            "description": "the agent has more than 20,000 counted payments; its history is not scored at request time"
+          },
+          "429": {
+            "description": "30 Gate calls a minute per address on the free tier; nothing was recorded"
+          },
+          "503": {
+            "description": "the check could not run; nothing is recorded and nothing is substituted. Your client's fail mode decides. Also the answer when checks of one agent under one client_ref or Desk session, which are decided one at a time, leave a check waiting longer than 5 seconds for its turn."
+          }
+        }
+      }
+    },
+    "/api/gate/facts": {
+      "get": {
+        "operationId": "gateFacts",
+        "summary": "Payee facts: nine measured facts about an address before paying it",
+        "description": "Code type and EIP-7702 implementation, freezes by stablecoin issuers, relay shape, swaps into assets that cannot be frozen, who funded it and where it exits, look-alike of an address the agent paid, size against the agent's history, the payee's usual price, the agent's history of over-sized settlements (payee.facts.v2). Each fact is true, false, a number or empty with the reason. Facts, never a verdict.",
+        "tags": [
+          "Security"
+        ],
+        "parameters": [
+          {
+            "name": "payee",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^0x[0-9a-fA-F]{40}$"
+            }
+          },
+          {
+            "name": "agent",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The paying agent; needed for the facts that compare with its own history."
+          },
+          {
+            "name": "amount",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number"
+            },
+            "description": "USD."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "the facts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "a parameter is missing or malformed; the body says which"
+          },
+          "429": {
+            "description": "rate limit: the body states the limit; Retry-After is set"
+          }
+        }
+      }
+    },
+    "/api/gate/receipt": {
+      "get": {
+        "operationId": "gateReceipt",
+        "summary": "The signed receipt of one Gate check",
+        "description": "The canonical text of the decision, its SHA-256, the Ed25519 signature, and for identified checks its place in the signed log and the Base anchor (gate.receipt.v2; receipts issued from 13 Nov to 24 Nov 2026, 10:10 UTC, are gate.receipt.v1 and stay as issued). Keep it beside the payment as proof it was checked first.",
+        "tags": [
+          "Security"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^gd_[0-9a-f]{24}$"
+            },
+            "description": "decision_id of a check."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "the receipt and how to check it",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "a parameter is missing or malformed; the body says which"
+          },
+          "429": {
+            "description": "rate limit: the body states the limit; Retry-After is set"
+          }
+        }
+      }
+    },
+    "/api/gate/policies": {
+      "get": {
+        "operationId": "gatePolicies",
+        "summary": "The named Gate policies and the policy vocabulary",
+        "description": "log-only, balanced, recommended, recommended-v3 and strict, each in full, with the names of the refuse conditions and what fails closed.",
+        "tags": [
+          "Security"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "the policies",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "a parameter is missing or malformed; the body says which"
+          },
+          "429": {
+            "description": "rate limit: the body states the limit; Retry-After is set"
+          }
+        }
+      }
+    },
+    "/api/payer": {
+      "get": {
+        "operationId": "payerCheck",
+        "summary": "Payer check: what the ledger holds about the wallet that is paying you",
+        "description": "For a seller or a platform. The Base ERC-8004 registrations bound to the wallet, and for the highest-level one its level, last payment, open incidents, Pass, Watch reading and detections of the last 30 days, with the items worth a look listed first; and what we know of the wallet as a payee. A wallet with no registration answers registered_agent false, which is not a statement about the wallet. Free: 30 a minute per address; cache an answer for ten minutes.",
+        "tags": [
+          "Security"
+        ],
+        "parameters": [
+          {
+            "name": "wallet",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^0x[0-9a-fA-F]{40}$"
+            },
+            "description": "The address that is paying you."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "the payer check",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "a parameter is missing or malformed; the body says which"
+          },
+          "429": {
+            "description": "rate limit: the body states the limit; Retry-After is set"
+          }
+        }
+      }
+    },
+    "/api/fleet": {
+      "get": {
+        "operationId": "fleetCheck",
+        "summary": "Fleet check: the self-check for up to 60 agents in one answer",
+        "description": "Level, Pass, Watch reading, incidents, approvals, detections and blast radius per agent, the agents worth a look first. Give agents, or owner to read the registrations one wallet holds (the 60 newest, with the total). Free: 6 a minute per address.",
+        "tags": [
+          "Security"
+        ],
+        "parameters": [
+          {
+            "name": "agents",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Up to 60 token ids, comma-separated."
+          },
+          {
+            "name": "owner",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^0x[0-9a-fA-F]{40}$"
+            },
+            "description": "A wallet that holds registrations."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "one row per agent",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "a parameter is missing or malformed; the body says which"
+          },
+          "429": {
+            "description": "rate limit: the body states the limit; Retry-After is set"
+          }
+        }
+      }
+    },
+    "/api/self-check": {
+      "get": {
+        "operationId": "selfCheck",
+        "summary": "Self-check: everything the ledger holds about one agent",
+        "description": "Level, wallets, payments, the Pass, the Watch reading, incidents, approvals, detections and blast radius in one answer, ending with the items worth a look, each with its source. A clean list is not a statement that the agent is safe.",
+        "tags": [
+          "Security"
+        ],
+        "parameters": [
+          {
+            "name": "agent",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "A Base ERC-8004 token id, act_8453_N, a slug or a bound wallet."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "the self-check",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "a parameter is missing or malformed; the body says which"
+          },
+          "429": {
+            "description": "rate limit: the body states the limit; Retry-After is set"
+          }
+        }
+      }
+    },
+    "/api/pass": {
+      "get": {
+        "operationId": "agentPass",
+        "summary": "Agent Pass: eight checks on one agent at one moment, signed",
+        "description": "What held, what failed and what could not be checked, valid three hours, Ed25519-signed (agent.pass.v3); the public key is at /.well-known/afg-pass-keys.json. format=jwt returns the same Pass as a JWT, format=vc as a W3C Verifiable Credential, format=svg as a badge. It says holds or not, never safe.",
+        "tags": [
+          "Security"
+        ],
+        "parameters": [
+          {
+            "name": "agent",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "A Base ERC-8004 token id, act_8453_N, a slug or a bound wallet."
+          },
+          {
+            "name": "format",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "json",
+                "jwt",
+                "vc",
+                "svg"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "the Pass",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "a parameter is missing or malformed; the body says which"
+          },
+          "429": {
+            "description": "rate limit: the body states the limit; Retry-After is set"
+          }
+        }
+      }
+    },
+    "/api/score": {
+      "get": {
+        "operationId": "agentPattern",
+        "summary": "Watch: is this agent's newest payment in character for it",
+        "description": "The out-of-character reading of an agent's newest counted payment against its own earlier payments, with the reasons (behaviour.out_of_character.v6: the v3 score, and a wallet's own exchange, bridge to its own address or deposit into its own position reads none). A pattern for a human to read; nothing is blocked from it. Without agent: the market's rates.",
+        "tags": [
+          "Security"
+        ],
+        "parameters": [
+          {
+            "name": "agent",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "A Base ERC-8004 token id, act_8453_N, a slug or a bound wallet."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "the reading",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "a parameter is missing or malformed; the body says which"
+          },
+          "429": {
+            "description": "rate limit: the body states the limit; Retry-After is set"
+          }
+        }
+      }
+    },
+    "/api/blast": {
+      "get": {
+        "operationId": "blastRadius",
+        "summary": "Blast radius: what a stolen key for an agent's wallets would control",
+        "description": "Balances, open approvals and delegations of the agent's bound wallets at one block, in USD (agent.blast_radius.v1). Without agent: the distribution over ranked agents.",
+        "tags": [
+          "Security"
+        ],
+        "parameters": [
+          {
+            "name": "agent",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "A Base ERC-8004 token id, act_8453_N, a slug or a bound wallet."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "the blast radius",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "a parameter is missing or malformed; the body says which"
+          },
+          "429": {
+            "description": "rate limit: the body states the limit; Retry-After is set"
+          }
+        }
+      }
+    },
+    "/api/books": {
+      "get": {
+        "operationId": "agentBooks",
+        "summary": "Agent Books: one agent's month as a signed statement",
+        "description": "What one registration paid and received on Base in a closed month or to date: counted payments, what left its control, what was left out and why, receipts, detections, transfers of the registration. Signed, written into our signed log, and committed to by a daily Base transaction, so the receiver can check it without trusting us (agent.books.v1; verifier: afg booksverify). A record of observed facts: not an audit, an opinion, or a statement about tax. Without parameters: what it is. Every signed answer carries permalink (/api/books?id=<books_id>), which returns that same statement later; a request by agent and period on a later day makes a new statement for that day.",
+        "tags": [
+          "Security"
+        ],
+        "parameters": [
+          {
+            "name": "agent",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "A Base ERC-8004 token id, act_8453_N, a slug or a bound wallet."
+          },
+          {
+            "name": "period",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^(\\d{4}-\\d{2}|to-date)$"
+            },
+            "description": "A closed month YYYY-MM, or to-date."
+          },
+          {
+            "name": "id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{32}$"
+            },
+            "description": "The books_id of a statement produced earlier (in its permalink): returns that stored statement on any later day, with its log and chain proof as they stand now. Use instead of agent and period."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "the statement with its proof",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "a parameter is missing or malformed; the body says which"
+          },
+          "429": {
+            "description": "by agent and period: 10 a minute and 40 a day per address (a stored statement by its id is not limited); the body states the limit; Retry-After is set"
+          }
+        }
+      }
+    },
+    "/api/anchors": {
+      "get": {
+        "operationId": "anchors",
+        "summary": "The daily Base anchors of our signed logs",
+        "description": "One Base transaction a day commits to the head of the statement log, the sum log and the Agent Pass log (anchor.v2), so a head shown later is the one committed to.",
+        "tags": [
+          "Security"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "the anchors, newest first",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "a parameter is missing or malformed; the body says which"
+          },
+          "429": {
+            "description": "rate limit: the body states the limit; Retry-After is set"
+          }
+        }
+      }
+    },
+    "/api/statements/proof": {
+      "get": {
+        "operationId": "publicationProof",
+        "summary": "Where the hash of a published file sits in the signed log and on Base",
+        "description": "For a file whose SHA-256 we wrote into the statement log (an edition, the pinned MCP tool list, a Gate receipt, an Agent Books statement, a six-hourly address-facts file): the leaf publication/1|<slug>|<sha256>|<time>, its index, the RFC 6962 inclusion path under a signed head, and the Base anchor transaction that commits to a head covering it. Fields of the head and the anchor are absent until the next head (every three hours) and the daily anchor (04:30 UTC). 404 when no file with this hash was published.",
+        "tags": [
+          "Security"
+        ],
+        "parameters": [
+          {
+            "name": "sha256",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "description": "SHA-256 of the file's bytes, 64 hex characters."
+          },
+          {
+            "name": "slug",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Or the publication's slug as it appears in the log, for example address-facts/20261114T082703."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "the leaf and its proof",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "neither a hash nor a slug in the expected form"
+          },
+          "404": {
+            "description": "no publication with this hash or slug"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Flag": {
+        "type": "object",
+        "required": [
+          "id",
+          "t",
+          "kind",
+          "severity",
+          "title",
+          "source_url"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "t": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The x position on the chart"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "launch",
+              "incident",
+              "regulation",
+              "rail",
+              "vault",
+              "market"
+            ]
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "info",
+              "notable",
+              "major"
+            ]
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 60
+          },
+          "body": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 400
+          },
+          "source_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Required https URL. No flag exists without a source."
+          },
+          "producer": {
+            "type": "string"
+          },
+          "metrics": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Which series the event is about"
+          }
+        }
+      },
+      "Metric": {
+        "type": "object",
+        "required": [
+          "value",
+          "unit",
+          "producer",
+          "kind"
+        ],
+        "properties": {
+          "value": {
+            "type": "number"
+          },
+          "unit": {
+            "type": "string",
+            "examples": [
+              "USD",
+              "USDC",
+              "ratio",
+              "agents"
+            ]
+          },
+          "producer": {
+            "type": "string",
+            "description": "self | DefiLlama | Keyrock | 8004scan | ...",
+            "examples": [
+              "self",
+              "DefiLlama"
+            ]
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "live",
+              "measured",
+              "context",
+              "cited"
+            ],
+            "description": "live: read from a public API or eth_call; measured: our own sweep, census or scan; context: market scale, never agent activity; cited: someone else research, dated, not reproduced"
+          },
+          "window": {
+            "type": "string",
+            "description": "Time window the value describes"
+          },
+          "as_of": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "method": {
+            "type": "string",
+            "description": "How a live value was produced, e.g. eth_call totalAssets()"
+          },
+          "caveat": {
+            "type": "string"
+          },
+          "stale": {
+            "type": "boolean",
+            "description": "true when the source did not answer at the last check; the value is the last one actually measured"
+          },
+          "definition_id": {
+            "type": "string",
+            "description": "Frozen definition of the figure; GET /def/{id}",
+            "examples": [
+              "rank.l7plus.v2"
+            ]
+          },
+          "third_party": {
+            "type": "boolean"
+          },
+          "note": {
+            "type": "string"
+          },
+          "replaces": {
+            "type": "string"
+          }
+        }
+      },
+      "Agent": {
+        "type": "object",
+        "required": [
+          "id",
+          "token_id",
+          "slug",
+          "liveness"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "examples": [
+              "act_8453_57657"
+            ]
+          },
+          "token_id": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string",
+            "examples": [
+              "8004-base-57657"
+            ]
+          },
+          "declared_name": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Name declared in its registration file, cleaned; not verified"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "liveness": {
+            "type": "integer",
+            "minimum": 7,
+            "maximum": 9
+          },
+          "registered_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "chain": {
+            "type": "string",
+            "examples": [
+              "eip155:8453"
+            ]
+          },
+          "wallet": {
+            "type": "string"
+          },
+          "usdc_float": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "Rounded on the free tier"
+          },
+          "stables_float": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "delegated_7702": {
+            "description": "EIP-7702 implementation address, or false",
+            "type": [
+              "string",
+              "boolean",
+              "null"
+            ]
+          },
+          "pay": {
+            "type": "object",
+            "properties": {
+              "events": {
+                "type": "integer"
+              },
+              "usd": {
+                "type": "number"
+              },
+              "counterparties": {
+                "type": "integer"
+              },
+              "events_30d": {
+                "type": "integer"
+              },
+              "usd_30d": {
+                "type": "number"
+              },
+              "first": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "last": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          }
+        }
+      },
+      "AgentList": {
+        "type": "object",
+        "properties": {
+          "as_of": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "tier": {
+            "type": "string"
+          },
+          "total_ranked": {
+            "type": "integer"
+          },
+          "returned": {
+            "type": "integer"
+          },
+          "withheld_by_tier": {
+            "type": "integer",
+            "description": "Ranked agents beyond the free top 25"
+          },
+          "agents": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Agent"
+            }
+          }
+        }
+      }
+    }
+  },
+  "x-discovery": {
+    "compat": "https://agenticfinancegraph.com/.well-known/x402",
+    "catalog": "https://agenticfinancegraph.com/.well-known/agent-card.json"
+  }
+}

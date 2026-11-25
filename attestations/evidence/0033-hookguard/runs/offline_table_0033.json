@@ -1,0 +1,545 @@
+{
+ "record": "0033-agentic-finance-gate-hook-guard-receipt-v2-rerun",
+ "run_ts": {
+  "first_check_utc": "2026-11-25T05:06:49Z",
+  "last_check_utc": "2026-11-25T05:07:22Z"
+ },
+ "prereg": {
+  "status": "published_before_first_live_GET (operator-confirmed; run started after publication)",
+  "post_location": "https://github.com/x402-foundation/x402/issues/3866 (operator prereg post)",
+  "hash_as_posted": "OPERATOR_FILL_AT_PACK_COMMIT — transcribe the exact sha256/canonical hash from the operator's prereg post",
+  "issued_conditions_body_sha256": "840ffa33488216a5bfa9cc8e803c4a0c9eca56220ee7aa4633061082246c966c",
+  "issued_conditions_verify_command": "curl -s https://api.github.com/repos/x402-foundation/x402/issues/comments/7144596133 | jq -j .body | sha256sum",
+  "issued_conditions_corroboration": "comment 7144596133 re-fetched live at run day: body matches the frozen verbatim (AgenticFinanceGraph, 2026-11-24T21:11:21Z)"
+ },
+ "freeze_source": "freeze text as posted (operator); battery = sut-hookguard/battery_hookguard.mjs sha256 ca55f1f422ae50464b292a39d09d27813ddac6307315ee01ca79cfb930546151 (frozen); payees-0033.json sha256 bb6a605d269de739a90545636b9c11f9e70f81ce2961fb9139ae1fddc1a288cf (frozen); def snapshot sha256 4d7ad61d0e376a14835f5a9bf5fb892c60fbd02004c96a1a8c1b03b21625dff0 (frozen recon)",
+ "sut_pin": {
+  "client": "agentic-finance-graph@0.3.7 (npm ci reproduced)",
+  "hook_file_sha256": "b3983aed5db8ead24d4ea65e7fe44155307a24455fb96b97666c9f83f59508ed",
+  "package_manifest_sha256": "60e4bdcdf46c79d164597b9733da2829d54776fd60e58269ddf144f230c98b9d",
+  "gate_server": "openapi 0.22.7 issued by vendor; 0.22.8 observed at run start (L1, evidence-only)",
+  "receipt_schema": "afg-gate-receipt/2 since 2026-11-24T10:10:11Z"
+ },
+ "identity": {
+  "agent": "45978",
+  "references": "argus-0033-* per freeze",
+  "payees": {
+   "run": "0033",
+   "note": "fresh synthetic payees generated at freeze build; owned by nobody; no funds ever move to or from them; the 0031 payees are NOT reused (no longer new-payee-window candidates for agent 45978)",
+   "generated_at": "2026-11-25T04:27:07Z",
+   "P1": "0x20b512e451144428a5fc59fc91d25a600b97aa5e",
+   "P2": "0x528180b2725ec54ef3b146392ccc8e28eee2585e",
+   "P3": "0x7abdef38231036940907e7f9b5395fa83b577d1e",
+   "P4": "0x9a67cf9a3030b758bfdc8fc52a41792dc5fbffc2",
+   "P5": "0x02e0aae0699f7e2a7563314836124962e9c829a7",
+   "P6": "0x6d9c1eec4cce2e5b08f582e775c8474e35f441d0"
+  },
+  "budget": "$0.00, no payments signed",
+  "retries": "0 by construction (NO RETRIES rule)"
+ },
+ "l1": {
+  "utc_ts": "2026-11-25T05:06:43Z",
+  "role": "evidence-only L1",
+  "snapshots": [
+   {
+    "url": "https://agenticfinancegraph.com/openapi.json",
+    "http_status": 200,
+    "sha256_response": "7d22ce2c57b2706cb34e98665c4b7a1fc0f011cb19d23c959d1eed5e070be71b",
+    "saved": "openapi-runstart.json",
+    "parsed_meta": "0.22.8"
+   },
+   {
+    "url": "https://agenticfinancegraph.com/.well-known/afg-pass-keys.json",
+    "http_status": 200,
+    "sha256_response": "1af0922227af492418707344e737701dd9b5d6d1d4d4553486293b30a9861bd9",
+    "saved": "afg-pass-keys.json",
+    "parsed_meta": null
+   }
+  ],
+  "note": "one-time snapshot fingerprints, not a reproducibility claim; if the openapi version moved above 0.22.7 mid-queue it is recorded and does not affect the verdict (receipts remain v2 per the vendor: v2 since 2026-11-24T10:10:11Z)"
+ },
+ "self_run": {
+  "battery_sha256": "ca55f1f422ae50464b292a39d09d27813ddac6307315ee01ca79cfb930546151",
+  "node_versions": [
+   "v24.22.3"
+  ],
+  "process_pids_s1a_s1b": [
+   2130,
+   2142,
+   2154,
+   2175,
+   2187,
+   2199,
+   2220
+  ],
+  "evidence_dir_sha256_manifest": "see files in this directory"
+ },
+ "rows": [
+  {
+   "session": "S1",
+   "role": "control C1",
+   "case": "restart persistence R1/P1 $200, process restart (new pid), same R1/P1 $200",
+   "frozen_expected": "allow -> block; reason format new_payee_window_above_max:200+200>250/168h",
+   "observed": {
+    "call1": {
+     "gate": "allow",
+     "pending": {
+      "counted": true,
+      "decisions": 0,
+      "usd": 0
+     }
+    },
+    "call2": {
+     "gate": "block",
+     "reasons": [
+      "new_payee_window_above_max:200+200>250/168h"
+     ],
+     "pending": {
+      "counted": true,
+      "decisions": 1,
+      "usd": 200
+     },
+     "pid_changed": true
+    }
+   },
+   "verdict": "MATCH",
+   "evidence_files": [
+    "s1-call1.json",
+    "s1-call2.json"
+   ]
+  },
+  {
+   "session": "S2",
+   "role": "control C2",
+   "case": "fresh-reference farming P1, 10 checks FR01..FR10",
+   "frozen_expected": "all 10 allow; each fresh reference pending starts clean, no cross-reference aggregation",
+   "observed": {
+    "decisions": [
+     "allow",
+     "allow",
+     "allow",
+     "allow",
+     "allow",
+     "allow",
+     "allow",
+     "allow",
+     "allow",
+     "allow"
+    ],
+    "pending_per_fresh_ref": [
+     {
+      "counted": true,
+      "decisions": 0,
+      "usd": 0
+     },
+     {
+      "counted": true,
+      "decisions": 0,
+      "usd": 0
+     },
+     {
+      "counted": true,
+      "decisions": 0,
+      "usd": 0
+     },
+     {
+      "counted": true,
+      "decisions": 0,
+      "usd": 0
+     },
+     {
+      "counted": true,
+      "decisions": 0,
+      "usd": 0
+     },
+     {
+      "counted": true,
+      "decisions": 0,
+      "usd": 0
+     },
+     {
+      "counted": true,
+      "decisions": 0,
+      "usd": 0
+     },
+     {
+      "counted": true,
+      "decisions": 0,
+      "usd": 0
+     },
+     {
+      "counted": true,
+      "decisions": 0,
+      "usd": 0
+     },
+     {
+      "counted": true,
+      "decisions": 0,
+      "usd": 0
+     }
+    ],
+    "cumulative_2000_visible_anywhere": false
+   },
+   "verdict": "MATCH",
+   "evidence_files": [
+    "s2-call1.json",
+    "s2-call2.json",
+    "s2-call3.json",
+    "s2-call4.json",
+    "s2-call5.json",
+    "s2-call6.json",
+    "s2-call7.json",
+    "s2-call8.json",
+    "s2-call9.json",
+    "s2-call10.json"
+   ]
+  },
+  {
+   "session": "S3",
+   "role": "live",
+   "case": "splitting $300 -> 5 x $60, refs SR1..SR5, P2",
+   "frozen_expected": "all 5 allow; the window math never sees $300",
+   "observed": {
+    "decisions": [
+     "allow",
+     "allow",
+     "allow",
+     "allow",
+     "allow"
+    ],
+    "pending": [
+     {
+      "counted": true,
+      "decisions": 0,
+      "usd": 0
+     },
+     {
+      "counted": true,
+      "decisions": 0,
+      "usd": 0
+     },
+     {
+      "counted": true,
+      "decisions": 0,
+      "usd": 0
+     },
+     {
+      "counted": true,
+      "decisions": 0,
+      "usd": 0
+     },
+     {
+      "counted": true,
+      "decisions": 0,
+      "usd": 0
+     }
+    ]
+   },
+   "verdict": "MATCH",
+   "evidence_files": [
+    "s3-call1.json",
+    "s3-call2.json",
+    "s3-call3.json",
+    "s3-call4.json",
+    "s3-call5.json"
+   ]
+  },
+  {
+   "session": "S4",
+   "role": "live",
+   "case": "payTo rotation P3,P4,P5,P6, fixed ref RR1, $200 each",
+   "frozen_expected": "1st-3rd allow; 4th blocked by new-payee cap (counts addresses, not checks); reason verbatim; $250-window block instead = divergence",
+   "observed": {
+    "decisions": [
+     "allow",
+     "allow",
+     "allow",
+     "block"
+    ],
+    "pending": [
+     {
+      "counted": true,
+      "decisions": 0,
+      "usd": 0
+     },
+     {
+      "counted": true,
+      "decisions": 1,
+      "usd": 200
+     },
+     {
+      "counted": true,
+      "decisions": 2,
+      "usd": 400
+     },
+     {
+      "counted": true,
+      "decisions": 3,
+      "usd": 600
+     }
+    ],
+    "call4_reasons": [
+     "new_payees_per_day_exceeded:4>3"
+    ]
+   },
+   "verdict": "MATCH",
+   "evidence_files": [
+    "s4-call1.json",
+    "s4-call2.json",
+    "s4-call3.json",
+    "s4-call4.json"
+   ]
+  },
+  {
+   "session": "S5",
+   "role": "live",
+   "case": "boundary: R5/P6 $200 -> $50 (exactly 250) -> $50",
+   "frozen_expected": "allow; allow at exactly 250 (strict >); block 250+50>250/168h",
+   "observed": {
+    "decisions": [
+     "allow",
+     "allow",
+     "block"
+    ],
+    "pending": [
+     {
+      "counted": true,
+      "decisions": 0,
+      "usd": 0
+     },
+     {
+      "counted": true,
+      "decisions": 1,
+      "usd": 200
+     },
+     {
+      "counted": true,
+      "decisions": 2,
+      "usd": 250
+     }
+    ],
+    "call3_reasons": [
+     "new_payee_window_above_max:250+50>250/168h"
+    ]
+   },
+   "verdict": "MATCH",
+   "evidence_files": [
+    "s5-call1.json",
+    "s5-call2.json",
+    "s5-call3.json"
+   ]
+  },
+  {
+   "session": "S6",
+   "role": "live",
+   "case": "race: 8 parallel identical checks, ref RC1, P1, $200",
+   "frozen_expected": "VENDOR-ISSUED (comment 7144596133): exactly 1 allow + 7 blocks, each block pending {decisions:1, usd:200}; integrity: no double-count, no under-count; repeat of the 0031 outcome (7 allow / 1 block) = DIVERGENCE recorded as-is",
+   "observed": {
+    "decisions_by_call": {
+     "s6-call1": {
+      "gate": "block",
+      "pending": {
+       "counted": true,
+       "decisions": 1,
+       "usd": 200
+      },
+      "reasons": [
+       "new_payee_window_above_max:200+200>250/168h"
+      ]
+     },
+     "s6-call2": {
+      "gate": "allow",
+      "pending": {
+       "counted": true,
+       "decisions": 0,
+       "usd": 0
+      },
+      "reasons": []
+     },
+     "s6-call3": {
+      "gate": "block",
+      "pending": {
+       "counted": true,
+       "decisions": 1,
+       "usd": 200
+      },
+      "reasons": [
+       "new_payee_window_above_max:200+200>250/168h"
+      ]
+     },
+     "s6-call4": {
+      "gate": "block",
+      "pending": {
+       "counted": true,
+       "decisions": 1,
+       "usd": 200
+      },
+      "reasons": [
+       "new_payee_window_above_max:200+200>250/168h"
+      ]
+     },
+     "s6-call5": {
+      "gate": "block",
+      "pending": {
+       "counted": true,
+       "decisions": 1,
+       "usd": 200
+      },
+      "reasons": [
+       "new_payee_window_above_max:200+200>250/168h"
+      ]
+     },
+     "s6-call6": {
+      "gate": "block",
+      "pending": {
+       "counted": true,
+       "decisions": 1,
+       "usd": 200
+      },
+      "reasons": [
+       "new_payee_window_above_max:200+200>250/168h"
+      ]
+     },
+     "s6-call7": {
+      "gate": "block",
+      "pending": {
+       "counted": true,
+       "decisions": 1,
+       "usd": 200
+      },
+      "reasons": [
+       "new_payee_window_above_max:200+200>250/168h"
+      ]
+     },
+     "s6-call8": {
+      "gate": "block",
+      "pending": {
+       "counted": true,
+       "decisions": 1,
+       "usd": 200
+      },
+      "reasons": [
+       "new_payee_window_above_max:200+200>250/168h"
+      ]
+     }
+    },
+    "integrity": "1 allow + 7 blocks = 8 checks accounted exactly once; every block saw pending {decisions:1, usd:200}; the single allow saw {0,0}; no double-count, no under-count",
+    "0031_divergence_repeat": false
+   },
+   "verdict": "MATCH",
+   "evidence_files": [
+    "s6-call1.json",
+    "s6-call2.json",
+    "s6-call3.json",
+    "s6-call4.json",
+    "s6-call5.json",
+    "s6-call6.json",
+    "s6-call7.json",
+    "s6-call8.json"
+   ]
+  },
+  {
+   "session": "S7",
+   "role": "control C3",
+   "case": "skipped hook: payment-creation attempt with no hook registered",
+   "frozen_expected": "no externally observable signal (zero gate_check requests); absence recorded as the result",
+   "observed": {
+    "mcp_requests_observed": 0,
+    "observable_signal": "none — no MCP request fired (hook not registered)"
+   },
+   "verdict": "MATCH",
+   "evidence_files": [
+    "s7-call1.json"
+   ]
+  },
+  {
+   "session": "S8",
+   "role": "live (passive)",
+   "case": "503 reachability: status histogram over every gate_check of S1-S7, no artificial queue",
+   "frozen_expected": "VENDOR-ISSUED (comment 7144596133): \"not observed\"; actual {calls_total, mcp_status histogram, count_503} recorded; any 503 = DIVERGENCE verbatim",
+   "observed": {
+    "calls_total": 32,
+    "mcp_status_histogram": {
+     "200": 32
+    },
+    "count_503": 0,
+    "files_with_503": []
+   },
+   "verdict": "MATCH",
+   "evidence_files": [
+    "s8-503-survey.json"
+   ]
+  },
+  {
+   "session": "S9",
+   "role": "offline control",
+   "case": "receipt v2 structural conformance over every gate_check response of the run",
+   "frozen_expected": "VENDOR-ISSUED (comment 7144596133) per frozen definition snapshot: every run-window receipt body.schema == afg-gate-receipt/2, body.policy == {name, sha256} 64-hex lowercase, 16-char policy.hash absent from receipt; answer may carry legacy hash beside policy.sha256 (corroboration); recompute per definition; signature check corroboration-only",
+   "observed": {
+    "receipts_found": 32,
+    "receipts_v2_conformant": 32,
+    "recompute_canon_policy_body_equals_sha256_all": true,
+    "policy_sha256_value": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+    "answer_legacy_hash_value": "fdca84e4e0e0b216 (16-char, beside policy.sha256 in the answer — corroboration per vendor comment)",
+    "signature_corroboration": {
+     "with_signature_field": 0,
+     "verified": 0,
+     "no_sig_field": 32
+    },
+    "note_raw_scan": "s9 mode over raw MCP envelopes found 0 receipts: the answer travels as an escaped JSON string inside result.content[0].text; receipts are structurally present in hook_log.receipt.body per call (per-call closure binding) — both facts recorded as-is; battery file untouched (pin intact)",
+    "divergences": []
+   },
+   "verdict": "MATCH",
+   "evidence_files": [
+    "s9-receipt-v2-verify.json",
+    "summary-0033.json",
+    "s1-call*.json",
+    "s2-call*.json",
+    "s3-call*.json",
+    "s4-call*.json",
+    "s5-call*.json",
+    "s6-call*.json"
+   ]
+  },
+  {
+   "session": "L1",
+   "role": "evidence-only",
+   "case": "openapi.json + afg-pass-keys.json GETs at run start, saved verbatim",
+   "frozen_expected": "version recorded verbatim; byte sha256 as one-time snapshot fingerprint; never affects the verdict",
+   "observed": {
+    "snapshots": [
+     {
+      "url": "https://agenticfinancegraph.com/openapi.json",
+      "http_status": 200,
+      "version_or_id": "0.22.8",
+      "sha256_response": "7d22ce2c57b2706cb34e98665c4b7a1fc0f011cb19d23c959d1eed5e070be71b"
+     },
+     {
+      "url": "https://agenticfinancegraph.com/.well-known/afg-pass-keys.json",
+      "http_status": 200,
+      "version_or_id": null,
+      "sha256_response": "1af0922227af492418707344e737701dd9b5d6d1d4d4553486293b30a9861bd9"
+     }
+    ]
+   },
+   "verdict": "evidence-only (no verdict)",
+   "evidence_files": [
+    "l1-openapi.json",
+    "openapi-runstart.json",
+    "afg-pass-keys.json"
+   ]
+  }
+ ],
+ "summary": {
+  "sessions_S1_S9": "9/9 MATCH (L1 evidence-only)",
+  "divergences": 0,
+  "pass_rule": "seal iff all nine sessions MATCH — condition met; seal-type record",
+  "checks_total": 32,
+  "receipts_total": 32,
+  "receipts_v2_conformant": 32,
+  "policy_sha256_recompute": "canon(policy.body) reproduces e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046 byte-exact for all receipts (candidate serializations recorded in receipt_rows)",
+  "vendor_issued_rows": "S6 and S8 and S9 matched the AFG-issued expectations (comment 7144596133): 1 allow / 7 blocks with pending 1x$200; 503 not observed; all receipts v2 with 16-char hash absent from receipts",
+  "0031_delta_note": "the 0031 S6 divergence (7 allow / 1 block, pre-decision pending snapshots) did NOT repeat on the current gate: server-side lock now yields the vendor-issued outcome; recorded as the honest delta between 0031 and 0033"
+ },
+ "generated_at_utc": "2026-11-25T05:15:09Z"
+}

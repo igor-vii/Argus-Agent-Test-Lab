@@ -1,0 +1,394 @@
+{
+ "type": "seal",
+ "title": "onBeforePaymentCreation gate hook re-run under vendor-issued conditions (agentic-finance-graph@0.3.7 client, gate 0.22.7+, receipt v2): 9/9 MATCH incl. vendor-issued S6 1 allow / 7 blocks with pending 1 x $200, 503 not observed, 32/32 receipts afg-gate-receipt/2; $0.00",
+ "subject": {
+  "component": "onBeforePaymentCreation hook battery re-run of agentic-finance-graph@0.3.7 (npm client unchanged since 0031), policy recommended-v3, against the current AFG gate server (openapi 0.22.7 issued by vendor, 0.22.8 observed at run start — recorded, verdict-neutral; receipt schema afg-gate-receipt/2 since 2026-11-24T10:10:11Z); registry slot 0033 (the vendor comment says 'Run 0032' — renumbering disclosed in the prereg post)",
+  "thread": "https://github.com/x402-foundation/x402/issues/3866",
+  "issued_conditions": {
+   "comment_url": "https://github.com/x402-foundation/x402/issues/3866#issuecomment-7144596133",
+   "author": "AgenticFinanceGraph",
+   "created_at": "2026-11-24T21:11:21Z",
+   "body_sha256": "840ffa33488216a5bfa9cc8e803c4a0c9eca56220ee7aa4633061082246c966c",
+   "verify_command": "curl -s https://api.github.com/repos/x402-foundation/x402/issues/comments/7144596133 | jq -j .body | sha256sum",
+   "frozen_verbatim_in": "operator prereg post (comment 7153392127) — conditions frozen AS ISSUED; the frozen expected column is the operator binding derived from them and nothing else"
+  },
+  "prereg": {
+   "post_url": "https://github.com/x402-foundation/x402/issues/3866#issuecomment-7153392127",
+   "post_author": "igor-vii",
+   "post_created_at": "2026-11-25T05:02:21Z",
+   "post_body_sha256": "bb7c786d6fcc0ae6cf277c8497c63486c803673bc7040f8d179d8514baab4662",
+   "post_body_chars": 4498,
+   "first_check_utc": "2026-11-25T05:06:49Z",
+   "published_before_first_live_GET_by": "4m28s",
+   "issued_conditions": {
+    "comment_url": "https://github.com/x402-foundation/x402/issues/3866#issuecomment-7144596133",
+    "author": "AgenticFinanceGraph",
+    "created_at": "2026-11-24T21:11:21Z",
+    "body_sha256": "840ffa33488216a5bfa9cc8e803c4a0c9eca56220ee7aa4633061082246c966c",
+    "verify_command": "curl -s https://api.github.com/repos/x402-foundation/x402/issues/comments/7144596133 | jq -j .body | sha256sum"
+   }
+  },
+  "sut_pin": {
+   "client": "agentic-finance-graph@0.3.7 (npm ci reproduced)",
+   "hook_file_sha256": "b3983aed5db8ead24d4ea65e7fe44155307a24455fb96b97666c9f83f59508ed",
+   "package_manifest_sha256": "60e4bdcdf46c79d164597b9733da2829d54776fd60e58269ddf144f230c98b9d",
+   "gate_server": "openapi 0.22.7 issued by vendor; 0.22.8 observed at run start (L1, evidence-only)",
+   "receipt_schema": "afg-gate-receipt/2 since 2026-11-24T10:10:11Z"
+  },
+  "identity": {
+   "agent": "45978 (ERC-8004 Base; unchanged since 0031 — the vendor binds the S6 expectation to this agent's characterization)",
+   "references": "argus-0033-*",
+   "payees": "fresh synthetic P1–P6 (sut-hookguard/payees-0033.json); 0031 payees deliberately not reused"
+  }
+ },
+ "scenarios": [
+  {
+   "id": "S1",
+   "role": "control C1",
+   "expected": "allow -> block; reason format new_payee_window_above_max:200+200>250/168h",
+   "observed": "allow (pending 0/0) -> block/abort new_payee_window_above_max:200+200>250/168h (pending 1/$200); pid changed across the restart",
+   "verdict": "MATCH"
+  },
+  {
+   "id": "S2",
+   "role": "control C2",
+   "expected": "10x allow; each fresh reference pending starts clean, no cross-reference aggregation",
+   "observed": "10 allow; pending {counted,0,0} on every FR01..FR10; no cumulative $2000 anywhere",
+   "verdict": "MATCH"
+  },
+  {
+   "id": "S3",
+   "role": "live",
+   "expected": "5x allow $60; window never sees $300",
+   "observed": "5 allow $60; pending clean",
+   "verdict": "MATCH"
+  },
+  {
+   "id": "S4",
+   "role": "live",
+   "expected": "1st-3rd allow; 4th blocked by the new-payee cap (counts addresses, not checks)",
+   "observed": "allow x3 (pending 0/$0, 1/$200, 2/$400) -> block new_payees_per_day_exceeded:4>3; 0031 reason format reproduced on the 0.22.7 gate",
+   "verdict": "MATCH"
+  },
+  {
+   "id": "S5",
+   "role": "live",
+   "expected": "allow; allow at exactly 250 (strict >); block 250+50>250/168h",
+   "observed": "allow (0/$0) -> allow (1/$200) -> block new_payee_window_above_max:250+50>250/168h",
+   "verdict": "MATCH"
+  },
+  {
+   "id": "S6",
+   "role": "live (VENDOR-ISSUED, comment 7144596133)",
+   "expected": "exactly 1 allow + 7 blocks, each block pending {decisions:1, usd:200}; integrity: no double-count, no under-count; a repeat of the 0031 outcome (7 allow / 1 block) would be a DIVERGENCE recorded as-is",
+   "observed": "exactly 1 allow (c2, pending 0/$0) + 7 blocks, each with pending {counted:true, decisions:1, usd:200}, reasons new_payee_window_above_max:200+200>250/168h; 8 checks accounted exactly once; the 0031 divergence did NOT repeat",
+   "verdict": "MATCH"
+  },
+  {
+   "id": "S7",
+   "role": "control C3",
+   "expected": "zero gate_check requests; absence recorded as the result",
+   "observed": "mcp_requests_observed = 0",
+   "verdict": "MATCH"
+  },
+  {
+   "id": "S8",
+   "role": "live (passive) (VENDOR-ISSUED)",
+   "expected": "\"not observed\"; actual {calls_total, mcp_status histogram, count_503} recorded; any 503 = DIVERGENCE verbatim; no artificial queue",
+   "observed": "calls_total 32, histogram {\"200\": 32}, count_503 = 0",
+   "verdict": "MATCH"
+  },
+  {
+   "id": "S9",
+   "role": "offline control (VENDOR-ISSUED)",
+   "expected": "every run-window receipt: body.schema == afg-gate-receipt/2, body.policy == {name, sha256} 64-hex lowercase, 16-char policy.hash absent from the receipt (answer may carry legacy hash beside policy.sha256 — corroboration); recompute per the frozen definition snapshot; signature check corroboration-only",
+   "observed": "32/32 receipts conformant; receipt policy {name, sha256} exact; sha256 e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046; answer carries policy.sha256 beside legacy 16-char fdca84e4e0e0b216; recompute canon(policy.body) byte-exact for all 32 (candidate serializations recorded in runs/summary-0033.json); note: receipts are structurally present in hook_log.receipt.body per call, the raw MCP envelope carries the answer as an escaped JSON string inside result.content[0].text so the frozen s9 raw-scan recorded 0 receipts as-is — battery file untouched (pin intact)",
+   "verdict": "MATCH"
+  },
+  {
+   "id": "L1",
+   "role": "evidence-only",
+   "expected": "openapi.json + afg-pass-keys.json GETs at run start, saved verbatim; never affects the verdict",
+   "observed": "openapi 200 version 0.22.8 (vendor issued 0.22.7 — recorded); keys 200; one-time snapshot fingerprints recorded",
+   "verdict": "evidence-only (no verdict)"
+  }
+ ],
+ "notes": [
+  "Prereg discipline held: operator prereg post 7153392127 at 2026-11-25T05:02:21Z, first live-GET 2026-11-25T05:06:49Z (4m28s later); issued conditions (AFG comment 7144596133) are frozen verbatim in the prereg post; no expectation derives from any pre-run gate_check observation.",
+  "Delta vs 0031: the S6 divergence (7 allow / 1 block via pre-decision pending snapshots) did not repeat on the current gate — the vendor-issued outcome (1 allow / 7 blocks, pending 1 x $200) was observed; recorded as the honest 0031->0033 delta.",
+  "Budget $0.00; free gate_check only; every check written exactly once at the moment it was made; retries: 0; failures/timeouts: none (all 32 calls HTTP 200).",
+  "Pass rule: seal iff all nine sessions MATCH — condition met; this draft is sealed by tools/registry/sign-record.mjs with the operator lab key (privkey never in the repo; ARGUS_PRIVKEY_PATH override), then verify-registry.mjs, then the record hash is posted in x402#3866.",
+  "Issued-conditions verify command (post-time): curl -s https://api.github.com/repos/x402-foundation/x402/issues/comments/7144596133 | jq -j .body | sha256sum  # must equal 840ffa33…c966c",
+  "Numbering: vendor comment says 'Run 0032'; registry slot 0032 was sealed 2026-11-24 (fiangshi census) before the vendor green light landed — this run takes slot 0033; renumbering disclosed in the prereg post."
+ ],
+ "evidence": [
+  {
+   "kind": "file",
+   "path": "sut-hookguard/battery_hookguard.mjs",
+   "sha256": null
+  },
+  {
+   "kind": "file",
+   "path": "sut-hookguard/payees-0033.json",
+   "sha256": null
+  },
+  {
+   "kind": "file",
+   "path": "sut-hookguard/recon/def-gate.receipt.v2.snap",
+   "sha256": null
+  },
+  {
+   "kind": "file",
+   "path": "attestations/evidence/0033-hookguard/README.md",
+   "sha256": null
+  },
+  {
+   "kind": "file",
+   "path": "attestations/evidence/0033-hookguard/run.json",
+   "sha256": null
+  },
+  {
+   "kind": "file",
+   "path": "attestations/evidence/0033-hookguard/offline_table.json",
+   "sha256": null
+  },
+  {
+   "kind": "file",
+   "path": "attestations/evidence/0033-hookguard/offline_table.md",
+   "sha256": null
+  },
+  {
+   "kind": "file",
+   "path": "attestations/evidence/0033-hookguard/manifest.sha256",
+   "sha256": null
+  },
+  {
+   "kind": "file",
+   "path": "attestations/evidence/0033-hookguard/runs/afg-pass-keys.json",
+   "sha256": null
+  },
+  {
+   "kind": "file",
+   "path": "attestations/evidence/0033-hookguard/runs/l1-openapi.json",
+   "sha256": null
+  },
+  {
+   "kind": "file",
+   "path": "attestations/evidence/0033-hookguard/runs/openapi-runstart.json",
+   "sha256": null
+  },
+  {
+   "kind": "file",
+   "path": "attestations/evidence/0033-hookguard/runs/s1-call1.json",
+   "sha256": null
+  },
+  {
+   "kind": "file",
+   "path": "attestations/evidence/0033-hookguard/runs/s1-call2.json",
+   "sha256": null
+  },
+  {
+   "kind": "file",
+   "path": "attestations/evidence/0033-hookguard/runs/s2-call1.json",
+   "sha256": null
+  },
+  {
+   "kind": "file",
+   "path": "attestations/evidence/0033-hookguard/runs/s2-call10.json",
+   "sha256": null
+  },
+  {
+   "kind": "file",
+   "path": "attestations/evidence/0033-hookguard/runs/s2-call2.json",
+   "sha256": null
+  },
+  {
+   "kind": "file",
+   "path": "attestations/evidence/0033-hookguard/runs/s2-call3.json",
+   "sha256": null
+  },
+  {
+   "kind": "file",
+   "path": "attestations/evidence/0033-hookguard/runs/s2-call4.json",
+   "sha256": null
+  },
+  {
+   "kind": "file",
+   "path": "attestations/evidence/0033-hookguard/runs/s2-call5.json",
+   "sha256": null
+  },
+  {
+   "kind": "file",
+   "path": "attestations/evidence/0033-hookguard/runs/s2-call6.json",
+   "sha256": null
+  },
+  {
+   "kind": "file",
+   "path": "attestations/evidence/0033-hookguard/runs/s2-call7.json",
+   "sha256": null
+  },
+  {
+   "kind": "file",
+   "path": "attestations/evidence/0033-hookguard/runs/s2-call8.json",
+   "sha256": null
+  },
+  {
+   "kind": "file",
+   "path": "attestations/evidence/0033-hookguard/runs/s2-call9.json",
+   "sha256": null
+  },
+  {
+   "kind": "file",
+   "path": "attestations/evidence/0033-hookguard/runs/s3-call1.json",
+   "sha256": null
+  },
+  {
+   "kind": "file",
+   "path": "attestations/evidence/0033-hookguard/runs/s3-call2.json",
+   "sha256": null
+  },
+  {
+   "kind": "file",
+   "path": "attestations/evidence/0033-hookguard/runs/s3-call3.json",
+   "sha256": null
+  },
+  {
+   "kind": "file",
+   "path": "attestations/evidence/0033-hookguard/runs/s3-call4.json",
+   "sha256": null
+  },
+  {
+   "kind": "file",
+   "path": "attestations/evidence/0033-hookguard/runs/s3-call5.json",
+   "sha256": null
+  },
+  {
+   "kind": "file",
+   "path": "attestations/evidence/0033-hookguard/runs/s4-call1.json",
+   "sha256": null
+  },
+  {
+   "kind": "file",
+   "path": "attestations/evidence/0033-hookguard/runs/s4-call2.json",
+   "sha256": null
+  },
+  {
+   "kind": "file",
+   "path": "attestations/evidence/0033-hookguard/runs/s4-call3.json",
+   "sha256": null
+  },
+  {
+   "kind": "file",
+   "path": "attestations/evidence/0033-hookguard/runs/s4-call4.json",
+   "sha256": null
+  },
+  {
+   "kind": "file",
+   "path": "attestations/evidence/0033-hookguard/runs/s5-call1.json",
+   "sha256": null
+  },
+  {
+   "kind": "file",
+   "path": "attestations/evidence/0033-hookguard/runs/s5-call2.json",
+   "sha256": null
+  },
+  {
+   "kind": "file",
+   "path": "attestations/evidence/0033-hookguard/runs/s5-call3.json",
+   "sha256": null
+  },
+  {
+   "kind": "file",
+   "path": "attestations/evidence/0033-hookguard/runs/s6-call1.json",
+   "sha256": null
+  },
+  {
+   "kind": "file",
+   "path": "attestations/evidence/0033-hookguard/runs/s6-call2.json",
+   "sha256": null
+  },
+  {
+   "kind": "file",
+   "path": "attestations/evidence/0033-hookguard/runs/s6-call3.json",
+   "sha256": null
+  },
+  {
+   "kind": "file",
+   "path": "attestations/evidence/0033-hookguard/runs/s6-call4.json",
+   "sha256": null
+  },
+  {
+   "kind": "file",
+   "path": "attestations/evidence/0033-hookguard/runs/s6-call5.json",
+   "sha256": null
+  },
+  {
+   "kind": "file",
+   "path": "attestations/evidence/0033-hookguard/runs/s6-call6.json",
+   "sha256": null
+  },
+  {
+   "kind": "file",
+   "path": "attestations/evidence/0033-hookguard/runs/s6-call7.json",
+   "sha256": null
+  },
+  {
+   "kind": "file",
+   "path": "attestations/evidence/0033-hookguard/runs/s6-call8.json",
+   "sha256": null
+  },
+  {
+   "kind": "file",
+   "path": "attestations/evidence/0033-hookguard/runs/s7-call1.json",
+   "sha256": null
+  },
+  {
+   "kind": "file",
+   "path": "attestations/evidence/0033-hookguard/runs/s8-503-survey.json",
+   "sha256": null
+  },
+  {
+   "kind": "file",
+   "path": "attestations/evidence/0033-hookguard/runs/s9-receipt-v2-verify.json",
+   "sha256": null
+  },
+  {
+   "kind": "file",
+   "path": "attestations/evidence/0033-hookguard/runs/summary-0033.json",
+   "sha256": null
+  }
+ ],
+ "run_ts": "2026-11-25T05:06:49Z..2026-11-25T05:07:22Z (L1 snapshots + 32 live gate_check calls in frozen session order S1->S7; S8/S9 offline)",
+ "self_run": {
+  "run_by": "argus lab agent (operator-directed), per the published freeze; no live calls before the prereg post timestamp",
+  "battery": "sut-hookguard/battery_hookguard.mjs sha256 ca55f1f422ae50464b292a39d09d27813ddac6307315ee01ca79cfb930546151 (frozen)",
+  "pre_flight": "npm ci reproduced pins: hook file b3983aed…59508ed, package manifest 60e4bdcd…c98b9d",
+  "calls_total": 32,
+  "receipts_total": 32,
+  "retries": 0,
+  "budget_spent": "$0.00 (free gate_check endpoint only; no keys, no payments signed)",
+  "node_versions": [
+   "v24.22.3"
+  ],
+  "process_pids_s1a_s1b": [
+   2130,
+   2142,
+   2154,
+   2175,
+   2187,
+   2199,
+   2220
+  ],
+  "l1_run_start": "openapi 200 version 0.22.8 (vendor issued 0.22.7 — recorded, verdict-neutral); pass-keys 200"
+ },
+ "findings_summary": {
+  "sessions": "9/9 MATCH (S1–S9); L1 evidence-only",
+  "divergences": 0,
+  "checks_total": 32,
+  "receipts_total": 32,
+  "receipts_v2_conformant": 32,
+  "vendor_issued_rows": "S6 (1 allow / 7 blocks, pending 1 x $200) MATCH; S8 (503 'not observed') MATCH; S9 (all receipts v2, 16-char hash absent) MATCH",
+  "policy_sha256_recompute": "canon(policy.body) == e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046 byte-exact for all 32 receipts and answers",
+  "delta_vs_0031": "S6 divergence did not repeat; server-side lock now yields the vendor-issued outcome"
+ }
+}

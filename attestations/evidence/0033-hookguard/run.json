@@ -1,0 +1,42 @@
+{
+ "record_id": "0033",
+ "prereg": {
+  "post_url": "https://github.com/x402-foundation/x402/issues/3866#issuecomment-7153392127",
+  "post_author": "igor-vii",
+  "post_created_at": "2026-11-25T05:02:21Z",
+  "post_body_sha256": "bb7c786d6fcc0ae6cf277c8497c63486c803673bc7040f8d179d8514baab4662",
+  "post_body_chars": 4498,
+  "first_check_utc": "2026-11-25T05:06:49Z",
+  "published_before_first_live_GET_by": "4m28s",
+  "issued_conditions": {
+   "comment_url": "https://github.com/x402-foundation/x402/issues/3866#issuecomment-7144596133",
+   "author": "AgenticFinanceGraph",
+   "created_at": "2026-11-24T21:11:21Z",
+   "body_sha256": "840ffa33488216a5bfa9cc8e803c4a0c9eca56220ee7aa4633061082246c966c",
+   "verify_command": "curl -s https://api.github.com/repos/x402-foundation/x402/issues/comments/7144596133 | jq -j .body | sha256sum"
+  }
+ },
+ "self_run": {
+  "run_by": "argus lab agent (operator-directed), per the published freeze; no live calls before the prereg post timestamp",
+  "battery": "sut-hookguard/battery_hookguard.mjs sha256 ca55f1f422ae50464b292a39d09d27813ddac6307315ee01ca79cfb930546151 (frozen)",
+  "pre_flight": "npm ci reproduced pins: hook file b3983aed…59508ed, package manifest 60e4bdcd…c98b9d",
+  "calls_total": 32,
+  "receipts_total": 32,
+  "retries": 0,
+  "budget_spent": "$0.00 (free gate_check endpoint only; no keys, no payments signed)",
+  "node_versions": [
+   "v24.22.3"
+  ],
+  "process_pids_s1a_s1b": [
+   2130,
+   2142,
+   2154,
+   2175,
+   2187,
+   2199,
+   2220
+  ],
+  "l1_run_start": "openapi 200 version 0.22.8 (vendor issued 0.22.7 — recorded, verdict-neutral); pass-keys 200"
+ },
+ "post_run_steps": "seal via tools/registry/sign-record.mjs with the operator lab key (privkey outside the repo, ARGUS_PRIVKEY_PATH), then verify-registry.mjs, then post the record hash in x402#3866"
+}

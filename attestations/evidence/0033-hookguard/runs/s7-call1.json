@@ -1,0 +1,20 @@
+{
+  "utc_ts": "2026-11-25T05:07:23Z",
+  "session": 7,
+  "call_no": 1,
+  "role": "control C3",
+  "reference": null,
+  "payee": "0x20b512e451144428a5fc59fc91d25a600b97aa5e",
+  "amount_atomic": "200000000",
+  "amount_usd": 200,
+  "full_response_verbatim": null,
+  "sha256_response": null,
+  "mcp_status": null,
+  "observable_signal": "none — no MCP request fired (hook not registered)",
+  "mcp_requests_observed": 0,
+  "note": "payment-creation attempt executed with the hook bypassed; the frozen expectation is no externally observable signal; absence recorded as the result",
+  "process": {
+    "pid": 2232,
+    "node": "v24.22.3"
+  }
+}

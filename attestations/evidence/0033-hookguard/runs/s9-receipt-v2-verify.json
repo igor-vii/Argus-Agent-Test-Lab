@@ -1,0 +1,173 @@
+{
+  "utc_ts": "2026-11-25T05:07:23Z",
+  "session": 9,
+  "role": "offline control",
+  "responses_scanned": 32,
+  "receipts_found": 0,
+  "receipts_v2_conformant": 0,
+  "divergences": [],
+  "results": [
+    {
+      "file": "s1-call1.json",
+      "receipts": 0,
+      "note": "no afg-gate-receipt/* object found in response — recorded as-is"
+    },
+    {
+      "file": "s1-call2.json",
+      "receipts": 0,
+      "note": "no afg-gate-receipt/* object found in response — recorded as-is"
+    },
+    {
+      "file": "s2-call1.json",
+      "receipts": 0,
+      "note": "no afg-gate-receipt/* object found in response — recorded as-is"
+    },
+    {
+      "file": "s2-call10.json",
+      "receipts": 0,
+      "note": "no afg-gate-receipt/* object found in response — recorded as-is"
+    },
+    {
+      "file": "s2-call2.json",
+      "receipts": 0,
+      "note": "no afg-gate-receipt/* object found in response — recorded as-is"
+    },
+    {
+      "file": "s2-call3.json",
+      "receipts": 0,
+      "note": "no afg-gate-receipt/* object found in response — recorded as-is"
+    },
+    {
+      "file": "s2-call4.json",
+      "receipts": 0,
+      "note": "no afg-gate-receipt/* object found in response — recorded as-is"
+    },
+    {
+      "file": "s2-call5.json",
+      "receipts": 0,
+      "note": "no afg-gate-receipt/* object found in response — recorded as-is"
+    },
+    {
+      "file": "s2-call6.json",
+      "receipts": 0,
+      "note": "no afg-gate-receipt/* object found in response — recorded as-is"
+    },
+    {
+      "file": "s2-call7.json",
+      "receipts": 0,
+      "note": "no afg-gate-receipt/* object found in response — recorded as-is"
+    },
+    {
+      "file": "s2-call8.json",
+      "receipts": 0,
+      "note": "no afg-gate-receipt/* object found in response — recorded as-is"
+    },
+    {
+      "file": "s2-call9.json",
+      "receipts": 0,
+      "note": "no afg-gate-receipt/* object found in response — recorded as-is"
+    },
+    {
+      "file": "s3-call1.json",
+      "receipts": 0,
+      "note": "no afg-gate-receipt/* object found in response — recorded as-is"
+    },
+    {
+      "file": "s3-call2.json",
+      "receipts": 0,
+      "note": "no afg-gate-receipt/* object found in response — recorded as-is"
+    },
+    {
+      "file": "s3-call3.json",
+      "receipts": 0,
+      "note": "no afg-gate-receipt/* object found in response — recorded as-is"
+    },
+    {
+      "file": "s3-call4.json",
+      "receipts": 0,
+      "note": "no afg-gate-receipt/* object found in response — recorded as-is"
+    },
+    {
+      "file": "s3-call5.json",
+      "receipts": 0,
+      "note": "no afg-gate-receipt/* object found in response — recorded as-is"
+    },
+    {
+      "file": "s4-call1.json",
+      "receipts": 0,
+      "note": "no afg-gate-receipt/* object found in response — recorded as-is"
+    },
+    {
+      "file": "s4-call2.json",
+      "receipts": 0,
+      "note": "no afg-gate-receipt/* object found in response — recorded as-is"
+    },
+    {
+      "file": "s4-call3.json",
+      "receipts": 0,
+      "note": "no afg-gate-receipt/* object found in response — recorded as-is"
+    },
+    {
+      "file": "s4-call4.json",
+      "receipts": 0,
+      "note": "no afg-gate-receipt/* object found in response — recorded as-is"
+    },
+    {
+      "file": "s5-call1.json",
+      "receipts": 0,
+      "note": "no afg-gate-receipt/* object found in response — recorded as-is"
+    },
+    {
+      "file": "s5-call2.json",
+      "receipts": 0,
+      "note": "no afg-gate-receipt/* object found in response — recorded as-is"
+    },
+    {
+      "file": "s5-call3.json",
+      "receipts": 0,
+      "note": "no afg-gate-receipt/* object found in response — recorded as-is"
+    },
+    {
+      "file": "s6-call1.json",
+      "receipts": 0,
+      "note": "no afg-gate-receipt/* object found in response — recorded as-is"
+    },
+    {
+      "file": "s6-call2.json",
+      "receipts": 0,
+      "note": "no afg-gate-receipt/* object found in response — recorded as-is"
+    },
+    {
+      "file": "s6-call3.json",
+      "receipts": 0,
+      "note": "no afg-gate-receipt/* object found in response — recorded as-is"
+    },
+    {
+      "file": "s6-call4.json",
+      "receipts": 0,
+      "note": "no afg-gate-receipt/* object found in response — recorded as-is"
+    },
+    {
+      "file": "s6-call5.json",
+      "receipts": 0,
+      "note": "no afg-gate-receipt/* object found in response — recorded as-is"
+    },
+    {
+      "file": "s6-call6.json",
+      "receipts": 0,
+      "note": "no afg-gate-receipt/* object found in response — recorded as-is"
+    },
+    {
+      "file": "s6-call7.json",
+      "receipts": 0,
+      "note": "no afg-gate-receipt/* object found in response — recorded as-is"
+    },
+    {
+      "file": "s6-call8.json",
+      "receipts": 0,
+      "note": "no afg-gate-receipt/* object found in response — recorded as-is"
+    }
+  ],
+  "expected": "every run-window receipt: body.schema == \"afg-gate-receipt/2\", body.policy == {name, sha256} (64-hex), 16-char policy.hash absent from the receipt; policy.sha256 equals the sha256 of the canonical policy body from the answer (keys sorted at every level, no spaces, minus top-level _comment/name/note/description) per the frozen definition snapshot",
+  "note": "a recompute_mismatch is recorded honestly (spec-conformance question for the vendor), never silently normalized; a v1 receipt in this run window is a divergence; signature verification is corroboration-only and never affects the verdict"
+}

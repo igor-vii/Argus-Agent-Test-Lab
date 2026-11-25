@@ -1,0 +1,1956 @@
+{
+ "utc_generated": "2026-11-25T05:09:36Z",
+ "calls": [
+  {
+   "file": "s1-call1.json",
+   "session": 1,
+   "call": 1,
+   "decision": "allow",
+   "gate": "allow",
+   "reasons": [],
+   "pending": {
+    "counted": true,
+    "decisions": 0,
+    "usd": 0
+   },
+   "mcp_status": 200,
+   "receipt_count": 1
+  },
+  {
+   "file": "s1-call2.json",
+   "session": 1,
+   "call": 2,
+   "decision": "abort",
+   "gate": "block",
+   "reasons": [
+    "new_payee_window_above_max:200+200>250/168h"
+   ],
+   "pending": {
+    "counted": true,
+    "decisions": 1,
+    "usd": 200
+   },
+   "mcp_status": 200,
+   "receipt_count": 1
+  },
+  {
+   "file": "s2-call1.json",
+   "session": 2,
+   "call": 1,
+   "decision": "allow",
+   "gate": "allow",
+   "reasons": [],
+   "pending": {
+    "counted": true,
+    "decisions": 0,
+    "usd": 0
+   },
+   "mcp_status": 200,
+   "receipt_count": 1
+  },
+  {
+   "file": "s2-call2.json",
+   "session": 2,
+   "call": 2,
+   "decision": "allow",
+   "gate": "allow",
+   "reasons": [],
+   "pending": {
+    "counted": true,
+    "decisions": 0,
+    "usd": 0
+   },
+   "mcp_status": 200,
+   "receipt_count": 1
+  },
+  {
+   "file": "s2-call3.json",
+   "session": 2,
+   "call": 3,
+   "decision": "allow",
+   "gate": "allow",
+   "reasons": [],
+   "pending": {
+    "counted": true,
+    "decisions": 0,
+    "usd": 0
+   },
+   "mcp_status": 200,
+   "receipt_count": 1
+  },
+  {
+   "file": "s2-call4.json",
+   "session": 2,
+   "call": 4,
+   "decision": "allow",
+   "gate": "allow",
+   "reasons": [],
+   "pending": {
+    "counted": true,
+    "decisions": 0,
+    "usd": 0
+   },
+   "mcp_status": 200,
+   "receipt_count": 1
+  },
+  {
+   "file": "s2-call5.json",
+   "session": 2,
+   "call": 5,
+   "decision": "allow",
+   "gate": "allow",
+   "reasons": [],
+   "pending": {
+    "counted": true,
+    "decisions": 0,
+    "usd": 0
+   },
+   "mcp_status": 200,
+   "receipt_count": 1
+  },
+  {
+   "file": "s2-call6.json",
+   "session": 2,
+   "call": 6,
+   "decision": "allow",
+   "gate": "allow",
+   "reasons": [],
+   "pending": {
+    "counted": true,
+    "decisions": 0,
+    "usd": 0
+   },
+   "mcp_status": 200,
+   "receipt_count": 1
+  },
+  {
+   "file": "s2-call7.json",
+   "session": 2,
+   "call": 7,
+   "decision": "allow",
+   "gate": "allow",
+   "reasons": [],
+   "pending": {
+    "counted": true,
+    "decisions": 0,
+    "usd": 0
+   },
+   "mcp_status": 200,
+   "receipt_count": 1
+  },
+  {
+   "file": "s2-call8.json",
+   "session": 2,
+   "call": 8,
+   "decision": "allow",
+   "gate": "allow",
+   "reasons": [],
+   "pending": {
+    "counted": true,
+    "decisions": 0,
+    "usd": 0
+   },
+   "mcp_status": 200,
+   "receipt_count": 1
+  },
+  {
+   "file": "s2-call9.json",
+   "session": 2,
+   "call": 9,
+   "decision": "allow",
+   "gate": "allow",
+   "reasons": [],
+   "pending": {
+    "counted": true,
+    "decisions": 0,
+    "usd": 0
+   },
+   "mcp_status": 200,
+   "receipt_count": 1
+  },
+  {
+   "file": "s2-call10.json",
+   "session": 2,
+   "call": 10,
+   "decision": "allow",
+   "gate": "allow",
+   "reasons": [],
+   "pending": {
+    "counted": true,
+    "decisions": 0,
+    "usd": 0
+   },
+   "mcp_status": 200,
+   "receipt_count": 1
+  },
+  {
+   "file": "s3-call1.json",
+   "session": 3,
+   "call": 1,
+   "decision": "allow",
+   "gate": "allow",
+   "reasons": [],
+   "pending": {
+    "counted": true,
+    "decisions": 0,
+    "usd": 0
+   },
+   "mcp_status": 200,
+   "receipt_count": 1
+  },
+  {
+   "file": "s3-call2.json",
+   "session": 3,
+   "call": 2,
+   "decision": "allow",
+   "gate": "allow",
+   "reasons": [],
+   "pending": {
+    "counted": true,
+    "decisions": 0,
+    "usd": 0
+   },
+   "mcp_status": 200,
+   "receipt_count": 1
+  },
+  {
+   "file": "s3-call3.json",
+   "session": 3,
+   "call": 3,
+   "decision": "allow",
+   "gate": "allow",
+   "reasons": [],
+   "pending": {
+    "counted": true,
+    "decisions": 0,
+    "usd": 0
+   },
+   "mcp_status": 200,
+   "receipt_count": 1
+  },
+  {
+   "file": "s3-call4.json",
+   "session": 3,
+   "call": 4,
+   "decision": "allow",
+   "gate": "allow",
+   "reasons": [],
+   "pending": {
+    "counted": true,
+    "decisions": 0,
+    "usd": 0
+   },
+   "mcp_status": 200,
+   "receipt_count": 1
+  },
+  {
+   "file": "s3-call5.json",
+   "session": 3,
+   "call": 5,
+   "decision": "allow",
+   "gate": "allow",
+   "reasons": [],
+   "pending": {
+    "counted": true,
+    "decisions": 0,
+    "usd": 0
+   },
+   "mcp_status": 200,
+   "receipt_count": 1
+  },
+  {
+   "file": "s4-call1.json",
+   "session": 4,
+   "call": 1,
+   "decision": "allow",
+   "gate": "allow",
+   "reasons": [],
+   "pending": {
+    "counted": true,
+    "decisions": 0,
+    "usd": 0
+   },
+   "mcp_status": 200,
+   "receipt_count": 1
+  },
+  {
+   "file": "s4-call2.json",
+   "session": 4,
+   "call": 2,
+   "decision": "allow",
+   "gate": "allow",
+   "reasons": [],
+   "pending": {
+    "counted": true,
+    "decisions": 1,
+    "usd": 200
+   },
+   "mcp_status": 200,
+   "receipt_count": 1
+  },
+  {
+   "file": "s4-call3.json",
+   "session": 4,
+   "call": 3,
+   "decision": "allow",
+   "gate": "allow",
+   "reasons": [],
+   "pending": {
+    "counted": true,
+    "decisions": 2,
+    "usd": 400
+   },
+   "mcp_status": 200,
+   "receipt_count": 1
+  },
+  {
+   "file": "s4-call4.json",
+   "session": 4,
+   "call": 4,
+   "decision": "abort",
+   "gate": "block",
+   "reasons": [
+    "new_payees_per_day_exceeded:4>3"
+   ],
+   "pending": {
+    "counted": true,
+    "decisions": 3,
+    "usd": 600
+   },
+   "mcp_status": 200,
+   "receipt_count": 1
+  },
+  {
+   "file": "s5-call1.json",
+   "session": 5,
+   "call": 1,
+   "decision": "allow",
+   "gate": "allow",
+   "reasons": [],
+   "pending": {
+    "counted": true,
+    "decisions": 0,
+    "usd": 0
+   },
+   "mcp_status": 200,
+   "receipt_count": 1
+  },
+  {
+   "file": "s5-call2.json",
+   "session": 5,
+   "call": 2,
+   "decision": "allow",
+   "gate": "allow",
+   "reasons": [],
+   "pending": {
+    "counted": true,
+    "decisions": 1,
+    "usd": 200
+   },
+   "mcp_status": 200,
+   "receipt_count": 1
+  },
+  {
+   "file": "s5-call3.json",
+   "session": 5,
+   "call": 3,
+   "decision": "abort",
+   "gate": "block",
+   "reasons": [
+    "new_payee_window_above_max:250+50>250/168h"
+   ],
+   "pending": {
+    "counted": true,
+    "decisions": 2,
+    "usd": 250
+   },
+   "mcp_status": 200,
+   "receipt_count": 1
+  },
+  {
+   "file": "s6-call1.json",
+   "session": 6,
+   "call": 1,
+   "decision": "abort",
+   "gate": "block",
+   "reasons": [
+    "new_payee_window_above_max:200+200>250/168h"
+   ],
+   "pending": {
+    "counted": true,
+    "decisions": 1,
+    "usd": 200
+   },
+   "mcp_status": 200,
+   "receipt_count": 1
+  },
+  {
+   "file": "s6-call2.json",
+   "session": 6,
+   "call": 2,
+   "decision": "allow",
+   "gate": "allow",
+   "reasons": [],
+   "pending": {
+    "counted": true,
+    "decisions": 0,
+    "usd": 0
+   },
+   "mcp_status": 200,
+   "receipt_count": 1
+  },
+  {
+   "file": "s6-call3.json",
+   "session": 6,
+   "call": 3,
+   "decision": "abort",
+   "gate": "block",
+   "reasons": [
+    "new_payee_window_above_max:200+200>250/168h"
+   ],
+   "pending": {
+    "counted": true,
+    "decisions": 1,
+    "usd": 200
+   },
+   "mcp_status": 200,
+   "receipt_count": 1
+  },
+  {
+   "file": "s6-call4.json",
+   "session": 6,
+   "call": 4,
+   "decision": "abort",
+   "gate": "block",
+   "reasons": [
+    "new_payee_window_above_max:200+200>250/168h"
+   ],
+   "pending": {
+    "counted": true,
+    "decisions": 1,
+    "usd": 200
+   },
+   "mcp_status": 200,
+   "receipt_count": 1
+  },
+  {
+   "file": "s6-call5.json",
+   "session": 6,
+   "call": 5,
+   "decision": "abort",
+   "gate": "block",
+   "reasons": [
+    "new_payee_window_above_max:200+200>250/168h"
+   ],
+   "pending": {
+    "counted": true,
+    "decisions": 1,
+    "usd": 200
+   },
+   "mcp_status": 200,
+   "receipt_count": 1
+  },
+  {
+   "file": "s6-call6.json",
+   "session": 6,
+   "call": 6,
+   "decision": "abort",
+   "gate": "block",
+   "reasons": [
+    "new_payee_window_above_max:200+200>250/168h"
+   ],
+   "pending": {
+    "counted": true,
+    "decisions": 1,
+    "usd": 200
+   },
+   "mcp_status": 200,
+   "receipt_count": 1
+  },
+  {
+   "file": "s6-call7.json",
+   "session": 6,
+   "call": 7,
+   "decision": "abort",
+   "gate": "block",
+   "reasons": [
+    "new_payee_window_above_max:200+200>250/168h"
+   ],
+   "pending": {
+    "counted": true,
+    "decisions": 1,
+    "usd": 200
+   },
+   "mcp_status": 200,
+   "receipt_count": 1
+  },
+  {
+   "file": "s6-call8.json",
+   "session": 6,
+   "call": 8,
+   "decision": "abort",
+   "gate": "block",
+   "reasons": [
+    "new_payee_window_above_max:200+200>250/168h"
+   ],
+   "pending": {
+    "counted": true,
+    "decisions": 1,
+    "usd": 200
+   },
+   "mcp_status": 200,
+   "receipt_count": 1
+  }
+ ],
+ "session_aggregates": {
+  "1": {
+   "allow": 1,
+   "block": 0,
+   "other": 1,
+   "pend_blocks": [],
+   "reasons": [],
+   "pend_allow": [
+    {
+     "counted": true,
+     "decisions": 0,
+     "usd": 0
+    }
+   ]
+  },
+  "2": {
+   "allow": 10,
+   "block": 0,
+   "other": 0,
+   "pend_blocks": [],
+   "reasons": [],
+   "pend_allow": [
+    {
+     "counted": true,
+     "decisions": 0,
+     "usd": 0
+    },
+    {
+     "counted": true,
+     "decisions": 0,
+     "usd": 0
+    },
+    {
+     "counted": true,
+     "decisions": 0,
+     "usd": 0
+    },
+    {
+     "counted": true,
+     "decisions": 0,
+     "usd": 0
+    },
+    {
+     "counted": true,
+     "decisions": 0,
+     "usd": 0
+    },
+    {
+     "counted": true,
+     "decisions": 0,
+     "usd": 0
+    },
+    {
+     "counted": true,
+     "decisions": 0,
+     "usd": 0
+    },
+    {
+     "counted": true,
+     "decisions": 0,
+     "usd": 0
+    },
+    {
+     "counted": true,
+     "decisions": 0,
+     "usd": 0
+    },
+    {
+     "counted": true,
+     "decisions": 0,
+     "usd": 0
+    }
+   ]
+  },
+  "3": {
+   "allow": 5,
+   "block": 0,
+   "other": 0,
+   "pend_blocks": [],
+   "reasons": [],
+   "pend_allow": [
+    {
+     "counted": true,
+     "decisions": 0,
+     "usd": 0
+    },
+    {
+     "counted": true,
+     "decisions": 0,
+     "usd": 0
+    },
+    {
+     "counted": true,
+     "decisions": 0,
+     "usd": 0
+    },
+    {
+     "counted": true,
+     "decisions": 0,
+     "usd": 0
+    },
+    {
+     "counted": true,
+     "decisions": 0,
+     "usd": 0
+    }
+   ]
+  },
+  "4": {
+   "allow": 3,
+   "block": 0,
+   "other": 1,
+   "pend_blocks": [],
+   "reasons": [],
+   "pend_allow": [
+    {
+     "counted": true,
+     "decisions": 0,
+     "usd": 0
+    },
+    {
+     "counted": true,
+     "decisions": 1,
+     "usd": 200
+    },
+    {
+     "counted": true,
+     "decisions": 2,
+     "usd": 400
+    }
+   ]
+  },
+  "5": {
+   "allow": 2,
+   "block": 0,
+   "other": 1,
+   "pend_blocks": [],
+   "reasons": [],
+   "pend_allow": [
+    {
+     "counted": true,
+     "decisions": 0,
+     "usd": 0
+    },
+    {
+     "counted": true,
+     "decisions": 1,
+     "usd": 200
+    }
+   ]
+  },
+  "6": {
+   "allow": 1,
+   "block": 0,
+   "other": 7,
+   "pend_blocks": [],
+   "reasons": [],
+   "pend_allow": [
+    {
+     "counted": true,
+     "decisions": 0,
+     "usd": 0
+    }
+   ]
+  }
+ },
+ "receipts_found": 32,
+ "receipts_v2_conformant": 32,
+ "receipt_rows": [
+  {
+   "file": "s1-call1.json",
+   "schema": "afg-gate-receipt/2",
+   "policy_name": "recommended-v3",
+   "policy_sha256": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+   "checks": {
+    "schema_is_v2": true,
+    "policy_shape_keys": [
+     "name",
+     "sha256"
+    ],
+    "sha256_hex64": true,
+    "legacy_hash_absent": true
+   },
+   "answer_policy_sha256": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+   "recompute_candidates": {
+    "canon(body)": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+    "canon(body minus _comment/name/note/description)": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+    "canon(policy minus name,sha256)": "5f80ff93142fae4553764398be613c8bd2e2f9508f7568c6dc7c76074be3b807",
+    "canon(policy minus name,sha256,hash,hash_covers)": "3fad01091eab29d13716fb686e30a6522b984aae5251e9d6baa99c11269e2f38"
+   },
+   "matches": {
+    "canon(body)": [
+     true,
+     true
+    ],
+    "canon(body minus _comment/name/note/description)": [
+     true,
+     true
+    ],
+    "canon(policy minus name,sha256)": [
+     false,
+     false
+    ],
+    "canon(policy minus name,sha256,hash,hash_covers)": [
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "file": "s1-call2.json",
+   "schema": "afg-gate-receipt/2",
+   "policy_name": "recommended-v3",
+   "policy_sha256": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+   "checks": {
+    "schema_is_v2": true,
+    "policy_shape_keys": [
+     "name",
+     "sha256"
+    ],
+    "sha256_hex64": true,
+    "legacy_hash_absent": true
+   },
+   "answer_policy_sha256": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+   "recompute_candidates": {
+    "canon(body)": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+    "canon(body minus _comment/name/note/description)": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+    "canon(policy minus name,sha256)": "5f80ff93142fae4553764398be613c8bd2e2f9508f7568c6dc7c76074be3b807",
+    "canon(policy minus name,sha256,hash,hash_covers)": "3fad01091eab29d13716fb686e30a6522b984aae5251e9d6baa99c11269e2f38"
+   },
+   "matches": {
+    "canon(body)": [
+     true,
+     true
+    ],
+    "canon(body minus _comment/name/note/description)": [
+     true,
+     true
+    ],
+    "canon(policy minus name,sha256)": [
+     false,
+     false
+    ],
+    "canon(policy minus name,sha256,hash,hash_covers)": [
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "file": "s2-call1.json",
+   "schema": "afg-gate-receipt/2",
+   "policy_name": "recommended-v3",
+   "policy_sha256": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+   "checks": {
+    "schema_is_v2": true,
+    "policy_shape_keys": [
+     "name",
+     "sha256"
+    ],
+    "sha256_hex64": true,
+    "legacy_hash_absent": true
+   },
+   "answer_policy_sha256": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+   "recompute_candidates": {
+    "canon(body)": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+    "canon(body minus _comment/name/note/description)": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+    "canon(policy minus name,sha256)": "5f80ff93142fae4553764398be613c8bd2e2f9508f7568c6dc7c76074be3b807",
+    "canon(policy minus name,sha256,hash,hash_covers)": "3fad01091eab29d13716fb686e30a6522b984aae5251e9d6baa99c11269e2f38"
+   },
+   "matches": {
+    "canon(body)": [
+     true,
+     true
+    ],
+    "canon(body minus _comment/name/note/description)": [
+     true,
+     true
+    ],
+    "canon(policy minus name,sha256)": [
+     false,
+     false
+    ],
+    "canon(policy minus name,sha256,hash,hash_covers)": [
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "file": "s2-call2.json",
+   "schema": "afg-gate-receipt/2",
+   "policy_name": "recommended-v3",
+   "policy_sha256": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+   "checks": {
+    "schema_is_v2": true,
+    "policy_shape_keys": [
+     "name",
+     "sha256"
+    ],
+    "sha256_hex64": true,
+    "legacy_hash_absent": true
+   },
+   "answer_policy_sha256": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+   "recompute_candidates": {
+    "canon(body)": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+    "canon(body minus _comment/name/note/description)": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+    "canon(policy minus name,sha256)": "5f80ff93142fae4553764398be613c8bd2e2f9508f7568c6dc7c76074be3b807",
+    "canon(policy minus name,sha256,hash,hash_covers)": "3fad01091eab29d13716fb686e30a6522b984aae5251e9d6baa99c11269e2f38"
+   },
+   "matches": {
+    "canon(body)": [
+     true,
+     true
+    ],
+    "canon(body minus _comment/name/note/description)": [
+     true,
+     true
+    ],
+    "canon(policy minus name,sha256)": [
+     false,
+     false
+    ],
+    "canon(policy minus name,sha256,hash,hash_covers)": [
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "file": "s2-call3.json",
+   "schema": "afg-gate-receipt/2",
+   "policy_name": "recommended-v3",
+   "policy_sha256": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+   "checks": {
+    "schema_is_v2": true,
+    "policy_shape_keys": [
+     "name",
+     "sha256"
+    ],
+    "sha256_hex64": true,
+    "legacy_hash_absent": true
+   },
+   "answer_policy_sha256": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+   "recompute_candidates": {
+    "canon(body)": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+    "canon(body minus _comment/name/note/description)": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+    "canon(policy minus name,sha256)": "5f80ff93142fae4553764398be613c8bd2e2f9508f7568c6dc7c76074be3b807",
+    "canon(policy minus name,sha256,hash,hash_covers)": "3fad01091eab29d13716fb686e30a6522b984aae5251e9d6baa99c11269e2f38"
+   },
+   "matches": {
+    "canon(body)": [
+     true,
+     true
+    ],
+    "canon(body minus _comment/name/note/description)": [
+     true,
+     true
+    ],
+    "canon(policy minus name,sha256)": [
+     false,
+     false
+    ],
+    "canon(policy minus name,sha256,hash,hash_covers)": [
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "file": "s2-call4.json",
+   "schema": "afg-gate-receipt/2",
+   "policy_name": "recommended-v3",
+   "policy_sha256": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+   "checks": {
+    "schema_is_v2": true,
+    "policy_shape_keys": [
+     "name",
+     "sha256"
+    ],
+    "sha256_hex64": true,
+    "legacy_hash_absent": true
+   },
+   "answer_policy_sha256": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+   "recompute_candidates": {
+    "canon(body)": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+    "canon(body minus _comment/name/note/description)": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+    "canon(policy minus name,sha256)": "5f80ff93142fae4553764398be613c8bd2e2f9508f7568c6dc7c76074be3b807",
+    "canon(policy minus name,sha256,hash,hash_covers)": "3fad01091eab29d13716fb686e30a6522b984aae5251e9d6baa99c11269e2f38"
+   },
+   "matches": {
+    "canon(body)": [
+     true,
+     true
+    ],
+    "canon(body minus _comment/name/note/description)": [
+     true,
+     true
+    ],
+    "canon(policy minus name,sha256)": [
+     false,
+     false
+    ],
+    "canon(policy minus name,sha256,hash,hash_covers)": [
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "file": "s2-call5.json",
+   "schema": "afg-gate-receipt/2",
+   "policy_name": "recommended-v3",
+   "policy_sha256": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+   "checks": {
+    "schema_is_v2": true,
+    "policy_shape_keys": [
+     "name",
+     "sha256"
+    ],
+    "sha256_hex64": true,
+    "legacy_hash_absent": true
+   },
+   "answer_policy_sha256": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+   "recompute_candidates": {
+    "canon(body)": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+    "canon(body minus _comment/name/note/description)": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+    "canon(policy minus name,sha256)": "5f80ff93142fae4553764398be613c8bd2e2f9508f7568c6dc7c76074be3b807",
+    "canon(policy minus name,sha256,hash,hash_covers)": "3fad01091eab29d13716fb686e30a6522b984aae5251e9d6baa99c11269e2f38"
+   },
+   "matches": {
+    "canon(body)": [
+     true,
+     true
+    ],
+    "canon(body minus _comment/name/note/description)": [
+     true,
+     true
+    ],
+    "canon(policy minus name,sha256)": [
+     false,
+     false
+    ],
+    "canon(policy minus name,sha256,hash,hash_covers)": [
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "file": "s2-call6.json",
+   "schema": "afg-gate-receipt/2",
+   "policy_name": "recommended-v3",
+   "policy_sha256": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+   "checks": {
+    "schema_is_v2": true,
+    "policy_shape_keys": [
+     "name",
+     "sha256"
+    ],
+    "sha256_hex64": true,
+    "legacy_hash_absent": true
+   },
+   "answer_policy_sha256": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+   "recompute_candidates": {
+    "canon(body)": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+    "canon(body minus _comment/name/note/description)": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+    "canon(policy minus name,sha256)": "5f80ff93142fae4553764398be613c8bd2e2f9508f7568c6dc7c76074be3b807",
+    "canon(policy minus name,sha256,hash,hash_covers)": "3fad01091eab29d13716fb686e30a6522b984aae5251e9d6baa99c11269e2f38"
+   },
+   "matches": {
+    "canon(body)": [
+     true,
+     true
+    ],
+    "canon(body minus _comment/name/note/description)": [
+     true,
+     true
+    ],
+    "canon(policy minus name,sha256)": [
+     false,
+     false
+    ],
+    "canon(policy minus name,sha256,hash,hash_covers)": [
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "file": "s2-call7.json",
+   "schema": "afg-gate-receipt/2",
+   "policy_name": "recommended-v3",
+   "policy_sha256": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+   "checks": {
+    "schema_is_v2": true,
+    "policy_shape_keys": [
+     "name",
+     "sha256"
+    ],
+    "sha256_hex64": true,
+    "legacy_hash_absent": true
+   },
+   "answer_policy_sha256": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+   "recompute_candidates": {
+    "canon(body)": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+    "canon(body minus _comment/name/note/description)": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+    "canon(policy minus name,sha256)": "5f80ff93142fae4553764398be613c8bd2e2f9508f7568c6dc7c76074be3b807",
+    "canon(policy minus name,sha256,hash,hash_covers)": "3fad01091eab29d13716fb686e30a6522b984aae5251e9d6baa99c11269e2f38"
+   },
+   "matches": {
+    "canon(body)": [
+     true,
+     true
+    ],
+    "canon(body minus _comment/name/note/description)": [
+     true,
+     true
+    ],
+    "canon(policy minus name,sha256)": [
+     false,
+     false
+    ],
+    "canon(policy minus name,sha256,hash,hash_covers)": [
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "file": "s2-call8.json",
+   "schema": "afg-gate-receipt/2",
+   "policy_name": "recommended-v3",
+   "policy_sha256": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+   "checks": {
+    "schema_is_v2": true,
+    "policy_shape_keys": [
+     "name",
+     "sha256"
+    ],
+    "sha256_hex64": true,
+    "legacy_hash_absent": true
+   },
+   "answer_policy_sha256": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+   "recompute_candidates": {
+    "canon(body)": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+    "canon(body minus _comment/name/note/description)": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+    "canon(policy minus name,sha256)": "5f80ff93142fae4553764398be613c8bd2e2f9508f7568c6dc7c76074be3b807",
+    "canon(policy minus name,sha256,hash,hash_covers)": "3fad01091eab29d13716fb686e30a6522b984aae5251e9d6baa99c11269e2f38"
+   },
+   "matches": {
+    "canon(body)": [
+     true,
+     true
+    ],
+    "canon(body minus _comment/name/note/description)": [
+     true,
+     true
+    ],
+    "canon(policy minus name,sha256)": [
+     false,
+     false
+    ],
+    "canon(policy minus name,sha256,hash,hash_covers)": [
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "file": "s2-call9.json",
+   "schema": "afg-gate-receipt/2",
+   "policy_name": "recommended-v3",
+   "policy_sha256": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+   "checks": {
+    "schema_is_v2": true,
+    "policy_shape_keys": [
+     "name",
+     "sha256"
+    ],
+    "sha256_hex64": true,
+    "legacy_hash_absent": true
+   },
+   "answer_policy_sha256": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+   "recompute_candidates": {
+    "canon(body)": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+    "canon(body minus _comment/name/note/description)": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+    "canon(policy minus name,sha256)": "5f80ff93142fae4553764398be613c8bd2e2f9508f7568c6dc7c76074be3b807",
+    "canon(policy minus name,sha256,hash,hash_covers)": "3fad01091eab29d13716fb686e30a6522b984aae5251e9d6baa99c11269e2f38"
+   },
+   "matches": {
+    "canon(body)": [
+     true,
+     true
+    ],
+    "canon(body minus _comment/name/note/description)": [
+     true,
+     true
+    ],
+    "canon(policy minus name,sha256)": [
+     false,
+     false
+    ],
+    "canon(policy minus name,sha256,hash,hash_covers)": [
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "file": "s2-call10.json",
+   "schema": "afg-gate-receipt/2",
+   "policy_name": "recommended-v3",
+   "policy_sha256": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+   "checks": {
+    "schema_is_v2": true,
+    "policy_shape_keys": [
+     "name",
+     "sha256"
+    ],
+    "sha256_hex64": true,
+    "legacy_hash_absent": true
+   },
+   "answer_policy_sha256": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+   "recompute_candidates": {
+    "canon(body)": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+    "canon(body minus _comment/name/note/description)": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+    "canon(policy minus name,sha256)": "5f80ff93142fae4553764398be613c8bd2e2f9508f7568c6dc7c76074be3b807",
+    "canon(policy minus name,sha256,hash,hash_covers)": "3fad01091eab29d13716fb686e30a6522b984aae5251e9d6baa99c11269e2f38"
+   },
+   "matches": {
+    "canon(body)": [
+     true,
+     true
+    ],
+    "canon(body minus _comment/name/note/description)": [
+     true,
+     true
+    ],
+    "canon(policy minus name,sha256)": [
+     false,
+     false
+    ],
+    "canon(policy minus name,sha256,hash,hash_covers)": [
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "file": "s3-call1.json",
+   "schema": "afg-gate-receipt/2",
+   "policy_name": "recommended-v3",
+   "policy_sha256": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+   "checks": {
+    "schema_is_v2": true,
+    "policy_shape_keys": [
+     "name",
+     "sha256"
+    ],
+    "sha256_hex64": true,
+    "legacy_hash_absent": true
+   },
+   "answer_policy_sha256": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+   "recompute_candidates": {
+    "canon(body)": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+    "canon(body minus _comment/name/note/description)": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+    "canon(policy minus name,sha256)": "5f80ff93142fae4553764398be613c8bd2e2f9508f7568c6dc7c76074be3b807",
+    "canon(policy minus name,sha256,hash,hash_covers)": "3fad01091eab29d13716fb686e30a6522b984aae5251e9d6baa99c11269e2f38"
+   },
+   "matches": {
+    "canon(body)": [
+     true,
+     true
+    ],
+    "canon(body minus _comment/name/note/description)": [
+     true,
+     true
+    ],
+    "canon(policy minus name,sha256)": [
+     false,
+     false
+    ],
+    "canon(policy minus name,sha256,hash,hash_covers)": [
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "file": "s3-call2.json",
+   "schema": "afg-gate-receipt/2",
+   "policy_name": "recommended-v3",
+   "policy_sha256": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+   "checks": {
+    "schema_is_v2": true,
+    "policy_shape_keys": [
+     "name",
+     "sha256"
+    ],
+    "sha256_hex64": true,
+    "legacy_hash_absent": true
+   },
+   "answer_policy_sha256": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+   "recompute_candidates": {
+    "canon(body)": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+    "canon(body minus _comment/name/note/description)": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+    "canon(policy minus name,sha256)": "5f80ff93142fae4553764398be613c8bd2e2f9508f7568c6dc7c76074be3b807",
+    "canon(policy minus name,sha256,hash,hash_covers)": "3fad01091eab29d13716fb686e30a6522b984aae5251e9d6baa99c11269e2f38"
+   },
+   "matches": {
+    "canon(body)": [
+     true,
+     true
+    ],
+    "canon(body minus _comment/name/note/description)": [
+     true,
+     true
+    ],
+    "canon(policy minus name,sha256)": [
+     false,
+     false
+    ],
+    "canon(policy minus name,sha256,hash,hash_covers)": [
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "file": "s3-call3.json",
+   "schema": "afg-gate-receipt/2",
+   "policy_name": "recommended-v3",
+   "policy_sha256": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+   "checks": {
+    "schema_is_v2": true,
+    "policy_shape_keys": [
+     "name",
+     "sha256"
+    ],
+    "sha256_hex64": true,
+    "legacy_hash_absent": true
+   },
+   "answer_policy_sha256": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+   "recompute_candidates": {
+    "canon(body)": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+    "canon(body minus _comment/name/note/description)": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+    "canon(policy minus name,sha256)": "5f80ff93142fae4553764398be613c8bd2e2f9508f7568c6dc7c76074be3b807",
+    "canon(policy minus name,sha256,hash,hash_covers)": "3fad01091eab29d13716fb686e30a6522b984aae5251e9d6baa99c11269e2f38"
+   },
+   "matches": {
+    "canon(body)": [
+     true,
+     true
+    ],
+    "canon(body minus _comment/name/note/description)": [
+     true,
+     true
+    ],
+    "canon(policy minus name,sha256)": [
+     false,
+     false
+    ],
+    "canon(policy minus name,sha256,hash,hash_covers)": [
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "file": "s3-call4.json",
+   "schema": "afg-gate-receipt/2",
+   "policy_name": "recommended-v3",
+   "policy_sha256": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+   "checks": {
+    "schema_is_v2": true,
+    "policy_shape_keys": [
+     "name",
+     "sha256"
+    ],
+    "sha256_hex64": true,
+    "legacy_hash_absent": true
+   },
+   "answer_policy_sha256": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+   "recompute_candidates": {
+    "canon(body)": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+    "canon(body minus _comment/name/note/description)": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+    "canon(policy minus name,sha256)": "5f80ff93142fae4553764398be613c8bd2e2f9508f7568c6dc7c76074be3b807",
+    "canon(policy minus name,sha256,hash,hash_covers)": "3fad01091eab29d13716fb686e30a6522b984aae5251e9d6baa99c11269e2f38"
+   },
+   "matches": {
+    "canon(body)": [
+     true,
+     true
+    ],
+    "canon(body minus _comment/name/note/description)": [
+     true,
+     true
+    ],
+    "canon(policy minus name,sha256)": [
+     false,
+     false
+    ],
+    "canon(policy minus name,sha256,hash,hash_covers)": [
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "file": "s3-call5.json",
+   "schema": "afg-gate-receipt/2",
+   "policy_name": "recommended-v3",
+   "policy_sha256": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+   "checks": {
+    "schema_is_v2": true,
+    "policy_shape_keys": [
+     "name",
+     "sha256"
+    ],
+    "sha256_hex64": true,
+    "legacy_hash_absent": true
+   },
+   "answer_policy_sha256": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+   "recompute_candidates": {
+    "canon(body)": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+    "canon(body minus _comment/name/note/description)": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+    "canon(policy minus name,sha256)": "5f80ff93142fae4553764398be613c8bd2e2f9508f7568c6dc7c76074be3b807",
+    "canon(policy minus name,sha256,hash,hash_covers)": "3fad01091eab29d13716fb686e30a6522b984aae5251e9d6baa99c11269e2f38"
+   },
+   "matches": {
+    "canon(body)": [
+     true,
+     true
+    ],
+    "canon(body minus _comment/name/note/description)": [
+     true,
+     true
+    ],
+    "canon(policy minus name,sha256)": [
+     false,
+     false
+    ],
+    "canon(policy minus name,sha256,hash,hash_covers)": [
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "file": "s4-call1.json",
+   "schema": "afg-gate-receipt/2",
+   "policy_name": "recommended-v3",
+   "policy_sha256": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+   "checks": {
+    "schema_is_v2": true,
+    "policy_shape_keys": [
+     "name",
+     "sha256"
+    ],
+    "sha256_hex64": true,
+    "legacy_hash_absent": true
+   },
+   "answer_policy_sha256": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+   "recompute_candidates": {
+    "canon(body)": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+    "canon(body minus _comment/name/note/description)": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+    "canon(policy minus name,sha256)": "5f80ff93142fae4553764398be613c8bd2e2f9508f7568c6dc7c76074be3b807",
+    "canon(policy minus name,sha256,hash,hash_covers)": "3fad01091eab29d13716fb686e30a6522b984aae5251e9d6baa99c11269e2f38"
+   },
+   "matches": {
+    "canon(body)": [
+     true,
+     true
+    ],
+    "canon(body minus _comment/name/note/description)": [
+     true,
+     true
+    ],
+    "canon(policy minus name,sha256)": [
+     false,
+     false
+    ],
+    "canon(policy minus name,sha256,hash,hash_covers)": [
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "file": "s4-call2.json",
+   "schema": "afg-gate-receipt/2",
+   "policy_name": "recommended-v3",
+   "policy_sha256": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+   "checks": {
+    "schema_is_v2": true,
+    "policy_shape_keys": [
+     "name",
+     "sha256"
+    ],
+    "sha256_hex64": true,
+    "legacy_hash_absent": true
+   },
+   "answer_policy_sha256": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+   "recompute_candidates": {
+    "canon(body)": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+    "canon(body minus _comment/name/note/description)": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+    "canon(policy minus name,sha256)": "5f80ff93142fae4553764398be613c8bd2e2f9508f7568c6dc7c76074be3b807",
+    "canon(policy minus name,sha256,hash,hash_covers)": "3fad01091eab29d13716fb686e30a6522b984aae5251e9d6baa99c11269e2f38"
+   },
+   "matches": {
+    "canon(body)": [
+     true,
+     true
+    ],
+    "canon(body minus _comment/name/note/description)": [
+     true,
+     true
+    ],
+    "canon(policy minus name,sha256)": [
+     false,
+     false
+    ],
+    "canon(policy minus name,sha256,hash,hash_covers)": [
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "file": "s4-call3.json",
+   "schema": "afg-gate-receipt/2",
+   "policy_name": "recommended-v3",
+   "policy_sha256": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+   "checks": {
+    "schema_is_v2": true,
+    "policy_shape_keys": [
+     "name",
+     "sha256"
+    ],
+    "sha256_hex64": true,
+    "legacy_hash_absent": true
+   },
+   "answer_policy_sha256": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+   "recompute_candidates": {
+    "canon(body)": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+    "canon(body minus _comment/name/note/description)": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+    "canon(policy minus name,sha256)": "5f80ff93142fae4553764398be613c8bd2e2f9508f7568c6dc7c76074be3b807",
+    "canon(policy minus name,sha256,hash,hash_covers)": "3fad01091eab29d13716fb686e30a6522b984aae5251e9d6baa99c11269e2f38"
+   },
+   "matches": {
+    "canon(body)": [
+     true,
+     true
+    ],
+    "canon(body minus _comment/name/note/description)": [
+     true,
+     true
+    ],
+    "canon(policy minus name,sha256)": [
+     false,
+     false
+    ],
+    "canon(policy minus name,sha256,hash,hash_covers)": [
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "file": "s4-call4.json",
+   "schema": "afg-gate-receipt/2",
+   "policy_name": "recommended-v3",
+   "policy_sha256": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+   "checks": {
+    "schema_is_v2": true,
+    "policy_shape_keys": [
+     "name",
+     "sha256"
+    ],
+    "sha256_hex64": true,
+    "legacy_hash_absent": true
+   },
+   "answer_policy_sha256": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+   "recompute_candidates": {
+    "canon(body)": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+    "canon(body minus _comment/name/note/description)": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+    "canon(policy minus name,sha256)": "5f80ff93142fae4553764398be613c8bd2e2f9508f7568c6dc7c76074be3b807",
+    "canon(policy minus name,sha256,hash,hash_covers)": "3fad01091eab29d13716fb686e30a6522b984aae5251e9d6baa99c11269e2f38"
+   },
+   "matches": {
+    "canon(body)": [
+     true,
+     true
+    ],
+    "canon(body minus _comment/name/note/description)": [
+     true,
+     true
+    ],
+    "canon(policy minus name,sha256)": [
+     false,
+     false
+    ],
+    "canon(policy minus name,sha256,hash,hash_covers)": [
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "file": "s5-call1.json",
+   "schema": "afg-gate-receipt/2",
+   "policy_name": "recommended-v3",
+   "policy_sha256": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+   "checks": {
+    "schema_is_v2": true,
+    "policy_shape_keys": [
+     "name",
+     "sha256"
+    ],
+    "sha256_hex64": true,
+    "legacy_hash_absent": true
+   },
+   "answer_policy_sha256": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+   "recompute_candidates": {
+    "canon(body)": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+    "canon(body minus _comment/name/note/description)": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+    "canon(policy minus name,sha256)": "5f80ff93142fae4553764398be613c8bd2e2f9508f7568c6dc7c76074be3b807",
+    "canon(policy minus name,sha256,hash,hash_covers)": "3fad01091eab29d13716fb686e30a6522b984aae5251e9d6baa99c11269e2f38"
+   },
+   "matches": {
+    "canon(body)": [
+     true,
+     true
+    ],
+    "canon(body minus _comment/name/note/description)": [
+     true,
+     true
+    ],
+    "canon(policy minus name,sha256)": [
+     false,
+     false
+    ],
+    "canon(policy minus name,sha256,hash,hash_covers)": [
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "file": "s5-call2.json",
+   "schema": "afg-gate-receipt/2",
+   "policy_name": "recommended-v3",
+   "policy_sha256": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+   "checks": {
+    "schema_is_v2": true,
+    "policy_shape_keys": [
+     "name",
+     "sha256"
+    ],
+    "sha256_hex64": true,
+    "legacy_hash_absent": true
+   },
+   "answer_policy_sha256": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+   "recompute_candidates": {
+    "canon(body)": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+    "canon(body minus _comment/name/note/description)": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+    "canon(policy minus name,sha256)": "5f80ff93142fae4553764398be613c8bd2e2f9508f7568c6dc7c76074be3b807",
+    "canon(policy minus name,sha256,hash,hash_covers)": "3fad01091eab29d13716fb686e30a6522b984aae5251e9d6baa99c11269e2f38"
+   },
+   "matches": {
+    "canon(body)": [
+     true,
+     true
+    ],
+    "canon(body minus _comment/name/note/description)": [
+     true,
+     true
+    ],
+    "canon(policy minus name,sha256)": [
+     false,
+     false
+    ],
+    "canon(policy minus name,sha256,hash,hash_covers)": [
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "file": "s5-call3.json",
+   "schema": "afg-gate-receipt/2",
+   "policy_name": "recommended-v3",
+   "policy_sha256": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+   "checks": {
+    "schema_is_v2": true,
+    "policy_shape_keys": [
+     "name",
+     "sha256"
+    ],
+    "sha256_hex64": true,
+    "legacy_hash_absent": true
+   },
+   "answer_policy_sha256": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+   "recompute_candidates": {
+    "canon(body)": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+    "canon(body minus _comment/name/note/description)": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+    "canon(policy minus name,sha256)": "5f80ff93142fae4553764398be613c8bd2e2f9508f7568c6dc7c76074be3b807",
+    "canon(policy minus name,sha256,hash,hash_covers)": "3fad01091eab29d13716fb686e30a6522b984aae5251e9d6baa99c11269e2f38"
+   },
+   "matches": {
+    "canon(body)": [
+     true,
+     true
+    ],
+    "canon(body minus _comment/name/note/description)": [
+     true,
+     true
+    ],
+    "canon(policy minus name,sha256)": [
+     false,
+     false
+    ],
+    "canon(policy minus name,sha256,hash,hash_covers)": [
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "file": "s6-call1.json",
+   "schema": "afg-gate-receipt/2",
+   "policy_name": "recommended-v3",
+   "policy_sha256": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+   "checks": {
+    "schema_is_v2": true,
+    "policy_shape_keys": [
+     "name",
+     "sha256"
+    ],
+    "sha256_hex64": true,
+    "legacy_hash_absent": true
+   },
+   "answer_policy_sha256": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+   "recompute_candidates": {
+    "canon(body)": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+    "canon(body minus _comment/name/note/description)": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+    "canon(policy minus name,sha256)": "5f80ff93142fae4553764398be613c8bd2e2f9508f7568c6dc7c76074be3b807",
+    "canon(policy minus name,sha256,hash,hash_covers)": "3fad01091eab29d13716fb686e30a6522b984aae5251e9d6baa99c11269e2f38"
+   },
+   "matches": {
+    "canon(body)": [
+     true,
+     true
+    ],
+    "canon(body minus _comment/name/note/description)": [
+     true,
+     true
+    ],
+    "canon(policy minus name,sha256)": [
+     false,
+     false
+    ],
+    "canon(policy minus name,sha256,hash,hash_covers)": [
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "file": "s6-call2.json",
+   "schema": "afg-gate-receipt/2",
+   "policy_name": "recommended-v3",
+   "policy_sha256": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+   "checks": {
+    "schema_is_v2": true,
+    "policy_shape_keys": [
+     "name",
+     "sha256"
+    ],
+    "sha256_hex64": true,
+    "legacy_hash_absent": true
+   },
+   "answer_policy_sha256": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+   "recompute_candidates": {
+    "canon(body)": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+    "canon(body minus _comment/name/note/description)": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+    "canon(policy minus name,sha256)": "5f80ff93142fae4553764398be613c8bd2e2f9508f7568c6dc7c76074be3b807",
+    "canon(policy minus name,sha256,hash,hash_covers)": "3fad01091eab29d13716fb686e30a6522b984aae5251e9d6baa99c11269e2f38"
+   },
+   "matches": {
+    "canon(body)": [
+     true,
+     true
+    ],
+    "canon(body minus _comment/name/note/description)": [
+     true,
+     true
+    ],
+    "canon(policy minus name,sha256)": [
+     false,
+     false
+    ],
+    "canon(policy minus name,sha256,hash,hash_covers)": [
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "file": "s6-call3.json",
+   "schema": "afg-gate-receipt/2",
+   "policy_name": "recommended-v3",
+   "policy_sha256": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+   "checks": {
+    "schema_is_v2": true,
+    "policy_shape_keys": [
+     "name",
+     "sha256"
+    ],
+    "sha256_hex64": true,
+    "legacy_hash_absent": true
+   },
+   "answer_policy_sha256": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+   "recompute_candidates": {
+    "canon(body)": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+    "canon(body minus _comment/name/note/description)": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+    "canon(policy minus name,sha256)": "5f80ff93142fae4553764398be613c8bd2e2f9508f7568c6dc7c76074be3b807",
+    "canon(policy minus name,sha256,hash,hash_covers)": "3fad01091eab29d13716fb686e30a6522b984aae5251e9d6baa99c11269e2f38"
+   },
+   "matches": {
+    "canon(body)": [
+     true,
+     true
+    ],
+    "canon(body minus _comment/name/note/description)": [
+     true,
+     true
+    ],
+    "canon(policy minus name,sha256)": [
+     false,
+     false
+    ],
+    "canon(policy minus name,sha256,hash,hash_covers)": [
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "file": "s6-call4.json",
+   "schema": "afg-gate-receipt/2",
+   "policy_name": "recommended-v3",
+   "policy_sha256": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+   "checks": {
+    "schema_is_v2": true,
+    "policy_shape_keys": [
+     "name",
+     "sha256"
+    ],
+    "sha256_hex64": true,
+    "legacy_hash_absent": true
+   },
+   "answer_policy_sha256": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+   "recompute_candidates": {
+    "canon(body)": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+    "canon(body minus _comment/name/note/description)": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+    "canon(policy minus name,sha256)": "5f80ff93142fae4553764398be613c8bd2e2f9508f7568c6dc7c76074be3b807",
+    "canon(policy minus name,sha256,hash,hash_covers)": "3fad01091eab29d13716fb686e30a6522b984aae5251e9d6baa99c11269e2f38"
+   },
+   "matches": {
+    "canon(body)": [
+     true,
+     true
+    ],
+    "canon(body minus _comment/name/note/description)": [
+     true,
+     true
+    ],
+    "canon(policy minus name,sha256)": [
+     false,
+     false
+    ],
+    "canon(policy minus name,sha256,hash,hash_covers)": [
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "file": "s6-call5.json",
+   "schema": "afg-gate-receipt/2",
+   "policy_name": "recommended-v3",
+   "policy_sha256": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+   "checks": {
+    "schema_is_v2": true,
+    "policy_shape_keys": [
+     "name",
+     "sha256"
+    ],
+    "sha256_hex64": true,
+    "legacy_hash_absent": true
+   },
+   "answer_policy_sha256": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+   "recompute_candidates": {
+    "canon(body)": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+    "canon(body minus _comment/name/note/description)": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+    "canon(policy minus name,sha256)": "5f80ff93142fae4553764398be613c8bd2e2f9508f7568c6dc7c76074be3b807",
+    "canon(policy minus name,sha256,hash,hash_covers)": "3fad01091eab29d13716fb686e30a6522b984aae5251e9d6baa99c11269e2f38"
+   },
+   "matches": {
+    "canon(body)": [
+     true,
+     true
+    ],
+    "canon(body minus _comment/name/note/description)": [
+     true,
+     true
+    ],
+    "canon(policy minus name,sha256)": [
+     false,
+     false
+    ],
+    "canon(policy minus name,sha256,hash,hash_covers)": [
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "file": "s6-call6.json",
+   "schema": "afg-gate-receipt/2",
+   "policy_name": "recommended-v3",
+   "policy_sha256": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+   "checks": {
+    "schema_is_v2": true,
+    "policy_shape_keys": [
+     "name",
+     "sha256"
+    ],
+    "sha256_hex64": true,
+    "legacy_hash_absent": true
+   },
+   "answer_policy_sha256": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+   "recompute_candidates": {
+    "canon(body)": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+    "canon(body minus _comment/name/note/description)": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+    "canon(policy minus name,sha256)": "5f80ff93142fae4553764398be613c8bd2e2f9508f7568c6dc7c76074be3b807",
+    "canon(policy minus name,sha256,hash,hash_covers)": "3fad01091eab29d13716fb686e30a6522b984aae5251e9d6baa99c11269e2f38"
+   },
+   "matches": {
+    "canon(body)": [
+     true,
+     true
+    ],
+    "canon(body minus _comment/name/note/description)": [
+     true,
+     true
+    ],
+    "canon(policy minus name,sha256)": [
+     false,
+     false
+    ],
+    "canon(policy minus name,sha256,hash,hash_covers)": [
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "file": "s6-call7.json",
+   "schema": "afg-gate-receipt/2",
+   "policy_name": "recommended-v3",
+   "policy_sha256": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+   "checks": {
+    "schema_is_v2": true,
+    "policy_shape_keys": [
+     "name",
+     "sha256"
+    ],
+    "sha256_hex64": true,
+    "legacy_hash_absent": true
+   },
+   "answer_policy_sha256": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+   "recompute_candidates": {
+    "canon(body)": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+    "canon(body minus _comment/name/note/description)": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+    "canon(policy minus name,sha256)": "5f80ff93142fae4553764398be613c8bd2e2f9508f7568c6dc7c76074be3b807",
+    "canon(policy minus name,sha256,hash,hash_covers)": "3fad01091eab29d13716fb686e30a6522b984aae5251e9d6baa99c11269e2f38"
+   },
+   "matches": {
+    "canon(body)": [
+     true,
+     true
+    ],
+    "canon(body minus _comment/name/note/description)": [
+     true,
+     true
+    ],
+    "canon(policy minus name,sha256)": [
+     false,
+     false
+    ],
+    "canon(policy minus name,sha256,hash,hash_covers)": [
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "file": "s6-call8.json",
+   "schema": "afg-gate-receipt/2",
+   "policy_name": "recommended-v3",
+   "policy_sha256": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+   "checks": {
+    "schema_is_v2": true,
+    "policy_shape_keys": [
+     "name",
+     "sha256"
+    ],
+    "sha256_hex64": true,
+    "legacy_hash_absent": true
+   },
+   "answer_policy_sha256": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+   "recompute_candidates": {
+    "canon(body)": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+    "canon(body minus _comment/name/note/description)": "e78dea71c0ff1344d078441ef73251a5a1d5245925164e350f68d46cc89ba046",
+    "canon(policy minus name,sha256)": "5f80ff93142fae4553764398be613c8bd2e2f9508f7568c6dc7c76074be3b807",
+    "canon(policy minus name,sha256,hash,hash_covers)": "3fad01091eab29d13716fb686e30a6522b984aae5251e9d6baa99c11269e2f38"
+   },
+   "matches": {
+    "canon(body)": [
+     true,
+     true
+    ],
+    "canon(body minus _comment/name/note/description)": [
+     true,
+     true
+    ],
+    "canon(policy minus name,sha256)": [
+     false,
+     false
+    ],
+    "canon(policy minus name,sha256,hash,hash_covers)": [
+     false,
+     false
+    ]
+   }
+  }
+ ],
+ "nonconformant_files": []
+}
