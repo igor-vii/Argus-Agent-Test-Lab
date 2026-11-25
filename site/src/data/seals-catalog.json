@@ -1874,5 +1874,106 @@
         "href": "https://github.com/igor-vii/Argus-Agent-Test-Lab/blob/main/attestations/records/0033-onbeforepaymentcreation-gate-hook-re-run-under-vendor-issued.seal.json"
       }
     ]
+  },
+  {
+    "seq": "0034",
+    "date": "2026-11-25",
+    "type": "seal",
+    "title": "fiangshi durable-receipt-store live-check (Aceop-001/fiangshi-receipts @ 75defdd, store_total 3 at freeze) — pre-registered store/API byte cross-check with independent receipt-hash recompute, $0.00",
+    "subject": "the three live-check receipts in fiangshi's durable receipt store (github.com/Aceop-001/fiangshi-receipts): P1 34160e4a… (dry-run, Bitrefill gift-card search, ALLOW), P2 682a85d7… (first live settled check, tx 0x90b91981…9696 on Base, $0.05), P3 dc6d6a6f… (dry-run, cleave gas, BLOCK via null_payee) — anchored as claims in the Argus registry; closes the L2 redeploy-gap row of record 0032 (recorded 404/DOCUMENTED there)",
+    "summary": [
+      "PREREG FREEZE (freeze-0034): this draft, PREREG-0034.md (prose twin) and store_checker.py land BEFORE the first judged live GET, committed to igor-vii/Argus-Agent-Test-Lab; the canonical sha256 of the signed wrapper (draft + detached Ed25519 by the agent session key) is published in Aceop-001/fiangshi#1 before the run, per the 0031/0032 discipline (hash over UTF-8 canonical form — ensure_ascii=False in the python one-liner). run_ts, self_run, findings_summary and run-pack evidence pins are filled from the run after it completes (re-pin commit before signing, as in 0031/0032). Discovery reads before the freeze are disclosed in PREREG-0034.md: /health, HEAD.json, the three store receipt files, route discovery, ls-remote of both repos — they set the pins, not the verdicts.",
+      "Pass rule for the final record: seal iff S1–S6 all match as frozen; any divergence → finding, recorded as-is; the record is complete either way; corrections are separate records, sealed originals are never edited. The L1/L2/L3 rows are evidence-only and never affect the verdict.",
+      "Append-only tolerance: the store may grow between freeze and run (HEAD may advance, new receipts may land); the frozen P1→P2→P3 segment must remain byte-identical; growth is recorded as-is (S1 accepts a longer chain that covers the frozen segment).",
+      "Verifier independence: receipt hashes are recomputed by the checker's own Python canonicalizer (not fiangshi's code); the vendor's /v1/verify results are recorded alongside as corroboration, not as the source of truth.",
+      "What this anchors, honestly: the three live-check receipts existed at freeze with fixed canonical bytes; the store chain links P2→P1 across the vendor's redeploy (the ledger-resets-on-redeploy weakness, now closed for this subset); the API serves the same bytes the store commits. It says nothing about fiangshi's internal ledger beyond the anchored bytes; the settlement tx is recorded as the receipt's own claim (not verified onchain in this run — no RPC in scope). Census receipts R1/R2/R3 from record 0032 are out of scope: the store holds live-check receipts; census receipts stay anchored offline at 1d19e408. fiangshi stays advisory: no signing key, no new call in its request path.",
+      "Clock disclosure: served_at/census_at and Date-header offsets are recorded as disclosed facts, never adjudicated (the 0032 ~35 min observation was the static fiangshi.xyz copy; this run pins api.fiangshi.xyz per the vendor's instruction)."
+    ],
+    "verdicts": [
+      {
+        "id": "S1",
+        "verdict": "parses; receipt_hash names a receipt whose prev_hash walk covers the frozen segment P1→P2→P3 in order (append-only tolerance: HEAD may name a newer receipt); count == number of receipt files; started_at == 2026-11-25T03:50:17.263Z; usd_settled == sum of fee_usd over settled receipts (0.05 at freeze)",
+        "tone": "info"
+      },
+      {
+        "id": "S2",
+        "verdict": "sha256 == frozen file hashes: P1 c88a936f…, P2 9f7a6295…, P3 c677ad01… — byte-identical",
+        "tone": "info"
+      },
+      {
+        "id": "S3",
+        "verdict": "sha256 over the canonical JSON of each receipt minus receipt_hash, recomputed by the checker's own Python canonicalizer (not fiangshi's code), == receipt_hash field == filename stem == pinned id — for all three",
+        "tone": "info"
+      },
+      {
+        "id": "S4",
+        "verdict": "P1.prev_hash == \"genesis\"; P2.prev_hash == 34160e4a…; P3.prev_hash == 682a85d7…; chain_id e701244c… identical on all three — the P2→P1 linkage across the vendor's redeploy holds",
+        "tone": "info"
+      },
+      {
+        "id": "S5",
+        "verdict": "GET api.fiangshi.xyz/v1/receipt/<id> for each pinned id → status 200, and the wrapper's receipt object canonicalizes to bytes identical to the store receipt's canonical form (recomputes to the pinned id)",
+        "tone": "info"
+      },
+      {
+        "id": "S6",
+        "verdict": "P2: settlement \"settled\", tx_hash 0x90b919810c9c3a3b6707a1847261d00609018ca42bd15ff9a2fcd10867af9696, chain \"eip155:8453\", fee_usd 0.05; P1 and P3: settlement \"dry-run\"",
+        "tone": "info"
+      },
+      {
+        "id": "L1",
+        "verdict": "status, receipts_stored.store_total (>= 3), census_at recorded verbatim; Cloudflare Date header minus sandbox UTC recorded as a disclosed offset (vendor claim: <= ~1 min); never affects the verdict",
+        "tone": "info"
+      },
+      {
+        "id": "L2",
+        "verdict": "recorded DOCUMENTED either way (corroboration; chain_linkage \"verified\" observed at freeze); never affects the verdict",
+        "tone": "info"
+      },
+      {
+        "id": "L3",
+        "verdict": "recorded as-is; if it advanced past 75defdd…, the frozen segment must remain byte-identical (that stability is judged by S2); never affects the verdict",
+        "tone": "info"
+      }
+    ],
+    "findings": [
+      {
+        "id": "match",
+        "severity": "info",
+        "text": "6"
+      },
+      {
+        "id": "divergence",
+        "severity": "info",
+        "text": "0"
+      },
+      {
+        "id": "total",
+        "severity": "info",
+        "text": "6"
+      },
+      {
+        "id": "by_row",
+        "severity": "info",
+        "text": "[object Object]"
+      },
+      {
+        "id": "live_evidence_only",
+        "severity": "info",
+        "text": "[object Object]"
+      },
+      {
+        "id": "verdict",
+        "severity": "info",
+        "text": "SEAL — all frozen rows match"
+      }
+    ],
+    "evidence": 10,
+    "links": [
+      {
+        "label": "record #0034",
+        "href": "https://github.com/igor-vii/Argus-Agent-Test-Lab/blob/main/attestations/records/0034-fiangshi-durable-receipt-store-live-check-aceop-001-fiangshi.seal.json"
+      }
+    ]
   }
 ]

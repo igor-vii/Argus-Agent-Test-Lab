@@ -1,9 +1,9 @@
 {
-  "generated_at": "2026-11-25T06:08:44.200Z",
+  "generated_at": "2026-11-25T11:15:12.692Z",
   "verify": {
     "command": "node tools/registry/verify-registry.mjs",
-    "records": 34,
-    "chain_head": "aa021ce0a59a0878"
+    "records": 35,
+    "chain_head": "3229faae6476b8b8"
   },
   "correction": {
     "seq": "0022",
@@ -13,258 +13,105 @@
     "amends": "argus-finding-0000"
   },
   "record": {
-    "seq": "0033",
-    "record_id": "argus-seal-0033",
+    "seq": "0034",
+    "record_id": "argus-seal-0034",
     "type": "seal",
-    "issued_at": "2026-11-25T06:08:44.200Z",
+    "issued_at": "2026-11-25T11:15:12.692Z",
     "date": "2026-11-25",
-    "title": "onBeforePaymentCreation gate hook re-run under vendor-issued conditions (agentic-finance-graph@0.3.7 client, gate 0.22.7+, receipt v2): 9/9 MATCH incl. vendor-issued S6 1 allow / 7 blocks with pending 1 x $200, 503 not observed, 32/32 receipts afg-gate-receipt/2; $0.00",
-    "subject": "onBeforePaymentCreation hook battery re-run of agentic-finance-graph@0.3.7 (npm client unchanged since 0031), policy recommended-v3, against the current AFG gate server (openapi 0.22.7 issued by vendor, 0.22.8 observed at run start — recorded, verdict-neutral; receipt schema afg-gate-receipt/2 since 2026-11-24T10:10:11Z); registry slot 0033 (the vendor comment says 'Run 0032' — renumbering disclosed in the prereg post)",
-    "prev_record_hash": "695a7a229b6cc2648376f84152be6bfe46e779232f662c1f63266aef950d7436",
-    "chain_head": "aa021ce0a59a0878",
+    "title": "fiangshi durable-receipt-store live-check (Aceop-001/fiangshi-receipts @ 75defdd, store_total 3 at freeze) — pre-registered store/API byte cross-check with independent receipt-hash recompute, $0.00",
+    "subject": "the three live-check receipts in fiangshi's durable receipt store (github.com/Aceop-001/fiangshi-receipts): P1 34160e4a… (dry-run, Bitrefill gift-card search, ALLOW), P2 682a85d7… (first live settled check, tx 0x90b91981…9696 on Base, $0.05), P3 dc6d6a6f… (dry-run, cleave gas, BLOCK via null_payee) — anchored as claims in the Argus registry; closes the L2 redeploy-gap row of record 0032 (recorded 404/DOCUMENTED there)",
+    "prev_record_hash": "aa021ce0a59a0878c35d1655356c55bf8f401a18d759d8185901602920d240bf",
+    "chain_head": "3229faae6476b8b8",
     "scenarios": [
       {
         "id": "S1",
-        "verdict": "MATCH",
+        "verdict": "parses; receipt_hash names a receipt whose prev_hash walk covers the frozen segment P1→P2→P3 in order (append-only tolerance: HEAD may name a newer receipt); count == number of receipt files; started_at == 2026-11-25T03:50:17.263Z; usd_settled == sum of fee_usd over settled receipts (0.05 at freeze)",
         "tone": "info"
       },
       {
         "id": "S2",
-        "verdict": "MATCH",
+        "verdict": "sha256 == frozen file hashes: P1 c88a936f…, P2 9f7a6295…, P3 c677ad01… — byte-identical",
         "tone": "info"
       },
       {
         "id": "S3",
-        "verdict": "MATCH",
+        "verdict": "sha256 over the canonical JSON of each receipt minus receipt_hash, recomputed by the checker's own Python canonicalizer (not fiangshi's code), == receipt_hash field == filename stem == pinned id — for all three",
         "tone": "info"
       },
       {
         "id": "S4",
-        "verdict": "MATCH",
+        "verdict": "P1.prev_hash == \"genesis\"; P2.prev_hash == 34160e4a…; P3.prev_hash == 682a85d7…; chain_id e701244c… identical on all three — the P2→P1 linkage across the vendor's redeploy holds",
         "tone": "info"
       },
       {
         "id": "S5",
-        "verdict": "MATCH",
+        "verdict": "GET api.fiangshi.xyz/v1/receipt/<id> for each pinned id → status 200, and the wrapper's receipt object canonicalizes to bytes identical to the store receipt's canonical form (recomputes to the pinned id)",
         "tone": "info"
       },
       {
         "id": "S6",
-        "verdict": "MATCH",
-        "tone": "info"
-      },
-      {
-        "id": "S7",
-        "verdict": "MATCH",
-        "tone": "info"
-      },
-      {
-        "id": "S8",
-        "verdict": "MATCH",
-        "tone": "info"
-      },
-      {
-        "id": "S9",
-        "verdict": "MATCH",
+        "verdict": "P2: settlement \"settled\", tx_hash 0x90b919810c9c3a3b6707a1847261d00609018ca42bd15ff9a2fcd10867af9696, chain \"eip155:8453\", fee_usd 0.05; P1 and P3: settlement \"dry-run\"",
         "tone": "info"
       },
       {
         "id": "L1",
-        "verdict": "evidence-only (no verdict)",
+        "verdict": "status, receipts_stored.store_total (>= 3), census_at recorded verbatim; Cloudflare Date header minus sandbox UTC recorded as a disclosed offset (vendor claim: <= ~1 min); never affects the verdict",
+        "tone": "info"
+      },
+      {
+        "id": "L2",
+        "verdict": "recorded DOCUMENTED either way (corroboration; chain_linkage \"verified\" observed at freeze); never affects the verdict",
+        "tone": "info"
+      },
+      {
+        "id": "L3",
+        "verdict": "recorded as-is; if it advanced past 75defdd…, the frozen segment must remain byte-identical (that stability is judged by S2); never affects the verdict",
         "tone": "info"
       }
     ],
     "counts": {
-      "info": 10
+      "info": 9
     },
     "evidence": [
       {
-        "path": "sut-hookguard/battery_hookguard_v2.mjs",
-        "sha256": "ca55f1f422ae50464b292a39d09d27813ddac6307315ee01ca79cfb930546151"
+        "path": "sut-fiangshi-store-livecheck/PREREG-0034.md",
+        "sha256": "19ea4d62f05fc41f9603a26feccc6385f254645e1114990e48b2782dde70f8ba"
       },
       {
-        "path": "sut-hookguard/payees-0033.json",
-        "sha256": "bb6a605d269de739a90545636b9c11f9e70f81ce2961fb9139ae1fddc1a288cf"
+        "path": "sut-fiangshi-store-livecheck/store_checker.py",
+        "sha256": "be9d9f3b4522e3935a174ba9225f978dc13b95f8d38649bce248afc1802d00c4"
       },
       {
-        "path": "sut-hookguard/recon/def-gate.receipt.v2.snap",
-        "sha256": "4d7ad61d0e376a14835f5a9bf5fb892c60fbd02004c96a1a8c1b03b21625dff0"
+        "path": "attestations/evidence/0034-fi-store-livecheck/runs/20261125T103636Z/expected_table.json",
+        "sha256": "db817bba2b4cf44827a90db3a786fe0fb3993d62199c131eaefb2a94188773c2"
       },
       {
-        "path": "attestations/evidence/0033-hookguard/README.md",
-        "sha256": "c47ab9c4ce0e0e45e20e960bb8cfbf84062f8129def48b2a0ed1a4428c2622fd"
+        "path": "attestations/evidence/0034-fi-store-livecheck/runs/20261125T103636Z/run_meta.json",
+        "sha256": "9e1485bb07afd5f8e3b8246f3c85edde701a66fc3844acd53378a5efdddc8228"
       },
       {
-        "path": "attestations/evidence/0033-hookguard/run.json",
-        "sha256": "0e0ba273222f5c4c32daf6a65fdc336a72112476ab44efe6df01008f6712f52a"
+        "path": "attestations/evidence/0034-fi-store-livecheck/runs/20261125T103636Z/store_HEAD.json",
+        "sha256": "d04f1e99f4d8830f94223db437cf6e9bf1b35549858f8749df35e2365f73ba8d"
       },
       {
-        "path": "attestations/evidence/0033-hookguard/offline_table.json",
-        "sha256": "9575826e25114dfa7d02cd44bee87267b7a6cccf688117b7d96a5cca3e81ca8a"
+        "path": "attestations/evidence/0034-fi-store-livecheck/runs/20261125T103636Z/store_34160e4a.json",
+        "sha256": "c88a936fe966b752ac9176106f423012949a613349ce419331cbcd177044d532"
       },
       {
-        "path": "attestations/evidence/0033-hookguard/offline_table.md",
-        "sha256": "720b5de8ac5efed175540bff25a897b24c922f2bcf884d234171f4bfdb67a492"
+        "path": "attestations/evidence/0034-fi-store-livecheck/runs/20261125T103636Z/store_682a85d7.json",
+        "sha256": "9f7a6295e6a580887c22cbedfccc76071d8fc07b96498006d417d7311a75c37f"
       },
       {
-        "path": "attestations/evidence/0033-hookguard/manifest.sha256",
-        "sha256": "b3992fba8c08d35aa95bb27873043118bd3b3258acc9ab321c702e0400cd1d1c"
+        "path": "attestations/evidence/0034-fi-store-livecheck/runs/20261125T103636Z/store_dc6d6a6f.json",
+        "sha256": "c677ad019f71db4473518197f7e147a21c6c4926cbdf80f929cee39ffe81d937"
       },
       {
-        "path": "attestations/evidence/0033-hookguard/runs/afg-pass-keys.json",
-        "sha256": "1af0922227af492418707344e737701dd9b5d6d1d4d4553486293b30a9861bd9"
+        "path": "attestations/evidence/0034-fi-store-livecheck/runs/20261125T103636Z/L1_health.json",
+        "sha256": "5e98709f317b135da10a7f3b04f68bbb4b325f4bccbe1c2fc6d598878083e023"
       },
       {
-        "path": "attestations/evidence/0033-hookguard/runs/l1-openapi.json",
-        "sha256": "d540af915357b4e2c63c4985da96399ad7b1416051fc66efab03e3ba6407f6e4"
-      },
-      {
-        "path": "attestations/evidence/0033-hookguard/runs/openapi-runstart.json",
-        "sha256": "7d22ce2c57b2706cb34e98665c4b7a1fc0f011cb19d23c959d1eed5e070be71b"
-      },
-      {
-        "path": "attestations/evidence/0033-hookguard/runs/s1-call1.json",
-        "sha256": "cdca3df97c3111ddd3beb4bebd5811fef714a28755bb8b35b46f84b076aff5f6"
-      },
-      {
-        "path": "attestations/evidence/0033-hookguard/runs/s1-call2.json",
-        "sha256": "3b8a280b26c697f46516e1c9a47dbdc43371ef80aaf771b140da41bd29a3634f"
-      },
-      {
-        "path": "attestations/evidence/0033-hookguard/runs/s2-call1.json",
-        "sha256": "c83b093757f405399fa704fe5ced339285c6cf5f3ab7d97b6c3faf2c8b43c720"
-      },
-      {
-        "path": "attestations/evidence/0033-hookguard/runs/s2-call10.json",
-        "sha256": "be47dc5cddc709a1261ce3407e2f10259ef73158ff04931a955212e2aaab8ed6"
-      },
-      {
-        "path": "attestations/evidence/0033-hookguard/runs/s2-call2.json",
-        "sha256": "174f325d340ca763299da40550f5cd7849ac5597f38e3f3fdb81a3f9ff235a2e"
-      },
-      {
-        "path": "attestations/evidence/0033-hookguard/runs/s2-call3.json",
-        "sha256": "fef24489a986895051427621c80c19c71c6149dfdf2b6a3fcf5ebd734f2378d7"
-      },
-      {
-        "path": "attestations/evidence/0033-hookguard/runs/s2-call4.json",
-        "sha256": "54e0bc62ba5266dd3d1ab41e2243126bcaa92eaf944c74e25062c94897038f7c"
-      },
-      {
-        "path": "attestations/evidence/0033-hookguard/runs/s2-call5.json",
-        "sha256": "1791d86fcc118b2ba300d6307f9b063c67127af0d5efc766b8eb82dbf26ba6a3"
-      },
-      {
-        "path": "attestations/evidence/0033-hookguard/runs/s2-call6.json",
-        "sha256": "4fe7d8c63b4c1c5914beec44e54312f0bd3e5105c6abd294b7140086a948a7a5"
-      },
-      {
-        "path": "attestations/evidence/0033-hookguard/runs/s2-call7.json",
-        "sha256": "bd6522796b88ff8916438c29c37b777e5f1598c48051724b5dda645dd0e36c4b"
-      },
-      {
-        "path": "attestations/evidence/0033-hookguard/runs/s2-call8.json",
-        "sha256": "50e53c84b5b8c2f5acc6ee14f4cc5652e96a422aa931d8bf8e11f516b6e0c9b0"
-      },
-      {
-        "path": "attestations/evidence/0033-hookguard/runs/s2-call9.json",
-        "sha256": "1c49fc94e1d320306eb4009bb7a73cf792a6c44eaba36a97e4a001dbf86049b1"
-      },
-      {
-        "path": "attestations/evidence/0033-hookguard/runs/s3-call1.json",
-        "sha256": "99adbf6d553a290468d083eb494f20581041736feca57111bb9a8b6375a7a861"
-      },
-      {
-        "path": "attestations/evidence/0033-hookguard/runs/s3-call2.json",
-        "sha256": "ff3bb2071ea3a68555df032640e6b2d52190e8bc3a40cd0a50c1c1fac3337006"
-      },
-      {
-        "path": "attestations/evidence/0033-hookguard/runs/s3-call3.json",
-        "sha256": "d4982b805bf94c93972643cf7425d859392de3a078c9d9a7c1942fe80e1c33d0"
-      },
-      {
-        "path": "attestations/evidence/0033-hookguard/runs/s3-call4.json",
-        "sha256": "34677d493f0ed96927d7da67263e407a9aa53082369267026c151e237be85ac0"
-      },
-      {
-        "path": "attestations/evidence/0033-hookguard/runs/s3-call5.json",
-        "sha256": "79f2c728c953f769298e3107977be976c4bfacf0b32b1418429fd91ca71f9e20"
-      },
-      {
-        "path": "attestations/evidence/0033-hookguard/runs/s4-call1.json",
-        "sha256": "0276b15adfa1eef9db5507630a546011add250455debd3395798fdb966ab97d4"
-      },
-      {
-        "path": "attestations/evidence/0033-hookguard/runs/s4-call2.json",
-        "sha256": "2e0ca72ece1dcc7f03ee3204547d6b7a6b17a2254da763490ccbb4a7f0bc2957"
-      },
-      {
-        "path": "attestations/evidence/0033-hookguard/runs/s4-call3.json",
-        "sha256": "b0ca0ef9b058d282e94a925c61ab398b020158211bd8a80068ea43711b4fa30d"
-      },
-      {
-        "path": "attestations/evidence/0033-hookguard/runs/s4-call4.json",
-        "sha256": "421fb3e87034ec4b6aa16bf3774385028fdbba9e2639de6fbffbf6d9dc9cfa24"
-      },
-      {
-        "path": "attestations/evidence/0033-hookguard/runs/s5-call1.json",
-        "sha256": "4fe5eb849a7e643762e6522a374d7ef1b5cbb32c17bd4a57a91fa17553eed474"
-      },
-      {
-        "path": "attestations/evidence/0033-hookguard/runs/s5-call2.json",
-        "sha256": "0875211fcb03c42e3cb30e3ce20a1a9b5dd264f6651962edde6631fdc08d9f10"
-      },
-      {
-        "path": "attestations/evidence/0033-hookguard/runs/s5-call3.json",
-        "sha256": "48e2dd420e7e15b001185a153fe5beeb87af3acb995c1e7925a4e0d38f3bfda3"
-      },
-      {
-        "path": "attestations/evidence/0033-hookguard/runs/s6-call1.json",
-        "sha256": "2cc4273f938d4ace536c921590dfd3219cc34d8bd1181589b53dac3935028221"
-      },
-      {
-        "path": "attestations/evidence/0033-hookguard/runs/s6-call2.json",
-        "sha256": "c937f8d4f5ae7f73b05d55d7f4364ad6ca6e86a1f2dc1375fc79d5765e8c1f11"
-      },
-      {
-        "path": "attestations/evidence/0033-hookguard/runs/s6-call3.json",
-        "sha256": "97b75da5f07e25b2b6c693e779f28ce554448f08dfd9c62472477d350c2a7f0e"
-      },
-      {
-        "path": "attestations/evidence/0033-hookguard/runs/s6-call4.json",
-        "sha256": "d28a67ae740b081eabe5e18f0176626fe184990a2778ccdb8415000ba628516f"
-      },
-      {
-        "path": "attestations/evidence/0033-hookguard/runs/s6-call5.json",
-        "sha256": "0e999d57fd6796265ad532c2fd11d204bba7d74770998b0eef3138d5891953f8"
-      },
-      {
-        "path": "attestations/evidence/0033-hookguard/runs/s6-call6.json",
-        "sha256": "804c6a0f4ab9068a1ceb3f781080baa126a8823e593978b768e2c9f1f21469a5"
-      },
-      {
-        "path": "attestations/evidence/0033-hookguard/runs/s6-call7.json",
-        "sha256": "5eba82accf4c6312200d64af8195e8900be14495c052eefd4311edae5c6214bb"
-      },
-      {
-        "path": "attestations/evidence/0033-hookguard/runs/s6-call8.json",
-        "sha256": "f93bf0a99c2f28925515708d64566e0afe7aa221edbaf1ba7a6bb1a367cfd02b"
-      },
-      {
-        "path": "attestations/evidence/0033-hookguard/runs/s7-call1.json",
-        "sha256": "a38f1aa32859d201e2456d9f08ad55d15b71160342d31fb52f71c2e5afe84cd1"
-      },
-      {
-        "path": "attestations/evidence/0033-hookguard/runs/s8-503-survey.json",
-        "sha256": "3dcdc3f40517934a794791bb9828c4cea7410c1e0c0382a767b92453bbc3d0ee"
-      },
-      {
-        "path": "attestations/evidence/0033-hookguard/runs/s9-receipt-v2-verify.json",
-        "sha256": "cd0e44b76592f247c5165f6a336f3703d4a055bf1c6fca98e76e6d217a0192f1"
-      },
-      {
-        "path": "attestations/evidence/0033-hookguard/runs/summary-0033.json",
-        "sha256": "1ac00919ec8b44318041037239c1b1fd22132897e4927419164facb3558d0d76"
+        "path": "attestations/evidence/0034-fi-store-livecheck/runs/20261125T103636Z/L3_store_head.json",
+        "sha256": "c8646bc639629645f20a1c61ab648e4b0301bf1e51f246284f32248fd8126038"
       }
     ]
   }
