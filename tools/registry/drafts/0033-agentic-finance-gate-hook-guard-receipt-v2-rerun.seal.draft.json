@@ -124,7 +124,7 @@
  "evidence": [
   {
    "kind": "file",
-   "path": "sut-hookguard/battery_hookguard.mjs",
+   "path": "sut-hookguard/battery_hookguard_v2.mjs",
    "sha256": null
   },
   {
