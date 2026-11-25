@@ -1,0 +1,19 @@
+{
+ "tool": "store_checker.py (sut-fiangshi-store-livecheck), prereg freeze-0034",
+ "started_utc": "2026-11-25T10:36:36.165Z",
+ "store_freeze_commit": "75defddbe49a3cf12406162bc1de58139b0ed052",
+ "fiangshi_main_freeze": "9f4cca7f712e8ff779165d434d2cf7517bbf570a",
+ "api_base": "https://api.fiangshi.xyz",
+ "host": {
+  "python": "3.12.16",
+  "os": "Linux x86_64"
+ },
+ "prereg_hash": "2c50ef0c88c8b9a44c6eedc8b3a3f3ac8055cd9392713945ec2a15f9d9dc7655",
+ "clocks": {
+  "sandbox_utc_at_health": "2026-11-25T10:36:36.752Z",
+  "api_date_header_offset_seconds": 0.752,
+  "disclosed": "offset recorded as-is, never adjudicated (vendor claim: api.fiangshi.xyz <= ~1 min behind)"
+ },
+ "verdict": "SEAL \u2014 all frozen rows match",
+ "finished_utc": "2026-11-25T10:36:43.974Z"
+}

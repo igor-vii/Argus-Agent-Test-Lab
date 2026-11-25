@@ -1,0 +1,18 @@
+{
+ "status": 200,
+ "body": {
+  "mode": "live",
+  "id": "34160e4a12d1afe20c66e3a150a076701310eafea0ca44bb6ecf15a5ae0ca8bf",
+  "source": "id",
+  "valid": true,
+  "errors": [],
+  "chain": "receipt store github.com/Aceop-001/fiangshi-receipts",
+  "chain_linkage": "verified",
+  "chain_id": "e701244c51dd854cb1baebfa724822316f0501cbc57a1de8ee958cb43d556b32",
+  "continuity": "Read back from the durable receipt store; its predecessor is stored too, so the link was checked after the server that issued it was gone.",
+  "policy_version": "2026-11-13.5",
+  "band_rederived": "ALLOW",
+  "band_matches": true,
+  "policy_note": "Issued under policy 2026-11-13.5; the band is the lowest of the score, model, vow and cap bands recorded on the receipt."
+ }
+}

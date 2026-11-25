@@ -1,0 +1,23 @@
+{
+ "status": 200,
+ "body": {
+  "mode": "live",
+  "ok": true,
+  "census_payees": 1923,
+  "census_at": "2026-11-24T13:05:25.014Z",
+  "settlement": "live: CDP x402 facilitator (payer -> payTo, Fiangshi never holds funds)",
+  "settlement_check": {
+   "requested": "live",
+   "cdp_api_key_id": "set",
+   "cdp_api_key_secret": "set (Ed25519, 64 bytes)",
+   "ready": true
+  },
+  "ledger_durability": "durable: receipts committed to github.com/Aceop-001/fiangshi-receipts (0 written by this process)",
+  "receipts_stored": {
+   "census": 8488,
+   "live_this_process": 0,
+   "store_total": 3
+  }
+ },
+ "date_header_offset_seconds": 0.81
+}

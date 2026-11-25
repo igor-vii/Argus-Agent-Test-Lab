@@ -1,0 +1,181 @@
+{
+ "store": "https://github.com/Aceop-001/fiangshi-receipts",
+ "store_freeze_commit": "75defddbe49a3cf12406162bc1de58139b0ed052",
+ "fiangshi_main_freeze": "9f4cca7f712e8ff779165d434d2cf7517bbf570a",
+ "verdict": "SEAL \u2014 all frozen rows match",
+ "rows": [
+  {
+   "row": "P1 prereg hash == posted (canonical-json, 0031 discipline)",
+   "expected": "2c50ef0c88c8b9a44c6eedc8b3a3f3ac8055cd9392713945ec2a15f9d9dc7655",
+   "actual": "2c50ef0c88c8b9a44c6eedc8b3a3f3ac8055cd9392713945ec2a15f9d9dc7655",
+   "match": true
+  },
+  {
+   "row": "P2 clocks recorded (disclosed fact, not adjudicated)",
+   "expected": "sandbox UTC + api Date header offset in run_meta.json",
+   "actual": 0.752,
+   "match": true
+  },
+  {
+   "row": "S1 HEAD.json consistency + append-only chain walk",
+   "expected": {
+    "receipt_hash_at_freeze": "dc6d6a6f52b6763388d9271f7e470fff131d73c05524ccb26548774a8e312a98",
+    "covers_frozen_segment": "P1->P2->P3",
+    "count": "== files",
+    "started_at": "2026-11-25T03:50:17.263Z",
+    "usd_settled": 0.05
+   },
+   "actual": {
+    "head_receipt_hash": "dc6d6a6f52b6763388d9271f7e470fff131d73c05524ccb26548774a8e312a98",
+    "walk_len": 3,
+    "covers": true,
+    "count": 3,
+    "files": 3,
+    "started_at": "2026-11-25T03:50:17.263Z",
+    "usd_settled_computed": 0.05
+   },
+   "match": true
+  },
+  {
+   "row": "S2 pinned store files byte-identical (x3 sha256)",
+   "expected": {
+    "34160e4a12d1afe20c66e3a150a076701310eafea0ca44bb6ecf15a5ae0ca8bf": "c88a936fe966b752ac9176106f423012949a613349ce419331cbcd177044d532",
+    "682a85d7f78c9325526d5843df5a670928988e078c05889c0bbd9834842ef635": "9f7a6295e6a580887c22cbedfccc76071d8fc07b96498006d417d7311a75c37f",
+    "dc6d6a6f52b6763388d9271f7e470fff131d73c05524ccb26548774a8e312a98": "c677ad019f71db4473518197f7e147a21c6c4926cbdf80f929cee39ffe81d937"
+   },
+   "actual": {
+    "34160e4a": "c88a936fe966b752ac9176106f423012949a613349ce419331cbcd177044d532",
+    "682a85d7": "9f7a6295e6a580887c22cbedfccc76071d8fc07b96498006d417d7311a75c37f",
+    "dc6d6a6f": "c677ad019f71db4473518197f7e147a21c6c4926cbdf80f929cee39ffe81d937"
+   },
+   "match": true
+  },
+  {
+   "row": "S3 independent canonical recompute == id (x3, own canonicalizer)",
+   "expected": "recompute == receipt_hash == filename stem",
+   "actual": {
+    "34160e4a": "34160e4a12d1afe20c66e3a150a076701310eafea0ca44bb6ecf15a5ae0ca8bf",
+    "682a85d7": "682a85d7f78c9325526d5843df5a670928988e078c05889c0bbd9834842ef635",
+    "dc6d6a6f": "dc6d6a6f52b6763388d9271f7e470fff131d73c05524ccb26548774a8e312a98"
+   },
+   "match": true
+  },
+  {
+   "row": "S4 chain links verbatim + chain_id (x3)",
+   "expected": {
+    "P1": "genesis",
+    "P2": "P1 id",
+    "P3": "P2 id",
+    "chain_id": "e701244c51dd854cb1baebfa724822316f0501cbc57a1de8ee958cb43d556b32"
+   },
+   "actual": {
+    "34160e4a": {
+     "prev_hash": "genesis",
+     "chain_id": "e701244c51dd854cb1baebfa724822316f0501cbc57a1de8ee958cb43d556b32"
+    },
+    "682a85d7": {
+     "prev_hash": "34160e4a12d1afe20c66e3a150a076701310eafea0ca44bb6ecf15a5ae0ca8bf",
+     "chain_id": "e701244c51dd854cb1baebfa724822316f0501cbc57a1de8ee958cb43d556b32"
+    },
+    "dc6d6a6f": {
+     "prev_hash": "682a85d7f78c9325526d5843df5a670928988e078c05889c0bbd9834842ef635",
+     "chain_id": "e701244c51dd854cb1baebfa724822316f0501cbc57a1de8ee958cb43d556b32"
+    }
+   },
+   "match": true
+  },
+  {
+   "row": "S5 API /v1/receipt/<id> serves store bytes (x3) \u2014 the 0032 L2 gap",
+   "expected": "status 200 + canonical(api receipt) == canonical(store receipt)",
+   "actual": {
+    "34160e4a": {
+     "status": 200,
+     "canonical_equal_store": true,
+     "recomputes_to": "34160e4a12d1afe20c66e3a150a076701310eafea0ca44bb6ecf15a5ae0ca8bf"
+    },
+    "682a85d7": {
+     "status": 200,
+     "canonical_equal_store": true,
+     "recomputes_to": "682a85d7f78c9325526d5843df5a670928988e078c05889c0bbd9834842ef635"
+    },
+    "dc6d6a6f": {
+     "status": 200,
+     "canonical_equal_store": true,
+     "recomputes_to": "dc6d6a6f52b6763388d9271f7e470fff131d73c05524ccb26548774a8e312a98"
+    }
+   },
+   "match": true
+  },
+  {
+   "row": "S6 settlement pins verbatim (claim, hash-anchored)",
+   "expected": {
+    "P2": [
+     "settled",
+     "0x90b919810c9c3a3b6707a1847261d00609018ca42bd15ff9a2fcd10867af9696",
+     "eip155:8453",
+     0.05
+    ],
+    "P1": "dry-run",
+    "P3": "dry-run"
+   },
+   "actual": {
+    "P2_settlement": "settled",
+    "P2_tx_hash": "0x90b919810c9c3a3b6707a1847261d00609018ca42bd15ff9a2fcd10867af9696",
+    "P2_chain": "eip155:8453",
+    "P2_fee_usd": 0.05,
+    "P1_settlement": "dry-run",
+    "P3_settlement": "dry-run"
+   },
+   "match": true
+  },
+  {
+   "row": "L1 /health (DOCUMENTED)",
+   "expected": "status 200, store_total >= 3, offset disclosed",
+   "actual": {
+    "status": 200,
+    "store_total": 3,
+    "offset_s": 0.81
+   },
+   "match": true
+  },
+  {
+   "row": "L2 P1 /v1/verify (DOCUMENTED)",
+   "expected": "recorded as-is",
+   "actual": {
+    "status": 200,
+    "valid": true,
+    "chain_linkage": "verified"
+   },
+   "match": true
+  },
+  {
+   "row": "L2 P2 /v1/verify (DOCUMENTED)",
+   "expected": "recorded as-is",
+   "actual": {
+    "status": 200,
+    "valid": true,
+    "chain_linkage": "verified"
+   },
+   "match": true
+  },
+  {
+   "row": "L2 P3 /v1/verify (DOCUMENTED)",
+   "expected": "recorded as-is",
+   "actual": {
+    "status": 200,
+    "valid": true,
+    "chain_linkage": "verified"
+   },
+   "match": true
+  },
+  {
+   "row": "L3 store head at run (git fetch, DOCUMENTED)",
+   "expected": "recorded as-is (freeze head 75defddb\u2026)",
+   "actual": {
+    "head": "75defddbe49a3cf12406162bc1de58139b0ed052",
+    "advanced": false
+   },
+   "match": true
+  }
+ ]
+}

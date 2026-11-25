@@ -1,0 +1,27 @@
+{
+ "run_id": "0034-fi-store-livecheck/runs/20261125T103636Z",
+ "run_ts": "2026-11-25T10:36:36Z..10:36:44Z (store re-pull + 8 free GETs, wall ~8 s; Этап 0 start 10:36:36Z)",
+ "freeze_commit": "aabfe82b43f1de3abadcfac2c050b39973c694ff",
+ "prereg_hash_before_first_judged_get": "2c50ef0c88c8b9a44c6eedc8b3a3f3ac8055cd9392713945ec2a15f9d9dc7655",
+ "prereg_post": "https://github.com/Aceop-001/fiangshi/issues/1#issuecomment-7159924452 (2026-11-25T10:36:24Z)",
+ "sut_pin": {
+  "store": "Aceop-001/fiangshi-receipts @ 75defddbe49a3cf12406162bc1de58139b0ed052 (unchanged at run)",
+  "api": "https://api.fiangshi.xyz (live; the static fiangshi.xyz copy out of scope per the vendor's instruction)",
+  "fiangshi_main_at_freeze": "9f4cca7f712e8ff779165d434d2cf7517bbf570a (informational, no rebuild)"
+ },
+ "receipt_pins": {
+  "P1": "34160e4a12d1afe20c66e3a150a076701310eafea0ca44bb6ecf15a5ae0ca8bf (dry-run, Bitrefill ALLOW)",
+  "P2": "682a85d7f78c9325526d5843df5a670928988e078c05889c0bbd9834842ef635 (settled, tx 0x90b919810c9c3a3b6707a1847261d00609018ca42bd15ff9a2fcd10867af9696, eip155:8453, fee_usd 0.05)",
+  "P3": "dc6d6a6f52b6763388d9271f7e470fff131d73c05524ccb26548774a8e312a98 (dry-run, cleave BLOCK null_payee)"
+ },
+ "live_calls": {"health": 2, "receipt_routes": 3, "verify_routes": 3, "retries": 0, "budget_spent": "$0.00",
+  "disclosed_deviation": "the freeze prose said seven GETs; the checker made eight (Этап 0 pins the clock via a second /health); both free, judged rows unaffected — recorded as-is"},
+ "verdict": "SEAL — all frozen rows match (S1–S6: 6 MATCH, 0 DIVERGENCE)",
+ "live_evidence": {
+  "L1": "/health 200: receipts_stored.store_total 3, census 8488, census_at 2026-11-24T13:05:25.014Z; api Date header 0.75–0.81 s behind sandbox UTC — disclosed, never adjudicated (vs the ~35 min static-copy lag of 0032)",
+  "L2": "all three /v1/verify?id= → valid true, chain_linkage verified (corroboration only)",
+  "L3": "store head at run 75defdd… — unchanged since freeze"
+ },
+ "host": {"python": "3.12.16", "os": "Linux x86_64"},
+ "tool": "sut-fiangshi-store-livecheck/store_checker.py sha256 be9d9f3b4522e3935a174ba9225f978dc13b95f8d38649bce248afc1802d00c4 (committed pre-run at aabfe82b)"
+}
