@@ -144,6 +144,100 @@
       "kind": "file",
       "path": "sut-fiangshi-store-livecheck/store_checker.py",
       "sha256": "be9d9f3b4522e3935a174ba9225f978dc13b95f8d38649bce248afc1802d00c4"
+    },
+    {
+      "kind": "file",
+      "path": "attestations/evidence/0034-fi-store-livecheck/runs/20261125T103636Z/expected_table.json",
+      "sha256": "db817bba2b4cf44827a90db3a786fe0fb3993d62199c131eaefb2a94188773c2"
+    },
+    {
+      "kind": "file",
+      "path": "attestations/evidence/0034-fi-store-livecheck/runs/20261125T103636Z/run_meta.json",
+      "sha256": "9e1485bb07afd5f8e3b8246f3c85edde701a66fc3844acd53378a5efdddc8228"
+    },
+    {
+      "kind": "file",
+      "path": "attestations/evidence/0034-fi-store-livecheck/runs/20261125T103636Z/store_HEAD.json",
+      "sha256": "d04f1e99f4d8830f94223db437cf6e9bf1b35549858f8749df35e2365f73ba8d"
+    },
+    {
+      "kind": "file",
+      "path": "attestations/evidence/0034-fi-store-livecheck/runs/20261125T103636Z/store_34160e4a.json",
+      "sha256": "c88a936fe966b752ac9176106f423012949a613349ce419331cbcd177044d532"
+    },
+    {
+      "kind": "file",
+      "path": "attestations/evidence/0034-fi-store-livecheck/runs/20261125T103636Z/store_682a85d7.json",
+      "sha256": "9f7a6295e6a580887c22cbedfccc76071d8fc07b96498006d417d7311a75c37f"
+    },
+    {
+      "kind": "file",
+      "path": "attestations/evidence/0034-fi-store-livecheck/runs/20261125T103636Z/store_dc6d6a6f.json",
+      "sha256": "c677ad019f71db4473518197f7e147a21c6c4926cbdf80f929cee39ffe81d937"
+    },
+    {
+      "kind": "file",
+      "path": "attestations/evidence/0034-fi-store-livecheck/runs/20261125T103636Z/L1_health.json",
+      "sha256": "5e98709f317b135da10a7f3b04f68bbb4b325f4bccbe1c2fc6d598878083e023"
+    },
+    {
+      "kind": "file",
+      "path": "attestations/evidence/0034-fi-store-livecheck/runs/20261125T103636Z/L3_store_head.json",
+      "sha256": "c8646bc639629645f20a1c61ab648e4b0301bf1e51f246284f32248fd8126038"
+    },
+    {
+      "kind": "evidence_pack",
+      "path": "attestations/evidence/0034-fi-store-livecheck",
+      "commit": "42ec5821",
+      "files": {
+        "attestations/evidence/0034-fi-store-livecheck/README.md": "see file (run summary, disclosed 8-GET deviation, clock offset)",
+        "attestations/evidence/0034-fi-store-livecheck/run.json": "see file (machine-readable run summary)",
+        "attestations/evidence/0034-fi-store-livecheck/runs/ (run pack, 15 files, sha256 of each in manifest.sha256)": "see manifest.sha256"
+      }
+    },
+    {
+      "kind": "run_pack_commits",
+      "freeze_commit": "aabfe82b",
+      "evidence_commit": "42ec5821",
+      "prereg_hash_before_first_judged_get": "2c50ef0c88c8b9a44c6eedc8b3a3f3ac8055cd9392713945ec2a15f9d9dc7655",
+      "prereg_post": "https://github.com/Aceop-001/fiangshi/issues/1#issuecomment-7159924452"
     }
-  ]
+  ],
+  "run_ts": "2026-11-25T10:36:36Z..10:36:44Z (store re-pull + 8 free GETs, wall ~8 s; Этап 0 start 10:36:36Z; prereg post 10:36:24Z — 12 s before the first judged GET)",
+  "self_run": {
+    "run_by": "argus lab agent (session key holder), per the operator's ТЗ and the thread agreement (comment 7152045928); no live calls beyond the freeze's scope; one deviation disclosed: eight free GETs instead of the seven stated in the freeze prose — the checker pins the clock via a second GET /health in Этап 0 (both free, 0 retries, judged rows unaffected), recorded as-is",
+    "checker": "sut-fiangshi-store-livecheck/store_checker.py sha256 be9d9f3b4522e3935a174ba9225f978dc13b95f8d38649bce248afc1802d00c4 (committed pre-run at aabfe82b)",
+    "calls_total": 8,
+    "retries": 0,
+    "budget_spent": "$0.00 (free public endpoints only: two GET /health, three GET /v1/receipt/<id>, three GET /v1/verify?id= on api.fiangshi.xyz; the store read via a git clone of Aceop-001/fiangshi-receipts; no paid x402 calls, no keys, no settlements initiated by the lab, no npm ci, no tsx)",
+    "etap0_checks": {
+      "prereg_hash_equals_posted": "canonical-json mode (ensure_ascii=False over the signed wrapper) == 2c50ef0c…d7655, checked before any live call",
+      "clocks_recorded": "api Date header 0.75–0.81 s behind sandbox UTC — disclosed fact, never adjudicated (vendor claim ≤ ~1 min; the 0032 ~35 min lag was the static fiangshi.xyz copy)",
+      "store_reachable": "git clone ok, head 75defddbe49a3cf12406162bc1de58139b0ed052 — unchanged since the freeze"
+    },
+    "host": {
+      "python": "3.12.16",
+      "os": "Linux x86_64"
+    },
+    "transport": "store re-pull via a fresh git clone of Aceop-001/fiangshi-receipts at run time (head 75defdd…, unchanged); receipt hashes recomputed by the checker's own Python canonicalizer (null kept), not fiangshi's code; live rows via urllib GETs to https://api.fiangshi.xyz; every call written once — failures recorded, never retried"
+  },
+  "findings_summary": {
+    "match": 6,
+    "divergence": 0,
+    "total": 6,
+    "by_row": {
+      "S1": "MATCH — HEAD.json consistent: receipt_hash dc6d6a6f…, walk covers the frozen segment P1→P2→P3 in order (chain not yet advanced), count 3 == files, started_at 2026-11-25T03:50:17.263Z, usd_settled 0.05 == sum of settled fees",
+      "S2": "MATCH — all three pinned store files byte-identical: raw sha256 P1 c88a936f…, P2 9f7a6295…, P3 c677ad01… == frozen pins",
+      "S3": "MATCH — all three ids reproduce under the checker's own Python canonicalizer (null kept): recompute == receipt_hash == filename stem == pinned id",
+      "S4": "MATCH — prev_hash links verbatim: P1 genesis, P2 34160e4a…, P3 682a85d7…; chain_id e701244c… on all three — the P2→P1 link across the vendor's redeploy holds",
+      "S5": "MATCH — the 0032 L2 gap closes: all three GET /v1/receipt/<id> → 200, the wrapper's receipt object canonical-equal to the store bytes and recomputes to the pinned id",
+      "S6": "MATCH — settlement pins verbatim on P2: settled, tx 0x90b91981…9696, eip155:8453, fee_usd 0.05; P1 and P3 dry-run — recorded as the receipt's own claim, hash-anchored, not adjudicated onchain (no RPC in scope)"
+    },
+    "live_evidence_only": {
+      "L1": "GET /health → 200: receipts_stored.store_total 3 (census 8488, live_this_process 0), census_at 2026-11-24T13:05:25.014Z; api Date header 0.75–0.81 s behind sandbox UTC — disclosed, never adjudicated",
+      "L2": "all three GET /v1/verify?id= → valid true, chain_linkage verified, source id (corroboration only; the judgment is the checker's own recompute)",
+      "L3": "store head at run 75defddbe49a3cf12406162bc1de58139b0ed052 — unchanged since the freeze; no append between freeze and run (append-only tolerance was frozen but not needed)"
+    },
+    "verdict": "SEAL — all frozen rows match"
+  }
 }
