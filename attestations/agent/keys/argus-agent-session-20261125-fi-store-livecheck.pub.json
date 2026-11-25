@@ -1,0 +1,13 @@
+{
+  "key_id": "argus-agent-session-20261125-fi-store-livecheck",
+  "algorithm": "Ed25519",
+  "class": "agent-session",
+  "session_id": "20261125-fi-store-livecheck",
+  "created_at": "2026-11-25T10:34:55.330Z",
+  "note": "Agent-session signer for the freeze-0034 prereg wrapper (sut-fiangshi-store-livecheck). NOT an operator key: main-registry verification rejects it (ARG-03 operator allowlist).",
+  "public_jwk": {
+    "kty": "OKP",
+    "crv": "Ed25519",
+    "x": "xw_l3bwSfVTZEFXPkm93S1Uhdopick7zNQYT98yEpf0"
+  }
+}

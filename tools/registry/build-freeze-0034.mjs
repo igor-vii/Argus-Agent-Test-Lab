@@ -1,0 +1,128 @@
+// Build the 0034 prereg freeze: draft.json + agent session key + signed wrapper.
+// Mirror of the 0032 mechanics (freeze-0032.signed.json): the wrapper signs
+// canonical(draft) with a per-run agent session key; privkey stays outside the repo.
+import crypto from 'node:crypto';
+import fs from 'node:fs';
+import path from 'path';
+import { canonical, sha256Hex } from './lib.mjs';
+
+const ROOT = path.resolve(import.meta.dirname, '..', '..'); // argus-lab/
+const SUT = path.join(ROOT, 'sut-fiangshi-store-livecheck');
+
+const f = (p) => path.join(SUT, p);
+const fileSha = (p) => sha256Hex(fs.readFileSync(p));
+
+// ---------- draft ----------
+const draft = {
+  type: 'seal',
+  title: 'fiangshi durable-receipt-store live-check (Aceop-001/fiangshi-receipts @ 75defdd, store_total 3 at freeze) — pre-registered store/API byte cross-check with independent receipt-hash recompute, $0.00',
+  subject: {
+    component: 'the three live-check receipts in fiangshi\'s durable receipt store (github.com/Aceop-001/fiangshi-receipts): P1 34160e4a… (dry-run, Bitrefill gift-card search, ALLOW), P2 682a85d7… (first live settled check, tx 0x90b91981…9696 on Base, $0.05), P3 dc6d6a6f… (dry-run, cleave gas, BLOCK via null_payee) — anchored as claims in the Argus registry; closes the L2 redeploy-gap row of record 0032 (recorded 404/DOCUMENTED there)',
+    thread: 'https://github.com/Aceop-001/fiangshi/issues/1',
+    vendor_answers: 'thread comment 7152902377 (2026-11-25 04:30 UTC): the store is live (store_total 2 at the post, 3 by our freeze — dc6d6a6f landed 04:57:38.855Z); the two receipts announced there are a dry-run check (34160e4a…) and the first live settled check (682a85d7…, settlement settled, tx 0x90b91981…9696 on Base), the second links to the first across a redeploy; served_at on api.fiangshi.xyz is at most about a minute behind (the served census is recomputed once a minute); the ~35 min lag seen in run 0032 came from fiangshi.xyz/v1/index.json, the static site copy rebuilt hourly (cron at :17) — for the live-check run pin api.fiangshi.xyz; the vendor linked argus-seal-0032 from their test report as a $0.00 third-party check. Receipt immutability and canonicalization per comment 7136711046 (2026-11-24): a receipt never changes — its id is the sha256 of its canonical JSON; recompute over the canonical receipt object, not the HTTP wrapper',
+    demo_shape: '$0.00: no paid x402 calls by us, no keys, no settlements initiated by us; the settled tx in P2 is the vendor\'s own demo payment, recorded as the receipt\'s own claim (hash-anchored, not adjudicated onchain in this run); the live API is touched only for seven free GETs (/health ×1, /v1/receipt/<id> ×3, /v1/verify?id= ×3); the store is read via a git fetch of Aceop-001/fiangshi-receipts; no repo rebuild, no npm ci, no tsx',
+    sut_pin: {
+      store: 'https://github.com/Aceop-001/fiangshi-receipts',
+      store_commit: '75defddbe49a3cf12406162bc1de58139b0ed052',
+      store_layout: 'receipts/<2-char-shard>/<receipt_hash>.json, one file per receipt; receipts/HEAD.json names the newest (receipt_hash dc6d6a6f…, chain_id e701244c…, started_at 2026-11-25T03:50:17.263Z, count 3, paid 2, settled 1, usd_settled 0.05; file sha256 d04f1e99…)',
+      api: 'https://api.fiangshi.xyz (live — per the vendor\'s instruction; the static fiangshi.xyz copy is a build snapshot by design)',
+      fiangshi_main_at_freeze: '9f4cca7f712e8ff779165d434d2cf7517bbf570a (informational — no rebuild in this run; the scheduled 36h ALLOW-only refresh may move main; live-check receipts reference checks, not census collections)',
+      append_only: 'the store may grow between freeze and run; the frozen P1→P2→P3 segment must stay byte-identical; growth recorded as-is',
+    },
+    receipts: {
+      P1: { seller: 'api.bitrefill.com/x402/gift-cards/search', payee: '0x480cd46e6fade651a0437deadda53d5c8e7d846a', id: '34160e4a12d1afe20c66e3a150a076701310eafea0ca44bb6ecf15a5ae0ca8bf', prev_hash: 'genesis', chain_id: 'e701244c51dd854cb1baebfa724822316f0501cbc57a1de8ee958cb43d556b32', checked_at: '2026-11-25T03:50:17.263Z', settlement: 'dry-run', fee_usd: 0.05, band: 'ALLOW', file_sha256: 'c88a936fe966b752ac9176106f423012949a613349ce419331cbcd177044d532' },
+      P2: { seller: 'api.bitrefill.com/x402/gift-cards/search', payee: '0x480cd46e6fade651a0437deadda53d5c8e7d846a', id: '682a85d7f78c9325526d5843df5a670928988e078c05889c0bbd9834842ef635', prev_hash: '34160e4a12d1afe20c66e3a150a076701310eafea0ca44bb6ecf15a5ae0ca8bf', chain_id: 'e701244c51dd854cb1baebfa724822316f0501cbc57a1de8ee958cb43d556b32', checked_at: '2026-11-25T04:15:27.363Z', settlement: 'settled', tx_hash: '0x90b919810c9c3a3b6707a1847261d00609018ca42bd15ff9a2fcd10867af9696', chain: 'eip155:8453', fee_usd: 0.05, band: 'ALLOW', file_sha256: '9f7a6295e6a580887c22cbedfccc76071d8fc07b96498006d417d7311a75c37f' },
+      P3: { seller: 'api.cleave.fi/x402/gas', payee: '0x0000000000000000000000000000000000000000', id: 'dc6d6a6f52b6763388d9271f7e470fff131d73c05524ccb26548774a8e312a98', prev_hash: '682a85d7f78c9325526d5843df5a670928988e078c05889c0bbd9834842ef635', chain_id: 'e701244c51dd854cb1baebfa724822316f0501cbc57a1de8ee958cb43d556b32', checked_at: '2026-11-25T04:57:38.855Z', settlement: 'dry-run', band: 'BLOCK', vow_fired: 'null_payee', file_sha256: 'c677ad019f71db4473518197f7e147a21c6c4926cbdf80f929cee39ffe81d937' },
+    },
+    canonicalization: 'same discipline as 0032, verified at freeze on all three pins: sorted object keys, compact separators, UTF-8, null kept (JS null is not undefined); receipt_hash = sha256 over every field except receipt_hash itself; recompute over the canonical receipt object, not the HTTP wrapper (per the vendor\'s answer 7136711046)',
+    endpoints: [
+      'GET https://api.fiangshi.xyz/health (evidence-only L1)',
+      'GET /v1/receipt/<id> for P1/P2/P3 (judged S5 — the 0032 L2 gap)',
+      'GET /v1/verify?id=<id> for P1/P2/P3 (evidence-only L2, corroboration)',
+      'git clone of Aceop-001/fiangshi-receipts (store re-pull, judged S1–S4, evidence-only L3)',
+    ],
+    platform: {
+      kind: 'sandbox-stand',
+      checker: 'python3 stdlib store_checker.py (independent canonicalizer; git-based store re-pull; live rows; no rebuild, no npm ci, no tsx)',
+      clock: 'sandbox UTC stamp + the api Date header + the vendor served_at/census_at fields recorded at freeze and at run; offsets disclosed, never adjudicated',
+    },
+  },
+  scenarios: [
+    { id: 'S1', unit: 'verdict', case: 'store HEAD.json re-pull', expected: 'parses; receipt_hash names a receipt whose prev_hash walk covers the frozen segment P1→P2→P3 in order (append-only tolerance: HEAD may name a newer receipt); count == number of receipt files; started_at == 2026-11-25T03:50:17.263Z; usd_settled == sum of fee_usd over settled receipts (0.05 at freeze)' },
+    { id: 'S2', unit: 'verdict', case: 'pinned store files re-pulled raw', expected: 'sha256 == frozen file hashes: P1 c88a936f…, P2 9f7a6295…, P3 c677ad01… — byte-identical' },
+    { id: 'S3', unit: 'verdict', case: 'independent receipt-hash recompute', expected: 'sha256 over the canonical JSON of each receipt minus receipt_hash, recomputed by the checker\'s own Python canonicalizer (not fiangshi\'s code), == receipt_hash field == filename stem == pinned id — for all three' },
+    { id: 'S4', unit: 'verdict', case: 'chain linkage', expected: 'P1.prev_hash == "genesis"; P2.prev_hash == 34160e4a…; P3.prev_hash == 682a85d7…; chain_id e701244c… identical on all three — the P2→P1 linkage across the vendor\'s redeploy holds' },
+    { id: 'S5', unit: 'verdict', case: 'API cross-check — the 0032 L2 gap', expected: 'GET api.fiangshi.xyz/v1/receipt/<id> for each pinned id → status 200, and the wrapper\'s receipt object canonicalizes to bytes identical to the store receipt\'s canonical form (recomputes to the pinned id)' },
+    { id: 'S6', unit: 'verdict', case: 'settlement pins verbatim (claim, hash-anchored)', expected: 'P2: settlement "settled", tx_hash 0x90b919810c9c3a3b6707a1847261d00609018ca42bd15ff9a2fcd10867af9696, chain "eip155:8453", fee_usd 0.05; P1 and P3: settlement "dry-run"' },
+    { id: 'L1', unit: 'verdict', role: 'evidence-only', case: 'one GET /health at run', expected: 'status, receipts_stored.store_total (>= 3), census_at recorded verbatim; Cloudflare Date header minus sandbox UTC recorded as a disclosed offset (vendor claim: <= ~1 min); never affects the verdict' },
+    { id: 'L2', unit: 'verdict', role: 'evidence-only', case: 'GET /v1/verify?id= for all three', expected: 'recorded DOCUMENTED either way (corroboration; chain_linkage "verified" observed at freeze); never affects the verdict' },
+    { id: 'L3', unit: 'verdict', role: 'evidence-only', case: 'store head sha at run (git clone)', expected: 'recorded as-is; if it advanced past 75defdd…, the frozen segment must remain byte-identical (that stability is judged by S2); never affects the verdict' },
+  ],
+  notes: [
+    'PREREG FREEZE (freeze-0034): this draft, PREREG-0034.md (prose twin) and store_checker.py land BEFORE the first judged live GET, committed to igor-vii/Argus-Agent-Test-Lab; the canonical sha256 of the signed wrapper (draft + detached Ed25519 by the agent session key) is published in Aceop-001/fiangshi#1 before the run, per the 0031/0032 discipline (hash over UTF-8 canonical form — ensure_ascii=False in the python one-liner). run_ts, self_run, findings_summary and run-pack evidence pins are filled from the run after it completes (re-pin commit before signing, as in 0031/0032). Discovery reads before the freeze are disclosed in PREREG-0034.md: /health, HEAD.json, the three store receipt files, route discovery, ls-remote of both repos — they set the pins, not the verdicts.',
+    'Pass rule for the final record: seal iff S1–S6 all match as frozen; any divergence → finding, recorded as-is; the record is complete either way; corrections are separate records, sealed originals are never edited. The L1/L2/L3 rows are evidence-only and never affect the verdict.',
+    'Append-only tolerance: the store may grow between freeze and run (HEAD may advance, new receipts may land); the frozen P1→P2→P3 segment must remain byte-identical; growth is recorded as-is (S1 accepts a longer chain that covers the frozen segment).',
+    'Verifier independence: receipt hashes are recomputed by the checker\'s own Python canonicalizer (not fiangshi\'s code); the vendor\'s /v1/verify results are recorded alongside as corroboration, not as the source of truth.',
+    'What this anchors, honestly: the three live-check receipts existed at freeze with fixed canonical bytes; the store chain links P2→P1 across the vendor\'s redeploy (the ledger-resets-on-redeploy weakness, now closed for this subset); the API serves the same bytes the store commits. It says nothing about fiangshi\'s internal ledger beyond the anchored bytes; the settlement tx is recorded as the receipt\'s own claim (not verified onchain in this run — no RPC in scope). Census receipts R1/R2/R3 from record 0032 are out of scope: the store holds live-check receipts; census receipts stay anchored offline at 1d19e408. fiangshi stays advisory: no signing key, no new call in its request path.',
+    'Clock disclosure: served_at/census_at and Date-header offsets are recorded as disclosed facts, never adjudicated (the 0032 ~35 min observation was the static fiangshi.xyz copy; this run pins api.fiangshi.xyz per the vendor\'s instruction).',
+  ],
+  evidence: [
+    { kind: 'file', path: 'sut-fiangshi-store-livecheck/PREREG-0034.md', sha256: fileSha(f('PREREG-0034.md')) },
+    { kind: 'file', path: 'sut-fiangshi-store-livecheck/store_checker.py', sha256: fileSha(f('store_checker.py')) },
+  ],
+};
+
+const DRAFTS = path.join(ROOT, 'tools', 'registry', 'drafts');
+fs.mkdirSync(DRAFTS, { recursive: true });
+fs.writeFileSync(path.join(DRAFTS, '0034-fi-durable-store-livecheck.seal.draft.json'), JSON.stringify(draft, null, 2) + '\n');
+
+// ---------- agent session key ----------
+const SESSION = '20261125-fi-store-livecheck';
+const keyId = `argus-agent-session-${SESSION}`;
+const AGENT_KEYS = path.join(ROOT, 'attestations', 'agent', 'keys');
+const pubPath = path.join(AGENT_KEYS, `${keyId}.pub.json`);
+const privDir = process.env.ARGUS_AGENT_PRIVKEY_DIR || path.resolve(ROOT, '..', 'keys');
+if (!fs.existsSync(pubPath)) {
+  const { publicKey, privateKey } = crypto.generateKeyPairSync('ed25519');
+  const now = new Date().toISOString();
+  fs.mkdirSync(privDir, { recursive: true });
+  fs.writeFileSync(path.join(privDir, `${keyId}.priv.json`), JSON.stringify({
+    key_id: keyId, algorithm: 'Ed25519', class: 'agent-session', session_id: SESSION,
+    created_at: now,
+    note: 'Agent-session key for the freeze-0034 prereg wrapper (mirror of the 0032 mechanics). Sandbox-only; never committed; revoke by removing the pub file.',
+    private_jwk: privateKey.export({ format: 'jwk' }),
+  }, null, 2), { mode: 0o600 });
+  fs.mkdirSync(AGENT_KEYS, { recursive: true });
+  fs.writeFileSync(pubPath, JSON.stringify({
+    key_id: keyId, algorithm: 'Ed25519', class: 'agent-session', session_id: SESSION,
+    created_at: now,
+    note: 'Agent-session signer for the freeze-0034 prereg wrapper (sut-fiangshi-store-livecheck). NOT an operator key: main-registry verification rejects it (ARG-03 operator allowlist).',
+    public_jwk: publicKey.export({ format: 'jwk' }),
+  }, null, 2), { mode: 0o644 });
+  console.log(`session key generated: ${keyId}`);
+} else {
+  console.log(`session key already present: ${keyId}`);
+}
+
+// ---------- signed wrapper ----------
+const privJwk = JSON.parse(fs.readFileSync(path.join(privDir, `${keyId}.priv.json`), 'utf8')).private_jwk;
+const privKey = crypto.createPrivateKey({ key: privJwk, format: 'jwk' });
+const sig = crypto.sign(null, Buffer.from(canonical(draft), 'utf8'), privKey);
+const wrapper = {
+  freeze_id: 'freeze-0034',
+  draft,
+  signed_at: new Date().toISOString().replace(/\.\d{3}Z$/, 'Z'),
+  signature: {
+    signer_key_id: keyId,
+    algorithm: 'Ed25519',
+    signed_over: `canonical(draft): recursively sorted keys, no whitespace, UTF-8; pubkey at attestations/agent/keys/${keyId}.pub.json`,
+    signature: sig.toString('base64'),
+  },
+};
+fs.writeFileSync(f('freeze-0034.signed.json'), JSON.stringify(wrapper, null, 2) + '\n');
+
+// self-check: verify the signature + print the prereg hash
+const pubJwk = JSON.parse(fs.readFileSync(pubPath, 'utf8')).public_jwk;
+const ok = crypto.verify(null, Buffer.from(canonical(draft), 'utf8'), crypto.createPublicKey({ key: pubJwk, format: 'jwk' }), Buffer.from(wrapper.signature.signature, 'base64'));
+console.log('wrapper signature self-check:', ok ? 'OK' : 'FAIL');
+console.log('prereg hash (canonical sha256 of the signed wrapper):', sha256Hex(canonical(wrapper)));
