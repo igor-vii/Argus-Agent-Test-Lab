@@ -1,0 +1,87 @@
+{
+  "$comment": "FREEZE-0035 (prereg) — paidfor client 0.8.0 cap battery. Frozen BEFORE the first live-GET. Registry slot 0035 (next free after 0034). Commit this file + battery_paidfor.mjs BEFORE the first call (RUNBOOK P1); sign freeze with agent session key, post prereg hash in x402#3866 as reply to vendor comment IC_kwDON8_yq88AAAABqeRNHA; only then run.",
+
+  "record_slot": "0035",
+  "run_id": "argus-0035-paidfor-0.8.0-caps",
+  "expected_record_type": "seal if every verdict row is MATCH; finding if any row is DIVERGENCE (decided by results, never retro-fitted)",
+
+  "subject": {
+    "component": "@paidfor/x402-safe-fetch",
+    "version": "0.8.0",
+    "npm_integrity": "sha512-uArqVL/5/28/2T0Ii1Eeo7Fpp+Y5zAHYb9w8QAIRK3NTAcu7V7cv/Jm7gPnjOEAGOOPqgExPXiyJVo7+SosUXQ==",
+    "npm_dist_tags_latest_at_freeze": "0.8.0",
+    "npm_time_modified": "2026-11-24T18:44:59.694Z",
+    "repo": "https://github.com/sarmadahsan/paidfor-client",
+    "repo_head_at_freeze": "3a32dd3fc1561a36e1751fcb76c09a15377f5143",
+    "mcp_package_noted_not_used": "@paidfor/mcp 0.7.8 (integrity sha512-rh0KYt5zhS3bG5dUOmvXgzpd/yGqDJUpvNPbOxBd4XQIv3J8+Dttt4BEah8pjNt4WiEpe21F38n/JX2G2Ogw4g==) — noted per vendor comment; Phase A battery drives the library directly",
+    "peer_dep_rule": "viem installed alongside at npm ci with committed lockfile; resolved version + integrity recorded in run.json (L0)"
+  },
+
+  "issued_conditions_verbatim": {
+    "author": "sarmadahsan",
+    "created_at": "2026-11-24T21:42:14Z",
+    "source": "https://github.com/x402-foundation/x402/issues/3866#issuecomment-IC_kwDON8_yq88AAAABqeRNHA",
+    "node_id": "IC_kwDON8_yq88AAAABqeRNHA",
+    "body_sha256": "b0bc799018b5c3979c88240ae8e24b34aec46e46e07f224f44b0654fc474847d",
+    "body_sha256_provenance": "computed over the comment body extracted from the issue-page embedded JSON payload; re-verify at freeze commit via: curl -s https://api.github.com/repos/x402-foundation/x402/issues/comments/<rest_id> | jq -j .body | sha256sum — mismatch => fix freeze and re-commit BEFORE the run, never after",
+    "vendor_ask_verbatim": "If you rerun your battery against 0.8.0, the per-day and per-seller refusals and the pay-to warning are the rows I would most like to see.",
+    "verbatim_text_file": "vendor-comment-verbatim.txt"
+  },
+
+  "readme_pins": {
+    "provenance": "raw.githubusercontent.com/sarmadahsan/paidfor-client/main/README.md fetched 2026-11-25 at main = 3a32dd3f…; sections quoted are normative for this freeze",
+    "caps_section_verbatim": "Everything here runs before the signature, after the seller verdict and the price check, so a payment that is allowed behaves exactly as before. Each refusal is a PaymentRefusedError whose code (and the receipt's outcome) names the rule; nothing is signed, no row goes to the index, and the receipt carries the quote.",
+    "refusal_codes_frozen": {
+      "maxPerCallUsd": "refused_max_per_call",
+      "maxPerDayUsd": "refused_max_per_day",
+      "maxPerSellerPerDayUsd": "refused_max_per_seller_per_day",
+      "maxFirstPaymentUsd": "refused_max_first_payment",
+      "approveAbove": "needs_approval",
+      "frozen": "frozen",
+      "refuseUnknownPayTo": "refused_pay_to"
+    },
+    "payto_verbatim": "refuseUnknownPayTo: true (default false) refuses instead with refused_pay_to, before signing; the warning stays on the refused receipt. A seller the index does not know, or knows without an address on record, gets neither the warning nor the refusal.",
+    "payto_warning_mode_verbatim": "The call still pays (outcome ok), and the v2 row carries \"warnings\": [\"unknown_pay_to\"].",
+    "nonce_verbatim": "nonce = HMAC-SHA256(key, JSON.stringify([intentId, payer, payTo, amountAtomic])); key = \"x402-safe-fetch:eip3009-nonce:v1\"; with payer and payTo as lowercase hex and amountAtomic the decimal string of the quote's atomic amount; the result is 32 bytes as 0x-hex (deriveNonce is exported, so a receipt can be checked).",
+    "telemetry_verbatim": "One POST per call to the index, fire-and-forget, on by default. ... On the Free plan, with or without an account, reporting is on and cannot be turned off."
+  },
+
+  "budget": {
+    "phase_a": "$0.00 — every Phase A row ends before the signature by the pinned caps-section sentence; belt-and-braces: burner wallet holds 0 USDC so any unexpected path to payment hits InsufficientFundsError (0.7.2 balance check) instead of signing",
+    "phase_b_gated": "pay-to warning mode (default refuseUnknownPayTo=false — 'the call still pays') and the approveAbove approval path ({approved:true}) both settle real money; frozen here, NOT run in Phase A, each requires operator go + funded burner, est <= $0.10 on Base USDC"
+  },
+
+  "identity_and_disclosure": {
+    "wallet": "fresh burner #2, 0 USDC, address recorded in run.json L1 before first call; payer address is a nonce input, hence pinned pre-run",
+    "user_agent": "honest identifying UA where the library surfaces it; otherwise library default recorded verbatim",
+    "telemetry_disclosure": "Free-plan reporting cannot be disabled; Phase A has zero paid calls and refusal rows send no row (pinned sentence); if any paidfor.dev index row appears for the burner address after Phase A, that is a DIVERGENCE recorded verbatim (S9)",
+    "no_retries": "every call made exactly once at the moment it was made; retries: 0",
+    "prep_probes_disclosed": "5 free pre-freeze probes on 2026-11-25, all $0.00, none signed: (1) POST api.exa.ai/search unpaid curl -> 402 with exact/eip155:8453 requirement; (2) POST api.exa.ai/contents unpaid curl -> 402; (3) safeFetch GET api.exa.ai/search -> no_payment_required (GET carries no quote — battery uses POST); (4) safeFetch POST api.exa.ai/search maxPerCallUsd=0.001 -> PaymentRefusedError refused_max_per_call paid=false (refusal-path smoke, throwaway key); (5) POST api.exa.ai/search battery probe shape -> 402 amount=7000 atomic. These validated request shape, refusal path and nonce formula BEFORE the freeze; the battery run itself starts only after this freeze is committed and its prereg hash posted"
+  },
+
+  "endpoint_rule": {
+    "P1": "the x402 discovery-surface endpoint from seal-0024 evidence (attestations/evidence/0024-… run pack) — exact URL re-verified live at run start",
+    "P2_P3": "additional distinct sellers from the official x402 examples verified live at run start",
+    "rule": "caps are USD-relative: cap = quoteUsd / 2 computed from the LIVE unpaid 402 quote at run time (relative freeze — immune to price drift); quote, payTo and atomic amount recorded verbatim per row; a dead candidate endpoint is substituted from the same source and the substitution is a disclosed deviation, never silent"
+  },
+
+  "frozen_expectations": {
+    "S1_per_day_cap": { "config": "fresh receiptsDir; maxPerCallUsd=100; maxPerDayUsd=quoteUsd/2", "expect": "PaymentRefusedError; receipt outcome refused_max_per_day; paid=false; message cites today's paid total and the cap", "verdict_basis": "outcome code + paid=false" },
+    "S2_per_seller_per_day_cap": { "config": "fresh receiptsDir; maxPerSellerPerDayUsd=quoteUsd/2", "expect": "refused_max_per_seller_per_day; paid=false", "verdict_basis": "outcome code + paid=false" },
+    "S3_payto_refuse_mode": { "config": "refuseUnknownPayTo=true over frozen candidate sellers", "expect": "refused_pay_to with unknown_pay_to warning on the refused receipt — OR honest not_observed if no known seller has addresses on record / quote pay-to matches (README: unknown seller gets neither); check responses recorded as evidence either way", "verdict_basis": "MATCH if refused_pay_to+warning, or not_observed with complete evidence; DIVERGENCE only if a refusal/warning appears in a shape contradicting the pinned sentences" },
+    "S4_approveAbove": { "config": "approveAbove=quoteUsd/2; call WITHOUT approval", "expect": "needs_approval; paid=false; approval path NOT taken in Phase A (frozen scope note)", "verdict_basis": "outcome code + paid=false" },
+    "S5_first_payment_cap": { "config": "stranger seller (no index listing, no local history); maxFirstPaymentUsd=quoteUsd/2", "expect": "refused_max_first_payment; paid=false", "verdict_basis": "outcome code + paid=false" },
+    "S6_frozen_switch": { "config": "frozen:true; any priced call", "expect": "frozen; paid=false", "verdict_basis": "outcome code + paid=false" },
+    "S7_nonce_from_intent": { "config": "offline; vectors frozen in battery_paidfor.mjs", "expect": "package deriveNonce equals independent HMAC-SHA256 recompute (own crypto, not their code) on every vector; same intent => same nonce across receipts-dir deletion; different amountAtomic => different nonce", "verdict_basis": "byte-equality on all vectors; any mismatch = DIVERGENCE" },
+    "C1_per_call_control": { "config": "maxPerCallUsd=quoteUsd/2", "expect": "refused_max_per_call; paid=false — control proving the harness observes refusals at all", "verdict_basis": "outcome code + paid=false" },
+    "S9_telemetry_evidence_only": { "config": "post-run index lookup for the burner payer", "expect": "no paidfor.dev row attributable to Phase A calls (no paid calls, refusal rows send none); evidence-only, no verdict", "verdict_basis": "evidence-only (no verdict)" },
+    "L1_liveness_quote_probe": "unpaid 402 GET per endpoint before rows; quote/payTo/atomic recorded verbatim; evidence-only",
+    "L2_index_state": "index answer recorded verbatim per row; index down/slow => local checks proceed with index:unavailable on receipt (README) — recorded, never verdict-affecting"
+  },
+
+  "registry_binding": {
+    "chain_head_at_freeze": "3229faae6476b8b8… (35 records, verify-registry green before freeze commit)",
+    "prereg_hash": "sha256 of this file after final edit + signature; posted in #3866 BEFORE the first live GET",
+    "battery_committed_pre_run": "battery_paidfor.mjs committed in the same freeze commit (RUNBOOK P1)"
+  }
+}

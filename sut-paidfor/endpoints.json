@@ -1,0 +1,4 @@
+{ "candidates": [
+  { "id": "P1", "url": "https://api.exa.ai/search", "method": "POST", "body": { "query": "argus 0035 probe", "numResults": 1 } },
+  { "id": "P2", "url": "https://api.exa.ai/contents", "method": "POST", "body": { "ids": ["https://example.com"] } }
+] }
