@@ -27,3 +27,8 @@ node_modules/
 # not noise — re-include them after the global *.log rule (fixes the silent
 # drop of attestations/evidence/0019-gist-a10/layer1-verbatim-run.log).
 !attestations/evidence/**/*.log
+
+# Secrets: never commit
+privkey.json
+signed-*.json
+.burner-*.json
