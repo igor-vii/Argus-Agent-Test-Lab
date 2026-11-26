@@ -1,0 +1,8 @@
+{
+  "id": "S9_telemetry_posture",
+  "ts": "2026-11-25T13:27:43.148Z",
+  "kind": "evidence-only",
+  "verdict": "evidence-only (no verdict)",
+  "payer": "0x92cfBE27b74900B81f7eC037CC620E8D9E1e9559",
+  "note": "verify absence of Phase A rows on the index post-run; result recorded in the registry record verbatim"
+}

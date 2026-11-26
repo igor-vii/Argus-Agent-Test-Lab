@@ -1,0 +1,36 @@
+{
+  "id": "S7_nonce_from_intent",
+  "ts": "2026-11-25T13:27:43.148Z",
+  "kind": "verdict",
+  "verdict": "MATCH",
+  "checks": [
+    {
+      "vector": "argus-0035-s7:vec-1/250000",
+      "theirs": "0x30826721147021ed8c697f906c684dfe580e8e6f9d3d058b5f6853f8d234e0c7",
+      "mine": "0x30826721147021ed8c697f906c684dfe580e8e6f9d3d058b5f6853f8d234e0c7",
+      "equal": true
+    },
+    {
+      "vector": "argus-0035-s7:vec-1/250000",
+      "theirs": "0x30826721147021ed8c697f906c684dfe580e8e6f9d3d058b5f6853f8d234e0c7",
+      "mine": "0x30826721147021ed8c697f906c684dfe580e8e6f9d3d058b5f6853f8d234e0c7",
+      "equal": true
+    },
+    {
+      "vector": "argus-0035-s7:vec-2/250000",
+      "theirs": "0xfd12e634f38354360a2094cb68ce142a3fbb49f868a61e7f771bb337257886e7",
+      "mine": "0xfd12e634f38354360a2094cb68ce142a3fbb49f868a61e7f771bb337257886e7",
+      "equal": true
+    },
+    {
+      "vector": "argus-0035-s7:vec-1/350000",
+      "theirs": "0xd1f7a26b229959a311a078417064cd95c824d62b24aa32fffa67aea95c4bdef3",
+      "mine": "0xd1f7a26b229959a311a078417064cd95c824d62b24aa32fffa67aea95c4bdef3",
+      "equal": true
+    }
+  ],
+  "stable": true,
+  "distinctIntent": true,
+  "distinctAmount": true,
+  "key": "x402-safe-fetch:eip3009-nonce:v1"
+}

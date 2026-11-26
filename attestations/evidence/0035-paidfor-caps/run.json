@@ -1,0 +1,56 @@
+{
+  "record_id": "0035",
+  "prereg": {
+    "id": "freeze-0035.prereg.json",
+    "sha256": "6b27989c003acf23df619c9c6a6aae7528b0c63dd620c792022fcc4a4da7c643",
+    "posted": "x402#3866 prereg comment (igor-vii, 2026-11-25, BEFORE the run); battery sha256 e10dca470cebab74684b791ac928024235406ce24777485658529957f8749a2c and endpoints sha256 4a0bd91b573f2f8543798c9b5f1064af7c77a90d6edd4d072513aed2dd5e9669 fixed on the stand before the first call; the repo commit of the checker lands in the same evidence push (deviation disclosed in notes)"
+  },
+  "platform": {
+    "kind": "sandbox-stand",
+    "engine": {
+      "name": "battery_paidfor.mjs (stdlib + SUT SDK only)",
+      "version_or_digest": "e10dca470cebab74684b791ac928024235406ce24777485658529957f8749a2c"
+    },
+    "scenarios": {
+      "source": "freeze-0035.prereg.json frozen_expectations",
+      "digest": "6b27989c003acf23df619c9c6a6aae7528b0c63dd620c792022fcc4a4da7c643"
+    },
+    "sut": {
+      "target": "@paidfor/x402-safe-fetch@0.8.0 (npm integrity sha512-uArqVL/5/28/2T0Ii1Eeo7Fpp+Y5zAHYb9w8QAIRK3NTAcu7V7cv/Jm7gPnjOEAGOOPqgExPXiyJVo7+SosUXQ==), repo sarmadahsan/paidfor-client @ 3a32dd3fc1561a36e1751fcb76c09a15377f5143",
+      "commit_or_version": "0.8.0 / 3a32dd3f"
+    }
+  },
+  "host": {
+    "class": "sandbox",
+    "os": "linux x64",
+    "runtime": {
+      "node": "v24.22.3"
+    },
+    "tz": "UTC"
+  },
+  "window": {
+    "start_utc": "2026-11-25T13:27:35.550Z",
+    "end_utc": "2026-11-25T13:27:43.148Z"
+  },
+  "runs": [
+    {
+      "argv": "PRIVATE_KEY=<burner-0035> PAIDFOR_ENDPOINTS=endpoints.json node battery_paidfor.mjs",
+      "exit": 0,
+      "log": "runs/summary.json"
+    }
+  ],
+  "calls": {
+    "phase_a_calls": 18,
+    "prep_probes_before_freeze_commit": 5,
+    "total": 23,
+    "paid": 0,
+    "signatures": 0,
+    "retries": 0,
+    "budget_usd": 0.0
+  },
+  "payer": {
+    "address": "0x92cfBE27b74900B81f7eC037CC620E8D9E1e9559",
+    "usdc_balance": 0,
+    "note": "fresh burner #2; key held on the stand only, never committed"
+  }
+}

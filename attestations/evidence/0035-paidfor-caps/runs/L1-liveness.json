@@ -1,0 +1,77 @@
+{
+  "account": "0x92cfBE27b74900B81f7eC037CC620E8D9E1e9559",
+  "indexUrl": "https://paidfor.dev/v1",
+  "live": [
+    {
+      "endpoint": {
+        "id": "P1",
+        "url": "https://api.exa.ai/search",
+        "method": "POST",
+        "body": {
+          "query": "argus 0035 probe",
+          "numResults": 1
+        }
+      },
+      "probe": {
+        "ok": true,
+        "status": 402,
+        "quoteUsd": 0.006999999999999999,
+        "payTo": "0x6d6E695b09861467c7d462f5AAF31cF3540B9192",
+        "amountAtomic": "7000",
+        "requirement": {
+          "scheme": "exact",
+          "network": "eip155:8453",
+          "amount": "7000",
+          "payTo": "0x6d6E695b09861467c7d462f5AAF31cF3540B9192",
+          "maxTimeoutSeconds": 60,
+          "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+          "extra": {
+            "name": "USD Coin",
+            "version": "2",
+            "breakdown": {
+              "search": 0.006999999999999999
+            },
+            "totalUsd": 0.006999999999999999,
+            "acceptId": "legacy"
+          }
+        }
+      }
+    },
+    {
+      "endpoint": {
+        "id": "P2",
+        "url": "https://api.exa.ai/contents",
+        "method": "POST",
+        "body": {
+          "ids": [
+            "https://example.com"
+          ]
+        }
+      },
+      "probe": {
+        "ok": true,
+        "status": 402,
+        "quoteUsd": 0.001,
+        "payTo": "0x6d6E695b09861467c7d462f5AAF31cF3540B9192",
+        "amountAtomic": "1000",
+        "requirement": {
+          "scheme": "exact",
+          "network": "eip155:8453",
+          "amount": "1000",
+          "payTo": "0x6d6E695b09861467c7d462f5AAF31cF3540B9192",
+          "maxTimeoutSeconds": 60,
+          "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+          "extra": {
+            "name": "USD Coin",
+            "version": "2",
+            "breakdown": {
+              "text": 0.001
+            },
+            "totalUsd": 0.001,
+            "acceptId": "legacy"
+          }
+        }
+      }
+    }
+  ]
+}

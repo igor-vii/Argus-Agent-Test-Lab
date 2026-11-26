@@ -1,0 +1,87 @@
+{
+  "id": "S6_frozen_switch",
+  "ts": "2026-11-25T13:27:40.216Z",
+  "kind": "verdict",
+  "verdict": "MATCH",
+  "expected": "frozen",
+  "observed": {
+    "outcome": "frozen",
+    "paid": false,
+    "threw": true,
+    "isPaymentRefusedError": true
+  },
+  "message": "x402-safe-fetch refused to pay 0.007000 USDC for https://api.exa.ai/search: payments are frozen (frozen: true). Make the client again without frozen to clear it.",
+  "endpoint": {
+    "id": "P1",
+    "url": "https://api.exa.ai/search"
+  },
+  "config": {
+    "maxPerCallUsd": 100,
+    "frozen": true
+  },
+  "quote": {
+    "payTo": "0x6d6E695b09861467c7d462f5AAF31cF3540B9192",
+    "amountAtomic": "7000",
+    "quoteUsd": 0.006999999999999999
+  },
+  "receipt": {
+    "v": 1,
+    "client": "x402-safe-fetch/0.8.0",
+    "intent_id": "813cd38a-8aab-484d-926c-8c8efb316950",
+    "request_hash": "f908ec703cffab4c7e95bddef124325e4ebf233959da264dd4852f7588289175",
+    "url": "https://api.exa.ai/search",
+    "method": "POST",
+    "started_at": "2026-11-25T13:27:40.030Z",
+    "finished_at": "2026-11-25T13:27:40.214Z",
+    "latency_ms": 184,
+    "outcome": "frozen",
+    "paid": false,
+    "replayed": false,
+    "replay_of": null,
+    "original": null,
+    "quote": {
+      "x402_version": 2,
+      "scheme": "exact",
+      "network": "eip155:8453",
+      "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+      "pay_to": "0x6d6E695b09861467c7d462f5AAF31cF3540B9192",
+      "amount_atomic": "7000",
+      "amount_usdc": "0.007000",
+      "max_timeout_seconds": 60,
+      "resource_url": "https://api.exa.ai/search"
+    },
+    "amount_usdc": "0.000000",
+    "reference": null,
+    "seller": {
+      "host": "api.exa.ai",
+      "verdict": "unknown",
+      "verdict_text": null,
+      "seller_url": null,
+      "evidence_url": null
+    },
+    "index": "unavailable",
+    "index_note": "not waited for: payments are frozen",
+    "validators": {},
+    "validator_failures": [],
+    "warnings": [],
+    "settlement": {
+      "header": null,
+      "version": null,
+      "parsed": null,
+      "parse_error": null
+    },
+    "tx_hash": null,
+    "nonce": null,
+    "payer": null,
+    "valid_before": null,
+    "proof": null,
+    "reported_outcome": null,
+    "verification_url": null,
+    "response": null,
+    "error": {
+      "code": "frozen",
+      "message": "refused to pay 0.007000 USDC for https://api.exa.ai/search: payments are frozen (frozen: true). Make the client again without frozen to clear it."
+    }
+  },
+  "intentId": "argus-0035-S6_frozen_switch:fca4cd93-66ed-418b-b82a-37c5b99f37d3"
+}

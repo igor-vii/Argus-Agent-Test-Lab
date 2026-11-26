@@ -1,0 +1,87 @@
+{
+  "id": "S2_per_seller_per_day_cap",
+  "ts": "2026-11-25T13:27:37.530Z",
+  "kind": "verdict",
+  "verdict": "MATCH",
+  "expected": "refused_max_per_seller_per_day",
+  "observed": {
+    "outcome": "refused_max_per_seller_per_day",
+    "paid": false,
+    "threw": true,
+    "isPaymentRefusedError": true
+  },
+  "message": "x402-safe-fetch refused to pay 0.007000 USDC for https://api.exa.ai/search: 0.000000 USDC already went to 0x6d6e695b09861467c7d462f5aaf31cf3540b9192 today (UTC), and this payment would take it over maxPerSellerPerDayUsd 0.003500 USDC. See https://paidfor.dev/seller/api.exa.ai",
+  "endpoint": {
+    "id": "P1",
+    "url": "https://api.exa.ai/search"
+  },
+  "config": {
+    "maxPerCallUsd": 100,
+    "maxPerSellerPerDayUsd": 0.0034999999999999996
+  },
+  "quote": {
+    "payTo": "0x6d6E695b09861467c7d462f5AAF31cF3540B9192",
+    "amountAtomic": "7000",
+    "quoteUsd": 0.006999999999999999
+  },
+  "receipt": {
+    "v": 1,
+    "client": "x402-safe-fetch/0.8.0",
+    "intent_id": "6830806c-83f2-4751-b6b0-56a7fcf5d826",
+    "request_hash": "f908ec703cffab4c7e95bddef124325e4ebf233959da264dd4852f7588289175",
+    "url": "https://api.exa.ai/search",
+    "method": "POST",
+    "started_at": "2026-11-25T13:27:36.763Z",
+    "finished_at": "2026-11-25T13:27:37.529Z",
+    "latency_ms": 766,
+    "outcome": "refused_max_per_seller_per_day",
+    "paid": false,
+    "replayed": false,
+    "replay_of": null,
+    "original": null,
+    "quote": {
+      "x402_version": 2,
+      "scheme": "exact",
+      "network": "eip155:8453",
+      "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+      "pay_to": "0x6d6E695b09861467c7d462f5AAF31cF3540B9192",
+      "amount_atomic": "7000",
+      "amount_usdc": "0.007000",
+      "max_timeout_seconds": 60,
+      "resource_url": "https://api.exa.ai/search"
+    },
+    "amount_usdc": "0.000000",
+    "reference": null,
+    "seller": {
+      "host": "api.exa.ai",
+      "verdict": "ok",
+      "verdict_text": "OK for api.exa.ai: verdict from the last 50 paid calls: 37 calls, 0 failed (rate 0%, 95% interval 0% to 9.4%); all-time: 37 calls, 0 failed (rate 0%, 95% interval 0% to 9.4%). Evidence: https://raw.githubusercontent.com/sarmadahsan/paidfor-data/main/evidence/api.exa.ai.json",
+      "seller_url": "https://paidfor.dev/seller/api.exa.ai",
+      "evidence_url": "https://raw.githubusercontent.com/sarmadahsan/paidfor-data/main/evidence/api.exa.ai.json"
+    },
+    "index": "ok",
+    "index_note": null,
+    "validators": {},
+    "validator_failures": [],
+    "warnings": [],
+    "settlement": {
+      "header": null,
+      "version": null,
+      "parsed": null,
+      "parse_error": null
+    },
+    "tx_hash": null,
+    "nonce": null,
+    "payer": null,
+    "valid_before": null,
+    "proof": null,
+    "reported_outcome": null,
+    "verification_url": null,
+    "response": null,
+    "error": {
+      "code": "refused_max_per_seller_per_day",
+      "message": "refused to pay 0.007000 USDC for https://api.exa.ai/search: 0.000000 USDC already went to 0x6d6e695b09861467c7d462f5aaf31cf3540b9192 today (UTC), and this payment would take it over maxPerSellerPerDayUsd 0.003500 USDC. See https://paidfor.dev/seller/api.exa.ai"
+    }
+  },
+  "intentId": "argus-0035-S2_per_seller_per_day_cap:563ad7e5-4654-40d6-a6c1-7def7469046d"
+}

@@ -1,0 +1,149 @@
+{
+  "id": "S3_payto_refuse_mode",
+  "ts": "2026-11-25T13:27:43.147Z",
+  "kind": "evidence-only",
+  "verdict": "evidence-only (no verdict)",
+  "expected": "refused_pay_to with unknown_pay_to warning — or not_observed (README: unknown seller gets neither)",
+  "attempts": [
+    {
+      "endpoint": "P1",
+      "threw": true,
+      "isPaymentRefusedError": false,
+      "outcome": "insufficient_funds",
+      "paid": false,
+      "warnings": [],
+      "receipt": {
+        "v": 1,
+        "client": "x402-safe-fetch/0.8.0",
+        "intent_id": "8489ae55-dac4-4643-b08e-2855dca86aae",
+        "request_hash": "f908ec703cffab4c7e95bddef124325e4ebf233959da264dd4852f7588289175",
+        "url": "https://api.exa.ai/search",
+        "method": "POST",
+        "started_at": "2026-11-25T13:27:40.554Z",
+        "finished_at": "2026-11-25T13:27:41.627Z",
+        "latency_ms": 1073,
+        "outcome": "insufficient_funds",
+        "paid": false,
+        "replayed": false,
+        "replay_of": null,
+        "original": null,
+        "quote": {
+          "x402_version": 2,
+          "scheme": "exact",
+          "network": "eip155:8453",
+          "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+          "pay_to": "0x6d6E695b09861467c7d462f5AAF31cF3540B9192",
+          "amount_atomic": "7000",
+          "amount_usdc": "0.007000",
+          "max_timeout_seconds": 60,
+          "resource_url": "https://api.exa.ai/search"
+        },
+        "amount_usdc": "0.000000",
+        "reference": null,
+        "seller": {
+          "host": "api.exa.ai",
+          "verdict": "ok",
+          "verdict_text": "OK for api.exa.ai: verdict from the last 50 paid calls: 37 calls, 0 failed (rate 0%, 95% interval 0% to 9.4%); all-time: 37 calls, 0 failed (rate 0%, 95% interval 0% to 9.4%). Evidence: https://raw.githubusercontent.com/sarmadahsan/paidfor-data/main/evidence/api.exa.ai.json",
+          "seller_url": "https://paidfor.dev/seller/api.exa.ai",
+          "evidence_url": "https://raw.githubusercontent.com/sarmadahsan/paidfor-data/main/evidence/api.exa.ai.json"
+        },
+        "index": "ok",
+        "index_note": null,
+        "validators": {},
+        "validator_failures": [],
+        "warnings": [],
+        "settlement": {
+          "header": null,
+          "version": null,
+          "parsed": null,
+          "parse_error": null
+        },
+        "tx_hash": null,
+        "nonce": null,
+        "payer": null,
+        "valid_before": null,
+        "proof": null,
+        "reported_outcome": "error",
+        "verification_url": null,
+        "response": null,
+        "error": {
+          "code": "insufficient_funds",
+          "message": "refused to pay 0.007000 USDC for https://api.exa.ai/search: the wallet 0x92cfBE27b74900B81f7eC037CC620E8D9E1e9559 holds 0.000000 USDC on Base and this payment needs 0.007000 USDC. Nothing was signed. Fund the wallet, then call again with the same intentId."
+        }
+      }
+    },
+    {
+      "endpoint": "P2",
+      "threw": true,
+      "isPaymentRefusedError": false,
+      "outcome": "insufficient_funds",
+      "paid": false,
+      "warnings": [],
+      "receipt": {
+        "v": 1,
+        "client": "x402-safe-fetch/0.8.0",
+        "intent_id": "19bfbc34-f11a-4ea8-9ac0-c29d437294b7",
+        "request_hash": "ab145ef1ee57b28681c3daf9b914929ee7ddc64948c23704c6fa402ee8394c54",
+        "url": "https://api.exa.ai/contents",
+        "method": "POST",
+        "started_at": "2026-11-25T13:27:41.963Z",
+        "finished_at": "2026-11-25T13:27:43.145Z",
+        "latency_ms": 1182,
+        "outcome": "insufficient_funds",
+        "paid": false,
+        "replayed": false,
+        "replay_of": null,
+        "original": null,
+        "quote": {
+          "x402_version": 2,
+          "scheme": "exact",
+          "network": "eip155:8453",
+          "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+          "pay_to": "0x6d6E695b09861467c7d462f5AAF31cF3540B9192",
+          "amount_atomic": "1000",
+          "amount_usdc": "0.001000",
+          "max_timeout_seconds": 60,
+          "resource_url": "https://api.exa.ai/contents"
+        },
+        "amount_usdc": "0.000000",
+        "reference": {
+          "amount_usdc": "0.001000",
+          "source": "index_listed",
+          "ratio": 1,
+          "max_ratio": 1.1
+        },
+        "seller": {
+          "host": "api.exa.ai",
+          "verdict": "ok",
+          "verdict_text": "OK for api.exa.ai: verdict from the last 50 paid calls: 37 calls, 0 failed (rate 0%, 95% interval 0% to 9.4%); all-time: 37 calls, 0 failed (rate 0%, 95% interval 0% to 9.4%). Evidence: https://raw.githubusercontent.com/sarmadahsan/paidfor-data/main/evidence/api.exa.ai.json",
+          "seller_url": "https://paidfor.dev/seller/api.exa.ai",
+          "evidence_url": "https://raw.githubusercontent.com/sarmadahsan/paidfor-data/main/evidence/api.exa.ai.json"
+        },
+        "index": "ok",
+        "index_note": null,
+        "validators": {},
+        "validator_failures": [],
+        "warnings": [],
+        "settlement": {
+          "header": null,
+          "version": null,
+          "parsed": null,
+          "parse_error": null
+        },
+        "tx_hash": null,
+        "nonce": null,
+        "payer": null,
+        "valid_before": null,
+        "proof": null,
+        "reported_outcome": "error",
+        "verification_url": null,
+        "response": null,
+        "error": {
+          "code": "insufficient_funds",
+          "message": "refused to pay 0.001000 USDC for https://api.exa.ai/contents: the wallet 0x92cfBE27b74900B81f7eC037CC620E8D9E1e9559 holds 0.000000 USDC on Base and this payment needs 0.001000 USDC. Nothing was signed. Fund the wallet, then call again with the same intentId."
+        }
+      }
+    }
+  ],
+  "note": "not observed: no known seller triggered the check — evidence recorded verbatim"
+}
