@@ -2,8 +2,8 @@
   "generated_at": "2026-11-25T11:15:12.692Z",
   "verify": {
     "command": "node tools/registry/verify-registry.mjs",
-    "records": 35,
-    "chain_head": "3229faae6476b8b8"
+    "records": 36,
+    "chain_head": "09eef3d008581a34"
   },
   "correction": {
     "seq": "0022",
@@ -21,7 +21,7 @@
     "title": "fiangshi durable-receipt-store live-check (Aceop-001/fiangshi-receipts @ 75defdd, store_total 3 at freeze) — pre-registered store/API byte cross-check with independent receipt-hash recompute, $0.00",
     "subject": "the three live-check receipts in fiangshi's durable receipt store (github.com/Aceop-001/fiangshi-receipts): P1 34160e4a… (dry-run, Bitrefill gift-card search, ALLOW), P2 682a85d7… (first live settled check, tx 0x90b91981…9696 on Base, $0.05), P3 dc6d6a6f… (dry-run, cleave gas, BLOCK via null_payee) — anchored as claims in the Argus registry; closes the L2 redeploy-gap row of record 0032 (recorded 404/DOCUMENTED there)",
     "prev_record_hash": "aa021ce0a59a0878c35d1655356c55bf8f401a18d759d8185901602920d240bf",
-    "chain_head": "3229faae6476b8b8",
+    "chain_head": "09eef3d008581a34",
     "scenarios": [
       {
         "id": "S1",

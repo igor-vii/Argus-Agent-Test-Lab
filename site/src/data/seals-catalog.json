@@ -1975,5 +1975,99 @@
         "href": "https://github.com/igor-vii/Argus-Agent-Test-Lab/blob/main/attestations/records/0034-fiangshi-durable-receipt-store-live-check-aceop-001-fiangshi.seal.json"
       }
     ]
+  },
+  {
+    "seq": "0035",
+    "date": "2026-11-26",
+    "type": "finding",
+    "title": "paidfor client 0.8.0 cap battery — 6 MATCH / 1 DIVERGENCE (S5 harness design gap, no 0.8.0 defect) / 2 evidence-only",
+    "subject": "github.com/sarmadahsan/paidfor-client @ 3a32dd3fc1561a36e1751fcb76c09a15377f5143 (main at freeze)",
+    "summary": [
+      "RUN: 2026-11-25, platform sandbox-stand (battery_paidfor.mjs e10dca470cebab74684b791ac928024235406ce24777485658529957f8749a2c), payer burner 0x92cfBE27b74900B81f7eC037CC620E8D9E1e9559 (0 USDC), endpoints P1 api.exa.ai/search ($0.007) and P2 api.exa.ai/contents ($0.001), same seller pay-to 0x6d6E695b….",
+      "self_run deviation: the checker and freeze were committed to the registry repo in the same evidence push AFTER the run; their sha256 (freeze 6b27989c…, battery e10dca47…, endpoints 4a0bd91b…) were fixed on the stand before the first call and the freeze was posted in #3866 pre-run; prereg-hash/commit placeholders were left empty in the thread post — disclosed here.",
+      "evidence README.md: the original pack README was lost in transit; original sha256 ad10eff6fcc35e027079015f1673b92787229fb48dc07e8b81219bec1b055a33 and original manifest sha256 f017cdc675dd11559a21e9c2f9dfafbf5802d5ac2252c60b00ac6abd604b8e27 preserved here for provenance; README reconstructed post-run from pack contents (content-equivalent, NOT byte-identical), manifest README-line and draft pins amended to 4fcf728bdda523c4b34c73b396f0e4f08b01ec0029db42b189b23fa23de46309 and 46826bf6d813b9c97f313b6ed89f86f41aae51901f226ea769c18bfa0736797c; raw run data untouched — run.json, runs/L1-liveness.json, runs/summary.json and all rows remain byte-verified against original pins",
+      "S5 DIVERGENCE verbatim: observed outcome insufficient_funds, paid=false, 'refused to pay 0.007000 USDC … the wallet holds 0.000000 USDC on Base … Nothing was signed'. Expected refused_max_first_payment. Cause: maxFirstPaymentUsd applies to a seller with no index listing and no local history (README) — both candidates are api.exa.ai, an INDEXED seller, so the cap correctly did not apply and the 0.7.2 balance check fired first. No 0.8.0 defect observed; the gap is in the harness candidate list (no stranger seller). Re-run with a genuine stranger seller = new pre-registration.",
+      "S3 not_observed verbatim: attempts on P1 and P2 both ended insufficient_funds (paid=false) instead of reaching the pay-to check. Combined with the MATCH rows this yields the observed 0.8.0 gate order: caps (max-per-call/day/per-seller/first-payment/approveAbove/frozen) fire BEFORE the balance read; the pay-to check fires AFTER it. With a 0-USDC wallet the pay-to refusal is unreachable — not_observed recorded honestly per the freeze.",
+      "Phase B candidates (frozen in the prereg, gated on operator go, est <= $0.10): pay-to warning mode (default — 'the call still pays') and the approveAbove approval path; a funded burner (>= 0.01 USDC) also unlocks refused_pay_to observation.",
+      "Telemetry: Free-plan reporting cannot be disabled; Phase A made zero paid calls; refusal receipts carry paid=false and no index row is sent for refusals (README); S9 remains evidence-only pending a post-run index lookup for the payer.",
+      "Budget: 18 Phase A calls + 5 prep probes = 23 network calls, 0 paid, 0 signed, 0 retries, $0.00. Chain head at run: 3229faae6476b8b836538783624dcbf716b054288cd9701cc721f1732aed9841 (0034).",
+      "Status: no defect to report upstream — the vendor's three asked-for families: per-day refusal MATCH, per-seller refusal MATCH, pay-to observable only with a funded wallet (order-of-gates finding returned to the vendor as data)."
+    ],
+    "verdicts": [
+      {
+        "id": "C1",
+        "verdict": "refused_max_per_call; paid=false — control proving the harness observes refusals",
+        "tone": "info"
+      },
+      {
+        "id": "S1",
+        "verdict": "refused_max_per_day; paid=false",
+        "tone": "info"
+      },
+      {
+        "id": "S2",
+        "verdict": "refused_max_per_seller_per_day; paid=false",
+        "tone": "info"
+      },
+      {
+        "id": "S3",
+        "verdict": "refused_pay_to + unknown_pay_to warning on the refused receipt — OR honest not_observed (README: unknown seller gets neither); never forced",
+        "tone": "info"
+      },
+      {
+        "id": "S4",
+        "verdict": "needs_approval; paid=false; approval path not taken in Phase A",
+        "tone": "info"
+      },
+      {
+        "id": "S5",
+        "verdict": "refused_max_first_payment; paid=false",
+        "tone": "info"
+      },
+      {
+        "id": "S6",
+        "verdict": "frozen; paid=false",
+        "tone": "info"
+      },
+      {
+        "id": "S7",
+        "verdict": "byte-equality on frozen vectors; same intent => same nonce; different intent/amount => different nonce",
+        "tone": "info"
+      },
+      {
+        "id": "S9",
+        "verdict": "no paidfor.dev row attributable to Phase A calls; refusal rows send no index row (README)",
+        "tone": "info"
+      }
+    ],
+    "findings": [
+      {
+        "id": "match",
+        "severity": "info",
+        "text": "6"
+      },
+      {
+        "id": "divergence",
+        "severity": "info",
+        "text": "1"
+      },
+      {
+        "id": "total",
+        "severity": "info",
+        "text": "7"
+      },
+      {
+        "id": "by_session",
+        "severity": "info",
+        "text": "[object Object]"
+      }
+    ],
+    "evidence": 17,
+    "links": [
+      {
+        "label": "record #0035",
+        "href": "https://github.com/igor-vii/Argus-Agent-Test-Lab/blob/main/attestations/records/0035-paidfor-client-0-8-0-cap-battery-6-match-1-divergence-s5-har.finding.json"
+      }
+    ]
   }
 ]
