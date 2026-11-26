@@ -1,6 +1,6 @@
 {
   "registry": "argus-agent-test-lab",
-  "chain_head": "3229faae6476b8b8...",
+  "chain_head": "09eef3d008581a34...",
   "records": [
     {
       "seq": "0000",
@@ -4159,6 +4159,196 @@
         "verdict": "SEAL — all frozen rows match"
       },
       "signature": "Xr58otzDqFx2PIRo0AHSNdgC3kcYveUPGYh8chZjF+z69h6fPum8qGfhfyJfdQixvt4rl+Oyb/BVmbAxY4GACg=="
+    },
+    {
+      "seq": "0035",
+      "record_id": "argus-finding-0035",
+      "issued_at": "2026-11-26T05:59:10.685Z",
+      "signer_key_id": "argus-lab-2026q4r2",
+      "prev_record_hash": "3229faae6476b8b836538783624dcbf716b054288cd9701cc721f1732aed9841",
+      "type": "finding",
+      "title": "paidfor client 0.8.0 cap battery — 6 MATCH / 1 DIVERGENCE (S5 harness design gap, no 0.8.0 defect) / 2 evidence-only",
+      "subject": {
+        "component": "@paidfor/x402-safe-fetch",
+        "version": "0.8.0",
+        "npm_integrity": "sha512-uArqVL/5/28/2T0Ii1Eeo7Fpp+Y5zAHYb9w8QAIRK3NTAcu7V7cv/Jm7gPnjOEAGOOPqgExPXiyJVo7+SosUXQ==",
+        "repo": "github.com/sarmadahsan/paidfor-client @ 3a32dd3fc1561a36e1751fcb76c09a15377f5143 (main at freeze)",
+        "vendor_ask": "sarmadahsan 2026-11-24T21:42:14Z x402#3866, body_sha256 b0bc799018b5c3979c88240ae8e24b34aec46e46e07f224f44b0654fc474847d (verbatim frozen): per-day and per-seller refusals and the pay-to warning are the rows I would most like to see",
+        "prereg": "freeze-0035.prereg.json sha256 6b27989c003acf23df619c9c6a6aae7528b0c63dd620c792022fcc4a4da7c643, posted in x402#3866 before the run"
+      },
+      "scenarios": [
+        {
+          "id": "C1",
+          "unit": "verdict",
+          "case": "per-call cap control, maxPerCallUsd = liveQuote/2",
+          "expected": "refused_max_per_call; paid=false — control proving the harness observes refusals"
+        },
+        {
+          "id": "S1",
+          "unit": "verdict",
+          "case": "per-day cap across every seller, maxPerDayUsd = liveQuote/2",
+          "expected": "refused_max_per_day; paid=false"
+        },
+        {
+          "id": "S2",
+          "unit": "verdict",
+          "case": "per-seller per-day cap keyed by pay-to, maxPerSellerPerDayUsd = liveQuote/2",
+          "expected": "refused_max_per_seller_per_day; paid=false"
+        },
+        {
+          "id": "S3",
+          "unit": "verdict",
+          "case": "pay-to check, refuseUnknownPayTo=true, candidates re-verified live",
+          "expected": "refused_pay_to + unknown_pay_to warning on the refused receipt — OR honest not_observed (README: unknown seller gets neither); never forced"
+        },
+        {
+          "id": "S4",
+          "unit": "verdict",
+          "case": "approveAbove = liveQuote/2, call without approval",
+          "expected": "needs_approval; paid=false; approval path not taken in Phase A"
+        },
+        {
+          "id": "S5",
+          "unit": "verdict",
+          "case": "first-payment cap, maxFirstPaymentUsd = liveQuote/2",
+          "expected": "refused_max_first_payment; paid=false"
+        },
+        {
+          "id": "S6",
+          "unit": "verdict",
+          "case": "frozen switch, frozen:true",
+          "expected": "frozen; paid=false"
+        },
+        {
+          "id": "S7",
+          "unit": "verdict",
+          "case": "deterministic nonce, offline: package deriveNonce vs independent HMAC-SHA256 recompute",
+          "expected": "byte-equality on frozen vectors; same intent => same nonce; different intent/amount => different nonce"
+        },
+        {
+          "id": "S9",
+          "unit": "verdict",
+          "case": "telemetry posture, evidence-only",
+          "expected": "no paidfor.dev row attributable to Phase A calls; refusal rows send no index row (README)"
+        }
+      ],
+      "notes": [
+        "RUN: 2026-11-25, platform sandbox-stand (battery_paidfor.mjs e10dca470cebab74684b791ac928024235406ce24777485658529957f8749a2c), payer burner 0x92cfBE27b74900B81f7eC037CC620E8D9E1e9559 (0 USDC), endpoints P1 api.exa.ai/search ($0.007) and P2 api.exa.ai/contents ($0.001), same seller pay-to 0x6d6E695b….",
+        "self_run deviation: the checker and freeze were committed to the registry repo in the same evidence push AFTER the run; their sha256 (freeze 6b27989c…, battery e10dca47…, endpoints 4a0bd91b…) were fixed on the stand before the first call and the freeze was posted in #3866 pre-run; prereg-hash/commit placeholders were left empty in the thread post — disclosed here.",
+        "evidence README.md: the original pack README was lost in transit; original sha256 ad10eff6fcc35e027079015f1673b92787229fb48dc07e8b81219bec1b055a33 and original manifest sha256 f017cdc675dd11559a21e9c2f9dfafbf5802d5ac2252c60b00ac6abd604b8e27 preserved here for provenance; README reconstructed post-run from pack contents (content-equivalent, NOT byte-identical), manifest README-line and draft pins amended to 4fcf728bdda523c4b34c73b396f0e4f08b01ec0029db42b189b23fa23de46309 and 46826bf6d813b9c97f313b6ed89f86f41aae51901f226ea769c18bfa0736797c; raw run data untouched — run.json, runs/L1-liveness.json, runs/summary.json and all rows remain byte-verified against original pins",
+        "S5 DIVERGENCE verbatim: observed outcome insufficient_funds, paid=false, 'refused to pay 0.007000 USDC … the wallet holds 0.000000 USDC on Base … Nothing was signed'. Expected refused_max_first_payment. Cause: maxFirstPaymentUsd applies to a seller with no index listing and no local history (README) — both candidates are api.exa.ai, an INDEXED seller, so the cap correctly did not apply and the 0.7.2 balance check fired first. No 0.8.0 defect observed; the gap is in the harness candidate list (no stranger seller). Re-run with a genuine stranger seller = new pre-registration.",
+        "S3 not_observed verbatim: attempts on P1 and P2 both ended insufficient_funds (paid=false) instead of reaching the pay-to check. Combined with the MATCH rows this yields the observed 0.8.0 gate order: caps (max-per-call/day/per-seller/first-payment/approveAbove/frozen) fire BEFORE the balance read; the pay-to check fires AFTER it. With a 0-USDC wallet the pay-to refusal is unreachable — not_observed recorded honestly per the freeze.",
+        "Phase B candidates (frozen in the prereg, gated on operator go, est <= $0.10): pay-to warning mode (default — 'the call still pays') and the approveAbove approval path; a funded burner (>= 0.01 USDC) also unlocks refused_pay_to observation.",
+        "Telemetry: Free-plan reporting cannot be disabled; Phase A made zero paid calls; refusal receipts carry paid=false and no index row is sent for refusals (README); S9 remains evidence-only pending a post-run index lookup for the payer.",
+        "Budget: 18 Phase A calls + 5 prep probes = 23 network calls, 0 paid, 0 signed, 0 retries, $0.00. Chain head at run: 3229faae6476b8b836538783624dcbf716b054288cd9701cc721f1732aed9841 (0034).",
+        "Status: no defect to report upstream — the vendor's three asked-for families: per-day refusal MATCH, per-seller refusal MATCH, pay-to observable only with a funded wallet (order-of-gates finding returned to the vendor as data)."
+      ],
+      "evidence": [
+        {
+          "kind": "file",
+          "path": "sut-paidfor/freeze-0035.prereg.json",
+          "sha256": "6b27989c003acf23df619c9c6a6aae7528b0c63dd620c792022fcc4a4da7c643"
+        },
+        {
+          "kind": "file",
+          "path": "sut-paidfor/battery_paidfor.mjs",
+          "sha256": "e10dca470cebab74684b791ac928024235406ce24777485658529957f8749a2c"
+        },
+        {
+          "kind": "file",
+          "path": "sut-paidfor/endpoints.json",
+          "sha256": "4a0bd91b573f2f8543798c9b5f1064af7c77a90d6edd4d072513aed2dd5e9669"
+        },
+        {
+          "kind": "file",
+          "path": "attestations/evidence/0035-paidfor-caps/run.json",
+          "sha256": "72d299428a21b7b93178b39d60af31a3900cd2a143304dcc7f5f2b08114d1b97"
+        },
+        {
+          "kind": "file",
+          "path": "attestations/evidence/0035-paidfor-caps/README.md",
+          "sha256": "4fcf728bdda523c4b34c73b396f0e4f08b01ec0029db42b189b23fa23de46309"
+        },
+        {
+          "kind": "file",
+          "path": "attestations/evidence/0035-paidfor-caps/manifest.sha256",
+          "sha256": "46826bf6d813b9c97f313b6ed89f86f41aae51901f226ea769c18bfa0736797c"
+        },
+        {
+          "kind": "file",
+          "path": "attestations/evidence/0035-paidfor-caps/runs/L1-liveness.json",
+          "sha256": "e435f6ee5a39974106a6cc7c8778a6fad18d3db9a4447747aaed75dd60d8bd0c"
+        },
+        {
+          "kind": "file",
+          "path": "attestations/evidence/0035-paidfor-caps/runs/summary.json",
+          "sha256": "a07f43cdf2cb749df4e3de6b50af9209e94d824bfd4eb4378a6a7b9ee0cf45de"
+        },
+        {
+          "kind": "file",
+          "path": "attestations/evidence/0035-paidfor-caps/runs/rows/C1_per_call_control.json",
+          "sha256": "22f698fa134d12b41227126e042a218b28bf4a22267b444d2d24cc79f0d3afa3"
+        },
+        {
+          "kind": "file",
+          "path": "attestations/evidence/0035-paidfor-caps/runs/rows/S1_per_day_cap.json",
+          "sha256": "5085b6c3c8f67ef0752d8a0721194bf7b79e39caba3060abe591cd6629b4ea02"
+        },
+        {
+          "kind": "file",
+          "path": "attestations/evidence/0035-paidfor-caps/runs/rows/S2_per_seller_per_day_cap.json",
+          "sha256": "3095e470bd1a754ea75c886e371950ef7804daf8ed593b6b800fa1747922e683"
+        },
+        {
+          "kind": "file",
+          "path": "attestations/evidence/0035-paidfor-caps/runs/rows/S3_payto_refuse_mode.json",
+          "sha256": "b37a65733de70cb11f3d41fcf8a9c0dfbb9596fa07907a3d0b2f90a6cbaeef27"
+        },
+        {
+          "kind": "file",
+          "path": "attestations/evidence/0035-paidfor-caps/runs/rows/S4_approveAbove.json",
+          "sha256": "c1951b58980668c8a792699559f929d3b8a3889c6e26b66514185cdb45faaef0"
+        },
+        {
+          "kind": "file",
+          "path": "attestations/evidence/0035-paidfor-caps/runs/rows/S5_first_payment_cap.json",
+          "sha256": "05422017cd5863cc2ed1632817159fda6d2e8105a1754fc36be1ed2e4ffd5267"
+        },
+        {
+          "kind": "file",
+          "path": "attestations/evidence/0035-paidfor-caps/runs/rows/S6_frozen_switch.json",
+          "sha256": "f6da28c71a5aeff575c4de23bc076d07019902a5e8cf04c9029facae323a28bb"
+        },
+        {
+          "kind": "file",
+          "path": "attestations/evidence/0035-paidfor-caps/runs/rows/S7_nonce_from_intent.json",
+          "sha256": "c118c979806c87fed29aa3f7e01d9aff477d9fc1b4bff32ef8cce94c03b0d0b4"
+        },
+        {
+          "kind": "file",
+          "path": "attestations/evidence/0035-paidfor-caps/runs/rows/S9_telemetry_posture.json",
+          "sha256": "69c86089f6881d549d7ff86c6c029f77ca8a0a7ce3e8fc016c54f60f20c14b30"
+        }
+      ],
+      "run_ts": "2026-11-25T13:27:43.148Z",
+      "self_run": "18 free POST/GETs in Phase A (0 paid, 0 signed, 0 retries, $0.00) + 5 disclosed prep probes before the freeze commit; battery sha256 e10dca470cebab74684b791ac928024235406ce24777485658529957f8749a2c fixed on the stand pre-run",
+      "findings_summary": {
+        "match": 6,
+        "divergence": 1,
+        "total": 7,
+        "by_session": {
+          "C1_per_call_control": "MATCH — expected refused_max_per_call; observed refused_max_per_call, paid=false",
+          "S1_per_day_cap": "MATCH — expected refused_max_per_day; observed refused_max_per_day, paid=false",
+          "S2_per_seller_per_day_cap": "MATCH — expected refused_max_per_seller_per_day; observed refused_max_per_seller_per_day, paid=false",
+          "S4_approveAbove": "MATCH — expected needs_approval; observed needs_approval, paid=false",
+          "S5_first_payment_cap": "DIVERGENCE — expected refused_max_first_payment; observed insufficient_funds, paid=false (exa is an indexed seller; harness had no stranger seller; no 0.8.0 defect)",
+          "S6_frozen_switch": "MATCH — expected frozen; observed frozen, paid=false",
+          "S7_nonce_from_intent": "MATCH — deriveNonce equals independent HMAC-SHA256 recompute on all vectors; relations verified",
+          "S3_payto_refuse_mode": "evidence-only — not_observed; balance gate precedes the pay-to check with a 0-USDC wallet",
+          "S9_telemetry_posture": "evidence-only — no index row attributable to Phase A; post-run lookup pending"
+        }
+      },
+      "signature": "ltpdJTeLDHJ3oL0r5PbskEc6076B91aRli85xFPeg1C67XrYpePwEGH9rZvXfGRf+qETmLkD7/PtK5wokbLSDg=="
     }
   ]
 }
